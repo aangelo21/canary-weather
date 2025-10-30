@@ -22,6 +22,7 @@
     "dev": "node --watch index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed:pois": "node seeders/seed_pois_canarias.js",
+    "seed:users": "node seeders/seed_users.js",
     "migrate": "npx sequelize-cli db:migrate",
     "migrate:undo": "npx sequelize-cli db:migrate:undo"
   }
