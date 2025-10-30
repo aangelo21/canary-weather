@@ -7,6 +7,7 @@ export default function Layout() {
                 <nav>
                     <h1>CanaryWeather</h1>
                     <Link to="/pois">Puntos de Interés</Link>
+                    <Link to="/users">Usuarios</Link>
                 </nav>
             </header>
             <main>
