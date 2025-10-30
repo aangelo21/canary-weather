@@ -15,6 +15,14 @@ import {
     getPointsByLocation,
 } from "./controllers/pointOfInterestController.js";
 
+import {
+    getAllUsers,
+    getUserById,
+    createUser,
+    updateUser,
+    deleteUser,
+} from "./controllers/userController.js";
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -29,6 +37,13 @@ app.post("/api/pois", createPointOfInterest);
 app.put("/api/pois/:id", updatePointOfInterest);
 app.delete("/api/pois/:id", deletePointOfInterest);
 app.get("/api/locations/:locationId/pois", getPointsByLocation);
+
+// User Routes
+app.get("/api/users", getAllUsers);
+app.get("/api/users/:id", getUserById);
+app.post("/api/users", createUser);
+app.put("/api/users/:id", updateUser);
+app.delete("/api/users/:id", deleteUser);
 
 // Health check route
 app.get("/api/health", (req, res) => {
