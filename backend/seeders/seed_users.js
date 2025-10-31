@@ -15,13 +15,13 @@ async function seed() {
             password: "password123", // Note: In production, this should be hashed
         },
         {
-            email: "user1@example.com", 
+            email: "user1@example.com",
             username: "user1",
             password: "password123",
         },
         {
             email: "user2@example.com",
-            username: "user2", 
+            username: "user2",
             password: "password123",
         },
         {
@@ -33,7 +33,7 @@ async function seed() {
             email: "demo@canaryweather.com",
             username: "demo",
             password: "demo123",
-        }
+        },
     ];
 
     for (const userData of users) {
@@ -42,14 +42,19 @@ async function seed() {
                 where: { email: userData.email },
                 defaults: userData,
             });
-            
+
             if (created) {
                 console.log(`Created user: ${user.username} (${user.email})`);
             } else {
-                console.log(`User already exists: ${user.username} (${user.email})`);
+                console.log(
+                    `User already exists: ${user.username} (${user.email})`
+                );
             }
         } catch (error) {
-            console.error(`Error creating user ${userData.email}:`, error.message);
+            console.error(
+                `Error creating user ${userData.email}:`,
+                error.message
+            );
         }
     }
 

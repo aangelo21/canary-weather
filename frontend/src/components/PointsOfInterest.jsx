@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
-
-const API_BASE = "http://144.126.230.64:85/api";
+import {
+    fetchPois as fetchPoisService,
+    createOrUpdatePoi,
+    deletePoi as deletePoiService,
+} from "../services/poiService";
 
 export default function PointsOfInterest() {
     const [pois, setPois] = useState([]);
@@ -20,9 +23,7 @@ export default function PointsOfInterest() {
     const fetchPois = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`${API_BASE}/pois`);
-            if (!response.ok) throw new Error("Error fetching POIs");
-            const data = await response.json();
+            const data = await fetchPoisService();
             setPois(data);
         } catch (err) {
             setError(err.message);
@@ -36,38 +37,8 @@ export default function PointsOfInterest() {
         e.preventDefault();
         setLoading(true);
         setError("");
-
         try {
-            const payload = {
-                ...formData,
-                latitude: formData.latitude
-                    ? parseFloat(formData.latitude)
-                    : null,
-                longitude: formData.longitude
-                    ? parseFloat(formData.longitude)
-                    : null,
-                location_id: formData.location_id || null,
-            };
-
-            const url = editingId
-                ? `${API_BASE}/pois/${editingId}`
-                : `${API_BASE}/pois`;
-            const method = editingId ? "PUT" : "POST";
-
-            const response = await fetch(url, {
-                method,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Error saving POI");
-            }
-
-            // Reset form and refresh list
+            await createOrUpdatePoi(formData, editingId);
             resetForm();
             fetchPois();
         } catch (err) {
@@ -80,17 +51,9 @@ export default function PointsOfInterest() {
     // Delete POI
     const handleDelete = async (id) => {
         if (!confirm("¿Estás seguro de eliminar este POI?")) return;
-
         try {
             setLoading(true);
-            const response = await fetch(`${API_BASE}/pois/${id}`, {
-                method: "DELETE",
-            });
-
-            if (!response.ok) {
-                throw new Error("Error deleting POI");
-            }
-
+            await deletePoiService(id);
             fetchPois();
         } catch (err) {
             setError(err.message);
