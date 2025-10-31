@@ -1,6 +1,6 @@
 // src/services/poiService.js
 
-const API_BASE = "http://144.126.230.64:85/api";
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 export async function fetchPois() {
     const response = await fetch(`${API_BASE}/pois`);
