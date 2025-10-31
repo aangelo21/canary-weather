@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
-
-const API_BASE = "http://144.126.230.64:85/api";
+import {
+    fetchUsers as fetchUsersService,
+    createOrUpdateUser,
+    deleteUser as deleteUserService,
+} from "../services/userService";
 
 export default function Users() {
     const [users, setUsers] = useState([]);
@@ -17,9 +20,7 @@ export default function Users() {
     const fetchUsers = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`${API_BASE}/users`);
-            if (!response.ok) throw new Error("Error fetching users");
-            const data = await response.json();
+            const data = await fetchUsersService();
             setUsers(data);
         } catch (err) {
             setError(err.message);
@@ -33,31 +34,8 @@ export default function Users() {
         e.preventDefault();
         setLoading(true);
         setError("");
-
         try {
-            const payload = {
-                ...formData,
-            };
-
-            const url = editingId
-                ? `${API_BASE}/users/${editingId}`
-                : `${API_BASE}/users`;
-            const method = editingId ? "PUT" : "POST";
-
-            const response = await fetch(url, {
-                method,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Error saving user");
-            }
-
-            // Reset form and refresh list
+            await createOrUpdateUser(formData, editingId);
             resetForm();
             fetchUsers();
         } catch (err) {
@@ -70,17 +48,9 @@ export default function Users() {
     // Delete user
     const handleDelete = async (id) => {
         if (!confirm("¿Estás seguro de eliminar este usuario?")) return;
-
         try {
             setLoading(true);
-            const response = await fetch(`${API_BASE}/users/${id}`, {
-                method: "DELETE",
-            });
-
-            if (!response.ok) {
-                throw new Error("Error deleting user");
-            }
-
+            await deleteUserService(id);
             fetchUsers();
         } catch (err) {
             setError(err.message);
