@@ -159,7 +159,10 @@ export default function Users() {
 
                     <div className="form-group">
                         <label htmlFor="password">
-                            Contraseña {editingId ? "(dejar vacío para mantener actual)" : "*"}
+                            Contraseña{" "}
+                            {editingId
+                                ? "(dejar vacío para mantener actual)"
+                                : "*"}
                         </label>
                         <input
                             type="password"
@@ -214,7 +217,9 @@ export default function Users() {
                                             Editar
                                         </button>
                                         <button
-                                            onClick={() => handleDelete(user.id)}
+                                            onClick={() =>
+                                                handleDelete(user.id)
+                                            }
                                             className="btn-delete"
                                         >
                                             Eliminar
@@ -228,7 +233,8 @@ export default function Users() {
                                     </p>
                                     {user.username && (
                                         <p>
-                                            <strong>Usuario:</strong> {user.username}
+                                            <strong>Usuario:</strong>{" "}
+                                            {user.username}
                                         </p>
                                     )}
                                     <p>
@@ -236,11 +242,15 @@ export default function Users() {
                                     </p>
                                     <p>
                                         <strong>Creado:</strong>{" "}
-                                        {new Date(user.createdAt).toLocaleDateString()}
+                                        {new Date(
+                                            user.createdAt
+                                        ).toLocaleDateString()}
                                     </p>
                                     <p>
                                         <strong>Actualizado:</strong>{" "}
-                                        {new Date(user.updatedAt).toLocaleDateString()}
+                                        {new Date(
+                                            user.updatedAt
+                                        ).toLocaleDateString()}
                                     </p>
                                 </div>
                             </div>
