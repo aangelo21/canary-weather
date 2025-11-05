@@ -1,15 +1,10 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import Header from "../components/header/Header";
 
 export default function Layout() {
     return (
         <>
-            <header>
-                <nav>
-                    <h1>CanaryWeather</h1>
-                    <Link to="/pois">Puntos de Interés</Link>
-                    <Link to="/users">Usuarios</Link>
-                </nav>
-            </header>
+            <Header />
             <main>
                 <Outlet />
             </main>

@@ -3,6 +3,7 @@ import "./App.css";
 import Layout from "./layout/Layout";
 import PointsOfInterest from "./components/PointsOfInterest";
 import Users from "./components/Users";
+import Home from "./Pages/Home"; 
 
 function App() {
     return (
@@ -10,7 +11,7 @@ function App() {
             <BrowserRouter>
                 <Routes>
                     <Route element={<Layout />}>
-                        <Route path="/" element={<PointsOfInterest />} />
+                        <Route path="/" element={<Home />} />       
                         <Route path="/pois" element={<PointsOfInterest />} />
                         <Route path="/users" element={<Users />} />
                     </Route>
