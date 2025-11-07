@@ -1,4 +1,28 @@
 import { User } from "../models/index.js";
+import bcrypt from "bcrypt";
+export const loginUser = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        let user;
+        if (email) {
+            user = await User.findOne({ where: { email } });
+        } else {
+            user = await User.findOne({ where: { username: req.body.username } });
+        }
+        if (!user) {
+            return res.status(401).json({ error: "Usuario o contraseña incorrectos" });
+        }
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) {
+            return res.status(401).json({ error: "Usuario o contraseña incorrectos" });
+        }
+        const safe = user.toJSON();
+        delete safe.password;
+        return res.json(safe);
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -26,8 +50,16 @@ export const getUserById = async (req, res) => {
 
 export const createUser = async (req, res) => {
     try {
-        const payload = req.body;
-        const user = await User.create(payload);
+        const { email, username, password } = req.body;
+        if (!email || !username || !password) {
+            return res.status(400).json({ error: "Faltan campos obligatorios" });
+        }
+        const exists = await User.findOne({ where: { email } });
+        if (exists) {
+            return res.status(409).json({ error: "El email ya está registrado" });
+        }
+        const hash = await bcrypt.hash(password, 10);
+        const user = await User.create({ email, username, password: hash });
         const safe = user.toJSON();
         delete safe.password;
         return res.status(201).json(safe);

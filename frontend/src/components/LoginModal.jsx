@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createOrUpdateUser } from "../services/userService";
+import { createOrUpdateUser, loginUser } from "../services/userService";
 
 export default function LoginModal({
     isOpen,
@@ -138,7 +138,18 @@ export default function LoginModal({
                                 setError("All fields are required");
                                 return;
                             }
-                            onLogin(input.emailOrUsername);
+                            setLoading(true);
+                            try {
+                                const user = await loginUser({
+                                    emailOrUsername: input.emailOrUsername,
+                                    password: input.password,
+                                });
+                                setLoading(false);
+                                onLogin(user);
+                            } catch (err) {
+                                setLoading(false);
+                                setError(err.message || "Error logging in");
+                            }
                         }
                     }}
                 >

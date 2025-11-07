@@ -1,3 +1,22 @@
+export async function loginUser({ emailOrUsername, password }) {
+    // Detect if input is email or username
+    let body;
+    if (emailOrUsername.includes("@")) {
+        body = { email: emailOrUsername, password };
+    } else {
+        body = { username: emailOrUsername, password };
+    }
+    const response = await fetch(`${API_BASE}/users/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+    });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error logging in");
+    }
+    return response.json();
+}
 const API_BASE = import.meta.env.VITE_API_BASE;
 
 export async function fetchUsers() {
