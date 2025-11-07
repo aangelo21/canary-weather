@@ -1,8 +1,10 @@
 import { useState } from "react";
+import LoginModal from "./LoginModal";
 import { NavLink } from "react-router-dom";
 
 function Header() {
     const [isOpen, setIsOpen] = useState(false);
+    const [showLogin, setShowLogin] = useState(false);
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -83,8 +85,11 @@ function Header() {
                         </li>
                     </ul>
 
-                    <div className="hidden md:block">
-                        <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors">
+                    <div className="md:block relative flex flex-col items-center">
+                        <button
+                            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors"
+                            onClick={() => setShowLogin((prev) => !prev)}
+                        >
                             <svg
                                 className="w-4 h-4"
                                 fill="currentColor"
@@ -98,6 +103,10 @@ function Header() {
                             </svg>
                             log in
                         </button>
+                        <LoginModal
+                            isOpen={showLogin}
+                            onClose={() => setShowLogin(false)}
+                        />
                     </div>
 
                     <button
@@ -206,7 +215,12 @@ function Header() {
                                 </NavLink>
                             </li>
                             <li>
-                                <button className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors">
+                                <button
+                                    className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors"
+                                    onClick={() =>
+                                        setShowLogin((prev) => !prev)
+                                    }
+                                >
                                     <svg
                                         className="w-4 h-4"
                                         fill="currentColor"
@@ -220,6 +234,10 @@ function Header() {
                                     </svg>
                                     log in
                                 </button>
+                                <LoginModal
+                                    isOpen={showLogin}
+                                    onClose={() => setShowLogin(false)}
+                                />
                             </li>
                         </ul>
                     </div>
