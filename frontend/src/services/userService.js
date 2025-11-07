@@ -1,15 +1,10 @@
-export async function loginUser({ emailOrUsername, password }) {
-    // Detect if input is email or username
-    let body;
-    if (emailOrUsername.includes("@")) {
-        body = { email: emailOrUsername, password };
-    } else {
-        body = { username: emailOrUsername, password };
-    }
+export async function loginUser({ username, password }) {
+    const credentials = btoa(`${username}:${password}`);
     const response = await fetch(`${API_BASE}/users/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        headers: {
+            Authorization: `Basic ${credentials}`,
+        },
     });
     if (!response.ok) {
         const errorData = await response.json();

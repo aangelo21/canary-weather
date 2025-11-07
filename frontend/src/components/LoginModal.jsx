@@ -140,12 +140,22 @@ export default function LoginModal({
                             }
                             setLoading(true);
                             try {
-                                const user = await loginUser({
-                                    emailOrUsername: input.emailOrUsername,
+                                const result = await loginUser({
+                                    username: input.emailOrUsername,
                                     password: input.password,
                                 });
                                 setLoading(false);
-                                onLogin(user);
+                                if (result.token) {
+                                    localStorage.setItem(
+                                        "authToken",
+                                        result.token
+                                    );
+                                    onLogin({
+                                        username: input.emailOrUsername,
+                                    });
+                                } else {
+                                    setError("No se recibió token");
+                                }
                             } catch (err) {
                                 setLoading(false);
                                 setError(err.message || "Error logging in");
