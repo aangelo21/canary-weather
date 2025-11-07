@@ -122,13 +122,13 @@ export default function LoginModal({
                             }
                             setLoading(true);
                             try {
-                                await createOrUpdateUser({
+                                const user = await createOrUpdateUser({
                                     email: input.email,
                                     username: input.username,
                                     password: input.password,
                                 });
                                 setLoading(false);
-                                onLogin(input.username);
+                                onLogin(user);
                             } catch (err) {
                                 setLoading(false);
                                 setError(err.message || "Error creating user");

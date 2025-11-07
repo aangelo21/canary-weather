@@ -14,9 +14,9 @@ function Header() {
         }
     }, []);
 
-    const handleLogin = (username) => {
-        localStorage.setItem("cw_user", JSON.stringify({ username }));
-        setUser({ username });
+    const handleLogin = (userObj) => {
+        localStorage.setItem("cw_user", JSON.stringify(userObj));
+        setUser(userObj);
         setShowLogin(false);
     };
 
@@ -24,6 +24,7 @@ function Header() {
         localStorage.removeItem("cw_user");
         setUser(null);
         setShowLogin(false);
+        window.location.reload();
     };
 
     const toggleMenu = () => {

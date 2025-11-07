@@ -58,8 +58,7 @@ export const createUser = async (req, res) => {
         if (exists) {
             return res.status(409).json({ error: "El email ya está registrado" });
         }
-        const hash = await bcrypt.hash(password, 10);
-        const user = await User.create({ email, username, password: hash });
+    const user = await User.create({ email, username, password });
         const safe = user.toJSON();
         delete safe.password;
         return res.status(201).json(safe);
