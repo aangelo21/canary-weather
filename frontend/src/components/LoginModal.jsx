@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createOrUpdateUser } from "../services/userService";
 
 export default function LoginModal({
     isOpen,
@@ -16,6 +17,7 @@ export default function LoginModal({
         confirm: "",
     });
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     if (!isOpen) return null;
     if (user) {
         return (
@@ -94,10 +96,16 @@ export default function LoginModal({
                         {error}
                     </div>
                 )}
+                {loading && (
+                    <div className="text-blue-600 text-sm mb-2 text-center">
+                        Processing...
+                    </div>
+                )}
                 <form
                     className="flex flex-col gap-4"
-                    onSubmit={(e) => {
+                    onSubmit={async (e) => {
                         e.preventDefault();
+                        setError("");
                         if (isSignUp) {
                             if (
                                 !input.email ||
@@ -112,7 +120,19 @@ export default function LoginModal({
                                 setError("Passwords do not match");
                                 return;
                             }
-                            onLogin(input.username);
+                            setLoading(true);
+                            try {
+                                await createOrUpdateUser({
+                                    email: input.email,
+                                    username: input.username,
+                                    password: input.password,
+                                });
+                                setLoading(false);
+                                onLogin(input.username);
+                            } catch (err) {
+                                setLoading(false);
+                                setError(err.message || "Error creating user");
+                            }
                         } else {
                             if (!input.emailOrUsername || !input.password) {
                                 setError("All fields are required");
