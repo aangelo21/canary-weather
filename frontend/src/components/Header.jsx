@@ -1,8 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import LoginModal from "./LoginModal";
 import { NavLink } from "react-router-dom";
 
 function Header() {
     const [isOpen, setIsOpen] = useState(false);
+    const [showLogin, setShowLogin] = useState(false);
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem("cw_user");
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
+
+    const handleLogin = (userObj) => {
+        localStorage.setItem("cw_user", JSON.stringify(userObj));
+        setUser(userObj);
+        setShowLogin(false);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem("cw_user");
+        setUser(null);
+        setShowLogin(false);
+        window.location.reload();
+    };
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -83,8 +106,15 @@ function Header() {
                         </li>
                     </ul>
 
-                    <div className="hidden md:block">
-                        <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors">
+                    <div className="md:block relative flex flex-col items-center">
+                        <button
+                            className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors ${
+                                user
+                                    ? "bg-red-600 text-white hover:bg-red-700"
+                                    : "bg-blue-600 text-white hover:bg-blue-700"
+                            }`}
+                            onClick={() => setShowLogin((prev) => !prev)}
+                        >
                             <svg
                                 className="w-4 h-4"
                                 fill="currentColor"
@@ -96,8 +126,15 @@ function Header() {
                                     clipRule="evenodd"
                                 />
                             </svg>
-                            log in
+                            {user ? "Log out" : "Log in"}
                         </button>
+                        <LoginModal
+                            isOpen={showLogin}
+                            onClose={() => setShowLogin(false)}
+                            onLogin={handleLogin}
+                            user={user}
+                            onLogout={handleLogout}
+                        />
                     </div>
 
                     <button
@@ -206,7 +243,12 @@ function Header() {
                                 </NavLink>
                             </li>
                             <li>
-                                <button className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors">
+                                <button
+                                    className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors"
+                                    onClick={() =>
+                                        setShowLogin((prev) => !prev)
+                                    }
+                                >
                                     <svg
                                         className="w-4 h-4"
                                         fill="currentColor"
@@ -220,6 +262,10 @@ function Header() {
                                     </svg>
                                     log in
                                 </button>
+                                <LoginModal
+                                    isOpen={showLogin}
+                                    onClose={() => setShowLogin(false)}
+                                />
                             </li>
                         </ul>
                     </div>

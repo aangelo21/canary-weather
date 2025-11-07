@@ -1,3 +1,17 @@
+export async function loginUser({ username, password }) {
+    const credentials = btoa(`${username}:${password}`);
+    const response = await fetch(`${API_BASE}/users/login`, {
+        method: "POST",
+        headers: {
+            Authorization: `Basic ${credentials}`,
+        },
+    });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error logging in");
+    }
+    return response.json();
+}
 const API_BASE = import.meta.env.VITE_API_BASE;
 
 export async function fetchUsers() {

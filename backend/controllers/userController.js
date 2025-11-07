@@ -1,4 +1,41 @@
 import { User } from "../models/index.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+export const loginUser = async (req, res) => {
+    try {
+        const authHeader = req.headers["authorization"];
+        if (!authHeader || !authHeader.startsWith("Basic ")) {
+            return res
+                .status(401)
+                .json({ error: "Falta encabezado Authorization Basic" });
+        }
+        const base64Credentials = authHeader.split(" ")[1];
+        const credentials = Buffer.from(base64Credentials, "base64").toString(
+            "ascii"
+        );
+        const [username, password] = credentials.split(":");
+        const user = await User.findOne({ where: { username } });
+        if (!user) {
+            return res
+                .status(401)
+                .json({ error: "Usuario o contraseña incorrectos" });
+        }
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) {
+            return res
+                .status(401)
+                .json({ error: "Usuario o contraseña incorrectos" });
+        }
+        const token = jwt.sign(
+            { id: user.id, username: user.username },
+            process.env.JWT_SECRET || "secret",
+            { expiresIn: "1h" }
+        );
+        return res.json({ token });
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -26,8 +63,19 @@ export const getUserById = async (req, res) => {
 
 export const createUser = async (req, res) => {
     try {
-        const payload = req.body;
-        const user = await User.create(payload);
+        const { email, username, password } = req.body;
+        if (!email || !username || !password) {
+            return res
+                .status(400)
+                .json({ error: "Faltan campos obligatorios" });
+        }
+        const exists = await User.findOne({ where: { email } });
+        if (exists) {
+            return res
+                .status(409)
+                .json({ error: "El email ya está registrado" });
+        }
+        const user = await User.create({ email, username, password });
         const safe = user.toJSON();
         delete safe.password;
         return res.status(201).json(safe);
