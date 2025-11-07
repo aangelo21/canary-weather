@@ -1,8 +1,53 @@
 import { useState } from "react";
 
-export default function LoginModal({ isOpen, onClose }) {
+export default function LoginModal({
+    isOpen,
+    onClose,
+    onLogin,
+    user,
+    onLogout,
+}) {
     const [isSignUp, setIsSignUp] = useState(false);
+    const [input, setInput] = useState({
+        emailOrUsername: "",
+        password: "",
+        username: "",
+        email: "",
+        confirm: "",
+    });
+    const [error, setError] = useState("");
     if (!isOpen) return null;
+    if (user) {
+        return (
+            <div
+                className="absolute left-1/2 transform -translate-x-1/2 mt-2 z-50"
+                style={{ minWidth: "18rem" }}
+            >
+                <div className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative flex flex-col items-center">
+                    <button
+                        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                        onClick={onClose}
+                        type="button"
+                    >
+                        &times;
+                    </button>
+                    <h2 className="text-xl font-semibold mb-4 text-center">
+                        Welcome!
+                    </h2>
+                    <div className="mb-4 text-lg">
+                        Username:{" "}
+                        <span className="font-bold">{user.username}</span>
+                    </div>
+                    <button
+                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                        onClick={onLogout}
+                    >
+                        Log out
+                    </button>
+                </div>
+            </div>
+        );
+    }
     return (
         <div
             className="absolute left-1/2 transform -translate-x-1/2 mt-2 z-50"
@@ -44,31 +89,91 @@ export default function LoginModal({ isOpen, onClose }) {
                 <h2 className="text-xl font-semibold mb-4 text-center">
                     {isSignUp ? "Sign Up" : "Log In"}
                 </h2>
-                <form className="flex flex-col gap-4">
+                {error && (
+                    <div className="text-red-600 text-sm mb-2 text-center">
+                        {error}
+                    </div>
+                )}
+                <form
+                    className="flex flex-col gap-4"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        if (isSignUp) {
+                            if (
+                                !input.email ||
+                                !input.username ||
+                                !input.password ||
+                                !input.confirm
+                            ) {
+                                setError("All fields are required");
+                                return;
+                            }
+                            if (input.password !== input.confirm) {
+                                setError("Passwords do not match");
+                                return;
+                            }
+                            onLogin(input.username);
+                        } else {
+                            if (!input.emailOrUsername || !input.password) {
+                                setError("All fields are required");
+                                return;
+                            }
+                            onLogin(input.emailOrUsername);
+                        }
+                    }}
+                >
                     {isSignUp ? (
                         <>
                             <input
                                 type="email"
                                 placeholder="Email"
                                 className="border rounded px-3 py-2"
+                                value={input.email}
+                                onChange={(e) =>
+                                    setInput((i) => ({
+                                        ...i,
+                                        email: e.target.value,
+                                    }))
+                                }
                                 required
                             />
                             <input
                                 type="text"
                                 placeholder="Username"
                                 className="border rounded px-3 py-2"
+                                value={input.username}
+                                onChange={(e) =>
+                                    setInput((i) => ({
+                                        ...i,
+                                        username: e.target.value,
+                                    }))
+                                }
                                 required
                             />
                             <input
                                 type="password"
                                 placeholder="Password"
                                 className="border rounded px-3 py-2"
+                                value={input.password}
+                                onChange={(e) =>
+                                    setInput((i) => ({
+                                        ...i,
+                                        password: e.target.value,
+                                    }))
+                                }
                                 required
                             />
                             <input
                                 type="password"
                                 placeholder="Confirm Password"
                                 className="border rounded px-3 py-2"
+                                value={input.confirm}
+                                onChange={(e) =>
+                                    setInput((i) => ({
+                                        ...i,
+                                        confirm: e.target.value,
+                                    }))
+                                }
                                 required
                             />
                         </>
@@ -78,12 +183,26 @@ export default function LoginModal({ isOpen, onClose }) {
                                 type="text"
                                 placeholder="Email or Username"
                                 className="border rounded px-3 py-2"
+                                value={input.emailOrUsername}
+                                onChange={(e) =>
+                                    setInput((i) => ({
+                                        ...i,
+                                        emailOrUsername: e.target.value,
+                                    }))
+                                }
                                 required
                             />
                             <input
                                 type="password"
                                 placeholder="Password"
                                 className="border rounded px-3 py-2"
+                                value={input.password}
+                                onChange={(e) =>
+                                    setInput((i) => ({
+                                        ...i,
+                                        password: e.target.value,
+                                    }))
+                                }
                                 required
                             />
                         </>

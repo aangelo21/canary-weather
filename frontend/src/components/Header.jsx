@@ -1,10 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LoginModal from "./LoginModal";
 import { NavLink } from "react-router-dom";
 
 function Header() {
     const [isOpen, setIsOpen] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem("cw_user");
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
+
+    const handleLogin = (username) => {
+        localStorage.setItem("cw_user", JSON.stringify({ username }));
+        setUser({ username });
+        setShowLogin(false);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem("cw_user");
+        setUser(null);
+        setShowLogin(false);
+    };
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -87,7 +107,11 @@ function Header() {
 
                     <div className="md:block relative flex flex-col items-center">
                         <button
-                            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors"
+                            className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors ${
+                                user
+                                    ? "bg-red-600 text-white hover:bg-red-700"
+                                    : "bg-blue-600 text-white hover:bg-blue-700"
+                            }`}
                             onClick={() => setShowLogin((prev) => !prev)}
                         >
                             <svg
@@ -101,11 +125,14 @@ function Header() {
                                     clipRule="evenodd"
                                 />
                             </svg>
-                            log in
+                            {user ? "Log out" : "Log in"}
                         </button>
                         <LoginModal
                             isOpen={showLogin}
                             onClose={() => setShowLogin(false)}
+                            onLogin={handleLogin}
+                            user={user}
+                            onLogout={handleLogout}
                         />
                     </div>
 
