@@ -11,12 +11,14 @@ import {
 
 
 const router = express.Router();
-router.post("/login", loginUser);
 
-router.get("/", getAllUsers);
-router.get("/:id", getUserById);
+import { authenticateToken } from "../middleware/authenticateToken.js";
+
+router.post("/login", loginUser);
+router.get("/", authenticateToken, getAllUsers);
+router.get("/:id", authenticateToken, getUserById);
 router.post("/", createUser);
-router.put("/:id", updateUser);
-router.delete("/:id", deleteUser);
+router.put("/:id", authenticateToken, updateUser);
+router.delete("/:id", authenticateToken, deleteUser);
 
 export default router;
