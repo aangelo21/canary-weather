@@ -5,10 +5,8 @@ import PointOfInterest from "../models/pointOfInterest.js";
 async function seed() {
     console.log("Starting POI seeder for Canarias...");
 
-    // ensure models are loaded and DB is ready
     await sequelize.sync();
 
-    // Canonical list of Canary Islands (centroid coords approximated)
     const islands = [
         {
             key: "Tenerife",
@@ -74,9 +72,7 @@ async function seed() {
         locationMap[isl.key] = loc;
     }
 
-    // Points of interest limited to the Canary Islands
     const pois = [
-        // Tenerife
         {
             name: "Parque Nacional del Teide",
             latitude: 28.2724,
@@ -101,7 +97,6 @@ async function seed() {
             locationName: "Tenerife",
         },
 
-        // Gran Canaria
         {
             name: "Roque Nublo",
             latitude: 27.9871,
@@ -124,7 +119,6 @@ async function seed() {
             locationName: "Gran Canaria",
         },
 
-        // Lanzarote
         {
             name: "Parque Nacional de Timanfaya",
             latitude: 29.003,
@@ -141,7 +135,6 @@ async function seed() {
             locationName: "Lanzarote",
         },
 
-        // Fuerteventura
         {
             name: "Dunas de Corralejo",
             latitude: 28.7373,
@@ -157,7 +150,6 @@ async function seed() {
             locationName: "Fuerteventura",
         },
 
-        // La Palma
         {
             name: "Caldera de Taburiente",
             latitude: 28.693,
@@ -167,7 +159,6 @@ async function seed() {
             locationName: "La Palma",
         },
 
-        // La Gomera
         {
             name: "Parque Nacional de Garajonay",
             latitude: 28.0907,
@@ -183,7 +174,6 @@ async function seed() {
             locationName: "La Gomera",
         },
 
-        // El Hierro
         {
             name: "Mirador de La Peña",
             latitude: 27.7281,
@@ -193,7 +183,6 @@ async function seed() {
             locationName: "El Hierro",
         },
 
-        // La Graciosa
         {
             name: "Playa de Las Conchas",
             latitude: 29.1692,

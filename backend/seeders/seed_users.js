@@ -4,15 +4,13 @@ import User from "../models/user.js";
 async function seed() {
     console.log("Starting User seeder...");
 
-    // ensure models are loaded and DB is ready
     await sequelize.sync();
 
-    // Sample users for testing
     const users = [
         {
             email: "admin@canaryweather.com",
             username: "admin",
-            password: "password123", // Note: In production, this should be hashed
+            password: "password123",
         },
         {
             email: "user1@example.com",

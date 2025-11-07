@@ -19,7 +19,6 @@ export default function PointsOfInterest() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    // Fetch all POIs
     const fetchPois = async () => {
         try {
             setLoading(true);
@@ -32,7 +31,6 @@ export default function PointsOfInterest() {
         }
     };
 
-    // Create or update POI
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -48,7 +46,6 @@ export default function PointsOfInterest() {
         }
     };
 
-    // Delete POI
     const handleDelete = async (id) => {
         if (!confirm("¿Estás seguro de eliminar este POI?")) return;
         try {
@@ -62,7 +59,6 @@ export default function PointsOfInterest() {
         }
     };
 
-    // Edit POI
     const handleEdit = (poi) => {
         setFormData({
             name: poi.name,
@@ -75,7 +71,6 @@ export default function PointsOfInterest() {
         setEditingId(poi.id);
     };
 
-    // Reset form
     const resetForm = () => {
         setFormData({
             name: "",
@@ -88,7 +83,6 @@ export default function PointsOfInterest() {
         setEditingId(null);
     };
 
-    // Handle input changes
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData((prev) => ({
@@ -107,7 +101,6 @@ export default function PointsOfInterest() {
 
             {error && <div className="error-message">{error}</div>}
 
-            {/* Form */}
             <div className="form-section">
                 <h2>{editingId ? "Editar POI" : "Crear Nuevo POI"}</h2>
                 <form onSubmit={handleSubmit}>
@@ -209,7 +202,6 @@ export default function PointsOfInterest() {
                 </form>
             </div>
 
-            {/* POIs List */}
             <div className="list-section">
                 <h2>Lista de POIs</h2>
                 {loading && <div className="loading">Cargando...</div>}

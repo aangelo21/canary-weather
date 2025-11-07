@@ -27,7 +27,6 @@ export const getUserById = async (req, res) => {
 export const createUser = async (req, res) => {
     try {
         const payload = req.body;
-        // Note: password hashing should be applied here in a real app
         const user = await User.create(payload);
         const safe = user.toJSON();
         delete safe.password;
@@ -41,7 +40,6 @@ export const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
         const payload = req.body;
-        // Avoid returning password in responses
         await User.update(payload, { where: { id } });
         const updated = await User.findByPk(id, {
             attributes: { exclude: ["password"] },

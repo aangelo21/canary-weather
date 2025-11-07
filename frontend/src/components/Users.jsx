@@ -16,7 +16,6 @@ export default function Users() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    // Fetch all users
     const fetchUsers = async () => {
         try {
             setLoading(true);
@@ -29,7 +28,6 @@ export default function Users() {
         }
     };
 
-    // Create or update user
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -45,7 +43,6 @@ export default function Users() {
         }
     };
 
-    // Delete user
     const handleDelete = async (id) => {
         if (!confirm("¿Estás seguro de eliminar este usuario?")) return;
         try {
@@ -59,17 +56,15 @@ export default function Users() {
         }
     };
 
-    // Edit user
     const handleEdit = (user) => {
         setFormData({
             email: user.email,
             username: user.username || "",
-            password: "", // Don't prefill password for security
+            password: "",
         });
         setEditingId(user.id);
     };
 
-    // Reset form
     const resetForm = () => {
         setFormData({
             email: "",
@@ -79,7 +74,6 @@ export default function Users() {
         setEditingId(null);
     };
 
-    // Handle input changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
@@ -98,7 +92,6 @@ export default function Users() {
 
             {error && <div className="error-message">{error}</div>}
 
-            {/* Form */}
             <div className="form-section">
                 <h2>{editingId ? "Editar Usuario" : "Crear Nuevo Usuario"}</h2>
                 <form onSubmit={handleSubmit}>
@@ -166,7 +159,6 @@ export default function Users() {
                 </form>
             </div>
 
-            {/* Users List */}
             <div className="list-section">
                 <h2>Lista de Usuarios</h2>
                 {loading && <div className="loading">Cargando...</div>}

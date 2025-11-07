@@ -1,4 +1,3 @@
-// imports dependencies
 import { Sequelize } from "sequelize";
 import { config } from "dotenv";
 import fs from "fs";
@@ -7,7 +6,6 @@ import { fileURLToPath } from "url";
 
 config();
 
-// creates .env variables
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DB_HOST = process.env.DB_HOST || process.env.DB_URL;
@@ -36,7 +34,6 @@ try {
     );
 }
 
-// initializes Sequelize with .env variables
 const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
     host: DB_HOST,
     port: DB_PORT,
@@ -54,7 +51,6 @@ const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
     },
 });
 
-// tests the database connection
 sequelize
     .authenticate()
     .then(() => {
