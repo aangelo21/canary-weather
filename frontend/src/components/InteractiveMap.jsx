@@ -4,7 +4,7 @@ import WeatherPopup from "./WeatherPopup";
 
 function InteractiveMap() {
     const [clickedPos, setClickedPos] = useState(null);
-    const [temperature, setTemperature] = useState(null);
+    const [weather, setWeather] = useState(null);
     const markerRef = useRef(null);
 
     function MapClickHandler() {
@@ -12,15 +12,21 @@ function InteractiveMap() {
             click: async (e) => {
                 const { lat, lng } = e.latlng;
                 setClickedPos([lat, lng]);
-                setTemperature(null);
+                setWeather(null);
                 try {
                     const res = await fetch(
                         `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=6face86f22b577e34d37321df89e1511&units=metric`
                     );
                     const data = await res.json();
-                    setTemperature(data.main?.temp ?? null);
+                    setWeather({
+                        temp: data.main?.temp ?? null,
+                        humidity: data.main?.humidity ?? null,
+                        pressure: data.main?.pressure ?? null,
+                        wind: data.wind?.speed ?? null,
+                        description: data.weather?.[0]?.description ?? "",
+                    });
                 } catch {
-                    setTemperature(null);
+                    setWeather(null);
                 }
             },
         });
@@ -28,10 +34,10 @@ function InteractiveMap() {
     }
 
     useEffect(() => {
-        if (markerRef.current && clickedPos && temperature != null) {
+        if (markerRef.current && clickedPos && weather != null) {
             markerRef.current.openPopup();
         }
-    }, [clickedPos, temperature]);
+    }, [clickedPos, weather]);
 
     const bounds = [
         [27.5, -18],
@@ -55,10 +61,10 @@ function InteractiveMap() {
                 <MapClickHandler />
                 {clickedPos && (
                     <Marker position={clickedPos} ref={markerRef}>
-                        {temperature != null && (
+                        {weather != null && (
                             <WeatherPopup
                                 position={clickedPos}
-                                temperature={temperature}
+                                weather={weather}
                                 markerRef={markerRef}
                             />
                         )}
