@@ -33,11 +33,18 @@ function InteractiveMap() {
         }
     }, [clickedPos, temperature]);
 
+    const bounds = [
+        [27.5, -18],
+        [29.5, -14],
+    ];
     return (
         <div className="flex justify-center">
             <MapContainer
                 center={[28.5, -16]}
                 zoom={8}
+                minZoom={8}
+                maxBounds={bounds}
+                maxBoundsViscosity={1.0}
                 scrollWheelZoom={true}
                 className="leaflet-container"
             >
