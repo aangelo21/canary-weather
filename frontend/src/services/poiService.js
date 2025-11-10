@@ -34,5 +34,9 @@ export async function deletePoi(id) {
         method: "DELETE",
     });
     if (!response.ok) throw new Error("Error deleting POI");
-    return response.json();
+    try {
+        return await response.json();
+    } catch {
+        return { success: true };
+    }
 }

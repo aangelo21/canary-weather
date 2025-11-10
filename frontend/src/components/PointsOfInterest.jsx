@@ -7,6 +7,7 @@ import {
 
 export default function PointsOfInterest() {
     const [pois, setPois] = useState([]);
+    const [weatherData, setWeatherData] = useState({});
     const [formData, setFormData] = useState({
         name: "",
         latitude: "",
@@ -15,6 +16,7 @@ export default function PointsOfInterest() {
         is_global: false,
         location_id: "",
     });
+    const [showEditForm, setShowEditForm] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -38,6 +40,8 @@ export default function PointsOfInterest() {
         try {
             await createOrUpdatePoi(formData, editingId);
             resetForm();
+            setShowEditForm(false);
+            setEditingId(null);
             fetchPois();
         } catch (err) {
             setError(err.message);
@@ -69,6 +73,7 @@ export default function PointsOfInterest() {
             location_id: poi.location_id || "",
         });
         setEditingId(poi.id);
+        setShowEditForm(true);
     };
 
     const resetForm = () => {
@@ -95,15 +100,45 @@ export default function PointsOfInterest() {
         fetchPois();
     }, []);
 
+    useEffect(() => {
+        async function fetchWeatherForPois() {
+            const entries = await Promise.all(
+                pois.map(async (poi) => {
+                    if (!poi.latitude || !poi.longitude) return [poi.id, null];
+                    try {
+                        const res = await fetch(
+                            `https://api.openweathermap.org/data/2.5/weather?lat=${poi.latitude}&lon=${poi.longitude}&appid=6face86f22b577e34d37321df89e1511&units=metric`
+                        );
+                        const data = await res.json();
+                        return [
+                            poi.id,
+                            {
+                                temp: data.main?.temp ?? null,
+                                description:
+                                    data.weather?.[0]?.description ?? "",
+                            },
+                        ];
+                    } catch {
+                        return [poi.id, null];
+                    }
+                })
+            );
+            setWeatherData(Object.fromEntries(entries));
+        }
+        if (pois.length > 0) {
+            fetchWeatherForPois();
+        }
+    }, [pois]);
+
     return (
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-2xl font-extrabold text-[#0f6fb9]">
-                        Puntos de Interés
+                        Points of Interest
                     </h1>
                     <div className="text-sm text-gray-600">
-                        {pois.length} puntos
+                        {pois.length} points
                     </div>
                 </div>
 
@@ -113,10 +148,58 @@ export default function PointsOfInterest() {
                     </div>
                 )}
 
+                {showEditForm && (
+                    <div className="mb-6 p-4 bg-white rounded shadow border border-gray-200">
+                        <h2 className="text-lg font-bold mb-2">Edit POI</h2>
+                        <form onSubmit={handleSubmit}>
+                            <div className="mb-2">
+                                <label className="block text-sm font-medium mb-1">Name</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleInputChange}
+                                    className="border rounded px-3 py-2 w-full"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-2">
+                                <label className="block text-sm font-medium mb-1">Description</label>
+                                <textarea
+                                    name="description"
+                                    value={formData.description}
+                                    onChange={handleInputChange}
+                                    className="border rounded px-3 py-2 w-full"
+                                    rows={3}
+                                />
+                            </div>
+                            <div className="flex gap-2 mt-4">
+                                <button
+                                    type="submit"
+                                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                                    disabled={loading}
+                                >
+                                    {loading ? "Saving..." : "Save"}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+                                    onClick={() => {
+                                        setShowEditForm(false);
+                                        setEditingId(null);
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                )}
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {pois.length === 0 ? (
                         <div className="col-span-full text-center text-gray-500">
-                            No hay puntos de interés registrados
+                            No points of interest registered
                         </div>
                     ) : (
                         pois.map((poi) => (
@@ -132,6 +215,19 @@ export default function PointsOfInterest() {
                                         <p className="text-sm text-gray-500 mt-1">
                                             {poi.description}
                                         </p>
+                                        {weatherData[poi.id] && (
+                                            <div className="mt-2 text-blue-700 text-sm">
+                                                <span className="font-semibold">
+                                                    {weatherData[poi.id].temp}°C
+                                                </span>{" "}
+                                                <span>
+                                                    {
+                                                        weatherData[poi.id]
+                                                            .description
+                                                    }
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="text-right">
                                         <span
@@ -147,52 +243,44 @@ export default function PointsOfInterest() {
                                 </div>
 
                                 <dl className="mt-4 text-sm text-gray-600">
-                                    {poi.latitude && poi.longitude && (
+                                    {poi.latitude && (
                                         <div className="flex items-center justify-between py-1">
-                                            <dt className="font-medium">
-                                                Coordenadas
-                                            </dt>
-                                            <dd>
-                                                {poi.latitude}, {poi.longitude}
-                                            </dd>
+                                            <dt className="font-medium">Latitude</dt>
+                                            <dd>{poi.latitude}</dd>
+                                        </div>
+                                    )}
+                                    {poi.longitude && (
+                                        <div className="flex items-center justify-between py-1">
+                                            <dt className="font-medium">Longitude</dt>
+                                            <dd>{poi.longitude}</dd>
                                         </div>
                                     )}
                                     {poi.location_id && (
                                         <div className="flex items-center justify-between py-1">
-                                            <dt className="font-medium">
-                                                Ubicación ID
-                                            </dt>
-                                            <dd className="text-xs text-gray-400">
-                                                {poi.location_id}
-                                            </dd>
+                                            <dt className="font-medium">Location ID</dt>
+                                            <dd className="text-xs text-gray-400">{poi.location_id}</dd>
                                         </div>
                                     )}
                                     <div className="flex items-center justify-between py-1">
-                                        <dt className="font-medium">Creado</dt>
+                                        <dt className="font-medium">Created</dt>
                                         <dd className="text-sm text-gray-500">
-                                            {new Date(
-                                                poi.createdAt
-                                            ).toLocaleDateString()}
+                                            {new Date(poi.createdAt).toLocaleDateString()}
                                         </dd>
                                     </div>
                                 </dl>
 
                                 <div className="mt-4 flex items-center justify-end gap-2">
                                     <button
-                                        onClick={() => {
-                                            alert(
-                                                "Edición desde el mapa. Añadir/editar se realizará desde el mapa más tarde."
-                                            );
-                                        }}
+                                        onClick={() => handleEdit(poi)}
                                         className="px-3 py-1 rounded-md bg-[#ffd966] text-sm"
                                     >
-                                        Editar
+                                        Edit
                                     </button>
                                     <button
                                         onClick={() => handleDelete(poi.id)}
                                         className="px-3 py-1 rounded-md bg-[#d64545] text-white text-sm"
                                     >
-                                        Eliminar
+                                        Delete
                                     </button>
                                 </div>
                             </article>

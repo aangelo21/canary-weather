@@ -20,7 +20,7 @@ function WeatherPopup({ position, weather, markerRef }) {
                 name: `POI ${position[0].toFixed(4)},${position[1].toFixed(4)}`,
                 latitude: position[0],
                 longitude: position[1],
-                description: `Weather: ${weather.temp}°C, ${weather.description}`,
+                description: "",
                 is_global: false,
             });
             setSaved(true);
@@ -48,7 +48,9 @@ function WeatherPopup({ position, weather, markerRef }) {
                     {saving ? "Saving..." : saved ? "Saved" : "Save as POI"}
                 </button>
                 {saved && (
-                    <div className="mt-2 text-green-600 text-sm">POI saved!</div>
+                    <div className="mt-2 text-green-600 text-sm">
+                        POI saved!
+                    </div>
                 )}
             </div>
         </Popup>
