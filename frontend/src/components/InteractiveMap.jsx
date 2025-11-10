@@ -44,7 +44,8 @@ function InteractiveMap() {
         [29.5, -14],
     ];
     return (
-        <div className="flex justify-center">
+        // add bottom margin so the map doesn't butt up against the footer
+        <div className="flex justify-center mb-20">
             <MapContainer
                 center={[28.5, -16]}
                 zoom={8}
