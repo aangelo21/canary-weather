@@ -39,7 +39,7 @@ function Header() {
                         <img
                             src="bannerCanaryWeather.png"
                             alt="Canary Weather Logo"
-                            className="h-8 md:h-10 w-auto"
+                            className="h-16 md:h-20 w-auto"
                         />
                     </div>
 
@@ -70,7 +70,7 @@ function Header() {
                         </li>
                         <li>
                             <NavLink
-                                to="/POI"
+                                to="/pois"
                                 className={({ isActive }) =>
                                     isActive
                                         ? "text-gray-900 font-semibold"

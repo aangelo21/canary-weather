@@ -96,177 +96,109 @@ export default function PointsOfInterest() {
     }, []);
 
     return (
-        <div className="pois-container">
-            <h1>Gestión de Puntos de Interés</h1>
-
-            {error && <div className="error-message">{error}</div>}
-
-            <div className="form-section">
-                <h2>{editingId ? "Editar POI" : "Crear Nuevo POI"}</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="name">Nombre *</label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            required
-                            placeholder="Nombre del punto de interés"
-                        />
+        <div className="min-h-screen bg-gray-50 py-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-between mb-6">
+                    <h1 className="text-2xl font-extrabold text-[#0f6fb9]">
+                        Puntos de Interés
+                    </h1>
+                    <div className="text-sm text-gray-600">
+                        {pois.length} puntos
                     </div>
+                </div>
 
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label htmlFor="latitude">Latitud</label>
-                            <input
-                                type="number"
-                                id="latitude"
-                                name="latitude"
-                                value={formData.latitude}
-                                onChange={handleInputChange}
-                                step="any"
-                                placeholder="28.1234567"
-                            />
+                {error && (
+                    <div className="mb-4 p-3 rounded-md bg-[#fff1f0] border border-[#ffd6d6] text-[#c53030]">
+                        {error}
+                    </div>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {pois.length === 0 ? (
+                        <div className="col-span-full text-center text-gray-500">
+                            No hay puntos de interés registrados
                         </div>
-
-                        <div className="form-group">
-                            <label htmlFor="longitude">Longitud</label>
-                            <input
-                                type="number"
-                                id="longitude"
-                                name="longitude"
-                                value={formData.longitude}
-                                onChange={handleInputChange}
-                                step="any"
-                                placeholder="-15.1234567"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="description">Descripción</label>
-                        <textarea
-                            id="description"
-                            name="description"
-                            value={formData.description}
-                            onChange={handleInputChange}
-                            placeholder="Descripción del punto de interés"
-                            rows="3"
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="location_id">ID de Ubicación</label>
-                        <input
-                            type="text"
-                            id="location_id"
-                            name="location_id"
-                            value={formData.location_id}
-                            onChange={handleInputChange}
-                            placeholder="UUID de la ubicación (opcional)"
-                        />
-                    </div>
-
-                    <div className="form-group checkbox-group">
-                        <label>
-                            <input
-                                type="checkbox"
-                                name="is_global"
-                                checked={formData.is_global}
-                                onChange={handleInputChange}
-                            />
-                            Es POI global
-                        </label>
-                    </div>
-
-                    <div className="form-actions">
-                        <button type="submit" disabled={loading}>
-                            {loading
-                                ? "Guardando..."
-                                : editingId
-                                ? "Actualizar"
-                                : "Crear"}
-                        </button>
-                        {editingId && (
-                            <button
-                                type="button"
-                                onClick={resetForm}
-                                className="btn-secondary"
+                    ) : (
+                        pois.map((poi) => (
+                            <article
+                                key={poi.id}
+                                className="bg-white rounded-lg shadow p-5 border border-gray-100"
                             >
-                                Cancelar
-                            </button>
-                        )}
-                    </div>
-                </form>
-            </div>
-
-            <div className="list-section">
-                <h2>Lista de POIs</h2>
-                {loading && <div className="loading">Cargando...</div>}
-
-                {pois.length === 0 ? (
-                    <p>No hay puntos de interés registrados</p>
-                ) : (
-                    <div className="pois-grid">
-                        {pois.map((poi) => (
-                            <div key={poi.id} className="poi-card">
-                                <div className="poi-header">
-                                    <h3>{poi.name}</h3>
-                                    <div className="poi-actions">
-                                        <button
-                                            onClick={() => handleEdit(poi)}
-                                            className="btn-edit"
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <h3 className="text-lg font-semibold text-gray-800">
+                                            {poi.name}
+                                        </h3>
+                                        <p className="text-sm text-gray-500 mt-1">
+                                            {poi.description}
+                                        </p>
+                                    </div>
+                                    <div className="text-right">
+                                        <span
+                                            className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                                                poi.is_global
+                                                    ? "bg-[#f2c200] text-black"
+                                                    : "bg-[#0f6fb9] text-white"
+                                            }`}
                                         >
-                                            Editar
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(poi.id)}
-                                            className="btn-delete"
-                                        >
-                                            Eliminar
-                                        </button>
+                                            {poi.is_global ? "GLOBAL" : "LOCAL"}
+                                        </span>
                                     </div>
                                 </div>
 
-                                <div className="poi-info">
+                                <dl className="mt-4 text-sm text-gray-600">
                                     {poi.latitude && poi.longitude && (
-                                        <p>
-                                            <strong>Coordenadas:</strong>{" "}
-                                            {poi.latitude}, {poi.longitude}
-                                        </p>
+                                        <div className="flex items-center justify-between py-1">
+                                            <dt className="font-medium">
+                                                Coordenadas
+                                            </dt>
+                                            <dd>
+                                                {poi.latitude}, {poi.longitude}
+                                            </dd>
+                                        </div>
                                     )}
-                                    {poi.description && (
-                                        <p>
-                                            <strong>Descripción:</strong>{" "}
-                                            {poi.description}
-                                        </p>
-                                    )}
-                                    <p>
-                                        <strong>Global:</strong>{" "}
-                                        {poi.is_global ? "Sí" : "No"}
-                                    </p>
                                     {poi.location_id && (
-                                        <p>
-                                            <strong>Ubicación ID:</strong>{" "}
-                                            {poi.location_id}
-                                        </p>
+                                        <div className="flex items-center justify-between py-1">
+                                            <dt className="font-medium">
+                                                Ubicación ID
+                                            </dt>
+                                            <dd className="text-xs text-gray-400">
+                                                {poi.location_id}
+                                            </dd>
+                                        </div>
                                     )}
-                                    <p>
-                                        <strong>ID:</strong> {poi.id}
-                                    </p>
-                                    <p>
-                                        <strong>Creado:</strong>{" "}
-                                        {new Date(
-                                            poi.createdAt
-                                        ).toLocaleDateString()}
-                                    </p>
+                                    <div className="flex items-center justify-between py-1">
+                                        <dt className="font-medium">Creado</dt>
+                                        <dd className="text-sm text-gray-500">
+                                            {new Date(
+                                                poi.createdAt
+                                            ).toLocaleDateString()}
+                                        </dd>
+                                    </div>
+                                </dl>
+
+                                <div className="mt-4 flex items-center justify-end gap-2">
+                                    <button
+                                        onClick={() => {
+                                            alert(
+                                                "Edición desde el mapa. Añadir/editar se realizará desde el mapa más tarde."
+                                            );
+                                        }}
+                                        className="px-3 py-1 rounded-md bg-[#ffd966] text-sm"
+                                    >
+                                        Editar
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(poi.id)}
+                                        className="px-3 py-1 rounded-md bg-[#d64545] text-white text-sm"
+                                    >
+                                        Eliminar
+                                    </button>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                            </article>
+                        ))
+                    )}
+                </div>
             </div>
         </div>
     );
