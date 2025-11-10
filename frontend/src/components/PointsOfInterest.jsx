@@ -106,8 +106,9 @@ export default function PointsOfInterest() {
                 pois.map(async (poi) => {
                     if (!poi.latitude || !poi.longitude) return [poi.id, null];
                     try {
+                        const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
                         const res = await fetch(
-                            `https://api.openweathermap.org/data/2.5/weather?lat=${poi.latitude}&lon=${poi.longitude}&appid=6face86f22b577e34d37321df89e1511&units=metric`
+                            `https://api.openweathermap.org/data/2.5/weather?lat=${poi.latitude}&lon=${poi.longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`
                         );
                         const data = await res.json();
                         return [

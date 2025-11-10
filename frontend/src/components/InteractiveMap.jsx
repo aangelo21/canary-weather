@@ -14,8 +14,9 @@ function InteractiveMap() {
                 setClickedPos([lat, lng]);
                 setWeather(null);
                 try {
+                    const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
                     const res = await fetch(
-                        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=6face86f22b577e34d37321df89e1511&units=metric`
+                        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${OPENWEATHER_API_KEY}&units=metric`
                     );
                     const data = await res.json();
                     setWeather({
