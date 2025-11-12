@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     createOrUpdateUser,
     loginUser,
@@ -13,6 +13,7 @@ export default function LoginModal({
     onLogout,
 }) {
     const [isSignUp, setIsSignUp] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [input, setInput] = useState({
         emailOrUsername: "",
         password: "",
@@ -22,7 +23,80 @@ export default function LoginModal({
     });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (user && isOpen) {
+            setInput({
+                email: user.email || "",
+                username: user.username || "",
+                password: "",
+                confirm: "",
+                emailOrUsername: "",
+            });
+        }
+    }, [user, isOpen]);
     if (!isOpen) return null;
+    if (showDeleteConfirm) {
+        return (
+            <div
+                className="absolute left-1/2 transform -translate-x-1/2 mt-2 z-50"
+                style={{ minWidth: "18rem" }}
+            >
+                <div className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative">
+                    <button
+                        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                        onClick={() => setShowDeleteConfirm(false)}
+                        type="button"
+                    >
+                        &times;
+                    </button>
+                    <h2 className="text-xl font-semibold mb-4 text-center">
+                        Delete Account
+                    </h2>
+                    <p className="text-center mb-6">
+                        Are you sure you want to delete your account? This action cannot be undone.
+                    </p>
+                    {error && (
+                        <div className="text-red-600 text-sm mb-2 text-center">
+                            {error}
+                        </div>
+                    )}
+                    {loading && (
+                        <div className="text-blue-600 text-sm mb-2 text-center">
+                            Deleting account...
+                        </div>
+                    )}
+                    <div className="flex gap-2">
+                        <button
+                            className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 flex-1"
+                            onClick={() => setShowDeleteConfirm(false)}
+                            disabled={loading}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex-1"
+                            onClick={async () => {
+                                setLoading(true);
+                                try {
+                                    await deleteUser(user.id);
+                                    setLoading(false);
+                                    onLogout();
+                                    onClose();
+                                } catch (err) {
+                                    setLoading(false);
+                                    setError(err.message || "Error deleting user");
+                                }
+                            }}
+                            disabled={loading}
+                        >
+                            {loading ? "Deleting..." : "Delete"}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
     if (user) {
         return (
             <div
@@ -78,7 +152,7 @@ export default function LoginModal({
                                 setLoading(false);
                                 if (result) {
                                     onLogin(result);
-                                    setIsEditing(false);
+                                    onClose();
                                 }
                             } catch (err) {
                                 setLoading(false);
@@ -144,26 +218,7 @@ export default function LoginModal({
                     </form>
                     <button
                         className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 w-full mt-4"
-                        onClick={async () => {
-                            if (
-                                window.confirm(
-                                    "Are you sure you want to delete your account?"
-                                )
-                            ) {
-                                setLoading(true);
-                                try {
-                                    await deleteUser(user.id);
-                                    setLoading(false);
-                                    onLogout();
-                                    onClose();
-                                } catch (err) {
-                                    setLoading(false);
-                                    setError(
-                                        err.message || "Error deleting user"
-                                    );
-                                }
-                            }
-                        }}
+                        onClick={() => setShowDeleteConfirm(true)}
                     >
                         Delete Account
                     </button>
@@ -171,6 +226,7 @@ export default function LoginModal({
             </div>
         );
     }
+
     return (
         <div
             className="absolute left-1/2 transform -translate-x-1/2 mt-2 z-50"

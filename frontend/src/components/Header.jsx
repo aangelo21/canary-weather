@@ -280,6 +280,9 @@ function Header() {
                                 <LoginModal
                                     isOpen={showLogin}
                                     onClose={() => setShowLogin(false)}
+                                    onLogin={handleLogin}
+                                    user={user}
+                                    onLogout={handleLogout}
                                 />
                             </li>
                         </ul>

@@ -63,6 +63,9 @@ export async function deleteUser(id) {
         method: "DELETE",
         headers,
     });
-    if (!response.ok) throw new Error("Error deleting user");
-    return response.json();
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error deleting user");
+    }
+    return response.status === 204 ? { success: true } : response.json();
 }
