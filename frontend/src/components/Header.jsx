@@ -193,13 +193,13 @@ function Header() {
                                     />
                                 </div>
                                 <button
-                                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                                    className="bg-accent-blue-200 text-white px-4 py-2 rounded hover:bg-accent-blue-100 transition-colors"
                                     onClick={() => setShowLogin(true)}
                                 >
                                     Edit Profile
                                 </button>
                                 <button
-                                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
+                                    className="bg-error text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
                                     onClick={handleLogout}
                                 >
                                     Log out
@@ -207,7 +207,7 @@ function Header() {
                             </div>
                         ) : (
                             <button
-                                className="bg-[#0768A9] text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors flex items-center gap-2"
+                                className="bg-brand-primary text-white px-4 py-2 rounded-full hover:bg-accent-blue-200 transition-colors flex items-center gap-2"
                                 onClick={() => setShowLogin(true)}
                             >
                                 <svg
@@ -234,7 +234,7 @@ function Header() {
                     </div>
 
                     <button
-                        className="md:hidden text-gray-700 text-2xl p-2"
+                        className="md:hidden text-neutral-2 text-2xl p-2"
                         onClick={toggleMenu}
                         aria-label="Toggle menu"
                     >
