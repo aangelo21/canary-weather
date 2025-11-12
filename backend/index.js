@@ -2,15 +2,22 @@ import express from "express";
 import cors from "cors";
 import sequelize from "./controllers/dbController.js";
 import "./models/index.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 import pointOfInterestRoutes from "./routes/pointOfInterestRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 85;
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/pois", pointOfInterestRoutes);
 

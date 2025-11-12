@@ -14,6 +14,19 @@ export async function loginUser({ username, password }) {
 }
 const API_BASE = import.meta.env.VITE_API_BASE;
 
+export async function getCurrentUser() {
+    const token = localStorage.getItem("authToken");
+    if (!token) throw new Error("No auth token");
+    const response = await fetch(`${API_BASE}/users/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || "Error fetching current user");
+    }
+    return response.json();
+}
+
 export async function fetchUsers() {
     const response = await fetch(`${API_BASE}/users`);
     if (!response.ok) throw new Error("Error fetching users");
@@ -25,10 +38,25 @@ export async function createOrUpdateUser(formData, editingId) {
         ? `${API_BASE}/users/${editingId}`
         : `${API_BASE}/users`;
     const method = editingId ? "PUT" : "POST";
+    const headers = {};
+    
+    if (editingId) {
+        const token = localStorage.getItem("authToken");
+        if (token) headers.Authorization = `Bearer ${token}`;
+    }
+
+    let body;
+    if (formData instanceof FormData) {
+        body = formData;
+    } else {
+        headers["Content-Type"] = "application/json";
+        body = JSON.stringify(formData);
+    }
+
     const response = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        headers,
+        body,
     });
     if (!response.ok) {
         const errorData = await response.json();
@@ -38,9 +66,16 @@ export async function createOrUpdateUser(formData, editingId) {
 }
 
 export async function deleteUser(id) {
+    const token = localStorage.getItem("authToken");
+    const headers = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
     const response = await fetch(`${API_BASE}/users/${id}`, {
         method: "DELETE",
+        headers,
     });
-    if (!response.ok) throw new Error("Error deleting user");
-    return response.json();
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error deleting user");
+    }
+    return response.status === 204 ? { success: true } : response.json();
 }

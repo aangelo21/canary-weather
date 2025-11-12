@@ -41,7 +41,7 @@ function WeatherPopup({ position, weather, markerRef }) {
                     <div>Wind: {weather.wind} m/s</div>
                 </div>
                 <button
-                    className="mt-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                    className="mt-2 px-3 py-1 bg-accent-blue-200 text-white rounded hover:bg-accent-blue-100 disabled:opacity-50"
                     onClick={handleSavePoi}
                     disabled={saved || saving}
                 >

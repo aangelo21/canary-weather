@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Footer() {
     return (
-        <footer className="bg-[#0f6fa8] text-white py-4 shadow-[0_-2px_6px_rgba(0,0,0,0.08)]">
+        <footer className="bg-brand-primary text-white py-4 shadow-[0_-2px_6px_rgba(0,0,0,0.08)]">
             <div className="max-w-6xl mx-auto px-4 flex items-center justify-between gap-4">
                 <div className="text-sm">
                     ©CanaryWeather |{" "}
@@ -10,7 +10,7 @@ export default function Footer() {
                         href="https://canaryweather.com"
                         target="_blank"
                         rel="noreferrer"
-                        className="underline underline-offset-2 hover:text-gray-100"
+                        className="underline underline-offset-2 hover:text-neutral-4"
                     >
                         canaryweather.com
                     </a>
