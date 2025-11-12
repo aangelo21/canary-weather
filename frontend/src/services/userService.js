@@ -38,9 +38,14 @@ export async function createOrUpdateUser(formData, editingId) {
         ? `${API_BASE}/users/${editingId}`
         : `${API_BASE}/users`;
     const method = editingId ? "PUT" : "POST";
+    const headers = { "Content-Type": "application/json" };
+    if (editingId) {
+        const token = localStorage.getItem("authToken");
+        if (token) headers.Authorization = `Bearer ${token}`;
+    }
     const response = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify(formData),
     });
     if (!response.ok) {
@@ -51,8 +56,12 @@ export async function createOrUpdateUser(formData, editingId) {
 }
 
 export async function deleteUser(id) {
+    const token = localStorage.getItem("authToken");
+    const headers = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
     const response = await fetch(`${API_BASE}/users/${id}`, {
         method: "DELETE",
+        headers,
     });
     if (!response.ok) throw new Error("Error deleting user");
     return response.json();

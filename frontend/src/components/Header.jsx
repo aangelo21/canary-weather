@@ -109,27 +109,40 @@ function Header() {
                     </ul>
 
                     <div className="md:block relative flex flex-col items-center">
-                        <button
-                            className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors ${
-                                user
-                                    ? "bg-red-600 text-white hover:bg-red-700"
-                                    : "bg-[#0768A9]  text-white hover:bg-blue-700"
-                            }`}
-                            onClick={() => setShowLogin((prev) => !prev)}
-                        >
-                            <svg
-                                className="w-4 h-4"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
+                        {user ? (
+                            <div className="flex gap-2">
+                                <button
+                                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                                    onClick={() => setShowLogin(true)}
+                                >
+                                    Edit Profile
+                                </button>
+                                <button
+                                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
+                                    onClick={handleLogout}
+                                >
+                                    Log out
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                className="bg-[#0768A9] text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors"
+                                onClick={() => setShowLogin(true)}
                             >
-                                <path
-                                    fillRule="evenodd"
-                                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                                    clipRule="evenodd"
-                                />
-                            </svg>
-                            {user ? "Log out" : "Log in"}
-                        </button>
+                                <svg
+                                    className="w-4 h-4"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path
+                                        fillRule="evenodd"
+                                        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                        clipRule="evenodd"
+                                    />
+                                </svg>
+                                Log in
+                            </button>
+                        )}
                         <LoginModal
                             isOpen={showLogin}
                             onClose={() => setShowLogin(false)}

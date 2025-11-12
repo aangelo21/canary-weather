@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { createOrUpdateUser, loginUser } from "../services/userService";
+import {
+    createOrUpdateUser,
+    loginUser,
+    deleteUser,
+} from "../services/userService";
 
 export default function LoginModal({
     isOpen,
@@ -25,7 +29,7 @@ export default function LoginModal({
                 className="absolute left-1/2 transform -translate-x-1/2 mt-2 z-50"
                 style={{ minWidth: "18rem" }}
             >
-                <div className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative flex flex-col items-center">
+                <div className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative">
                     <button
                         className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
                         onClick={onClose}
@@ -34,17 +38,134 @@ export default function LoginModal({
                         &times;
                     </button>
                     <h2 className="text-xl font-semibold mb-4 text-center">
-                        Welcome!
+                        Edit Account
                     </h2>
-                    <div className="mb-4 text-lg">
-                        Username:{" "}
-                        <span className="font-bold">{user.username}</span>
-                    </div>
-                    <button
-                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-                        onClick={onLogout}
+                    {error && (
+                        <div className="text-red-600 text-sm mb-2 text-center">
+                            {error}
+                        </div>
+                    )}
+                    {loading && (
+                        <div className="text-blue-600 text-sm mb-2 text-center">
+                            Processing...
+                        </div>
+                    )}
+                    <form
+                        className="flex flex-col gap-4"
+                        onSubmit={async (e) => {
+                            e.preventDefault();
+                            setError("");
+                            if (
+                                input.password &&
+                                input.password !== input.confirm
+                            ) {
+                                setError("Passwords do not match");
+                                return;
+                            }
+                            setLoading(true);
+                            try {
+                                const updateData = {};
+                                if (input.email.trim())
+                                    updateData.email = input.email;
+                                if (input.username.trim())
+                                    updateData.username = input.username;
+                                if (input.password)
+                                    updateData.password = input.password;
+                                const result = await createOrUpdateUser(
+                                    updateData,
+                                    user.id
+                                );
+                                setLoading(false);
+                                if (result) {
+                                    onLogin(result);
+                                    setIsEditing(false);
+                                }
+                            } catch (err) {
+                                setLoading(false);
+                                setError(err.message || "Error updating user");
+                            }
+                        }}
                     >
-                        Log out
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            className="border rounded px-3 py-2"
+                            value={input.email}
+                            onChange={(e) =>
+                                setInput((i) => ({
+                                    ...i,
+                                    email: e.target.value,
+                                }))
+                            }
+                        />
+                        <input
+                            type="text"
+                            placeholder="Username"
+                            className="border rounded px-3 py-2"
+                            value={input.username}
+                            onChange={(e) =>
+                                setInput((i) => ({
+                                    ...i,
+                                    username: e.target.value,
+                                }))
+                            }
+                        />
+                        <input
+                            type="password"
+                            placeholder="New Password (optional)"
+                            className="border rounded px-3 py-2"
+                            value={input.password}
+                            onChange={(e) =>
+                                setInput((i) => ({
+                                    ...i,
+                                    password: e.target.value,
+                                }))
+                            }
+                        />
+                        <input
+                            type="password"
+                            placeholder="Confirm New Password"
+                            className="border rounded px-3 py-2"
+                            value={input.confirm}
+                            onChange={(e) =>
+                                setInput((i) => ({
+                                    ...i,
+                                    confirm: e.target.value,
+                                }))
+                            }
+                        />
+                        <button
+                            type="submit"
+                            className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 w-full"
+                            disabled={loading}
+                        >
+                            {loading ? "Updating..." : "Update Account"}
+                        </button>
+                    </form>
+                    <button
+                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 w-full mt-4"
+                        onClick={async () => {
+                            if (
+                                window.confirm(
+                                    "Are you sure you want to delete your account?"
+                                )
+                            ) {
+                                setLoading(true);
+                                try {
+                                    await deleteUser(user.id);
+                                    setLoading(false);
+                                    onLogout();
+                                    onClose();
+                                } catch (err) {
+                                    setLoading(false);
+                                    setError(
+                                        err.message || "Error deleting user"
+                                    );
+                                }
+                            }
+                        }}
+                    >
+                        Delete Account
                     </button>
                 </div>
             </div>
@@ -113,7 +234,7 @@ export default function LoginModal({
                                 !input.password ||
                                 !input.confirm
                             ) {
-                                setError("All fields are required");
+                                setError("All fields are ");
                                 return;
                             }
                             if (input.password !== input.confirm) {
@@ -165,7 +286,7 @@ export default function LoginModal({
                             }
                         } else {
                             if (!input.emailOrUsername || !input.password) {
-                                setError("All fields are required");
+                                setError("All fields are ");
                                 return;
                             }
                             setLoading(true);
@@ -226,7 +347,6 @@ export default function LoginModal({
                                         email: e.target.value,
                                     }))
                                 }
-                                required
                             />
                             <input
                                 type="text"
@@ -239,7 +359,6 @@ export default function LoginModal({
                                         username: e.target.value,
                                     }))
                                 }
-                                required
                             />
                             <input
                                 type="password"
@@ -252,7 +371,6 @@ export default function LoginModal({
                                         password: e.target.value,
                                     }))
                                 }
-                                required
                             />
                             <input
                                 type="password"
@@ -265,7 +383,6 @@ export default function LoginModal({
                                         confirm: e.target.value,
                                     }))
                                 }
-                                required
                             />
                         </>
                     ) : (
@@ -281,7 +398,6 @@ export default function LoginModal({
                                         emailOrUsername: e.target.value,
                                     }))
                                 }
-                                required
                             />
                             <input
                                 type="password"
@@ -294,7 +410,6 @@ export default function LoginModal({
                                         password: e.target.value,
                                     }))
                                 }
-                                required
                             />
                         </>
                     )}
