@@ -10,13 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/poppins": "^5.2.7",
     "@tailwindcss/vite": "^4.1.16",
     "leaflet": "^1.9.4",
     "react": "^19.0.0-rc.1",
     "react-dom": "^19.0.0-rc.1",
     "react-leaflet": "^5.0.0-rc.2",
     "react-router-dom": "^7.9.4",
-  "tailwindcss": "^4.1.16"
+    "tailwindcss": "^4.1.16"
   },
   "resolutions": {
     "lodash": ">=4.17.21",
