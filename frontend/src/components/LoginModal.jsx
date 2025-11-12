@@ -38,11 +38,8 @@ export default function LoginModal({
     if (!isOpen) return null;
     if (showDeleteConfirm) {
         return (
-            <div
-                className="absolute left-1/2 transform -translate-x-1/2 mt-2 z-50"
-                style={{ minWidth: "18rem" }}
-            >
-                <div className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative">
+            <div className="fixed inset-0 flex items-center justify-center z-50 p-4" onClick={() => setShowDeleteConfirm(false)}>
+                <div className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative" onClick={(e) => e.stopPropagation()}>
                     <button
                         className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
                         onClick={() => setShowDeleteConfirm(false)}
@@ -99,11 +96,8 @@ export default function LoginModal({
     }
     if (user) {
         return (
-            <div
-                className="absolute left-1/2 transform -translate-x-1/2 mt-2 z-50"
-                style={{ minWidth: "18rem" }}
-            >
-                <div className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative">
+            <div className="fixed inset-0 flex items-center justify-center z-50 p-4" onClick={onClose}>
+                <div className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative" onClick={(e) => e.stopPropagation()}>
                     <button
                         className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
                         onClick={onClose}
@@ -228,11 +222,8 @@ export default function LoginModal({
     }
 
     return (
-        <div
-            className="absolute left-1/2 transform -translate-x-1/2 mt-2 z-50"
-            style={{ minWidth: "18rem" }}
-        >
-            <div className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative">
+        <div className="fixed inset-0 flex items-center justify-center z-50 p-4" onClick={onClose}>
+            <div className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative" onClick={(e) => e.stopPropagation()}>
                 <button
                     className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
                     onClick={onClose}
