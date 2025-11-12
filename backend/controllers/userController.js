@@ -7,7 +7,7 @@ export const loginUser = async (req, res) => {
         if (!authHeader || !authHeader.startsWith("Basic ")) {
             return res
                 .status(401)
-                .json({ error: "Falta encabezado Authorization Basic" });
+                .json({ error: "Missing Authorization Basic header" });
         }
         const base64Credentials = authHeader.split(" ")[1];
         const credentials = Buffer.from(base64Credentials, "base64").toString(
@@ -18,20 +18,36 @@ export const loginUser = async (req, res) => {
         if (!user) {
             return res
                 .status(401)
-                .json({ error: "Usuario o contraseña incorrectos" });
+                .json({ error: "Invalid username or password" });
         }
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
             return res
                 .status(401)
-                .json({ error: "Usuario o contraseña incorrectos" });
+                .json({ error: "Invalid username or password" });
         }
         const token = jwt.sign(
             { id: user.id, username: user.username },
             process.env.JWT_SECRET || "secret",
             { expiresIn: "1h" }
         );
-        return res.json({ token });
+        const safe = user.toJSON();
+        delete safe.password;
+        return res.json({ token, user: safe });
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
+
+export const getCurrentUser = async (req, res) => {
+    try {
+        const userId = req.user && req.user.id;
+        if (!userId) return res.status(401).json({ error: "Invalid token" });
+        const user = await User.findByPk(userId, {
+            attributes: { exclude: ["password"] },
+        });
+        if (!user) return res.status(404).json({ error: "User not found" });
+        return res.json(user);
     } catch (err) {
         return res.status(500).json({ error: err.message });
     }
@@ -78,7 +94,12 @@ export const createUser = async (req, res) => {
         const user = await User.create({ email, username, password });
         const safe = user.toJSON();
         delete safe.password;
-        return res.status(201).json(safe);
+        const token = jwt.sign(
+            { id: user.id, username: user.username },
+            process.env.JWT_SECRET || "secret",
+            { expiresIn: "1h" }
+        );
+        return res.status(201).json({ token, user: safe });
     } catch (err) {
         return res.status(400).json({ error: err.message });
     }
@@ -88,6 +109,11 @@ export const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
         const payload = req.body;
+        
+        if (req.file) {
+            payload.profile_picture_url = `/uploads/profile-pictures/${req.file.filename}`;
+        }
+        
         await User.update(payload, { where: { id } });
         const updated = await User.findByPk(id, {
             attributes: { exclude: ["password"] },
