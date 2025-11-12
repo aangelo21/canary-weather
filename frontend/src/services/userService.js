@@ -38,15 +38,25 @@ export async function createOrUpdateUser(formData, editingId) {
         ? `${API_BASE}/users/${editingId}`
         : `${API_BASE}/users`;
     const method = editingId ? "PUT" : "POST";
-    const headers = { "Content-Type": "application/json" };
+    const headers = {};
+    
     if (editingId) {
         const token = localStorage.getItem("authToken");
         if (token) headers.Authorization = `Bearer ${token}`;
     }
+
+    let body;
+    if (formData instanceof FormData) {
+        body = formData;
+    } else {
+        headers["Content-Type"] = "application/json";
+        body = JSON.stringify(formData);
+    }
+
     const response = await fetch(url, {
         method,
         headers,
-        body: JSON.stringify(formData),
+        body,
     });
     if (!response.ok) {
         const errorData = await response.json();

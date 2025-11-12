@@ -109,6 +109,11 @@ export const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
         const payload = req.body;
+        
+        if (req.file) {
+            payload.profile_picture_url = `/uploads/profile-pictures/${req.file.filename}`;
+        }
+        
         await User.update(payload, { where: { id } });
         const updated = await User.findByPk(id, {
             attributes: { exclude: ["password"] },

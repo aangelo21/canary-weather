@@ -38,7 +38,9 @@ export default function LoginModal({
     if (!isOpen) return null;
     if (showDeleteConfirm) {
         return (
-            <div className="fixed inset-0 flex items-center justify-center z-50 p-4" onClick={() => setShowDeleteConfirm(false)}>
+            <>
+                <div className="fixed inset-0 z-9998" onClick={() => setShowDeleteConfirm(false)}></div>
+                <div className="fixed inset-0 flex items-center justify-center z-9999 p-4" onClick={() => setShowDeleteConfirm(false)}>
                 <div className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative" onClick={(e) => e.stopPropagation()}>
                     <button
                         className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -91,12 +93,15 @@ export default function LoginModal({
                         </button>
                     </div>
                 </div>
-            </div>
+                </div>
+            </>
         );
     }
     if (user) {
         return (
-            <div className="fixed inset-0 flex items-center justify-center z-50 p-4" onClick={onClose}>
+            <>
+                <div className="fixed inset-0 z-9998" onClick={onClose}></div>
+                <div className="fixed inset-0 flex items-center justify-center z-9999 p-4" onClick={onClose}>
                 <div className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative" onClick={(e) => e.stopPropagation()}>
                     <button
                         className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -217,12 +222,15 @@ export default function LoginModal({
                         Delete Account
                     </button>
                 </div>
-            </div>
+                </div>
+            </>
         );
     }
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center z-50 p-4" onClick={onClose}>
+        <>
+            <div className="fixed inset-0 z-9998" onClick={onClose}></div>
+            <div className="fixed inset-0 flex items-center justify-center z-9999 p-4" onClick={onClose}>
             <div className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative" onClick={(e) => e.stopPropagation()}>
                 <button
                     className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -468,6 +476,7 @@ export default function LoginModal({
                     </button>
                 </form>
             </div>
-        </div>
+            </div>
+        </>
     );
 }

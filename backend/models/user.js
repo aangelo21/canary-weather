@@ -22,6 +22,10 @@ const User = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        profile_picture_url: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
     },
     {
         timestamps: true,
