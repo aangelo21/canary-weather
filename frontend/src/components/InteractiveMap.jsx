@@ -58,7 +58,7 @@ function InteractiveMap() {
             >
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
                 />
                 <MapClickHandler />
                 {clickedPos && (

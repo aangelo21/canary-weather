@@ -43,7 +43,7 @@ export default function LoginModal({
                 <div className="fixed inset-0 flex items-center justify-center z-9999 p-4" onClick={() => setShowDeleteConfirm(false)}>
                 <div className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative" onClick={(e) => e.stopPropagation()}>
                     <button
-                        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                        className="absolute top-2 right-2 text-neutral-2 hover:text-neutral-1"
                         onClick={() => setShowDeleteConfirm(false)}
                         type="button"
                     >
@@ -56,25 +56,25 @@ export default function LoginModal({
                         Are you sure you want to delete your account? This action cannot be undone.
                     </p>
                     {error && (
-                        <div className="text-red-600 text-sm mb-2 text-center">
+                        <div className="text-error text-sm mb-2 text-center">
                             {error}
                         </div>
                     )}
                     {loading && (
-                        <div className="text-blue-600 text-sm mb-2 text-center">
+                        <div className="text-info text-sm mb-2 text-center">
                             Deleting account...
                         </div>
                     )}
                     <div className="flex gap-2">
                         <button
-                            className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 flex-1"
+                            className="bg-neutral-2 text-white px-4 py-2 rounded hover:bg-neutral-1 flex-1"
                             onClick={() => setShowDeleteConfirm(false)}
                             disabled={loading}
                         >
                             Cancel
                         </button>
                         <button
-                            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex-1"
+                            className="bg-error text-white px-4 py-2 rounded hover:bg-red-700 flex-1"
                             onClick={async () => {
                                 setLoading(true);
                                 try {
@@ -114,12 +114,12 @@ export default function LoginModal({
                         Edit Account
                     </h2>
                     {error && (
-                        <div className="text-red-600 text-sm mb-2 text-center">
+                        <div className="text-error text-sm mb-2 text-center">
                             {error}
                         </div>
                     )}
                     {loading && (
-                        <div className="text-blue-600 text-sm mb-2 text-center">
+                        <div className="text-info text-sm mb-2 text-center">
                             Processing...
                         </div>
                     )}
@@ -268,12 +268,12 @@ export default function LoginModal({
                     {isSignUp ? "Sign Up" : "Log In"}
                 </h2>
                 {error && (
-                    <div className="text-red-600 text-sm mb-2 text-center">
+                    <div className="text-error text-sm mb-2 text-center">
                         {error}
                     </div>
                 )}
                 {loading && (
-                    <div className="text-blue-600 text-sm mb-2 text-center">
+                    <div className="text-info text-sm mb-2 text-center">
                         Processing...
                     </div>
                 )}

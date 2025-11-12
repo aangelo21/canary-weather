@@ -4,19 +4,19 @@ function Home() {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen bg-white flex flex-col">
-            <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 flex-grow">
+        <div className="min-h-screen bg-neutral-4 flex flex-col">
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 grow">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[70vh]">
                     {/* Left column - Hero text */}
                     <div className="flex flex-col justify-center h-full">
                         <div>
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-black leading-tight">
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-neutral-1 leading-tight">
                                 Welcome to
                                 <br />
                                 Canary Weather
                             </h1>
 
-                            <p className="mt-6 text-lg md:text-xl text-gray-700 max-w-xl">
+                            <p className="mt-6 text-lg md:text-xl text-neutral-2 max-w-xl">
                                 Discover the weather in your favourite places. Explore
                                 the maps and see detailed forecasts, tides and points of
                                 interest around the Canary Islands.
@@ -25,14 +25,14 @@ function Home() {
                             <div className="mt-8 flex flex-wrap gap-4">
                                 <button
                                     onClick={() => navigate("/map")}
-                                    className="inline-flex items-center gap-2 bg-[#0f6fa8] hover:bg-[#0d5f91] text-white px-5 py-3 rounded-full font-semibold shadow"
+                                    className="inline-flex items-center gap-2 bg-brand-primary hover:bg-accent-blue-200 text-white px-5 py-3 rounded-full font-semibold shadow"
                                 >
                                     maps
                                 </button>
 
                                 <button
                                     onClick={() => navigate("/tides")}
-                                    className="inline-flex items-center gap-2 bg-[#0f6fa8] hover:bg-[#0d5f91] text-white px-5 py-3 rounded-full font-semibold shadow"
+                                    className="inline-flex items-center gap-2 bg-brand-primary hover:bg-accent-blue-200 text-white px-5 py-3 rounded-full font-semibold shadow"
                                 >
                                     tides
                                 </button>
@@ -43,8 +43,8 @@ function Home() {
                     {/* Right column - illustrative image placeholder */}
                     <div className="flex justify-center lg:justify-end">
                         <div className="w-full max-w-md lg:max-w-lg">
-                            <div className="w-full h-80 bg-gradient-to-br from-slate-100 to-white rounded-3xl shadow-xl flex items-center justify-center">
-                                <span className="text-gray-400">Hero image / phones</span>
+                            <div className="w-full h-80 bg-linear-to-br from-slate-100 to-white rounded-3xl shadow-xl flex items-center justify-center">
+                                <span className="text-neutral-3">Hero image / phones</span>
                             </div>
                         </div>
                     </div>
@@ -84,7 +84,7 @@ function Home() {
                             )
                         }
                     ].map((card, i) => (
-                        <div key={i} className="w-44 bg-[#ffd200] rounded-xl p-4 shadow-[0_14px_30px_rgba(15,111,168,0.12)] flex flex-col items-center text-center gap-2 transform transition-transform hover:-translate-y-1">
+                        <div key={i} className="w-44 bg-brand-secondary rounded-xl p-4 shadow-[0_14px_30px_rgba(15,111,168,0.12)] flex flex-col items-center text-center gap-2 transform transition-transform hover:-translate-y-1">
                             <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
                                 {card.icon}
                             </div>
