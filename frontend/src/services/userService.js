@@ -14,6 +14,19 @@ export async function loginUser({ username, password }) {
 }
 const API_BASE = import.meta.env.VITE_API_BASE;
 
+export async function getCurrentUser() {
+    const token = localStorage.getItem("authToken");
+    if (!token) throw new Error("No auth token");
+    const response = await fetch(`${API_BASE}/users/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || "Error fetching current user");
+    }
+    return response.json();
+}
+
 export async function fetchUsers() {
     const response = await fetch(`${API_BASE}/users`);
     if (!response.ok) throw new Error("Error fetching users");

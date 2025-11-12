@@ -22,6 +22,8 @@ function Header() {
 
     const handleLogout = () => {
         localStorage.removeItem("cw_user");
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userId");
         setUser(null);
         setShowLogin(false);
         window.location.reload();

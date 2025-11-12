@@ -122,13 +122,43 @@ export default function LoginModal({
                             }
                             setLoading(true);
                             try {
-                                const user = await createOrUpdateUser({
+                                const result = await createOrUpdateUser({
                                     email: input.email,
                                     username: input.username,
                                     password: input.password,
                                 });
                                 setLoading(false);
-                                onLogin(user);
+                                if (result && result.token) {
+                                    localStorage.setItem(
+                                        "authToken",
+                                        result.token
+                                    );
+                                    let loggedUser = {
+                                        username: input.username,
+                                    };
+                                    if (result.user) loggedUser = result.user;
+                                    else if (
+                                        result.id ||
+                                        result.username ||
+                                        result.email
+                                    ) {
+                                        loggedUser = {
+                                            id: result.id,
+                                            username:
+                                                result.username ||
+                                                input.username,
+                                            email: result.email,
+                                        };
+                                    }
+                                    if (loggedUser.id)
+                                        localStorage.setItem(
+                                            "userId",
+                                            loggedUser.id
+                                        );
+                                    onLogin(loggedUser);
+                                } else {
+                                    onLogin(result);
+                                }
                             } catch (err) {
                                 setLoading(false);
                                 setError(err.message || "Error creating user");
@@ -150,11 +180,31 @@ export default function LoginModal({
                                         "authToken",
                                         result.token
                                     );
-                                    onLogin({
+                                    let loggedUser = {
                                         username: input.emailOrUsername,
-                                    });
+                                    };
+                                    if (result.user) loggedUser = result.user;
+                                    else if (
+                                        result.id ||
+                                        result.username ||
+                                        result.email
+                                    ) {
+                                        loggedUser = {
+                                            id: result.id,
+                                            username:
+                                                result.username ||
+                                                input.emailOrUsername,
+                                            email: result.email,
+                                        };
+                                    }
+                                    if (loggedUser.id)
+                                        localStorage.setItem(
+                                            "userId",
+                                            loggedUser.id
+                                        );
+                                    onLogin(loggedUser);
                                 } else {
-                                    setError("No se recibió token");
+                                    setError("No token received");
                                 }
                             } catch (err) {
                                 setLoading(false);
