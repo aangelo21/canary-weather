@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import PointsOfInterest from "./components/PointsOfInterest";
+import PointsOfInterest from "./Pages/PointsOfInterest";
 import Layout from "./layout/Layout";
 import Home from "./pages/Home";
 import Map from "./pages/Map";

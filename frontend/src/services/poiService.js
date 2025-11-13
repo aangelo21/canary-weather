@@ -6,21 +6,52 @@ export async function fetchPois() {
     return response.json();
 }
 
-export async function createOrUpdatePoi(formData, editingId) {
-    const payload = {
-        ...formData,
-        latitude: formData.latitude ? parseFloat(formData.latitude) : null,
-        longitude: formData.longitude ? parseFloat(formData.longitude) : null,
-        location_id: formData.location_id || null,
-    };
+export async function createOrUpdatePoi(formData, editingId, imageFile) {
     const url = editingId
         ? `${API_BASE}/pois/${editingId}`
         : `${API_BASE}/pois`;
     const method = editingId ? "PUT" : "POST";
+    
+    let body;
+    let headers = {};
+    
+    if (imageFile) {
+        // Si hay imagen, usar FormData
+        const formDataObj = new FormData();
+        formDataObj.append("poi_image", imageFile);
+        formDataObj.append("name", formData.name);
+        if (formData.description) {
+            formDataObj.append("description", formData.description);
+        }
+        if (formData.latitude) {
+            formDataObj.append("latitude", formData.latitude);
+        }
+        if (formData.longitude) {
+            formDataObj.append("longitude", formData.longitude);
+        }
+        formDataObj.append("is_global", formData.is_global || false);
+        // Solo enviar location_id si tiene un valor válido
+        if (formData.location_id && formData.location_id.trim() !== "") {
+            formDataObj.append("location_id", formData.location_id);
+        }
+        body = formDataObj;
+        // No establecer Content-Type, el navegador lo hará automáticamente con el boundary
+    } else {
+        // Si no hay imagen, usar JSON
+        const payload = {
+            ...formData,
+            latitude: formData.latitude ? parseFloat(formData.latitude) : null,
+            longitude: formData.longitude ? parseFloat(formData.longitude) : null,
+            location_id: formData.location_id || null,
+        };
+        body = JSON.stringify(payload);
+        headers["Content-Type"] = "application/json";
+    }
+    
     const response = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        headers,
+        body,
     });
     if (!response.ok) {
         const errorData = await response.json();

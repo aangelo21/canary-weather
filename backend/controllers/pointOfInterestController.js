@@ -36,7 +36,36 @@ export const createPointOfInterest = async (req, res) => {
 export const updatePointOfInterest = async (req, res) => {
     try {
         const { id } = req.params;
-        const payload = req.body;
+        const payload = { ...req.body };
+        
+        // Procesar campos numéricos si vienen como string (de FormData)
+        if (payload.latitude !== undefined && payload.latitude !== "") {
+            payload.latitude = parseFloat(payload.latitude);
+        } else if (payload.latitude === "") {
+            payload.latitude = null;
+        }
+        
+        if (payload.longitude !== undefined && payload.longitude !== "") {
+            payload.longitude = parseFloat(payload.longitude);
+        } else if (payload.longitude === "") {
+            payload.longitude = null;
+        }
+        
+        // Procesar boolean
+        if (payload.is_global !== undefined) {
+            payload.is_global = payload.is_global === true || payload.is_global === "true";
+        }
+        
+        // Procesar location_id - si está vacío, establecerlo a null
+        if (payload.location_id !== undefined && payload.location_id === "") {
+            payload.location_id = null;
+        }
+        
+        // Añadir imagen si se subió
+        if (req.file) {
+            payload.image_url = `/uploads/poi-images/${req.file.filename}`;
+        }
+        
         const [updated] = await PointOfInterest.update(payload, {
             where: { id },
         });
