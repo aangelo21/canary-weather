@@ -1,19 +1,28 @@
+// POIForm.jsx - Point of Interest form component
+// This component provides a form for creating or editing Points of Interest (POIs).
+// It includes fields for name, description, and image upload with preview functionality.
+// Used in the Points of Interest page for POI management.
+
 export default function POIForm({
-    formData,
-    onChange,
-    onSubmit,
-    loading,
-    onCancel,
-    onImageChange,
-    imagePreview,
+    formData,      // Current form data object
+    onChange,      // Function to handle input changes
+    onSubmit,      // Function to handle form submission
+    loading,       // Loading state for submit button
+    onCancel,      // Function to cancel editing
+    onImageChange, // Function to handle image file selection
+    imagePreview,  // URL for image preview
 }) {
     return (
+        // Form container with white background, padding, shadow, and border
         <div className="mb-6 p-4 bg-white rounded shadow border border-gray-200">
-            <h2 className="text-lg font-bold mb-2">Edit POI</h2>
+            {/* Form title */}
+            <h2 className="text-lg font-bold mb-2">Editar POI</h2>
+            {/* Main form element */}
             <form onSubmit={onSubmit}>
+                {/* Name input field */}
                 <div className="mb-2">
                     <label className="block text-sm font-medium mb-1">
-                        Name
+                        Nombre
                     </label>
                     <input
                         type="text"
@@ -24,9 +33,11 @@ export default function POIForm({
                         required
                     />
                 </div>
+
+                {/* Description textarea field */}
                 <div className="mb-2">
                     <label className="block text-sm font-medium mb-1">
-                        Description
+                        Descripción
                     </label>
                     <textarea
                         name="description"
@@ -36,41 +47,48 @@ export default function POIForm({
                         rows={3}
                     />
                 </div>
+
+                {/* Image upload field with preview */}
                 <div className="mb-2">
                     <label className="block text-sm font-medium mb-1">
-                        POI Image
+                        Imagen del POI
                     </label>
                     <input
                         type="file"
                         name="poi_image"
-                        accept="image/*"
+                        accept="image/*"  // Only accept image files
                         onChange={onImageChange}
                         className="border rounded px-3 py-2 w-full"
                     />
+                    {/* Image preview section - only shown when image is selected */}
                     {imagePreview && (
                         <div className="mt-2">
                             <img
                                 src={imagePreview}
-                                alt="Preview"
+                                alt="Vista Previa"
                                 className="w-32 h-32 object-cover rounded"
                             />
                         </div>
                     )}
                 </div>
+
+                {/* Action buttons */}
                 <div className="flex gap-2 mt-4">
+                    {/* Submit button with loading state */}
                     <button
                         type="submit"
                         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                         disabled={loading}
                     >
-                        {loading ? "Saving..." : "Save"}
+                        {loading ? "Guardando..." : "Guardar"}
                     </button>
+                    {/* Cancel button */}
                     <button
                         type="button"
                         className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
                         onClick={onCancel}
                     >
-                        Cancel
+                        Cancelar
                     </button>
                 </div>
             </form>
