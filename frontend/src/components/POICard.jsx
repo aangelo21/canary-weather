@@ -5,18 +5,27 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
     
     return (
         <article className="bg-white rounded-lg shadow p-5 border border-gray-100">
-            {imageUrl && (
-                <div className="mb-4">
+            <div className="mb-4">
+                {imageUrl ? (
                     <img
                         src={imageUrl}
                         alt={poi.name}
                         className="w-full h-48 object-cover rounded-lg"
                         onError={(e) => {
-                            e.target.style.display = 'none';
+                            e.target.src = 'https://via.placeholder.com/400x300/0f6fb9/ffffff?text=No+Image';
                         }}
                     />
-                </div>
-            )}
+                ) : (
+                    <div className="w-full h-48 bg-gradient-to-br from-[#0f6fb9] to-[#0a5a96] rounded-lg flex items-center justify-center">
+                        <div className="text-center text-white">
+                            <svg className="w-16 h-16 mx-auto mb-2 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <p className="text-sm font-medium opacity-80">No Image</p>
+                        </div>
+                    </div>
+                )}
+            </div>
             <div className="flex justify-between items-start">
                 <div>
                     <h3 className="text-lg font-semibold text-gray-800">
