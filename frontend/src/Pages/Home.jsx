@@ -5,7 +5,8 @@ function Home() {
 
     return (
         <div className="min-h-screen bg-neutral-4 flex flex-col">
-            <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 grow">
+            {/* Hero Section */}
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-8 pb-12 grow">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[70vh]">
                     {/* Left column - Hero text */}
                     <div className="flex flex-col justify-center h-full">
@@ -43,7 +44,7 @@ function Home() {
                     {/* Right column - illustrative image placeholder */}
                     <div className="flex justify-center lg:justify-end">
                         <div className="w-full max-w-md lg:max-w-lg">
-                            <div className="w-full h-80 bg-linear-to-br from-slate-100 to-white rounded-3xl shadow-xl flex items-center justify-center">
+                            <div className="w-full h-80 bg-gradient-to-br from-slate-100 to-white rounded-3xl shadow-xl flex items-center justify-center">
                                 <span className="text-neutral-3">Hero image / phones</span>
                             </div>
                         </div>
@@ -52,8 +53,8 @@ function Home() {
             </div>
 
             {/* Yellow cards centered below */}
-            <div className="flex justify-center pb-16">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="flex justify-center pb-10">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-12">
                     {[
                         {
                             title: "Responsive",
@@ -84,7 +85,10 @@ function Home() {
                             )
                         }
                     ].map((card, i) => (
-                        <div key={i} className="w-44 bg-brand-secondary rounded-xl p-4 shadow-[0_14px_30px_rgba(15,111,168,0.12)] flex flex-col items-center text-center gap-2 transform transition-transform hover:-translate-y-1">
+                        <div
+                            key={i}
+                            className="w-44 bg-brand-secondary rounded-xl p-4 shadow-[0_14px_30px_rgba(15,111,168,0.12)] flex flex-col items-center text-center gap-2 transform transition-transform hover:-translate-y-1"
+                        >
                             <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
                                 {card.icon}
                             </div>
