@@ -1,16 +1,28 @@
+// Import React hooks and components
 import { useState, useEffect, useRef } from "react";
+// Import LoginModal component for authentication
 import LoginModal from "./LoginModal";
+// Import NavLink for navigation with active state styling
 import { NavLink } from "react-router-dom";
+// Import user service for profile picture updates
 import { createOrUpdateUser } from "../services/userService";
 
+// Header component - main navigation bar with authentication and user profile management
 function Header() {
+  // State for mobile menu toggle
   const [isOpen, setIsOpen] = useState(false);
+  // State for showing login modal
   const [showLogin, setShowLogin] = useState(false);
+  // State for current user data
   const [user, setUser] = useState(null);
+  // State for profile picture upload loading
   const [uploading, setUploading] = useState(false);
+  // Ref for hidden file input
   const fileInputRef = useRef(null);
+  // API base URL from environment variables
   const API_BASE = import.meta.env.VITE_API_BASE;
 
+  // Effect to load user data from localStorage on component mount
   useEffect(() => {
     const storedUser = localStorage.getItem("cw_user");
     if (storedUser) {
@@ -18,12 +30,14 @@ function Header() {
     }
   }, []);
 
+  // Handler for successful login - stores user data and closes modal
   const handleLogin = (userObj) => {
     localStorage.setItem("cw_user", JSON.stringify(userObj));
     setUser(userObj);
     setShowLogin(false);
   };
 
+  // Handler for logout - clears localStorage and reloads page
   const handleLogout = () => {
     localStorage.removeItem("cw_user");
     localStorage.removeItem("authToken");
@@ -33,12 +47,14 @@ function Header() {
     window.location.reload();
   };
 
+  // Handler for profile image click - triggers file input
   const handleImageClick = () => {
     if (user && fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
 
+  // Handler for profile image file change - uploads new profile picture
   const handleImageChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
@@ -48,11 +64,13 @@ function Header() {
 
     setUploading(true);
     try {
+      // Upload profile picture via API
       const updatedUser = await createOrUpdateUser(formData, user.id);
       const newUser = {
         ...user,
         profile_picture_url: updatedUser.profile_picture_url,
       };
+      // Update localStorage and state with new profile picture URL
       localStorage.setItem("cw_user", JSON.stringify(newUser));
       setUser(newUser);
     } catch (error) {
@@ -63,6 +81,7 @@ function Header() {
     }
   };
 
+  // Helper function to construct full profile image URL
   const getProfileImageUrl = () => {
     if (user?.profile_picture_url) {
       const baseUrl = API_BASE.replace("/api", "");
@@ -71,14 +90,18 @@ function Header() {
     return null;
   };
 
+  // Toggle mobile menu visibility
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
   return (
+    // Header element with white background and shadow
     <header className="bg-white shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Navigation bar */}
         <nav className="flex items-center justify-between h-16 md:h-20">
+          {/* Logo section */}
           <div className="shrink-0">
             <img
               src="bannerCanaryWeather.png"
@@ -87,6 +110,7 @@ function Header() {
             />
           </div>
 
+          {/* Desktop navigation menu */}
           <ul className="hidden md:flex items-center space-x-8">
             <li>
               <NavLink
@@ -150,9 +174,12 @@ function Header() {
             </li>
           </ul>
 
+          {/* User authentication section */}
           <div className="md:block relative flex flex-col items-center">
             {user ? (
+              // Logged in user section with profile picture and buttons
               <div className="flex gap-2 items-center">
+                {/* Profile picture upload area */}
                 <div className="relative group">
                   <button
                     onClick={handleImageClick}
@@ -161,12 +188,14 @@ function Header() {
                     title="Cambiar foto de perfil"
                   >
                     {getProfileImageUrl() ? (
+                      // Display uploaded profile picture
                       <img
                         src={getProfileImageUrl()}
                         alt="Perfil"
                         className="w-full h-full object-cover"
                       />
                     ) : (
+                      // Default user icon
                       <div className="w-full h-full bg-blue-600 flex items-center justify-center">
                         <svg
                           className="w-6 h-6 text-white"
@@ -181,12 +210,14 @@ function Header() {
                         </svg>
                       </div>
                     )}
+                    {/* Loading spinner during upload */}
                     {uploading && (
                       <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                       </div>
                     )}
                   </button>
+                  {/* Hidden file input for profile picture selection */}
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -195,12 +226,14 @@ function Header() {
                     className="hidden"
                   />
                 </div>
+                {/* Edit profile button */}
                 <button
                   className="bg-accent-blue-200 text-white px-4 py-2 rounded hover:bg-accent-blue-100 transition-colors"
                   onClick={() => setShowLogin(true)}
                 >
                   Editar Perfil
                 </button>
+                {/* Logout button */}
                 <button
                   className="bg-error text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
                   onClick={handleLogout}
@@ -209,6 +242,7 @@ function Header() {
                 </button>
               </div>
             ) : (
+              // Login button for unauthenticated users
               <button
                 className="bg-brand-primary text-white px-4 py-2 rounded-full hover:bg-accent-blue-200 transition-colors flex items-center gap-2"
                 onClick={() => setShowLogin(true)}
@@ -227,6 +261,7 @@ function Header() {
                 <span>Iniciar Sesión</span>
               </button>
             )}
+            {/* Login modal component */}
             <LoginModal
               isOpen={showLogin}
               onClose={() => setShowLogin(false)}
@@ -236,12 +271,14 @@ function Header() {
             />
           </div>
 
+          {/* Mobile menu toggle button */}
           <button
             className="md:hidden text-neutral-2 text-2xl p-2"
             onClick={toggleMenu}
             aria-label="Alternar menú"
           >
             {isOpen ? (
+              // Close icon when menu is open
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -256,6 +293,7 @@ function Header() {
                 />
               </svg>
             ) : (
+              // Hamburger icon when menu is closed
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -273,6 +311,7 @@ function Header() {
           </button>
         </nav>
 
+        {/* Mobile navigation menu */}
         {isOpen && (
           <div className="md:hidden pb-4">
             <ul className="flex flex-col space-y-3">
@@ -342,6 +381,7 @@ function Header() {
                 </NavLink>
               </li>
               <li>
+                {/* Mobile login button */}
                 <button
                   className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors"
                   onClick={() => setShowLogin((prev) => !prev)}
@@ -359,6 +399,7 @@ function Header() {
                   </svg>
                   iniciar sesión
                 </button>
+                {/* Mobile login modal */}
                 <LoginModal
                   isOpen={showLogin}
                   onClose={() => setShowLogin(false)}
@@ -375,4 +416,5 @@ function Header() {
   );
 }
 
+// Export Header component as default
 export default Header;

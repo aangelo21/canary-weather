@@ -1,11 +1,27 @@
+// Footer.jsx - Footer component for the Canary Weather application
+// This component renders the footer section at the bottom of every page,
+// displaying copyright information, a link to the main website, and social media links.
+// It uses Tailwind CSS for styling and includes accessibility features like aria-labels.
+
 import React from "react";
 
+// Footer component - A simple footer that appears at the bottom of all pages
+// Provides branding, copyright notice, and social media links for user engagement
 export default function Footer() {
+    // Return the footer JSX structure
+    // The footer has a primary brand background color, white text, padding, and a subtle shadow
     return (
+        // Main footer element with brand styling and shadow effect
         <footer className="bg-brand-primary text-white py-4 shadow-[0_-2px_6px_rgba(0,0,0,0.08)]">
+            {/* Container div with max width, auto margins, padding, and flexbox layout */}
+            {/* Uses flexbox to space copyright on left and social links on right */}
             <div className="max-w-6xl mx-auto px-4 flex items-center justify-between gap-4">
+                {/* Left section: Copyright text and website link */}
                 <div className="text-sm">
+                    {/* Copyright notice with brand name */}
                     ©CanaryWeather |{" "}
+                    {/* External link to the main Canary Weather website */}
+                    {/* Opens in new tab with security attributes */}
                     <a
                         href="https://canaryweather.com"
                         target="_blank"
@@ -16,7 +32,10 @@ export default function Footer() {
                     </a>
                 </div>
 
+                {/* Right section: Social media links container */}
                 <div className="flex items-center gap-3">
+                    {/* GitHub repository link */}
+                    {/* Circular button with semi-transparent background */}
                     <a
                         href="https://github.com/aangelo21/canary_weather"
                         target="_blank"
@@ -24,6 +43,8 @@ export default function Footer() {
                         aria-label="GitHub"
                         className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center"
                     >
+                        {/* GitHub SVG icon */}
+                        {/* White filled GitHub logo */}
                         <svg
                             width="18"
                             height="18"
@@ -38,6 +59,8 @@ export default function Footer() {
                         </svg>
                     </a>
 
+                    {/* X (formerly Twitter) social media link */}
+                    {/* Similar circular button styling */}
                     <a
                         href="https://x.com"
                         target="_blank"
@@ -45,6 +68,8 @@ export default function Footer() {
                         aria-label="X"
                         className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center"
                     >
+                        {/* X/Twitter SVG icon */}
+                        {/* White filled X logo */}
                         <svg
                             width="18"
                             height="18"
