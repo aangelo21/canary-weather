@@ -4,6 +4,8 @@ import {
     createOrUpdatePoi,
     deletePoi as deletePoiService,
 } from "../services/poiService";
+import POIForm from "./POIForm";
+import POICard from "./POICard";
 
 export default function PointsOfInterest() {
     const [pois, setPois] = useState([]);
@@ -20,6 +22,8 @@ export default function PointsOfInterest() {
     const [editingId, setEditingId] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
 
     const fetchPois = async () => {
         try {
@@ -38,7 +42,7 @@ export default function PointsOfInterest() {
         setLoading(true);
         setError("");
         try {
-            await createOrUpdatePoi(formData, editingId);
+            await createOrUpdatePoi(formData, editingId, selectedImage);
             resetForm();
             setShowEditForm(false);
             setEditingId(null);
@@ -74,6 +78,15 @@ export default function PointsOfInterest() {
         });
         setEditingId(poi.id);
         setShowEditForm(true);
+        // Mostrar preview de la imagen existente si hay
+        if (poi.image_url) {
+            const API_BASE = import.meta.env.VITE_API_BASE;
+            const baseUrl = API_BASE.replace('/api', '');
+            setImagePreview(`${baseUrl}${poi.image_url}`);
+        } else {
+            setImagePreview(null);
+        }
+        setSelectedImage(null);
     };
 
     const resetForm = () => {
@@ -86,6 +99,8 @@ export default function PointsOfInterest() {
             location_id: "",
         });
         setEditingId(null);
+        setSelectedImage(null);
+        setImagePreview(null);
     };
 
     const handleInputChange = (e) => {
@@ -94,6 +109,18 @@ export default function PointsOfInterest() {
             ...prev,
             [name]: type === "checkbox" ? checked : value,
         }));
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedImage(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     useEffect(() => {
@@ -106,7 +133,8 @@ export default function PointsOfInterest() {
                 pois.map(async (poi) => {
                     if (!poi.latitude || !poi.longitude) return [poi.id, null];
                     try {
-                        const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
+                        const OPENWEATHER_API_KEY = import.meta.env
+                            .VITE_OPENWEATHER_API_KEY;
                         const res = await fetch(
                             `https://api.openweathermap.org/data/2.5/weather?lat=${poi.latitude}&lon=${poi.longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`
                         );
@@ -150,51 +178,18 @@ export default function PointsOfInterest() {
                 )}
 
                 {showEditForm && (
-                    <div className="mb-6 p-4 bg-white rounded shadow border border-gray-200">
-                        <h2 className="text-lg font-bold mb-2">Edit POI</h2>
-                        <form onSubmit={handleSubmit}>
-                            <div className="mb-2">
-                                <label className="block text-sm font-medium mb-1">Name</label>
-                                <input
-                                    type="text"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleInputChange}
-                                    className="border rounded px-3 py-2 w-full"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-2">
-                                <label className="block text-sm font-medium mb-1">Description</label>
-                                <textarea
-                                    name="description"
-                                    value={formData.description}
-                                    onChange={handleInputChange}
-                                    className="border rounded px-3 py-2 w-full"
-                                    rows={3}
-                                />
-                            </div>
-                            <div className="flex gap-2 mt-4">
-                                <button
-                                    type="submit"
-                                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                                    disabled={loading}
-                                >
-                                    {loading ? "Saving..." : "Save"}
-                                </button>
-                                <button
-                                    type="button"
-                                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
-                                    onClick={() => {
-                                        setShowEditForm(false);
-                                        setEditingId(null);
-                                    }}
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                    <POIForm
+                        formData={formData}
+                        onChange={handleInputChange}
+                        onSubmit={handleSubmit}
+                        loading={loading}
+                        onCancel={() => {
+                            setShowEditForm(false);
+                            setEditingId(null);
+                        }}
+                        onImageChange={handleImageChange}
+                        imagePreview={imagePreview}
+                    />
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -204,87 +199,13 @@ export default function PointsOfInterest() {
                         </div>
                     ) : (
                         pois.map((poi) => (
-                            <article
+                            <POICard
                                 key={poi.id}
-                                className="bg-white rounded-lg shadow p-5 border border-gray-100"
-                            >
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-gray-800">
-                                            {poi.name}
-                                        </h3>
-                                        <p className="text-sm text-gray-500 mt-1">
-                                            {poi.description}
-                                        </p>
-                                        {weatherData[poi.id] && (
-                                            <div className="mt-2 text-blue-700 text-sm">
-                                                <span className="font-semibold">
-                                                    {weatherData[poi.id].temp}°C
-                                                </span>{" "}
-                                                <span>
-                                                    {
-                                                        weatherData[poi.id]
-                                                            .description
-                                                    }
-                                                </span>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="text-right">
-                                        <span
-                                            className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                                                poi.is_global
-                                                    ? "bg-[#f2c200] text-black"
-                                                    : "bg-[#0f6fb9] text-white"
-                                            }`}
-                                        >
-                                            {poi.is_global ? "GLOBAL" : "LOCAL"}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <dl className="mt-4 text-sm text-gray-600">
-                                    {poi.latitude && (
-                                        <div className="flex items-center justify-between py-1">
-                                            <dt className="font-medium">Latitude</dt>
-                                            <dd>{poi.latitude}</dd>
-                                        </div>
-                                    )}
-                                    {poi.longitude && (
-                                        <div className="flex items-center justify-between py-1">
-                                            <dt className="font-medium">Longitude</dt>
-                                            <dd>{poi.longitude}</dd>
-                                        </div>
-                                    )}
-                                    {poi.location_id && (
-                                        <div className="flex items-center justify-between py-1">
-                                            <dt className="font-medium">Location ID</dt>
-                                            <dd className="text-xs text-gray-400">{poi.location_id}</dd>
-                                        </div>
-                                    )}
-                                    <div className="flex items-center justify-between py-1">
-                                        <dt className="font-medium">Created</dt>
-                                        <dd className="text-sm text-gray-500">
-                                            {new Date(poi.createdAt).toLocaleDateString()}
-                                        </dd>
-                                    </div>
-                                </dl>
-
-                                <div className="mt-4 flex items-center justify-end gap-2">
-                                    <button
-                                        onClick={() => handleEdit(poi)}
-                                        className="px-3 py-1 rounded-md bg-[#ffd966] text-sm"
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(poi.id)}
-                                        className="px-3 py-1 rounded-md bg-[#d64545] text-white text-sm"
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
-                            </article>
+                                poi={poi}
+                                weather={weatherData[poi.id]}
+                                onEdit={() => handleEdit(poi)}
+                                onDelete={() => handleDelete(poi.id)}
+                            />
                         ))
                     )}
                 </div>

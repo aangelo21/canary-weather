@@ -33,6 +33,10 @@ const PointOfInterest = sequelize.define(
             type: DataTypes.UUID,
             allowNull: true,
         },
+        image_url: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
     },
     { timestamps: true }
 );
