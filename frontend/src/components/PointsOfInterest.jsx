@@ -167,7 +167,7 @@ export default function PointsOfInterest() {
                         Points of Interest
                     </h1>
                     <div className="text-sm text-gray-600">
-                        {pois.length} points
+                        {pois.length} puntos
                     </div>
                 </div>
 
@@ -195,7 +195,7 @@ export default function PointsOfInterest() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {pois.length === 0 ? (
                         <div className="col-span-full text-center text-gray-500">
-                            No points of interest registered
+                            No hay puntos de interés registrados
                         </div>
                     ) : (
                         pois.map((poi) => (

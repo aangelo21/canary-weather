@@ -82,7 +82,7 @@ function Header() {
           <div className="shrink-0">
             <img
               src="bannerCanaryWeather.png"
-              alt="Canary Weather Logo"
+              alt="Logo de Canary Weather"
               className="h-16 md:h-20 w-auto"
             />
           </div>
@@ -97,7 +97,7 @@ function Header() {
                     : "text-gray-700 hover:text-gray-900 transition-colors"
                 }
               >
-                Home
+                Inicio
               </NavLink>
             </li>
             <li>
@@ -109,7 +109,7 @@ function Header() {
                     : "text-gray-700 hover:text-gray-900 transition-colors"
                 }
               >
-                Map
+                Mapa
               </NavLink>
             </li>
             <li>
@@ -121,7 +121,7 @@ function Header() {
                     : "text-gray-700 hover:text-gray-900 transition-colors"
                 }
               >
-                Points of Interest
+                Puntos de Interés
               </NavLink>
             </li>
             <li>
@@ -133,7 +133,7 @@ function Header() {
                     : "text-gray-700 hover:text-gray-900 transition-colors"
                 }
               >
-                Tides
+                Mareas
               </NavLink>
             </li>
             <li>
@@ -145,7 +145,7 @@ function Header() {
                     : "text-gray-700 hover:text-gray-900 transition-colors"
                 }
               >
-                Warnings
+                Advertencias
               </NavLink>
             </li>
           </ul>
@@ -163,7 +163,7 @@ function Header() {
                     {getProfileImageUrl() ? (
                       <img
                         src={getProfileImageUrl()}
-                        alt="Profile"
+                        alt="Perfil"
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -199,13 +199,13 @@ function Header() {
                   className="bg-accent-blue-200 text-white px-4 py-2 rounded hover:bg-accent-blue-100 transition-colors"
                   onClick={() => setShowLogin(true)}
                 >
-                  Edit Profile
+                  Editar Perfil
                 </button>
                 <button
                   className="bg-error text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
                   onClick={handleLogout}
                 >
-                  Log out
+                  Cerrar Sesión
                 </button>
               </div>
             ) : (
@@ -224,7 +224,7 @@ function Header() {
                     clipRule="evenodd"
                   />
                 </svg>
-                <span>Log in</span>
+                <span>Iniciar Sesión</span>
               </button>
             )}
             <LoginModal
@@ -239,7 +239,7 @@ function Header() {
           <button
             className="md:hidden text-neutral-2 text-2xl p-2"
             onClick={toggleMenu}
-            aria-label="Toggle menu"
+            aria-label="Alternar menú"
           >
             {isOpen ? (
               <svg
@@ -286,7 +286,7 @@ function Header() {
                   }
                   onClick={() => setIsOpen(false)}
                 >
-                  Home
+                  Inicio
                 </NavLink>
               </li>
               <li>
@@ -299,7 +299,7 @@ function Header() {
                   }
                   onClick={() => setIsOpen(false)}
                 >
-                  Map
+                  Mapa
                 </NavLink>
               </li>
               <li>
@@ -312,7 +312,7 @@ function Header() {
                   }
                   onClick={() => setIsOpen(false)}
                 >
-                  Points of Interest
+                  Puntos de Interés
                 </NavLink>
               </li>
               <li>
@@ -325,7 +325,7 @@ function Header() {
                   }
                   onClick={() => setIsOpen(false)}
                 >
-                  Tides
+                  Mareas
                 </NavLink>
               </li>
               <li>
@@ -338,7 +338,7 @@ function Header() {
                   }
                   onClick={() => setIsOpen(false)}
                 >
-                  Warnings
+                  Advertencias
                 </NavLink>
               </li>
               <li>
@@ -357,7 +357,7 @@ function Header() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  log in
+                  iniciar sesión
                 </button>
                 <LoginModal
                   isOpen={showLogin}

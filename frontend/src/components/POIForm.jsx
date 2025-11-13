@@ -9,11 +9,11 @@ export default function POIForm({
 }) {
     return (
         <div className="mb-6 p-4 bg-white rounded shadow border border-gray-200">
-            <h2 className="text-lg font-bold mb-2">Edit POI</h2>
+            <h2 className="text-lg font-bold mb-2">Editar POI</h2>
             <form onSubmit={onSubmit}>
                 <div className="mb-2">
                     <label className="block text-sm font-medium mb-1">
-                        Name
+                        Nombre
                     </label>
                     <input
                         type="text"
@@ -26,7 +26,7 @@ export default function POIForm({
                 </div>
                 <div className="mb-2">
                     <label className="block text-sm font-medium mb-1">
-                        Description
+                        Descripción
                     </label>
                     <textarea
                         name="description"
@@ -38,7 +38,7 @@ export default function POIForm({
                 </div>
                 <div className="mb-2">
                     <label className="block text-sm font-medium mb-1">
-                        POI Image
+                        Imagen del POI
                     </label>
                     <input
                         type="file"
@@ -51,7 +51,7 @@ export default function POIForm({
                         <div className="mt-2">
                             <img
                                 src={imagePreview}
-                                alt="Preview"
+                                alt="Vista Previa"
                                 className="w-32 h-32 object-cover rounded"
                             />
                         </div>
@@ -63,14 +63,14 @@ export default function POIForm({
                         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                         disabled={loading}
                     >
-                        {loading ? "Saving..." : "Save"}
+                        {loading ? "Guardando..." : "Guardar"}
                     </button>
                     <button
                         type="button"
                         className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
                         onClick={onCancel}
                     >
-                        Cancel
+                        Cancelar
                     </button>
                 </div>
             </form>

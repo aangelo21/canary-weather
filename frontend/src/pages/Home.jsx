@@ -12,15 +12,13 @@ function Home() {
                     <div className="flex flex-col justify-center h-full">
                         <div>
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-neutral-1 leading-tight">
-                                Welcome to
+                                Bienvenido a
                                 <br />
                                 Canary Weather
                             </h1>
 
                             <p className="mt-6 text-lg md:text-xl text-neutral-2 max-w-xl">
-                                Discover the weather in your favourite places. Explore
-                                the maps and see detailed forecasts, tides and points of
-                                interest around the Canary Islands.
+                                Descubre el clima en tus lugares favoritos. Explora los mapas y ve pronósticos detallados, mareas y puntos de interés alrededor de las Islas Canarias.
                             </p>
 
                             <div className="mt-8 flex flex-wrap gap-4">
@@ -28,14 +26,14 @@ function Home() {
                                     onClick={() => navigate("/map")}
                                     className="inline-flex items-center gap-2 bg-brand-primary hover:bg-accent-blue-200 text-white px-5 py-3 rounded-full font-semibold shadow"
                                 >
-                                    maps
+                                    mapas
                                 </button>
 
                                 <button
                                     onClick={() => navigate("/tides")}
                                     className="inline-flex items-center gap-2 bg-brand-primary hover:bg-accent-blue-200 text-white px-5 py-3 rounded-full font-semibold shadow"
                                 >
-                                    tides
+                                    mareas
                                 </button>
                             </div>
                         </div>
@@ -44,8 +42,8 @@ function Home() {
                     {/* Right column - illustrative image placeholder */}
                     <div className="flex justify-center lg:justify-end">
                         <div className="w-full max-w-md lg:max-w-lg">
-                            <div className="w-full h-80 bg-gradient-to-br from-slate-100 to-white rounded-3xl shadow-xl flex items-center justify-center">
-                                <span className="text-neutral-3">Hero image / phones</span>
+                            <div className="w-full h-80 bg-linear-to-br from-slate-100 to-white rounded-3xl shadow-xl flex items-center justify-center">
+                                <span className="text-neutral-3">Imagen heroica / teléfonos</span>
                             </div>
                         </div>
                     </div>
@@ -57,8 +55,8 @@ function Home() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-12">
                     {[
                         {
-                            title: "Responsive",
-                            text: "Select one destiny on the map and look the weather and the points of interest in mobile",
+                            title: "Responsivo",
+                            text: "Selecciona un destino en el mapa y mira el clima y los puntos de interés en móvil",
                             icon: (
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M12 3v2M12 19v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42" stroke="#0f6fa8" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
@@ -67,8 +65,8 @@ function Home() {
                             )
                         },
                         {
-                            title: "Wind alert",
-                            text: "In this website you can see the different forecast and wind alerts of the different locations",
+                            title: "Alerta de viento",
+                            text: "En este sitio web puedes ver los diferentes pronósticos y alertas de viento de las diferentes ubicaciones",
                             icon: (
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M3 12h18M12 3v18" stroke="#0f6fa8" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
@@ -76,8 +74,8 @@ function Home() {
                             )
                         },
                         {
-                            title: "Locations",
-                            text: "Explore the different locations in the map and check the forecast of the location",
+                            title: "Ubicaciones",
+                            text: "Explora las diferentes ubicaciones en el mapa y verifica el pronóstico de la ubicación",
                             icon: (
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7l3-7z" stroke="#0f6fa8" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
