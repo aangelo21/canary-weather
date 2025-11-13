@@ -91,7 +91,7 @@ Please read the contributing guidelines in `contributing.md` for details on how 
 
 ## License
 
-This project is licensed under the terms specified in the `licence` file.
+This project is licensed under the terms specified in the `license` file.
 
 ## Deployment
 
