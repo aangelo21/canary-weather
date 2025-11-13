@@ -1,6 +1,22 @@
 export default function POICard({ poi, weather, onEdit, onDelete }) {
+    const API_BASE = import.meta.env.VITE_API_BASE;
+    const baseUrl = API_BASE?.replace('/api', '') || '';
+    const imageUrl = poi.image_url ? `${baseUrl}${poi.image_url}` : null;
+    
     return (
         <article className="bg-white rounded-lg shadow p-5 border border-gray-100">
+            {imageUrl && (
+                <div className="mb-4">
+                    <img
+                        src={imageUrl}
+                        alt={poi.name}
+                        className="w-full h-48 object-cover rounded-lg"
+                        onError={(e) => {
+                            e.target.style.display = 'none';
+                        }}
+                    />
+                </div>
+            )}
             <div className="flex justify-between items-start">
                 <div>
                     <h3 className="text-lg font-semibold text-gray-800">

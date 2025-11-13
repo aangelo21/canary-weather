@@ -4,6 +4,8 @@ export default function POIForm({
     onSubmit,
     loading,
     onCancel,
+    onImageChange,
+    imagePreview,
 }) {
     return (
         <div className="mb-6 p-4 bg-white rounded shadow border border-gray-200">
@@ -33,6 +35,27 @@ export default function POIForm({
                         className="border rounded px-3 py-2 w-full"
                         rows={3}
                     />
+                </div>
+                <div className="mb-2">
+                    <label className="block text-sm font-medium mb-1">
+                        POI Image
+                    </label>
+                    <input
+                        type="file"
+                        name="poi_image"
+                        accept="image/*"
+                        onChange={onImageChange}
+                        className="border rounded px-3 py-2 w-full"
+                    />
+                    {imagePreview && (
+                        <div className="mt-2">
+                            <img
+                                src={imagePreview}
+                                alt="Preview"
+                                className="w-32 h-32 object-cover rounded"
+                            />
+                        </div>
+                    )}
                 </div>
                 <div className="flex gap-2 mt-4">
                     <button

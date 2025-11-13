@@ -22,6 +22,8 @@ export default function PointsOfInterest() {
     const [editingId, setEditingId] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
 
     const fetchPois = async () => {
         try {
@@ -40,7 +42,7 @@ export default function PointsOfInterest() {
         setLoading(true);
         setError("");
         try {
-            await createOrUpdatePoi(formData, editingId);
+            await createOrUpdatePoi(formData, editingId, selectedImage);
             resetForm();
             setShowEditForm(false);
             setEditingId(null);
@@ -76,6 +78,15 @@ export default function PointsOfInterest() {
         });
         setEditingId(poi.id);
         setShowEditForm(true);
+        // Mostrar preview de la imagen existente si hay
+        if (poi.image_url) {
+            const API_BASE = import.meta.env.VITE_API_BASE;
+            const baseUrl = API_BASE.replace('/api', '');
+            setImagePreview(`${baseUrl}${poi.image_url}`);
+        } else {
+            setImagePreview(null);
+        }
+        setSelectedImage(null);
     };
 
     const resetForm = () => {
@@ -88,6 +99,8 @@ export default function PointsOfInterest() {
             location_id: "",
         });
         setEditingId(null);
+        setSelectedImage(null);
+        setImagePreview(null);
     };
 
     const handleInputChange = (e) => {
@@ -96,6 +109,18 @@ export default function PointsOfInterest() {
             ...prev,
             [name]: type === "checkbox" ? checked : value,
         }));
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedImage(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     useEffect(() => {
@@ -162,6 +187,8 @@ export default function PointsOfInterest() {
                             setShowEditForm(false);
                             setEditingId(null);
                         }}
+                        onImageChange={handleImageChange}
+                        imagePreview={imagePreview}
                     />
                 )}
 
