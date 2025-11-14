@@ -9,6 +9,7 @@ import {
     loginUser,
     deleteUser,
 } from "../services/userService";
+import { useTranslation } from "react-i18next";
 
 // LoginModal component - Main authentication interface
 // Supports multiple modes: login, signup, account editing, and account deletion
@@ -20,6 +21,7 @@ export default function LoginModal({
     user,          // Current user object (if logged in)
     onLogout,      // Function called when user logs out
 }) {
+    const { t } = useTranslation();
     // State to toggle between login and signup modes
     const [isSignUp, setIsSignUp] = useState(false);
     // State to show delete account confirmation dialog
@@ -73,11 +75,11 @@ export default function LoginModal({
                     </button>
                     {/* Modal title */}
                     <h2 className="text-xl font-semibold mb-4 text-center">
-                        Eliminar Cuenta
+                        {t('deleteAccount')}
                     </h2>
                     {/* Warning message */}
                     <p className="text-center mb-6">
-                        ¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.
+                        {t('confirmDeleteAccount')}
                     </p>
                     {/* Error message display */}
                     {error && (
@@ -88,7 +90,7 @@ export default function LoginModal({
                     {/* Loading message */}
                     {loading && (
                         <div className="text-info text-sm mb-2 text-center">
-                            Eliminando cuenta...
+                            {t('deletingAccount')}
                         </div>
                     )}
                     {/* Action buttons */}
@@ -99,7 +101,7 @@ export default function LoginModal({
                             onClick={() => setShowDeleteConfirm(false)}
                             disabled={loading}
                         >
-                            Cancelar
+                            {t('cancel')}
                         </button>
                         {/* Delete button with confirmation */}
                         <button
@@ -120,7 +122,7 @@ export default function LoginModal({
                             }}
                             disabled={loading}
                         >
-                            {loading ? "Eliminando..." : "Eliminar"}
+                            {loading ? t('deletingAccount').split('...')[0] + "..." : t('delete')}
                         </button>
                     </div>
                 </div>
@@ -144,7 +146,7 @@ export default function LoginModal({
                         &times;
                     </button>
                     <h2 className="text-xl font-semibold mb-4 text-center">
-                        Editar Cuenta
+                        {t('editProfile')}
                     </h2>
                     {error && (
                         <div className="text-error text-sm mb-2 text-center">
@@ -153,7 +155,7 @@ export default function LoginModal({
                     )}
                     {loading && (
                         <div className="text-info text-sm mb-2 text-center">
-                            Procesando...
+                            {t('updating')}
                         </div>
                     )}
                     {/* Account update form */}
@@ -167,7 +169,7 @@ export default function LoginModal({
                                 input.password &&
                                 input.password !== input.confirm
                             ) {
-                                setError("Las contraseñas no coinciden");
+                                setError(t('passwordsDontMatch'));
                                 return;
                             }
                             setLoading(true);
@@ -193,14 +195,14 @@ export default function LoginModal({
                                 }
                             } catch (err) {
                                 setLoading(false);
-                                setError(err.message || "Error al actualizar usuario");
+                                setError(err.message || t('errorUpdateUser'));
                             }
                         }}
                     >
                         {/* Email input field */}
                         <input
                             type="email"
-                            placeholder="Correo Electrónico"
+                            placeholder={t('email')}
                             className="border rounded px-3 py-2"
                             value={input.email}
                             onChange={(e) =>
@@ -213,7 +215,7 @@ export default function LoginModal({
                         {/* Username input field */}
                         <input
                             type="text"
-                            placeholder="Nombre de Usuario"
+                            placeholder={t('username')}
                             className="border rounded px-3 py-2"
                             value={input.username}
                             onChange={(e) =>
@@ -226,7 +228,7 @@ export default function LoginModal({
                         {/* New password input (optional) */}
                         <input
                             type="password"
-                            placeholder="Nueva Contraseña (opcional)"
+                            placeholder={t('newPassword')}
                             className="border rounded px-3 py-2"
                             value={input.password}
                             onChange={(e) =>
@@ -239,7 +241,7 @@ export default function LoginModal({
                         {/* Password confirmation input */}
                         <input
                             type="password"
-                            placeholder="Confirmar Nueva Contraseña"
+                            placeholder={t('confirmNewPassword')}
                             className="border rounded px-3 py-2"
                             value={input.confirm}
                             onChange={(e) =>
@@ -255,7 +257,7 @@ export default function LoginModal({
                             className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 w-full"
                             disabled={loading}
                         >
-                            {loading ? "Actualizando..." : "Actualizar Cuenta"}
+                            {loading ? t('updating') : t('updateAccount')}
                         </button>
                     </form>
                     {/* Delete account button */}
@@ -263,7 +265,7 @@ export default function LoginModal({
                         className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 w-full mt-4"
                         onClick={() => setShowDeleteConfirm(true)}
                     >
-                        Eliminar Cuenta
+                        {t('deleteAccount')}
                     </button>
                 </div>
                 </div>
@@ -291,31 +293,31 @@ export default function LoginModal({
                 <div className="mb-2 text-sm text-center">
                     {!isSignUp ? (
                         <span>
-                            ¿No tienes una cuenta con nosotros?{" "}
+                            {t('noAccount')}{" "}
                             <button
                                 type="button"
                                 className="text-blue-600 hover:underline"
                                 onClick={() => setIsSignUp(true)}
                             >
-                                Registrarse
+                                {t('signUp')}
                             </button>
                         </span>
                     ) : (
                         <span>
-                            ¿Ya tienes una cuenta?{" "}
+                            {t('haveAccount')}{" "}
                             <button
                                 type="button"
                                 className="text-blue-600 hover:underline"
                                 onClick={() => setIsSignUp(false)}
                             >
-                                Iniciar Sesión
+                                {t('signIn')}
                             </button>
                         </span>
                     )}
                 </div>
                 {/* Modal title */}
                 <h2 className="text-xl font-semibold mb-4 text-center">
-                    {isSignUp ? "Registrarse" : "Iniciar Sesión"}
+                    {isSignUp ? t('signUp') : t('signIn')}
                 </h2>
                 {/* Error message display */}
                 {error && (
@@ -326,7 +328,7 @@ export default function LoginModal({
                 {/* Loading message */}
                 {loading && (
                     <div className="text-info text-sm mb-2 text-center">
-                        Procesando...
+                        {t('processing')}
                     </div>
                 )}
                 {/* Main authentication form */}
@@ -343,11 +345,11 @@ export default function LoginModal({
                                 !input.password ||
                                 !input.confirm
                             ) {
-                                setError("Todos los campos son obligatorios");
+                                setError(t('allFieldsRequired'));
                                 return;
                             }
                             if (input.password !== input.confirm) {
-                                setError("Las contraseñas no coinciden");
+                                setError(t('passwordsDontMatch'));
                                 return;
                             }
                             setLoading(true);
@@ -396,12 +398,12 @@ export default function LoginModal({
                                 }
                             } catch (err) {
                                 setLoading(false);
-                                setError(err.message || "Error al crear usuario");
+                                setError(err.message || t('errorCreateUser'));
                             }
                         } else {
                             // Login validation
                             if (!input.emailOrUsername || !input.password) {
-                                setError("Todos los campos son obligatorios");
+                                setError(t('allFieldsRequired'));
                                 return;
                             }
                             setLoading(true);
@@ -445,11 +447,11 @@ export default function LoginModal({
                                     // Call onLogin callback
                                     onLogin(loggedUser);
                                 } else {
-                                    setError("No se recibió token");
+                                    setError(t('noTokenReceived'));
                                 }
                             } catch (err) {
                                 setLoading(false);
-                                setError(err.message || "Error al iniciar sesión");
+                                setError(err.message || t('errorSignIn'));
                             }
                         }
                     }}
@@ -460,7 +462,7 @@ export default function LoginModal({
                             {/* Signup form fields */}
                             <input
                                 type="email"
-                                placeholder="Email"
+                                placeholder={t('email')}
                                 className="border rounded px-3 py-2"
                                 value={input.email}
                                 onChange={(e) =>
@@ -472,7 +474,7 @@ export default function LoginModal({
                             />
                             <input
                                 type="text"
-                                placeholder="Username"
+                                placeholder={t('username')}
                                 className="border rounded px-3 py-2"
                                 value={input.username}
                                 onChange={(e) =>
@@ -484,7 +486,7 @@ export default function LoginModal({
                             />
                             <input
                                 type="password"
-                                placeholder="Contraseña"
+                                placeholder={t('password')}
                                 className="border rounded px-3 py-2"
                                 value={input.password}
                                 onChange={(e) =>
@@ -496,7 +498,7 @@ export default function LoginModal({
                             />
                             <input
                                 type="password"
-                                placeholder="Confirmar Contraseña"
+                                placeholder={t('confirmPassword')}
                                 className="border rounded px-3 py-2"
                                 value={input.confirm}
                                 onChange={(e) =>
@@ -512,7 +514,7 @@ export default function LoginModal({
                             {/* Login form fields */}
                             <input
                                 type="text"
-                                placeholder="Correo Electrónico o Nombre de Usuario"
+                                placeholder={t('emailOrUsername')}
                                 className="border rounded px-3 py-2"
                                 value={input.emailOrUsername}
                                 onChange={(e) =>
@@ -524,7 +526,7 @@ export default function LoginModal({
                             />
                             <input
                                 type="password"
-                                placeholder="Password"
+                                placeholder={t('password')}
                                 className="border rounded px-3 py-2"
                                 value={input.password}
                                 onChange={(e) =>
@@ -541,7 +543,7 @@ export default function LoginModal({
                         type="submit"
                         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                     >
-                        {isSignUp ? "Registrarse" : "Iniciar Sesión"}
+                        {isSignUp ? t('signUp') : t('signIn')}
                     </button>
                 </form>
             </div>

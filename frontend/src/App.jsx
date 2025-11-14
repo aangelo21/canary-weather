@@ -7,11 +7,15 @@ import PointsOfInterest from "./Pages/PointsOfInterest";
 import Layout from "./layout/Layout";
 import Home from "./pages/Home";
 import Map from "./pages/Map";
+// Import i18n for internationalization
+import "../i18n/index.js";
+import { I18nextProvider } from "react-i18next";
+import i18n from "../i18n/index.js";
 
 // Main App component that sets up the application routing structure
 function App() {
     return (
-        <>
+        <I18nextProvider i18n={i18n}>
             {/* BrowserRouter enables client-side routing */}
             <BrowserRouter>
                 {/* Routes component contains all route definitions */}
@@ -27,7 +31,7 @@ function App() {
                     </Route>
                 </Routes>
             </BrowserRouter>
-        </>
+        </I18nextProvider>
     );
 }
 

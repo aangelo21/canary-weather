@@ -3,6 +3,8 @@
 // It includes fields for name, description, and image upload with preview functionality.
 // Used in the Points of Interest page for POI management.
 
+import { useTranslation } from "react-i18next";
+
 export default function POIForm({
     formData,      // Current form data object
     onChange,      // Function to handle input changes
@@ -12,17 +14,18 @@ export default function POIForm({
     onImageChange, // Function to handle image file selection
     imagePreview,  // URL for image preview
 }) {
+    const { t } = useTranslation();
     return (
         // Form container with white background, padding, shadow, and border
         <div className="mb-6 p-4 bg-white rounded shadow border border-gray-200">
             {/* Form title */}
-            <h2 className="text-lg font-bold mb-2">Editar POI</h2>
+            <h2 className="text-lg font-bold mb-2">{t('editPOI')}</h2>
             {/* Main form element */}
             <form onSubmit={onSubmit}>
                 {/* Name input field */}
                 <div className="mb-2">
                     <label className="block text-sm font-medium mb-1">
-                        Nombre
+                        {t('name')}
                     </label>
                     <input
                         type="text"
@@ -37,7 +40,7 @@ export default function POIForm({
                 {/* Description textarea field */}
                 <div className="mb-2">
                     <label className="block text-sm font-medium mb-1">
-                        Descripción
+                        {t('description')}
                     </label>
                     <textarea
                         name="description"
@@ -51,7 +54,7 @@ export default function POIForm({
                 {/* Image upload field with preview */}
                 <div className="mb-2">
                     <label className="block text-sm font-medium mb-1">
-                        Imagen del POI
+                        {t('poiImage')}
                     </label>
                     <input
                         type="file"
@@ -65,7 +68,7 @@ export default function POIForm({
                         <div className="mt-2">
                             <img
                                 src={imagePreview}
-                                alt="Vista Previa"
+                                alt={t('preview')}
                                 className="w-32 h-32 object-cover rounded"
                             />
                         </div>
@@ -80,7 +83,7 @@ export default function POIForm({
                         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                         disabled={loading}
                     >
-                        {loading ? "Guardando..." : "Guardar"}
+                        {loading ? t('saving') : t('save')}
                     </button>
                     {/* Cancel button */}
                     <button
@@ -88,7 +91,7 @@ export default function POIForm({
                         className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
                         onClick={onCancel}
                     >
-                        Cancelar
+                        {t('cancel')}
                     </button>
                 </div>
             </form>

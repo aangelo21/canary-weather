@@ -48,7 +48,7 @@ app.get("/api/health", (req, res) => {
         console.log("Connection has been established successfully.");
 
         // Synchronize models with database (create tables if they don't exist)
-        await sequelize.sync({ force: false });
+        await sequelize.sync({ alter: true });
         console.log("All models were synchronized successfully.");
 
         // Start the server and listen on the specified port

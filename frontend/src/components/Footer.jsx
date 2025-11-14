@@ -4,10 +4,12 @@
 // It uses Tailwind CSS for styling and includes accessibility features like aria-labels.
 
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 // Footer component - A simple footer that appears at the bottom of all pages
 // Provides branding, copyright notice, and social media links for user engagement
 export default function Footer() {
+    const { t } = useTranslation();
     // Return the footer JSX structure
     // The footer has a primary brand background color, white text, padding, and a subtle shadow
     return (
@@ -19,7 +21,7 @@ export default function Footer() {
                 {/* Left section: Copyright text and website link */}
                 <div className="text-sm">
                     {/* Copyright notice with brand name */}
-                    ©CanaryWeather |{" "}
+                    {t('copyright')}{" "}
                     {/* External link to the main Canary Weather website */}
                     {/* Opens in new tab with security attributes */}
                     <a
@@ -28,7 +30,7 @@ export default function Footer() {
                         rel="noreferrer"
                         className="underline underline-offset-2 hover:text-neutral-4"
                     >
-                        canaryweather.com
+                        {t('website')}
                     </a>
                 </div>
 

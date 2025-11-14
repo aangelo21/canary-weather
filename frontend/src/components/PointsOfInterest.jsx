@@ -11,9 +11,11 @@ import {
 } from "../services/poiService";
 import POIForm from "./POIForm";
 import POICard from "./POICard";
+import { useTranslation } from "react-i18next";
 
 // PointsOfInterest component - Main POI management interface
 export default function PointsOfInterest() {
+    const { t } = useTranslation();
     // State for storing all POIs
     const [pois, setPois] = useState([]);
     // State for weather data associated with each POI
@@ -77,7 +79,7 @@ export default function PointsOfInterest() {
     // Function to handle POI deletion
     const handleDelete = async (id) => {
         // Show confirmation dialog
-        if (!confirm("¿Estás seguro de eliminar este POI?")) return;
+        if (!confirm(t('confirmDelete'))) return;
         try {
             setLoading(true);
             await deletePoiService(id);
@@ -205,10 +207,10 @@ export default function PointsOfInterest() {
                 {/* Header section with title and POI count */}
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-2xl font-extrabold text-[#0f6fb9]">
-                        Points of Interest
+                        {t('pointsOfInterest')}
                     </h1>
                     <div className="text-sm text-gray-600">
-                        {pois.length} puntos
+                        {pois.length} {t('points')}
                     </div>
                 </div>
 
@@ -240,7 +242,7 @@ export default function PointsOfInterest() {
                     {pois.length === 0 ? (
                         // Empty state message
                         <div className="col-span-full text-center text-gray-500">
-                            No hay puntos de interés registrados
+                            {t('noPois')}
                         </div>
                     ) : (
                         // Render POI cards

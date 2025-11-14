@@ -1,10 +1,12 @@
 // Import useNavigate hook from React Router for programmatic navigation
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 // Home page component - the landing page of the Canary Weather application
 function Home() {
     // Hook to navigate to different routes
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     return (
         // Main container with full height and neutral background
@@ -17,14 +19,14 @@ function Home() {
                         <div>
                             {/* Main heading welcoming users to Canary Weather */}
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-neutral-1 leading-tight">
-                                Bienvenido a
+                                {t('welcomeTo')}
                                 <br />
-                                Canary Weather
+                                {t('canaryWeather')}
                             </h1>
 
                             {/* Descriptive paragraph about the app's features */}
                             <p className="mt-6 text-lg md:text-xl text-neutral-2 max-w-xl">
-                                Descubre el clima en tus lugares favoritos. Explora los mapas y ve pronósticos detallados, mareas y puntos de interés alrededor de las Islas Canarias.
+                                {t('discoverWeather')}
                             </p>
 
                             {/* Call-to-action buttons for navigation */}
@@ -34,7 +36,7 @@ function Home() {
                                     onClick={() => navigate("/map")}
                                     className="inline-flex items-center gap-2 bg-brand-primary hover:bg-accent-blue-200 text-white px-5 py-3 rounded-full font-semibold shadow"
                                 >
-                                    mapas
+                                    {t('maps')}
                                 </button>
 
                                 {/* Button to navigate to tides page (though route may not exist yet) */}
@@ -42,7 +44,7 @@ function Home() {
                                     onClick={() => navigate("/tides")}
                                     className="inline-flex items-center gap-2 bg-brand-primary hover:bg-accent-blue-200 text-white px-5 py-3 rounded-full font-semibold shadow"
                                 >
-                                    mareas
+                                    {t('tides')}
                                 </button>
                             </div>
                         </div>
@@ -53,7 +55,7 @@ function Home() {
                         <div className="w-full max-w-md lg:max-w-lg">
                             {/* Placeholder div for hero image or illustration */}
                             <div className="w-full h-80 bg-linear-to-br from-slate-100 to-white rounded-3xl shadow-xl flex items-center justify-center">
-                                <span className="text-neutral-3">Imagen heroica / teléfonos</span>
+                                <span className="text-neutral-3">{t('heroImage')}</span>
                             </div>
                         </div>
                     </div>
@@ -66,8 +68,8 @@ function Home() {
                     {/* Array of feature cards with title, description, and icon */}
                     {[
                         {
-                            title: "Responsivo",
-                            text: "Selecciona un destino en el mapa y mira el clima y los puntos de interés en móvil",
+                            title: t('responsive'),
+                            text: t('responsiveDesc'),
                             icon: (
                                 // Responsive design icon (sun with rays)
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -77,8 +79,8 @@ function Home() {
                             )
                         },
                         {
-                            title: "Alerta de viento",
-                            text: "En este sitio web puedes ver los diferentes pronósticos y alertas de viento de las diferentes ubicaciones",
+                            title: t('windAlert'),
+                            text: t('windAlertDesc'),
                             icon: (
                                 // Wind/compass icon
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -87,8 +89,8 @@ function Home() {
                             )
                         },
                         {
-                            title: "Ubicaciones",
-                            text: "Explora las diferentes ubicaciones en el mapa y verifica el pronóstico de la ubicación",
+                            title: t('locations'),
+                            text: t('locationsDesc'),
                             icon: (
                                 // Star/location icon
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -3,7 +3,10 @@
 // showing its image, name, description, weather data, location info, and action buttons.
 // Used in the Points of Interest page to display individual POI items.
 
+import { useTranslation } from "react-i18next";
+
 export default function POICard({ poi, weather, onEdit, onDelete }) {
+  const { t } = useTranslation();
   // Get API base URL from environment variables
   const API_BASE = import.meta.env.VITE_API_BASE;
   // Remove '/api' suffix to get the base URL for static assets
@@ -47,7 +50,7 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
                 />
               </svg>
               {/* "No Image" text */}
-              <p className="text-sm font-medium opacity-80">Sin Imagen</p>
+              <p className="text-sm font-medium opacity-80">{t('noImage')}</p>
             </div>
           </div>
         )}
@@ -76,7 +79,7 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
                 : "bg-[#0f6fb9] text-white"   // Blue badge for local POIs
             }`}
           >
-            {poi.is_global ? "GLOBAL" : "LOCAL"}
+            {poi.is_global ? t('global') : t('local')}
           </span>
         </div>
       </div>
@@ -86,27 +89,27 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
         {/* Latitude display */}
         {poi.latitude && (
           <div className="flex items-center justify-between py-1">
-            <dt className="font-medium">Latitud</dt>
+            <dt className="font-medium">{t('latitude')}</dt>
             <dd>{poi.latitude}</dd>
           </div>
         )}
         {/* Longitude display */}
         {poi.longitude && (
           <div className="flex items-center justify-between py-1">
-            <dt className="font-medium">Longitud</dt>
+            <dt className="font-medium">{t('longitude')}</dt>
             <dd>{poi.longitude}</dd>
           </div>
         )}
         {/* Location ID display */}
         {poi.location_id && (
           <div className="flex items-center justify-between py-1">
-            <dt className="font-medium">ID de Ubicación</dt>
+            <dt className="font-medium">{t('locationId')}</dt>
             <dd className="text-xs text-gray-400">{poi.location_id}</dd>
           </div>
         )}
         {/* Creation date */}
         <div className="flex items-center justify-between py-1">
-          <dt className="font-medium">Creado</dt>
+          <dt className="font-medium">{t('created')}</dt>
           <dd className="text-sm text-gray-500">
             {new Date(poi.createdAt).toLocaleDateString()}
           </dd>
@@ -120,14 +123,14 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
           onClick={onEdit}
           className="px-3 py-1 rounded-md bg-[#ffd966] text-sm"
         >
-          Editar
+          {t('edit')}
         </button>
         {/* Delete button */}
         <button
           onClick={onDelete}
           className="px-3 py-1 rounded-md bg-[#d64545] text-white text-sm"
         >
-          Eliminar
+          {t('delete')}
         </button>
       </div>
     </article>

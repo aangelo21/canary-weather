@@ -6,10 +6,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Popup } from "react-leaflet";
 import { createOrUpdatePoi } from "../services/poiService";
+import { useTranslation } from "react-i18next";
 
 // WeatherPopup component - Displays weather info and POI creation option
 // Used by InteractiveMap component when user clicks on map locations
 function WeatherPopup({ position, weather, markerRef }) {
+    const { t } = useTranslation();
     // Ref for the popup element
     const popupRef = useRef(null);
     // State to track if POI has been saved
@@ -58,10 +60,10 @@ function WeatherPopup({ position, weather, markerRef }) {
 
                 {/* Weather details section */}
                 <div className="text-sm mt-1">
-                    <div>Condición: {weather.description}</div>
-                    <div>Humedad: {weather.humidity}%</div>
-                    <div>Presión: {weather.pressure} hPa</div>
-                    <div>Viento: {weather.wind} m/s</div>
+                    <div>{t('condition')} {weather.description}</div>
+                    <div>{t('humidity')} {weather.humidity}%</div>
+                    <div>{t('pressure')} {weather.pressure} hPa</div>
+                    <div>{t('wind')} {weather.wind} m/s</div>
                 </div>
 
                 {/* Save as POI button */}
@@ -70,13 +72,13 @@ function WeatherPopup({ position, weather, markerRef }) {
                     onClick={handleSavePoi}
                     disabled={saved || saving}
                 >
-                    {saving ? "Guardando..." : saved ? "Guardado" : "Guardar como POI"}
+                    {saving ? t('savingPoi') : saved ? t('saved') : t('saveAsPoi')}
                 </button>
 
                 {/* Success message when POI is saved */}
                 {saved && (
                     <div className="mt-2 text-green-600 text-sm">
-                        ¡POI guardado!
+                        {t('poiSaved')}
                     </div>
                 )}
             </div>
