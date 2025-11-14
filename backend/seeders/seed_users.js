@@ -1,18 +1,17 @@
 import sequelize from "../controllers/dbController.js";
 import User from "../models/user.js";
+import bcrypt from "bcrypt";
 
 async function seed() {
     console.log("Starting User seeder...");
 
-    // ensure models are loaded and DB is ready
     await sequelize.sync();
 
-    // Sample users for testing
     const users = [
         {
             email: "admin@canaryweather.com",
             username: "admin",
-            password: "password123", // Note: In production, this should be hashed
+            password: "password123",
         },
         {
             email: "user1@example.com",
@@ -38,9 +37,14 @@ async function seed() {
 
     for (const userData of users) {
         try {
+            // Hash password before saving
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(userData.password, salt);
+            const userDataHashed = { ...userData, password: hashedPassword };
+
             const [user, created] = await User.findOrCreate({
                 where: { email: userData.email },
-                defaults: userData,
+                defaults: userDataHashed,
             });
 
             if (created) {

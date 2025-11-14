@@ -1,7 +1,10 @@
+// Import PointOfInterest and Location models
 import { PointOfInterest, Location } from "../models/index.js";
 
+// Controller function to get all points of interest
 export const getAllPointsOfInterest = async (req, res) => {
     try {
+        // Fetch all POIs from database
         const items = await PointOfInterest.findAll();
         return res.json(items);
     } catch (err) {
@@ -9,9 +12,11 @@ export const getAllPointsOfInterest = async (req, res) => {
     }
 };
 
+// Controller function to get a specific point of interest by ID
 export const getPointOfInterestById = async (req, res) => {
     try {
         const { id } = req.params;
+        // Find POI by ID and include associated Location data
         const item = await PointOfInterest.findByPk(id, {
             include: [Location],
         });
@@ -23,9 +28,11 @@ export const getPointOfInterestById = async (req, res) => {
     }
 };
 
+// Controller function to create a new point of interest
 export const createPointOfInterest = async (req, res) => {
     try {
         const payload = req.body;
+        // Create new POI with provided data
         const item = await PointOfInterest.create(payload);
         return res.status(201).json(item);
     } catch (err) {
@@ -33,15 +40,47 @@ export const createPointOfInterest = async (req, res) => {
     }
 };
 
+// Controller function to update an existing point of interest
 export const updatePointOfInterest = async (req, res) => {
     try {
         const { id } = req.params;
-        const payload = req.body;
+        const payload = { ...req.body };
+        
+        // Process numeric fields if they come as strings from FormData
+        if (payload.latitude !== undefined && payload.latitude !== "") {
+            payload.latitude = parseFloat(payload.latitude);
+        } else if (payload.latitude === "") {
+            payload.latitude = null;
+        }
+        
+        if (payload.longitude !== undefined && payload.longitude !== "") {
+            payload.longitude = parseFloat(payload.longitude);
+        } else if (payload.longitude === "") {
+            payload.longitude = null;
+        }
+        
+        // Process boolean field
+        if (payload.is_global !== undefined) {
+            payload.is_global = payload.is_global === true || payload.is_global === "true";
+        }
+        
+        // Process location_id - set to null if empty
+        if (payload.location_id !== undefined && payload.location_id === "") {
+            payload.location_id = null;
+        }
+        
+        // Add image URL if file was uploaded
+        if (req.file) {
+            payload.image_url = `/uploads/poi-images/${req.file.filename}`;
+        }
+        
+        // Update POI in database
         const [updated] = await PointOfInterest.update(payload, {
             where: { id },
         });
         if (!updated)
             return res.status(404).json({ error: "PointOfInterest not found" });
+        // Fetch and return updated POI
         const updatedItem = await PointOfInterest.findByPk(id);
         return res.json(updatedItem);
     } catch (err) {
@@ -49,21 +88,26 @@ export const updatePointOfInterest = async (req, res) => {
     }
 };
 
+// Controller function to delete a point of interest
 export const deletePointOfInterest = async (req, res) => {
     try {
         const { id } = req.params;
+        // Delete POI by ID
         const deleted = await PointOfInterest.destroy({ where: { id } });
         if (!deleted)
             return res.status(404).json({ error: "PointOfInterest not found" });
+        // Return 204 No Content on success
         return res.status(204).send();
     } catch (err) {
         return res.status(500).json({ error: err.message });
     }
 };
 
+// Controller function to get points of interest by location
 export const getPointsByLocation = async (req, res) => {
     try {
         const { locationId } = req.params;
+        // Find all POIs associated with the given location
         const items = await PointOfInterest.findAll({
             where: { location_id: locationId },
         });

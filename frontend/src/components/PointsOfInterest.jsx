@@ -1,12 +1,24 @@
+// PointsOfInterest.jsx - Points of Interest management page component
+// This component provides a complete interface for managing Points of Interest (POIs).
+// It displays POIs in a grid, allows creating/editing/deleting POIs, handles image uploads,
+// and fetches weather data for each POI location. Used as a page in the application.
+
 import { useState, useEffect } from "react";
 import {
     fetchPois as fetchPoisService,
     createOrUpdatePoi,
     deletePoi as deletePoiService,
 } from "../services/poiService";
+import POIForm from "./POIForm";
+import POICard from "./POICard";
 
+// PointsOfInterest component - Main POI management interface
 export default function PointsOfInterest() {
+    // State for storing all POIs
     const [pois, setPois] = useState([]);
+    // State for weather data associated with each POI
+    const [weatherData, setWeatherData] = useState({});
+    // State for form data when creating/editing POIs
     const [formData, setFormData] = useState({
         name: "",
         latitude: "",
@@ -15,11 +27,20 @@ export default function PointsOfInterest() {
         is_global: false,
         location_id: "",
     });
+    // State to control form visibility
+    const [showEditForm, setShowEditForm] = useState(false);
+    // State to track which POI is being edited (null for new POI)
     const [editingId, setEditingId] = useState(null);
+    // State for loading indicators
     const [loading, setLoading] = useState(false);
+    // State for error messages
     const [error, setError] = useState("");
+    // State for selected image file
+    const [selectedImage, setSelectedImage] = useState(null);
+    // State for image preview URL
+    const [imagePreview, setImagePreview] = useState(null);
 
-    // Fetch all POIs
+    // Function to fetch all POIs from the API
     const fetchPois = async () => {
         try {
             setLoading(true);
@@ -32,14 +53,19 @@ export default function PointsOfInterest() {
         }
     };
 
-    // Create or update POI
+    // Function to handle form submission for creating/updating POIs
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError("");
         try {
-            await createOrUpdatePoi(formData, editingId);
+            // Call API to create or update POI with optional image
+            await createOrUpdatePoi(formData, editingId, selectedImage);
+            // Reset form and hide it
             resetForm();
+            setShowEditForm(false);
+            setEditingId(null);
+            // Refresh POI list
             fetchPois();
         } catch (err) {
             setError(err.message);
@@ -48,12 +74,14 @@ export default function PointsOfInterest() {
         }
     };
 
-    // Delete POI
+    // Function to handle POI deletion
     const handleDelete = async (id) => {
+        // Show confirmation dialog
         if (!confirm("¿Estás seguro de eliminar este POI?")) return;
         try {
             setLoading(true);
             await deletePoiService(id);
+            // Refresh POI list after deletion
             fetchPois();
         } catch (err) {
             setError(err.message);
@@ -62,7 +90,7 @@ export default function PointsOfInterest() {
         }
     };
 
-    // Edit POI
+    // Function to handle editing a POI - populates form with POI data
     const handleEdit = (poi) => {
         setFormData({
             name: poi.name,
@@ -73,9 +101,19 @@ export default function PointsOfInterest() {
             location_id: poi.location_id || "",
         });
         setEditingId(poi.id);
+        setShowEditForm(true);
+        // Set up image preview for existing POI image
+        if (poi.image_url) {
+            const API_BASE = import.meta.env.VITE_API_BASE;
+            const baseUrl = API_BASE.replace('/api', '');
+            setImagePreview(`${baseUrl}${poi.image_url}`);
+        } else {
+            setImagePreview(null);
+        }
+        setSelectedImage(null);
     };
 
-    // Reset form
+    // Function to reset form to initial state
     const resetForm = () => {
         setFormData({
             name: "",
@@ -86,9 +124,11 @@ export default function PointsOfInterest() {
             location_id: "",
         });
         setEditingId(null);
+        setSelectedImage(null);
+        setImagePreview(null);
     };
 
-    // Handle input changes
+    // Function to handle input changes in the form
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData((prev) => ({
@@ -97,184 +137,124 @@ export default function PointsOfInterest() {
         }));
     };
 
+    // Function to handle image file selection
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedImage(file);
+            // Create preview URL using FileReader
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    // useEffect hook - Load POIs on component mount
     useEffect(() => {
         fetchPois();
     }, []);
 
+    // useEffect hook - Fetch weather data for all POIs when POI list changes
+    useEffect(() => {
+        async function fetchWeatherForPois() {
+            // Create array of promises to fetch weather for each POI
+            const entries = await Promise.all(
+                pois.map(async (poi) => {
+                    // Skip POIs without coordinates
+                    if (!poi.latitude || !poi.longitude) return [poi.id, null];
+                    try {
+                        // Get OpenWeatherMap API key
+                        const OPENWEATHER_API_KEY = import.meta.env
+                            .VITE_OPENWEATHER_API_KEY;
+                        // Fetch weather data for POI coordinates
+                        const res = await fetch(
+                            `https://api.openweathermap.org/data/2.5/weather?lat=${poi.latitude}&lon=${poi.longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`
+                        );
+                        const data = await res.json();
+                        // Return weather data for this POI
+                        return [
+                            poi.id,
+                            {
+                                temp: data.main?.temp ?? null,
+                                description:
+                                    data.weather?.[0]?.description ?? "",
+                            },
+                        ];
+                    } catch {
+                        // Return null if weather fetch fails
+                        return [poi.id, null];
+                    }
+                })
+            );
+            // Convert array of entries to object
+            setWeatherData(Object.fromEntries(entries));
+        }
+        // Only fetch weather if there are POIs
+        if (pois.length > 0) {
+            fetchWeatherForPois();
+        }
+    }, [pois]);
+
+    // Return the JSX structure
     return (
-        <div className="pois-container">
-            <h1>Gestión de Puntos de Interés</h1>
-
-            {error && <div className="error-message">{error}</div>}
-
-            {/* Form */}
-            <div className="form-section">
-                <h2>{editingId ? "Editar POI" : "Crear Nuevo POI"}</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="name">Nombre *</label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            required
-                            placeholder="Nombre del punto de interés"
-                        />
+        // Main container with gray background and padding
+        <div className="min-h-screen bg-gray-50 py-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Header section with title and POI count */}
+                <div className="flex items-center justify-between mb-6">
+                    <h1 className="text-2xl font-extrabold text-[#0f6fb9]">
+                        Points of Interest
+                    </h1>
+                    <div className="text-sm text-gray-600">
+                        {pois.length} puntos
                     </div>
+                </div>
 
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label htmlFor="latitude">Latitud</label>
-                            <input
-                                type="number"
-                                id="latitude"
-                                name="latitude"
-                                value={formData.latitude}
-                                onChange={handleInputChange}
-                                step="any"
-                                placeholder="28.1234567"
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="longitude">Longitud</label>
-                            <input
-                                type="number"
-                                id="longitude"
-                                name="longitude"
-                                value={formData.longitude}
-                                onChange={handleInputChange}
-                                step="any"
-                                placeholder="-15.1234567"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="description">Descripción</label>
-                        <textarea
-                            id="description"
-                            name="description"
-                            value={formData.description}
-                            onChange={handleInputChange}
-                            placeholder="Descripción del punto de interés"
-                            rows="3"
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="location_id">ID de Ubicación</label>
-                        <input
-                            type="text"
-                            id="location_id"
-                            name="location_id"
-                            value={formData.location_id}
-                            onChange={handleInputChange}
-                            placeholder="UUID de la ubicación (opcional)"
-                        />
-                    </div>
-
-                    <div className="form-group checkbox-group">
-                        <label>
-                            <input
-                                type="checkbox"
-                                name="is_global"
-                                checked={formData.is_global}
-                                onChange={handleInputChange}
-                            />
-                            Es POI global
-                        </label>
-                    </div>
-
-                    <div className="form-actions">
-                        <button type="submit" disabled={loading}>
-                            {loading
-                                ? "Guardando..."
-                                : editingId
-                                ? "Actualizar"
-                                : "Crear"}
-                        </button>
-                        {editingId && (
-                            <button
-                                type="button"
-                                onClick={resetForm}
-                                className="btn-secondary"
-                            >
-                                Cancelar
-                            </button>
-                        )}
-                    </div>
-                </form>
-            </div>
-
-            {/* POIs List */}
-            <div className="list-section">
-                <h2>Lista de POIs</h2>
-                {loading && <div className="loading">Cargando...</div>}
-
-                {pois.length === 0 ? (
-                    <p>No hay puntos de interés registrados</p>
-                ) : (
-                    <div className="pois-grid">
-                        {pois.map((poi) => (
-                            <div key={poi.id} className="poi-card">
-                                <div className="poi-header">
-                                    <h3>{poi.name}</h3>
-                                    <div className="poi-actions">
-                                        <button
-                                            onClick={() => handleEdit(poi)}
-                                            className="btn-edit"
-                                        >
-                                            Editar
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(poi.id)}
-                                            className="btn-delete"
-                                        >
-                                            Eliminar
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div className="poi-info">
-                                    {poi.latitude && poi.longitude && (
-                                        <p>
-                                            <strong>Coordenadas:</strong>{" "}
-                                            {poi.latitude}, {poi.longitude}
-                                        </p>
-                                    )}
-                                    {poi.description && (
-                                        <p>
-                                            <strong>Descripción:</strong>{" "}
-                                            {poi.description}
-                                        </p>
-                                    )}
-                                    <p>
-                                        <strong>Global:</strong>{" "}
-                                        {poi.is_global ? "Sí" : "No"}
-                                    </p>
-                                    {poi.location_id && (
-                                        <p>
-                                            <strong>Ubicación ID:</strong>{" "}
-                                            {poi.location_id}
-                                        </p>
-                                    )}
-                                    <p>
-                                        <strong>ID:</strong> {poi.id}
-                                    </p>
-                                    <p>
-                                        <strong>Creado:</strong>{" "}
-                                        {new Date(
-                                            poi.createdAt
-                                        ).toLocaleDateString()}
-                                    </p>
-                                </div>
-                            </div>
-                        ))}
+                {/* Error message display */}
+                {error && (
+                    <div className="mb-4 p-3 rounded-md bg-[#fff1f0] border border-[#ffd6d6] text-[#c53030]">
+                        {error}
                     </div>
                 )}
+
+                {/* Conditional form display */}
+                {showEditForm && (
+                    <POIForm
+                        formData={formData}
+                        onChange={handleInputChange}
+                        onSubmit={handleSubmit}
+                        loading={loading}
+                        onCancel={() => {
+                            setShowEditForm(false);
+                            setEditingId(null);
+                        }}
+                        onImageChange={handleImageChange}
+                        imagePreview={imagePreview}
+                    />
+                )}
+
+                {/* POI cards grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {pois.length === 0 ? (
+                        // Empty state message
+                        <div className="col-span-full text-center text-gray-500">
+                            No hay puntos de interés registrados
+                        </div>
+                    ) : (
+                        // Render POI cards
+                        pois.map((poi) => (
+                            <POICard
+                                key={poi.id}
+                                poi={poi}
+                                weather={weatherData[poi.id]}
+                                onEdit={() => handleEdit(poi)}
+                                onDelete={() => handleDelete(poi.id)}
+                            />
+                        ))
+                    )}
+                </div>
             </div>
         </div>
     );

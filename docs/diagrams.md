@@ -1,6 +1,4 @@
-# canary_weather
-
-## Diagrams
+# Diagrams
 
 ### Use case diagram
 
