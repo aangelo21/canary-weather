@@ -18,6 +18,13 @@ const DB_PORT = parseInt(process.env.DB_PORT || "3306", 10);
 const DB_NAME = process.env.DB_NAME || process.env.MYSQL_DATABASE;
 const DB_USER = process.env.DB_USERNAME || process.env.DB_USER;
 const DB_PASS = process.env.DB_PASSWORD;
+
+console.log('=== DB Configuration Debug ===');
+console.log('DB_HOST:', DB_HOST);
+console.log('DB_PORT:', DB_PORT);
+console.log('DB_NAME:', DB_NAME);
+console.log('DB_USER:', DB_USER);
+console.log('==============================');
 // Default path to SSL CA certificate
 const defaultCaPath = path.resolve(
     __dirname,
