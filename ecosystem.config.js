@@ -3,16 +3,17 @@ module.exports = {
     {
       name: 'backend',
       cwd: './backend',
-      script: 'node',
-      args: 'index.js',
-      env_file: '.env'
+      script: 'index.js',
+      interpreter: 'node',
+      env: {
+        NODE_ENV: 'production'
+      }
     },
     {
       name: 'frontend',
       cwd: './frontend',
       script: 'npm',
-      args: 'run dev -- --host 0.0.0.0',
-      env_file: '.env'
+      args: 'run dev -- --host 0.0.0.0'
     }
   ]
 };
