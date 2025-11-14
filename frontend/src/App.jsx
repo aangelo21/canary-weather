@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 // Import main application styles
 import "./App.css";
 // Import page components
-import PointsOfInterest from "./Pages/PointsOfInterest";
+import PointsOfInterest from "./pages/PointsOfInterest";
 import Layout from "./layout/Layout";
 import Home from "./pages/Home";
 import Map from "./pages/Map";
