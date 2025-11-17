@@ -19,44 +19,44 @@ function WeatherPopup({ position, weather, markerRef }) {
     // State for save operation loading
     const [saving, setSaving] = useState(false);
 
-    // useEffect hook - Ensures popup opens when data is available
-    useEffect(() => {
-        if (popupRef.current && markerRef?.current) {
-            markerRef.current.openPopup();
-        }
-    }, [position, weather, markerRef]);
+  // useEffect hook - Ensures popup opens when data is available
+  useEffect(() => {
+    if (popupRef.current && markerRef?.current) {
+      markerRef.current.openPopup();
+    }
+  }, [position, weather, markerRef]);
 
-    // Early return if required props are missing
-    if (!position || !weather) return null;
+  // Early return if required props are missing
+  if (!position || !weather) return null;
 
-    // Function to save the clicked location as a POI
-    const handleSavePoi = async () => {
-        setSaving(true);
-        try {
-            // Create POI with coordinates as name and basic data
-            await createOrUpdatePoi({
-                name: `POI ${position[0].toFixed(4)},${position[1].toFixed(4)}`,
-                latitude: position[0],
-                longitude: position[1],
-                description: "",
-                is_global: false,  // Local POI by default
-            });
-            // Mark as saved to update UI
-            setSaved(true);
-        } catch {
-            // Optional error handling - could show error message
-        }
-        setSaving(false);
-    };
+  // Function to save the clicked location as a POI
+  const handleSavePoi = async () => {
+    setSaving(true);
+    try {
+      // Create POI with coordinates as name and basic data
+      await createOrUpdatePoi({
+        name: `POI ${position[0].toFixed(4)},${position[1].toFixed(4)}`,
+        latitude: position[0],
+        longitude: position[1],
+        description: "",
+        is_global: false, // Local POI by default
+      });
+      // Mark as saved to update UI
+      setSaved(true);
+    } catch {
+      // Optional error handling - could show error message
+    }
+    setSaving(false);
+  };
 
-    // Return the Popup JSX structure
-    return (
-        // Leaflet Popup component positioned at clicked coordinates
-        <Popup position={position} ref={popupRef}>
-            {/* Popup content container */}
-            <div className="p-2 text-center">
-                {/* Main temperature display */}
-                <span className="text-lg font-semibold">{weather.temp}°C</span>
+  // Return the Popup JSX structure
+  return (
+    // Leaflet Popup component positioned at clicked coordinates
+    <Popup position={position} ref={popupRef}>
+      {/* Popup content container */}
+      <div className="p-2 text-center">
+        {/* Main temperature display */}
+        <span className="text-lg font-semibold">{weather.temp}°C</span>
 
                 {/* Weather details section */}
                 <div className="text-sm mt-1">

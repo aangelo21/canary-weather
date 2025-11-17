@@ -2,12 +2,12 @@
 import express from "express";
 // Import controller functions for POI operations
 import {
-    getAllPointsOfInterest,
-    getPointOfInterestById,
-    createPointOfInterest,
-    updatePointOfInterest,
-    deletePointOfInterest,
-    getPointsByLocation,
+  getAllPointsOfInterest,
+  getPointOfInterestById,
+  createPointOfInterest,
+  updatePointOfInterest,
+  deletePointOfInterest,
+  getPointsByLocation,
 } from "../controllers/pointOfInterestController.js";
 // Import multer middleware for POI image uploads
 import { uploadPOI } from "../middleware/uploadMiddleware.js";

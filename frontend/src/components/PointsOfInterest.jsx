@@ -5,9 +5,9 @@
 
 import { useState, useEffect } from "react";
 import {
-    fetchPois as fetchPoisService,
-    createOrUpdatePoi,
-    deletePoi as deletePoiService,
+  fetchPois as fetchPoisService,
+  createOrUpdatePoi,
+  deletePoi as deletePoiService,
 } from "../services/poiService";
 import POIForm from "./POIForm";
 import POICard from "./POICard";
@@ -42,39 +42,39 @@ export default function PointsOfInterest() {
     // State for image preview URL
     const [imagePreview, setImagePreview] = useState(null);
 
-    // Function to fetch all POIs from the API
-    const fetchPois = async () => {
-        try {
-            setLoading(true);
-            const data = await fetchPoisService();
-            setPois(data);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+  // Function to fetch all POIs from the API
+  const fetchPois = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchPoisService();
+      setPois(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // Function to handle form submission for creating/updating POIs
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError("");
-        try {
-            // Call API to create or update POI with optional image
-            await createOrUpdatePoi(formData, editingId, selectedImage);
-            // Reset form and hide it
-            resetForm();
-            setShowEditForm(false);
-            setEditingId(null);
-            // Refresh POI list
-            fetchPois();
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+  // Function to handle form submission for creating/updating POIs
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      // Call API to create or update POI with optional image
+      await createOrUpdatePoi(formData, editingId, selectedImage);
+      // Reset form and hide it
+      resetForm();
+      setShowEditForm(false);
+      setEditingId(null);
+      // Refresh POI list
+      fetchPois();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
     // Function to handle POI deletion
     const handleDelete = async (id) => {
@@ -92,112 +92,111 @@ export default function PointsOfInterest() {
         }
     };
 
-    // Function to handle editing a POI - populates form with POI data
-    const handleEdit = (poi) => {
-        setFormData({
-            name: poi.name,
-            latitude: poi.latitude?.toString() || "",
-            longitude: poi.longitude?.toString() || "",
-            description: poi.description || "",
-            is_global: poi.is_global,
-            location_id: poi.location_id || "",
-        });
-        setEditingId(poi.id);
-        setShowEditForm(true);
-        // Set up image preview for existing POI image
-        if (poi.image_url) {
-            const API_BASE = import.meta.env.VITE_API_BASE;
-            const baseUrl = API_BASE.replace('/api', '');
-            setImagePreview(`${baseUrl}${poi.image_url}`);
-        } else {
-            setImagePreview(null);
-        }
-        setSelectedImage(null);
-    };
+  // Function to handle editing a POI - populates form with POI data
+  const handleEdit = (poi) => {
+    setFormData({
+      name: poi.name,
+      latitude: poi.latitude?.toString() || "",
+      longitude: poi.longitude?.toString() || "",
+      description: poi.description || "",
+      is_global: poi.is_global,
+      location_id: poi.location_id || "",
+    });
+    setEditingId(poi.id);
+    setShowEditForm(true);
+    // Set up image preview for existing POI image
+    if (poi.image_url) {
+      const API_BASE = import.meta.env.VITE_API_BASE;
+      const baseUrl = API_BASE.replace("/api", "");
+      setImagePreview(`${baseUrl}${poi.image_url}`);
+    } else {
+      setImagePreview(null);
+    }
+    setSelectedImage(null);
+  };
 
-    // Function to reset form to initial state
-    const resetForm = () => {
-        setFormData({
-            name: "",
-            latitude: "",
-            longitude: "",
-            description: "",
-            is_global: false,
-            location_id: "",
-        });
-        setEditingId(null);
-        setSelectedImage(null);
-        setImagePreview(null);
-    };
+  // Function to reset form to initial state
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      latitude: "",
+      longitude: "",
+      description: "",
+      is_global: false,
+      location_id: "",
+    });
+    setEditingId(null);
+    setSelectedImage(null);
+    setImagePreview(null);
+  };
 
-    // Function to handle input changes in the form
-    const handleInputChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: type === "checkbox" ? checked : value,
-        }));
-    };
+  // Function to handle input changes in the form
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
 
-    // Function to handle image file selection
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setSelectedImage(file);
-            // Create preview URL using FileReader
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+  // Function to handle image file selection
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      // Create preview URL using FileReader
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
-    // useEffect hook - Load POIs on component mount
-    useEffect(() => {
-        fetchPois();
-    }, []);
+  // useEffect hook - Load POIs on component mount
+  useEffect(() => {
+    fetchPois();
+  }, []);
 
-    // useEffect hook - Fetch weather data for all POIs when POI list changes
-    useEffect(() => {
-        async function fetchWeatherForPois() {
-            // Create array of promises to fetch weather for each POI
-            const entries = await Promise.all(
-                pois.map(async (poi) => {
-                    // Skip POIs without coordinates
-                    if (!poi.latitude || !poi.longitude) return [poi.id, null];
-                    try {
-                        // Get OpenWeatherMap API key
-                        const OPENWEATHER_API_KEY = import.meta.env
-                            .VITE_OPENWEATHER_API_KEY;
-                        // Fetch weather data for POI coordinates
-                        const res = await fetch(
-                            `https://api.openweathermap.org/data/2.5/weather?lat=${poi.latitude}&lon=${poi.longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`
-                        );
-                        const data = await res.json();
-                        // Return weather data for this POI
-                        return [
-                            poi.id,
-                            {
-                                temp: data.main?.temp ?? null,
-                                description:
-                                    data.weather?.[0]?.description ?? "",
-                            },
-                        ];
-                    } catch {
-                        // Return null if weather fetch fails
-                        return [poi.id, null];
-                    }
-                })
+  // useEffect hook - Fetch weather data for all POIs when POI list changes
+  useEffect(() => {
+    async function fetchWeatherForPois() {
+      // Create array of promises to fetch weather for each POI
+      const entries = await Promise.all(
+        pois.map(async (poi) => {
+          // Skip POIs without coordinates
+          if (!poi.latitude || !poi.longitude) return [poi.id, null];
+          try {
+            // Get OpenWeatherMap API key
+            const OPENWEATHER_API_KEY = import.meta.env
+              .VITE_OPENWEATHER_API_KEY;
+            // Fetch weather data for POI coordinates
+            const res = await fetch(
+              `https://api.openweathermap.org/data/2.5/weather?lat=${poi.latitude}&lon=${poi.longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`
             );
-            // Convert array of entries to object
-            setWeatherData(Object.fromEntries(entries));
-        }
-        // Only fetch weather if there are POIs
-        if (pois.length > 0) {
-            fetchWeatherForPois();
-        }
-    }, [pois]);
+            const data = await res.json();
+            // Return weather data for this POI
+            return [
+              poi.id,
+              {
+                temp: data.main?.temp ?? null,
+                description: data.weather?.[0]?.description ?? "",
+              },
+            ];
+          } catch {
+            // Return null if weather fetch fails
+            return [poi.id, null];
+          }
+        })
+      );
+      // Convert array of entries to object
+      setWeatherData(Object.fromEntries(entries));
+    }
+    // Only fetch weather if there are POIs
+    if (pois.length > 0) {
+      fetchWeatherForPois();
+    }
+  }, [pois]);
 
     // Return the JSX structure
     return (
@@ -214,28 +213,28 @@ export default function PointsOfInterest() {
                     </div>
                 </div>
 
-                {/* Error message display */}
-                {error && (
-                    <div className="mb-4 p-3 rounded-md bg-[#fff1f0] border border-[#ffd6d6] text-[#c53030]">
-                        {error}
-                    </div>
-                )}
+        {/* Error message display */}
+        {error && (
+          <div className="mb-4 p-3 rounded-md bg-[#fff1f0] border border-[#ffd6d6] text-[#c53030]">
+            {error}
+          </div>
+        )}
 
-                {/* Conditional form display */}
-                {showEditForm && (
-                    <POIForm
-                        formData={formData}
-                        onChange={handleInputChange}
-                        onSubmit={handleSubmit}
-                        loading={loading}
-                        onCancel={() => {
-                            setShowEditForm(false);
-                            setEditingId(null);
-                        }}
-                        onImageChange={handleImageChange}
-                        imagePreview={imagePreview}
-                    />
-                )}
+        {/* Conditional form display */}
+        {showEditForm && (
+          <POIForm
+            formData={formData}
+            onChange={handleInputChange}
+            onSubmit={handleSubmit}
+            loading={loading}
+            onCancel={() => {
+              setShowEditForm(false);
+              setEditingId(null);
+            }}
+            onImageChange={handleImageChange}
+            imagePreview={imagePreview}
+          />
+        )}
 
                 {/* POI cards grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -258,6 +257,20 @@ export default function PointsOfInterest() {
                     )}
                 </div>
             </div>
+          ) : (
+            // Render POI cards
+            pois.map((poi) => (
+              <POICard
+                key={poi.id}
+                poi={poi}
+                weather={weatherData[poi.id]}
+                onEdit={() => handleEdit(poi)}
+                onDelete={() => handleDelete(poi.id)}
+              />
+            ))
+          )}
         </div>
-    );
+      </div>
+    </div>
+  );
 }

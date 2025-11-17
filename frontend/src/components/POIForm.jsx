@@ -6,13 +6,13 @@
 import { useTranslation } from "react-i18next";
 
 export default function POIForm({
-    formData,      // Current form data object
-    onChange,      // Function to handle input changes
-    onSubmit,      // Function to handle form submission
-    loading,       // Loading state for submit button
-    onCancel,      // Function to cancel editing
-    onImageChange, // Function to handle image file selection
-    imagePreview,  // URL for image preview
+  formData, // Current form data object
+  onChange, // Function to handle input changes
+  onSubmit, // Function to handle form submission
+  loading, // Loading state for submit button
+  onCancel, // Function to cancel editing
+  onImageChange, // Function to handle image file selection
+  imagePreview, // URL for image preview
 }) {
     const { t } = useTranslation();
     return (
@@ -96,5 +96,7 @@ export default function POIForm({
                 </div>
             </form>
         </div>
-    );
+      </form>
+    </div>
+  );
 }

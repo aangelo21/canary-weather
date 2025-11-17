@@ -14,14 +14,14 @@ import sequelize from "../controllers/dbController.js";
 // Define many-to-many relationship between User and Location through UserLocation junction table
 // Users can have multiple favorite locations, locations can be favorited by multiple users
 User.belongsToMany(Location, {
-    through: UserLocation,
-    foreignKey: "user_id",
-    otherKey: "location_id",
+  through: UserLocation,
+  foreignKey: "user_id",
+  otherKey: "location_id",
 });
 Location.belongsToMany(User, {
-    through: UserLocation,
-    foreignKey: "location_id",
-    otherKey: "user_id",
+  through: UserLocation,
+  foreignKey: "location_id",
+  otherKey: "user_id",
 });
 // Define one-to-many relationships for UserLocation junction table
 User.hasMany(UserLocation, { foreignKey: "user_id" });
@@ -32,23 +32,23 @@ UserLocation.belongsTo(Location, { foreignKey: "location_id" });
 // Define many-to-many relationship between User and PointOfInterest through UserPointOfInterest junction table
 // Users can have multiple favorite POIs, POIs can be favorited by multiple users
 User.belongsToMany(PointOfInterest, {
-    through: UserPointOfInterest,
-    foreignKey: "user_id",
-    otherKey: "point_of_interest_id",
+  through: UserPointOfInterest,
+  foreignKey: "user_id",
+  otherKey: "point_of_interest_id",
 });
 PointOfInterest.belongsToMany(User, {
-    through: UserPointOfInterest,
-    foreignKey: "point_of_interest_id",
-    otherKey: "user_id",
+  through: UserPointOfInterest,
+  foreignKey: "point_of_interest_id",
+  otherKey: "user_id",
 });
 // Define one-to-many relationships for UserPointOfInterest junction table
 User.hasMany(UserPointOfInterest, { foreignKey: "user_id" });
 UserPointOfInterest.belongsTo(User, { foreignKey: "user_id" });
 PointOfInterest.hasMany(UserPointOfInterest, {
-    foreignKey: "point_of_interest_id",
+  foreignKey: "point_of_interest_id",
 });
 UserPointOfInterest.belongsTo(PointOfInterest, {
-    foreignKey: "point_of_interest_id",
+  foreignKey: "point_of_interest_id",
 });
 
 // Define one-to-many relationship between Location and Forecast
@@ -83,14 +83,14 @@ Location.hasMany(PointOfInterest, { foreignKey: "location_id" });
 
 // Export Sequelize instance and all model classes for use in other parts of the application
 export {
-    sequelize,
-    User,
-    Location,
-    PointOfInterest,
-    Forecast,
-    Alert,
-    Tide,
-    CoastCode,
-    UserPointOfInterest,
-    UserLocation,
+  sequelize,
+  User,
+  Location,
+  PointOfInterest,
+  Forecast,
+  Alert,
+  Tide,
+  CoastCode,
+  UserPointOfInterest,
+  UserLocation,
 };

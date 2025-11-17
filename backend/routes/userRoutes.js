@@ -3,13 +3,13 @@ import express from "express";
 
 // Import controller functions for user operations
 import {
-    getAllUsers,
-    getUserById,
-    createUser,
-    updateUser,
-    deleteUser,
-    loginUser,
-    getCurrentUser,
+  getAllUsers,
+  getUserById,
+  createUser,
+  updateUser,
+  deleteUser,
+  loginUser,
+  getCurrentUser,
 } from "../controllers/userController.js";
 
 // Import multer middleware for profile picture uploads
@@ -32,7 +32,12 @@ router.get("/:id", authenticateToken, getUserById);
 // Public route to create a new user
 router.post("/", createUser);
 // Protected route to update a user, with profile picture upload middleware
-router.put("/:id", authenticateToken, upload.single("profile_picture"), updateUser);
+router.put(
+  "/:id",
+  authenticateToken,
+  upload.single("profile_picture"),
+  updateUser
+);
 // Protected route to delete a user
 router.delete("/:id", authenticateToken, deleteUser);
 

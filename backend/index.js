@@ -37,7 +37,7 @@ app.use("/api/users", userRoutes);
 
 // Health check endpoint to verify server status
 app.get("/api/health", (req, res) => {
-    res.json({ status: "OK", message: "CanaryWeather API is running" });
+  res.json({ status: "OK", message: "CanaryWeather API is running" });
 });
 
 // Asynchronous function to initialize database and start server

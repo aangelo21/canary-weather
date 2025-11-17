@@ -61,6 +61,9 @@ function Home() {
                     </div>
                 </div>
             </div>
+          </div>
+        </div>
+      </div>
 
             {/* Feature cards section - highlights key app features */}
             <div className="flex justify-center pb-10">
@@ -116,8 +119,11 @@ function Home() {
                     ))}
                 </div>
             </div>
+          ))}
         </div>
-    );
+      </div>
+    </div>
+  );
 }
 
 // Export the Home component as default
