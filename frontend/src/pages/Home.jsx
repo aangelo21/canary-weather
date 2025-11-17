@@ -61,11 +61,7 @@ function Home() {
                     </div>
                 </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-            {/* Feature cards section - highlights key app features */}
             <div className="flex justify-center pb-10">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-12">
                     {/* Array of feature cards with title, description, and icon */}
@@ -119,11 +115,8 @@ function Home() {
                     ))}
                 </div>
             </div>
-          ))}
         </div>
-      </div>
-    </div>
-  );
+    );
 }
 
 // Export the Home component as default

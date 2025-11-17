@@ -96,7 +96,5 @@ export default function POIForm({
                 </div>
             </form>
         </div>
-      </form>
-    </div>
-  );
+    );
 }
