@@ -72,8 +72,8 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
           <span
             className={`inline-block px-2 py-1 rounded text-xs font-medium ${
               poi.is_global
-                ? "bg-[#f2c200] text-black"  // Yellow badge for global POIs
-                : "bg-[#0f6fb9] text-white"   // Blue badge for local POIs
+                ? "bg-[#f2c200] text-black" // Yellow badge for global POIs
+                : "bg-[#0f6fb9] text-white" // Blue badge for local POIs
             }`}
           >
             {poi.is_global ? "GLOBAL" : "LOCAL"}

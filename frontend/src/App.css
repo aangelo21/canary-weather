@@ -2,24 +2,24 @@
 @import "@fontsource/poppins";
 
 @theme {
-    --color-brand-primary: #0768a9;
-    --color-brand-secondary: #ffcc00;
-    --color-accent-blue-100: #027fd2;
-    --color-accent-blue-200: #0c93ed;
-    --color-accent-blue-300: #5ebeff;
-    --color-accent-yellow-100: #ffe789;
-    --color-accent-yellow-200: #feeeb1;
-    --color-accent-yellow-300: #fff5d1;
-    --color-info: #009ec1;
-    --color-error: #b50909;
-    --color-success: #00a91c;
-    --color-warning: #e5a000;
-    --color-neutral-1: #000000;
-    --color-neutral-2: #6f6d6d;
-    --color-neutral-3: #cfcccc;
-    --color-neutral-4: #ffffff;
+  --color-brand-primary: #0768a9;
+  --color-brand-secondary: #ffcc00;
+  --color-accent-blue-100: #027fd2;
+  --color-accent-blue-200: #0c93ed;
+  --color-accent-blue-300: #5ebeff;
+  --color-accent-yellow-100: #ffe789;
+  --color-accent-yellow-200: #feeeb1;
+  --color-accent-yellow-300: #fff5d1;
+  --color-info: #009ec1;
+  --color-error: #b50909;
+  --color-success: #00a91c;
+  --color-warning: #e5a000;
+  --color-neutral-1: #000000;
+  --color-neutral-2: #6f6d6d;
+  --color-neutral-3: #cfcccc;
+  --color-neutral-4: #ffffff;
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
