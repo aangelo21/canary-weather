@@ -4,33 +4,35 @@
 // It uses Tailwind CSS for styling and includes accessibility features like aria-labels.
 
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 // Footer component - A simple footer that appears at the bottom of all pages
 // Provides branding, copyright notice, and social media links for user engagement
 export default function Footer() {
-  // Return the footer JSX structure
-  // The footer has a primary brand background color, white text, padding, and a subtle shadow
-  return (
-    // Main footer element with brand styling and shadow effect
-    <footer className="bg-brand-primary text-white py-4 shadow-[0_-2px_6px_rgba(0,0,0,0.08)]">
-      {/* Container div with max width, auto margins, padding, and flexbox layout */}
-      {/* Uses flexbox to space copyright on left and social links on right */}
-      <div className="max-w-6xl mx-auto px-4 flex items-center justify-between gap-4">
-        {/* Left section: Copyright text and website link */}
-        <div className="text-sm">
-          {/* Copyright notice with brand name */}
-          ©CanaryWeather |{" "}
-          {/* External link to the main Canary Weather website */}
-          {/* Opens in new tab with security attributes */}
-          <a
-            href="https://canaryweather.com"
-            target="_blank"
-            rel="noreferrer"
-            className="underline underline-offset-2 hover:text-neutral-4"
-          >
-            canaryweather.com
-          </a>
-        </div>
+    const { t } = useTranslation();
+    // Return the footer JSX structure
+    // The footer has a primary brand background color, white text, padding, and a subtle shadow
+    return (
+        // Main footer element with brand styling and shadow effect
+        <footer className="bg-brand-primary text-white py-4 shadow-[0_-2px_6px_rgba(0,0,0,0.08)]">
+            {/* Container div with max width, auto margins, padding, and flexbox layout */}
+            {/* Uses flexbox to space copyright on left and social links on right */}
+            <div className="max-w-6xl mx-auto px-4 flex items-center justify-between gap-4">
+                {/* Left section: Copyright text and website link */}
+                <div className="text-sm">
+                    {/* Copyright notice with brand name */}
+                    {t('copyright')}{" "}
+                    {/* External link to the main Canary Weather website */}
+                    {/* Opens in new tab with security attributes */}
+                    <a
+                        href="https://canaryweather.com"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="underline underline-offset-2 hover:text-neutral-4"
+                    >
+                        {t('website')}
+                    </a>
+                </div>
 
         {/* Right section: Social media links container */}
         <div className="flex items-center gap-3">

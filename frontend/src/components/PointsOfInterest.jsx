@@ -11,34 +11,36 @@ import {
 } from "../services/poiService";
 import POIForm from "./POIForm";
 import POICard from "./POICard";
+import { useTranslation } from "react-i18next";
 
 // PointsOfInterest component - Main POI management interface
 export default function PointsOfInterest() {
-  // State for storing all POIs
-  const [pois, setPois] = useState([]);
-  // State for weather data associated with each POI
-  const [weatherData, setWeatherData] = useState({});
-  // State for form data when creating/editing POIs
-  const [formData, setFormData] = useState({
-    name: "",
-    latitude: "",
-    longitude: "",
-    description: "",
-    is_global: false,
-    location_id: "",
-  });
-  // State to control form visibility
-  const [showEditForm, setShowEditForm] = useState(false);
-  // State to track which POI is being edited (null for new POI)
-  const [editingId, setEditingId] = useState(null);
-  // State for loading indicators
-  const [loading, setLoading] = useState(false);
-  // State for error messages
-  const [error, setError] = useState("");
-  // State for selected image file
-  const [selectedImage, setSelectedImage] = useState(null);
-  // State for image preview URL
-  const [imagePreview, setImagePreview] = useState(null);
+    const { t } = useTranslation();
+    // State for storing all POIs
+    const [pois, setPois] = useState([]);
+    // State for weather data associated with each POI
+    const [weatherData, setWeatherData] = useState({});
+    // State for form data when creating/editing POIs
+    const [formData, setFormData] = useState({
+        name: "",
+        latitude: "",
+        longitude: "",
+        description: "",
+        is_global: false,
+        location_id: "",
+    });
+    // State to control form visibility
+    const [showEditForm, setShowEditForm] = useState(false);
+    // State to track which POI is being edited (null for new POI)
+    const [editingId, setEditingId] = useState(null);
+    // State for loading indicators
+    const [loading, setLoading] = useState(false);
+    // State for error messages
+    const [error, setError] = useState("");
+    // State for selected image file
+    const [selectedImage, setSelectedImage] = useState(null);
+    // State for image preview URL
+    const [imagePreview, setImagePreview] = useState(null);
 
   // Function to fetch all POIs from the API
   const fetchPois = async () => {
@@ -74,21 +76,21 @@ export default function PointsOfInterest() {
     }
   };
 
-  // Function to handle POI deletion
-  const handleDelete = async (id) => {
-    // Show confirmation dialog
-    if (!confirm("¿Estás seguro de eliminar este POI?")) return;
-    try {
-      setLoading(true);
-      await deletePoiService(id);
-      // Refresh POI list after deletion
-      fetchPois();
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Function to handle POI deletion
+    const handleDelete = async (id) => {
+        // Show confirmation dialog
+        if (!confirm(t('confirmDelete'))) return;
+        try {
+            setLoading(true);
+            await deletePoiService(id);
+            // Refresh POI list after deletion
+            fetchPois();
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
   // Function to handle editing a POI - populates form with POI data
   const handleEdit = (poi) => {
@@ -196,18 +198,20 @@ export default function PointsOfInterest() {
     }
   }, [pois]);
 
-  // Return the JSX structure
-  return (
-    // Main container with gray background and padding
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header section with title and POI count */}
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-extrabold text-[#0f6fb9]">
-            Points of Interest
-          </h1>
-          <div className="text-sm text-gray-600">{pois.length} puntos</div>
-        </div>
+    // Return the JSX structure
+    return (
+        // Main container with gray background and padding
+        <div className="min-h-screen bg-gray-50 py-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Header section with title and POI count */}
+                <div className="flex items-center justify-between mb-6">
+                    <h1 className="text-2xl font-extrabold text-[#0f6fb9]">
+                        {t('pointsOfInterest')}
+                    </h1>
+                    <div className="text-sm text-gray-600">
+                        {pois.length} {t('points')}
+                    </div>
+                </div>
 
         {/* Error message display */}
         {error && (
@@ -232,12 +236,26 @@ export default function PointsOfInterest() {
           />
         )}
 
-        {/* POI cards grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {pois.length === 0 ? (
-            // Empty state message
-            <div className="col-span-full text-center text-gray-500">
-              No hay puntos de interés registrados
+                {/* POI cards grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {pois.length === 0 ? (
+                        // Empty state message
+                        <div className="col-span-full text-center text-gray-500">
+                            {t('noPois')}
+                        </div>
+                    ) : (
+                        // Render POI cards
+                        pois.map((poi) => (
+                            <POICard
+                                key={poi.id}
+                                poi={poi}
+                                weather={weatherData[poi.id]}
+                                onEdit={() => handleEdit(poi)}
+                                onDelete={() => handleDelete(poi.id)}
+                            />
+                        ))
+                    )}
+                </div>
             </div>
           ) : (
             // Render POI cards

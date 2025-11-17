@@ -42,21 +42,21 @@ app.get("/api/health", (req, res) => {
 
 // Asynchronous function to initialize database and start server
 (async () => {
-  try {
-    // Test database connection
-    await sequelize.authenticate();
-    console.log("Connection has been established successfully.");
+    try {
+        // Test database connection
+        await sequelize.authenticate();
+        console.log("Connection has been established successfully.");
 
-    // Synchronize models with database (create tables if they don't exist)
-    await sequelize.sync({ force: false });
-    console.log("All models were synchronized successfully.");
+        // Synchronize models with database (create tables if they don't exist)
+        await sequelize.sync({ alter: true });
+        console.log("All models were synchronized successfully.");
 
-    // Start the server and listen on the specified port
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
-  } catch (error) {
-    // Log any errors during database connection or sync
-    console.error("Unable to connect to the database:", error);
-  }
+        // Start the server and listen on the specified port
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
+    } catch (error) {
+        // Log any errors during database connection or sync
+        console.error("Unable to connect to the database:", error);
+    }
 })();
