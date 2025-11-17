@@ -45,10 +45,7 @@ A --> UC5
 
 ```plantuml
 @startuml Class Diagram
-
-' Rosa = Gabriel, Azul = Angelo
-
-class User #0066CC {
+class User {
     -id: String (PK)
     -email: String
     -username: String
@@ -57,7 +54,7 @@ class User #0066CC {
     +login()
 }
 
-class Location #0066CC {
+class Location {
     -id: String (PK)
     -aemet_code: String
     -name: String
@@ -67,31 +64,17 @@ class Location #0066CC {
     -coast_code_id: String (FK -> coast_code.id)
 }
 
-class UserLocation #0066CC {
-    -user_id: String (PK, FK -> user.id)
-    -location_id: String (PK, FK -> location.id)
-    -selected_at: DateTime
-}
-
-class Tide #0066CC {
-    -id: String (PK)
-    -timestamp: DateTime
-    -height: Double
-    -location_id: String (FK -> location.id)
-    -coast_code_id: String (FK -> coast_code.id)
-}
-
-class PointOfInterest #FF69B4 {
+class PointOfInterest {
     -id: String (PK)
     -name: String
     -latitude: Double
     -longitude: Double
     -description: String
     -is_global: Boolean
-    -location_id: String (FK -> location.id)
+    -location_id: String (FK -> location.id)  ' optional
 }
 
-class Forecast #FF69B4 {
+class Forecast {
     -id: String (PK)
     -temperature: Double
     -wind: String
@@ -100,7 +83,7 @@ class Forecast #FF69B4 {
     -location_id: String (FK -> location.id)
 }
 
-class Alert #FF69B4 {
+class Alert {
     -id: String (PK)
     -level: String
     -phenomenon: String
@@ -109,17 +92,31 @@ class Alert #FF69B4 {
     -location_id: String (FK -> location.id)
 }
 
-class CoastCode #FF69B4 {
+class Tide {
+    -id: String (PK)
+    -timestamp: DateTime
+    -height: Double
+    -location_id: String (FK -> location.id)
+    -coast_code_id: String (FK -> coast_code.id)
+}
+
+class CoastCode {
     -id: String (PK)
     -code: String
     -name: String
     -description: String
 }
 
-class UserPointOfInterest #FF69B4 {
+class UserPointOfInterest {
     -user_id: String (PK, FK -> user.id)
     -point_of_interest_id: String (PK, FK -> point_of_interest.id)
     -favorited_at: DateTime
+}
+
+class UserLocation {
+    -user_id: String (PK, FK -> user.id)
+    -location_id: String (PK, FK -> location.id)
+    -selected_at: DateTime
 }
 
 ' User relationships
@@ -140,7 +137,6 @@ Location "0..1" -- "0..1" CoastCode : may reference >
 
 ' POIs can optionally be linked to a location
 PointOfInterest "0..*" .. "0..1" Location : near >
-
 @enduml
 ```
 
@@ -223,4 +219,14 @@ erDiagram
 
     COAST_CODE ||--o{ TIDE : "associated_with"
     LOCATION }o--|| COAST_CODE : "may_reference (0..1)"
+
+    %% Estilos
+    style USER fill:#8B0000,stroke:#fff,color:#000000
+    style LOCATION fill:#8B0000,stroke:#fff,color:#000000
+    style ALERT fill:#8B0000,stroke:#fff,color:#000000
+    style TIDE fill:#8B0000,stroke:#fff,color:#000000
+    style POINT_OF_INTEREST fill:#00008B,stroke:#fff,color:#000000
+    style USER_POINT_OF_INTEREST fill:#00008B,stroke:#fff,color:#000000
+    style FORECAST fill:#00008B,stroke:#fff,color:#000000
+    style COAST_CODE fill:#00008B,stroke:#fff,color:#000000
 ```
