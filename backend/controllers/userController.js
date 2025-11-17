@@ -132,8 +132,8 @@ export const updateUser = async (req, res) => {
       payload.profile_picture_url = `/uploads/profile-pictures/${req.file.filename}`;
     }
 
-    // Update user with provided data
-    await User.update(payload, { where: { id } });
+    // Update user with provided data, enabling individualHooks to trigger beforeUpdate
+    await User.update(payload, { where: { id }, individualHooks: true });
     // Fetch updated user, excluding password
     const updated = await User.findByPk(id, {
       attributes: { exclude: ["password"] },
