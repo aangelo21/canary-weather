@@ -130,7 +130,6 @@ export default function LoginModal({
             </>
         );
     }
-  }, [user, isOpen]);
 
     // Render account editing modal when user is logged in
     if (user) {
@@ -274,631 +273,287 @@ export default function LoginModal({
         );
     }
 
-  // Render account editing modal when user is logged in
-  if (user) {
+    // Render main login/signup modal
     return (
-      <>
-        <div className="fixed inset-0 z-9998" onClick={onClose}></div>
-        <div
-          className="fixed inset-0 flex items-center justify-center z-9999 p-4"
-          onClick={onClose}
-        >
-          <div
-            className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              onClick={onClose}
-              type="button"
+        <>
+            {/* Backdrop overlay */}
+            <div className="fixed inset-0 z-9998" onClick={onClose}></div>
+            {/* Modal container */}
+            <div
+                className="fixed inset-0 flex items-center justify-center z-9999 p-4"
+                onClick={onClose}
             >
-              &times;
-            </button>
-            <h2 className="text-xl font-semibold mb-4 text-center">
-              Editar Cuenta
-            </h2>
-            {error && (
-              <div className="text-error text-sm mb-2 text-center">{error}</div>
-            )}
-            {loading && (
-              <div className="text-info text-sm mb-2 text-center">
-                Procesando...
-              </div>
-            )}
-            {/* Account update form */}
-            <form
-              className="flex flex-col gap-4"
-              onSubmit={async (e) => {
-                e.preventDefault();
-                setError("");
-                // Validate password confirmation if password is being changed
-                if (input.password && input.password !== input.confirm) {
-                  setError("Las contraseñas no coinciden");
-                  return;
-                }
-                setLoading(true);
-                try {
-                  // Build update data object with only changed fields
-                  const updateData = {};
-                  if (input.email.trim()) updateData.email = input.email;
-                  if (input.username.trim())
-                    updateData.username = input.username;
-                  if (input.password) updateData.password = input.password;
-                  // Call API to update user account
-                  const result = await createOrUpdateUser(updateData, user.id);
-                  setLoading(false);
-                  if (result) {
-                    // Update user state and close modal
-                    onLogin(result);
-                    onClose();
-                  }
-                } catch (err) {
-                  setLoading(false);
-                  setError(err.message || "Error al actualizar usuario");
-                }
-              }}
-            >
-              {/* Email input field */}
-              <input
-                type="email"
-                placeholder="Correo Electrónico"
-                className="border rounded px-3 py-2"
-                value={input.email}
-                onChange={(e) =>
-                  setInput((i) => ({
-                    ...i,
-                    email: e.target.value,
-                  }))
-                }
-              />
-              {/* Username input field */}
-              <input
-                type="text"
-                placeholder="Nombre de Usuario"
-                className="border rounded px-3 py-2"
-                value={input.username}
-                onChange={(e) =>
-                  setInput((i) => ({
-                    ...i,
-                    username: e.target.value,
-                  }))
-                }
-              />
-              {/* New password input (optional) */}
-              <input
-                type="password"
-                placeholder="Nueva Contraseña (opcional)"
-                className="border rounded px-3 py-2"
-                value={input.password}
-                onChange={(e) =>
-                  setInput((i) => ({
-                    ...i,
-                    password: e.target.value,
-                  }))
-                }
-              />
-              {/* Password confirmation input */}
-              <input
-                type="password"
-                placeholder="Confirmar Nueva Contraseña"
-                className="border rounded px-3 py-2"
-                value={input.confirm}
-                onChange={(e) =>
-                  setInput((i) => ({
-                    ...i,
-                    confirm: e.target.value,
-                  }))
-                }
-              />
-              {/* Submit button */}
-              <button
-                type="submit"
-                className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 w-full"
-                disabled={loading}
-              >
-                {loading ? "Actualizando..." : "Actualizar Cuenta"}
-              </button>
-            </form>
-            {/* Delete account button */}
-            <button
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 w-full mt-4"
-              onClick={() => setShowDeleteConfirm(true)}
-            >
-              Eliminar Cuenta
-            </button>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  // Render main login/signup modal
-  return (
-    <>
-      {/* Backdrop overlay */}
-      <div className="fixed inset-0 z-9998" onClick={onClose}></div>
-      {/* Modal container */}
-      <div
-        className="fixed inset-0 flex items-center justify-center z-9999 p-4"
-        onClick={onClose}
-      >
-        <div
-          className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Close button */}
-          <button
-            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-            onClick={onClose}
-            type="button"
-          >
-            &times;
-          </button>
-          {/* Mode toggle text */}
-          <div className="mb-2 text-sm text-center">
-            {!isSignUp ? (
-              <span>
-                ¿No tienes una cuenta con nosotros?{" "}
-                <button
-                  type="button"
-                  className="text-blue-600 hover:underline"
-                  onClick={() => setIsSignUp(true)}
+                <div
+                    className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative"
+                    onClick={(e) => e.stopPropagation()}
                 >
-                  Registrarse
-                </button>
-                {/* Mode toggle text */}
-                <div className="mb-2 text-sm text-center">
-                    {!isSignUp ? (
-                        <span>
-                            {t('noAccount')}{" "}
-                            <button
-                                type="button"
-                                className="text-blue-600 hover:underline"
-                                onClick={() => setIsSignUp(true)}
-                            >
-                                {t('signUp')}
-                            </button>
-                        </span>
-                    ) : (
-                        <span>
-                            {t('haveAccount')}{" "}
-                            <button
-                                type="button"
-                                className="text-blue-600 hover:underline"
-                                onClick={() => setIsSignUp(false)}
-                            >
-                                {t('signIn')}
-                            </button>
-                        </span>
-                    )}
-                </div>
-                {/* Modal title */}
-                <h2 className="text-xl font-semibold mb-4 text-center">
-                    {isSignUp ? t('signUp') : t('signIn')}
-                </h2>
-                {/* Error message display */}
-                {error && (
-                    <div className="text-error text-sm mb-2 text-center">
-                        {error}
-                    </div>
-                )}
-                {/* Loading message */}
-                {loading && (
-                    <div className="text-info text-sm mb-2 text-center">
-                        {t('processing')}
-                    </div>
-                )}
-                {/* Main authentication form */}
-                <form
-                    className="flex flex-col gap-4"
-                    onSubmit={async (e) => {
-                        e.preventDefault();
-                        setError("");
-                        if (isSignUp) {
-                            // Signup validation
-                            if (
-                                !input.email ||
-                                !input.username ||
-                                !input.password ||
-                                !input.confirm
-                            ) {
-                                setError(t('allFieldsRequired'));
-                                return;
-                            }
-                            if (input.password !== input.confirm) {
-                                setError(t('passwordsDontMatch'));
-                                return;
-                            }
-                            setLoading(true);
-                            try {
-                                // Call API to create new user account
-                                const result = await createOrUpdateUser({
-                                    email: input.email,
-                                    username: input.username,
-                                    password: input.password,
-                                });
-                                setLoading(false);
-                                if (result && result.token) {
-                                    // Store authentication token
-                                    localStorage.setItem(
-                                        "authToken",
-                                        result.token
-                                    );
-                                    // Build user object from response
-                                    let loggedUser = {
-                                        username: input.username,
-                                    };
-                                    if (result.user) loggedUser = result.user;
-                                    else if (
-                                        result.id ||
-                                        result.username ||
-                                        result.email
-                                    ) {
-                                        loggedUser = {
-                                            id: result.id,
-                                            username:
-                                                result.username ||
-                                                input.username,
-                                            email: result.email,
-                                        };
-                                    }
-                                    // Store user ID in localStorage
-                                    if (loggedUser.id)
-                                        localStorage.setItem(
-                                            "userId",
-                                            loggedUser.id
-                                        );
-                                    // Call onLogin callback
-                                    onLogin(loggedUser);
-                                } else {
-                                    onLogin(result);
-                                }
-                            } catch (err) {
-                                setLoading(false);
-                                setError(err.message || t('errorCreateUser'));
-                            }
-                        } else {
-                            // Login validation
-                            if (!input.emailOrUsername || !input.password) {
-                                setError(t('allFieldsRequired'));
-                                return;
-                            }
-                            setLoading(true);
-                            try {
-                                // Call API to authenticate user
-                                const result = await loginUser({
-                                    username: input.emailOrUsername,
-                                    password: input.password,
-                                });
-                                setLoading(false);
-                                if (result.token) {
-                                    // Store authentication token
-                                    localStorage.setItem(
-                                        "authToken",
-                                        result.token
-                                    );
-                                    // Build user object from response
-                                    let loggedUser = {
-                                        username: input.emailOrUsername,
-                                    };
-                                    if (result.user) loggedUser = result.user;
-                                    else if (
-                                        result.id ||
-                                        result.username ||
-                                        result.email
-                                    ) {
-                                        loggedUser = {
-                                            id: result.id,
-                                            username:
-                                                result.username ||
-                                                input.emailOrUsername,
-                                            email: result.email,
-                                        };
-                                    }
-                                    // Store user ID in localStorage
-                                    if (loggedUser.id)
-                                        localStorage.setItem(
-                                            "userId",
-                                            loggedUser.id
-                                        );
-                                    // Call onLogin callback
-                                    onLogin(loggedUser);
-                                } else {
-                                    setError(t('noTokenReceived'));
-                                }
-                            } catch (err) {
-                                setLoading(false);
-                                setError(err.message || t('errorSignIn'));
-                            }
-                        }
-                    }}
-                >
-                    {/* Conditional form fields based on signup/login mode */}
-                    {isSignUp ? (
-                        <>
-                            {/* Signup form fields */}
-                            <input
-                                type="email"
-                                placeholder={t('email')}
-                                className="border rounded px-3 py-2"
-                                value={input.email}
-                                onChange={(e) =>
-                                    setInput((i) => ({
-                                        ...i,
-                                        email: e.target.value,
-                                    }))
-                                }
-                            />
-                            <input
-                                type="text"
-                                placeholder={t('username')}
-                                className="border rounded px-3 py-2"
-                                value={input.username}
-                                onChange={(e) =>
-                                    setInput((i) => ({
-                                        ...i,
-                                        username: e.target.value,
-                                    }))
-                                }
-                            />
-                            <input
-                                type="password"
-                                placeholder={t('password')}
-                                className="border rounded px-3 py-2"
-                                value={input.password}
-                                onChange={(e) =>
-                                    setInput((i) => ({
-                                        ...i,
-                                        password: e.target.value,
-                                    }))
-                                }
-                            />
-                            <input
-                                type="password"
-                                placeholder={t('confirmPassword')}
-                                className="border rounded px-3 py-2"
-                                value={input.confirm}
-                                onChange={(e) =>
-                                    setInput((i) => ({
-                                        ...i,
-                                        confirm: e.target.value,
-                                    }))
-                                }
-                            />
-                        </>
-                    ) : (
-                        <>
-                            {/* Login form fields */}
-                            <input
-                                type="text"
-                                placeholder={t('emailOrUsername')}
-                                className="border rounded px-3 py-2"
-                                value={input.emailOrUsername}
-                                onChange={(e) =>
-                                    setInput((i) => ({
-                                        ...i,
-                                        emailOrUsername: e.target.value,
-                                    }))
-                                }
-                            />
-                            <input
-                                type="password"
-                                placeholder={t('password')}
-                                className="border rounded px-3 py-2"
-                                value={input.password}
-                                onChange={(e) =>
-                                    setInput((i) => ({
-                                        ...i,
-                                        password: e.target.value,
-                                    }))
-                                }
-                            />
-                        </>
-                    )}
-                    {/* Submit button */}
+                    {/* Close button */}
                     <button
-                        type="submit"
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                        onClick={onClose}
+                        type="button"
                     >
-                        {isSignUp ? t('signUp') : t('signIn')}
+                        &times;
                     </button>
-                </form>
+                    {/* Mode toggle text */}
+                    <div className="mb-2 text-sm text-center">
+                        {!isSignUp ? (
+                            <span>
+                                {t('noAccount')}{" "}
+                                <button
+                                    type="button"
+                                    className="text-blue-600 hover:underline"
+                                    onClick={() => setIsSignUp(true)}
+                                >
+                                    {t('signUp')}
+                                </button>
+                            </span>
+                        ) : (
+                            <span>
+                                {t('haveAccount')}{" "}
+                                <button
+                                    type="button"
+                                    className="text-blue-600 hover:underline"
+                                    onClick={() => setIsSignUp(false)}
+                                >
+                                    {t('signIn')}
+                                </button>
+                            </span>
+                        )}
+                    </div>
+                    {/* Modal title */}
+                    <h2 className="text-xl font-semibold mb-4 text-center">
+                        {isSignUp ? t('signUp') : t('signIn')}
+                    </h2>
+                    {/* Error message display */}
+                    {error && (
+                        <div className="text-error text-sm mb-2 text-center">
+                            {error}
+                        </div>
+                    )}
+                    {/* Loading message */}
+                    {loading && (
+                        <div className="text-info text-sm mb-2 text-center">
+                            {t('processing')}
+                        </div>
+                    )}
+                    {/* Main authentication form */}
+                    <form
+                        className="flex flex-col gap-4"
+                        onSubmit={async (e) => {
+                            e.preventDefault();
+                            setError("");
+                            if (isSignUp) {
+                                // Signup validation
+                                if (
+                                    !input.email ||
+                                    !input.username ||
+                                    !input.password ||
+                                    !input.confirm
+                                ) {
+                                    setError(t('allFieldsRequired'));
+                                    return;
+                                }
+                                if (input.password !== input.confirm) {
+                                    setError(t('passwordsDontMatch'));
+                                    return;
+                                }
+                                setLoading(true);
+                                try {
+                                    // Call API to create new user account
+                                    const result = await createOrUpdateUser({
+                                        email: input.email,
+                                        username: input.username,
+                                        password: input.password,
+                                    });
+                                    setLoading(false);
+                                    if (result && result.token) {
+                                        // Store authentication token
+                                        localStorage.setItem(
+                                            "authToken",
+                                            result.token
+                                        );
+                                        // Build user object from response
+                                        let loggedUser = {
+                                            username: input.username,
+                                        };
+                                        if (result.user) loggedUser = result.user;
+                                        else if (
+                                            result.id ||
+                                            result.username ||
+                                            result.email
+                                        ) {
+                                            loggedUser = {
+                                                id: result.id,
+                                                username:
+                                                    result.username ||
+                                                    input.username,
+                                                email: result.email,
+                                            };
+                                        }
+                                        // Store user ID in localStorage
+                                        if (loggedUser.id)
+                                            localStorage.setItem(
+                                                "userId",
+                                                loggedUser.id
+                                            );
+                                        // Call onLogin callback
+                                        onLogin(loggedUser);
+                                    } else {
+                                        onLogin(result);
+                                    }
+                                } catch (err) {
+                                    setLoading(false);
+                                    setError(err.message || t('errorCreateUser'));
+                                }
+                            } else {
+                                // Login validation
+                                if (!input.emailOrUsername || !input.password) {
+                                    setError(t('allFieldsRequired'));
+                                    return;
+                                }
+                                setLoading(true);
+                                try {
+                                    // Call API to authenticate user
+                                    const result = await loginUser({
+                                        username: input.emailOrUsername,
+                                        password: input.password,
+                                    });
+                                    setLoading(false);
+                                    if (result.token) {
+                                        // Store authentication token
+                                        localStorage.setItem(
+                                            "authToken",
+                                            result.token
+                                        );
+                                        // Build user object from response
+                                        let loggedUser = {
+                                            username: input.emailOrUsername,
+                                        };
+                                        if (result.user) loggedUser = result.user;
+                                        else if (
+                                            result.id ||
+                                            result.username ||
+                                            result.email
+                                        ) {
+                                            loggedUser = {
+                                                id: result.id,
+                                                username:
+                                                    result.username ||
+                                                    input.emailOrUsername,
+                                                email: result.email,
+                                            };
+                                        }
+                                        // Store user ID in localStorage
+                                        if (loggedUser.id)
+                                            localStorage.setItem(
+                                                "userId",
+                                                loggedUser.id
+                                            );
+                                        // Call onLogin callback
+                                        onLogin(loggedUser);
+                                    } else {
+                                        setError(t('noTokenReceived'));
+                                    }
+                                } catch (err) {
+                                    setLoading(false);
+                                    setError(err.message || t('errorSignIn'));
+                                }
+                            }
+                        }}
+                    >
+                        {/* Conditional form fields based on signup/login mode */}
+                        {isSignUp ? (
+                            <>
+                                {/* Signup form fields */}
+                                <input
+                                    type="email"
+                                    placeholder={t('email')}
+                                    className="border rounded px-3 py-2"
+                                    value={input.email}
+                                    onChange={(e) =>
+                                        setInput((i) => ({
+                                            ...i,
+                                            email: e.target.value,
+                                        }))
+                                    }
+                                />
+                                <input
+                                    type="text"
+                                    placeholder={t('username')}
+                                    className="border rounded px-3 py-2"
+                                    value={input.username}
+                                    onChange={(e) =>
+                                        setInput((i) => ({
+                                            ...i,
+                                            username: e.target.value,
+                                        }))
+                                    }
+                                />
+                                <input
+                                    type="password"
+                                    placeholder={t('password')}
+                                    className="border rounded px-3 py-2"
+                                    value={input.password}
+                                    onChange={(e) =>
+                                        setInput((i) => ({
+                                            ...i,
+                                            password: e.target.value,
+                                        }))
+                                    }
+                                />
+                                <input
+                                    type="password"
+                                    placeholder={t('confirmPassword')}
+                                    className="border rounded px-3 py-2"
+                                    value={input.confirm}
+                                    onChange={(e) =>
+                                        setInput((i) => ({
+                                            ...i,
+                                            confirm: e.target.value,
+                                        }))
+                                    }
+                                />
+                            </>
+                        ) : (
+                            <>
+                                {/* Login form fields */}
+                                <input
+                                    type="text"
+                                    placeholder={t('emailOrUsername')}
+                                    className="border rounded px-3 py-2"
+                                    value={input.emailOrUsername}
+                                    onChange={(e) =>
+                                        setInput((i) => ({
+                                            ...i,
+                                            emailOrUsername: e.target.value,
+                                        }))
+                                    }
+                                />
+                                <input
+                                    type="password"
+                                    placeholder={t('password')}
+                                    className="border rounded px-3 py-2"
+                                    value={input.password}
+                                    onChange={(e) =>
+                                        setInput((i) => ({
+                                            ...i,
+                                            password: e.target.value,
+                                        }))
+                                    }
+                                />
+                            </>
+                        )}
+                        {/* Submit button */}
+                        <button
+                            type="submit"
+                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                        >
+                            {isSignUp ? t('signUp') : t('signIn')}
+                        </button>
+                    </form>
+                </div>
             </div>
-            </div>
-          )}
-          {/* Main authentication form */}
-          <form
-            className="flex flex-col gap-4"
-            onSubmit={async (e) => {
-              e.preventDefault();
-              setError("");
-              if (isSignUp) {
-                // Signup validation
-                if (
-                  !input.email ||
-                  !input.username ||
-                  !input.password ||
-                  !input.confirm
-                ) {
-                  setError("Todos los campos son obligatorios");
-                  return;
-                }
-                if (input.password !== input.confirm) {
-                  setError("Las contraseñas no coinciden");
-                  return;
-                }
-                setLoading(true);
-                try {
-                  // Call API to create new user account
-                  const result = await createOrUpdateUser({
-                    email: input.email,
-                    username: input.username,
-                    password: input.password,
-                  });
-                  setLoading(false);
-                  if (result && result.token) {
-                    // Store authentication token
-                    localStorage.setItem("authToken", result.token);
-                    // Build user object from response
-                    let loggedUser = {
-                      username: input.username,
-                    };
-                    if (result.user) loggedUser = result.user;
-                    else if (result.id || result.username || result.email) {
-                      loggedUser = {
-                        id: result.id,
-                        username: result.username || input.username,
-                        email: result.email,
-                      };
-                    }
-                    // Store user ID in localStorage
-                    if (loggedUser.id)
-                      localStorage.setItem("userId", loggedUser.id);
-                    // Call onLogin callback
-                    onLogin(loggedUser);
-                  } else {
-                    onLogin(result);
-                  }
-                } catch (err) {
-                  setLoading(false);
-                  setError(err.message || "Error al crear usuario");
-                }
-              } else {
-                // Login validation
-                if (!input.emailOrUsername || !input.password) {
-                  setError("Todos los campos son obligatorios");
-                  return;
-                }
-                setLoading(true);
-                try {
-                  // Call API to authenticate user
-                  const result = await loginUser({
-                    username: input.emailOrUsername,
-                    password: input.password,
-                  });
-                  setLoading(false);
-                  if (result.token) {
-                    // Store authentication token
-                    localStorage.setItem("authToken", result.token);
-                    // Build user object from response
-                    let loggedUser = {
-                      username: input.emailOrUsername,
-                    };
-                    if (result.user) loggedUser = result.user;
-                    else if (result.id || result.username || result.email) {
-                      loggedUser = {
-                        id: result.id,
-                        username: result.username || input.emailOrUsername,
-                        email: result.email,
-                      };
-                    }
-                    // Store user ID in localStorage
-                    if (loggedUser.id)
-                      localStorage.setItem("userId", loggedUser.id);
-                    // Call onLogin callback
-                    onLogin(loggedUser);
-                  } else {
-                    setError("No se recibió token");
-                  }
-                } catch (err) {
-                  setLoading(false);
-                  setError(err.message || "Error al iniciar sesión");
-                }
-              }
-            }}
-          >
-            {/* Conditional form fields based on signup/login mode */}
-            {isSignUp ? (
-              <>
-                {/* Signup form fields */}
-                <input
-                  type="email"
-                  placeholder="Email"
-                  className="border rounded px-3 py-2"
-                  value={input.email}
-                  onChange={(e) =>
-                    setInput((i) => ({
-                      ...i,
-                      email: e.target.value,
-                    }))
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Username"
-                  className="border rounded px-3 py-2"
-                  value={input.username}
-                  onChange={(e) =>
-                    setInput((i) => ({
-                      ...i,
-                      username: e.target.value,
-                    }))
-                  }
-                />
-                <input
-                  type="password"
-                  placeholder="Contraseña"
-                  className="border rounded px-3 py-2"
-                  value={input.password}
-                  onChange={(e) =>
-                    setInput((i) => ({
-                      ...i,
-                      password: e.target.value,
-                    }))
-                  }
-                />
-                <input
-                  type="password"
-                  placeholder="Confirmar Contraseña"
-                  className="border rounded px-3 py-2"
-                  value={input.confirm}
-                  onChange={(e) =>
-                    setInput((i) => ({
-                      ...i,
-                      confirm: e.target.value,
-                    }))
-                  }
-                />
-              </>
-            ) : (
-              <>
-                {/* Login form fields */}
-                <input
-                  type="text"
-                  placeholder="Correo Electrónico o Nombre de Usuario"
-                  className="border rounded px-3 py-2"
-                  value={input.emailOrUsername}
-                  onChange={(e) =>
-                    setInput((i) => ({
-                      ...i,
-                      emailOrUsername: e.target.value,
-                    }))
-                  }
-                />
-                <input
-                  type="password"
-                  placeholder="Password"
-                  className="border rounded px-3 py-2"
-                  value={input.password}
-                  onChange={(e) =>
-                    setInput((i) => ({
-                      ...i,
-                      password: e.target.value,
-                    }))
-                  }
-                />
-              </>
-            )}
-            {/* Submit button */}
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            >
-              {isSignUp ? "Registrarse" : "Iniciar Sesión"}
-            </button>
-          </form>
-        </div>
-      </div>
-    </>
-  );
+        </>
+    );
 }

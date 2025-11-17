@@ -257,20 +257,6 @@ export default function PointsOfInterest() {
                     )}
                 </div>
             </div>
-          ) : (
-            // Render POI cards
-            pois.map((poi) => (
-              <POICard
-                key={poi.id}
-                poi={poi}
-                weather={weatherData[poi.id]}
-                onEdit={() => handleEdit(poi)}
-                onDelete={() => handleDelete(poi.id)}
-              />
-            ))
-          )}
         </div>
-      </div>
-    </div>
-  );
+    );
 }
