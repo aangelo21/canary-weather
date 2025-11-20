@@ -11,6 +11,8 @@ import {
 } from "../controllers/pointOfInterestController.js";
 // Import multer middleware for POI image uploads
 import { uploadPOI } from "../middleware/uploadMiddleware.js";
+// Import authentication middleware
+import { authenticateToken } from "../middleware/authenticateToken.js";
 
 // Create Express router instance
 const router = express.Router();
@@ -19,12 +21,12 @@ const router = express.Router();
 router.get("/", getAllPointsOfInterest);
 // Route to get a specific point of interest by ID
 router.get("/:id", getPointOfInterestById);
-// Route to create a new point of interest
-router.post("/", createPointOfInterest);
-// Route to update a point of interest, with image upload middleware
-router.put("/:id", uploadPOI.single("poi_image"), updatePointOfInterest);
-// Route to delete a point of interest
-router.delete("/:id", deletePointOfInterest);
+// Route to create a new point of interest (requires authentication)
+router.post("/", authenticateToken, createPointOfInterest);
+// Route to update a point of interest, with image upload middleware (requires authentication)
+router.put("/:id", authenticateToken, uploadPOI.single("poi_image"), updatePointOfInterest);
+// Route to delete a point of interest (requires authentication)
+router.delete("/:id", authenticateToken, deletePointOfInterest);
 // Route to get points of interest by location
 router.get("/location/:locationId", getPointsByLocation);
 
