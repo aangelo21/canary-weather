@@ -8,6 +8,7 @@ import {
   createOrUpdateUser,
   loginUser,
   deleteUser,
+  fetchMunicipalities,
 } from "../services/userService";
 import { useTranslation } from "react-i18next";
 
@@ -33,11 +34,14 @@ export default function LoginModal({
         username: "",         // For signup and account editing
         email: "",            // For signup and account editing
         confirm: "",          // Password confirmation for signup/editing
+        default_location_id: "", // For signup and account editing
     });
     // State for displaying error messages
     const [error, setError] = useState("");
     // State for loading indicators during API calls
     const [loading, setLoading] = useState(false);
+    // State for municipalities data
+    const [municipalities, setMunicipalities] = useState([]);
 
     // useEffect hook - Populates form fields when editing existing user account
     // Runs when user data changes or modal opens
@@ -49,9 +53,19 @@ export default function LoginModal({
                 password: "",
                 confirm: "",
                 emailOrUsername: "",
+                default_location_id: user.default_location_id || "",
             });
         }
     }, [user, isOpen]);
+
+    // useEffect hook - Loads municipalities when modal opens
+    useEffect(() => {
+        if (isOpen) {
+            fetchMunicipalities()
+                .then(setMunicipalities)
+                .catch(err => console.error("Error loading municipalities:", err));
+        }
+    }, [isOpen]);
 
     // Early return if modal is not open
     if (!isOpen) return null;
@@ -182,6 +196,8 @@ export default function LoginModal({
                                     updateData.username = input.username;
                                 if (input.password)
                                     updateData.password = input.password;
+                                if (input.default_location_id)
+                                    updateData.default_location_id = input.default_location_id;
                                 // Call API to update user account
                                 const result = await createOrUpdateUser(
                                     updateData,
@@ -225,6 +241,24 @@ export default function LoginModal({
                                 }))
                             }
                         />
+                        {/* Municipality selector */}
+                        <select
+                            className="border rounded px-3 py-2"
+                            value={input.default_location_id}
+                            onChange={(e) =>
+                                setInput((i) => ({
+                                    ...i,
+                                    default_location_id: e.target.value,
+                                }))
+                            }
+                        >
+                            <option value="">{t('selectMunicipality')}</option>
+                            {municipalities.map((municipality) => (
+                                <option key={municipality.id} value={municipality.id}>
+                                    {municipality.name}
+                                </option>
+                            ))}
+                        </select>
                         {/* New password input (optional) */}
                         <input
                             type="password"
@@ -349,7 +383,8 @@ export default function LoginModal({
                                     !input.email ||
                                     !input.username ||
                                     !input.password ||
-                                    !input.confirm
+                                    !input.confirm ||
+                                    !input.default_location_id
                                 ) {
                                     setError(t('allFieldsRequired'));
                                     return;
@@ -365,6 +400,7 @@ export default function LoginModal({
                                         email: input.email,
                                         username: input.username,
                                         password: input.password,
+                                        default_location_id: input.default_location_id,
                                     });
                                     setLoading(false);
                                     if (result && result.token) {
@@ -514,6 +550,24 @@ export default function LoginModal({
                                         }))
                                     }
                                 />
+                                {/* Municipality selector for signup */}
+                                <select
+                                    className="border rounded px-3 py-2"
+                                    value={input.default_location_id}
+                                    onChange={(e) =>
+                                        setInput((i) => ({
+                                            ...i,
+                                            default_location_id: e.target.value,
+                                        }))
+                                    }
+                                >
+                                    <option value="">{t('selectMunicipality')}</option>
+                                    {municipalities.map((municipality) => (
+                                        <option key={municipality.id} value={municipality.id}>
+                                            {municipality.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </>
                         ) : (
                             <>

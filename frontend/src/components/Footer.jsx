@@ -25,7 +25,7 @@ export default function Footer() {
                     {/* External link to the main Canary Weather website */}
                     {/* Opens in new tab with security attributes */}
                     <a
-                        href="https://canaryweather.com"
+                        href="https://canaryweather.xyz"
                         target="_blank"
                         rel="noreferrer"
                         className="underline underline-offset-2 hover:text-neutral-4"

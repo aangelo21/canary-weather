@@ -35,6 +35,11 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    // Default location (municipality) selected by the user
+    default_location_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
   },
   {
     // Enable automatic timestamps (createdAt, updatedAt)

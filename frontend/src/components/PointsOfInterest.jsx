@@ -18,6 +18,10 @@ export default function PointsOfInterest() {
     const { t } = useTranslation();
     // State for storing all POIs
     const [pois, setPois] = useState([]);
+    // State for filtered POIs based on selected filter
+    const [filteredPois, setFilteredPois] = useState([]);
+    // State for current filter selection
+    const [filter, setFilter] = useState('all'); // 'all', 'global', 'local', 'personal'
     // State for weather data associated with each POI
     const [weatherData, setWeatherData] = useState({});
     // State for form data when creating/editing POIs
@@ -158,6 +162,26 @@ export default function PointsOfInterest() {
     fetchPois();
   }, []);
 
+  // useEffect hook - Apply filter when POIs or filter changes
+  useEffect(() => {
+    applyFilter();
+  }, [pois, filter]);
+
+  // Function to apply the selected filter
+  const applyFilter = () => {
+    if (filter === 'all') {
+      setFilteredPois(pois);
+    } else if (filter === 'global') {
+      setFilteredPois(pois.filter(poi => poi.is_global === true));
+    } else if (filter === 'local') {
+      // Local: created by user, not global, not municipality
+      setFilteredPois(pois.filter(poi => poi.is_global === false && poi.location_id === null));
+    } else if (filter === 'personal') {
+      // Personal: municipality POIs (have location_id)
+      setFilteredPois(pois.filter(poi => poi.location_id !== null));
+    }
+  };
+
   // useEffect hook - Fetch weather data for all POIs when POI list changes
   useEffect(() => {
     async function fetchWeatherForPois() {
@@ -181,6 +205,9 @@ export default function PointsOfInterest() {
               {
                 temp: data.main?.temp ?? null,
                 description: data.weather?.[0]?.description ?? "",
+                humidity: data.main?.humidity ?? null,
+                pressure: data.main?.pressure ?? null,
+                wind: data.wind?.speed ?? null,
               },
             ];
           } catch {
@@ -236,16 +263,60 @@ export default function PointsOfInterest() {
           />
         )}
 
+                {/* Filter buttons */}
+                <div className="flex gap-2 mb-6 flex-wrap">
+                    <button
+                        onClick={() => setFilter('all')}
+                        className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                            filter === 'all'
+                                ? 'bg-[#0f6fb9] text-white'
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                    >
+                        {(t('all') || 'Todos').toUpperCase()}
+                    </button>
+                    <button
+                        onClick={() => setFilter('global')}
+                        className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                            filter === 'global'
+                                ? 'bg-[#0f6fb9] text-white'
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                    >
+                        {(t('global') || 'Global').toUpperCase()}
+                    </button>
+                    <button
+                        onClick={() => setFilter('local')}
+                        className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                            filter === 'local'
+                                ? 'bg-[#0f6fb9] text-white'
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                    >
+                        {(t('local') || 'Local').toUpperCase()}
+                    </button>
+                    <button
+                        onClick={() => setFilter('personal')}
+                        className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                            filter === 'personal'
+                                ? 'bg-[#0f6fb9] text-white'
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                    >
+                        {(t('personal') || 'Personal (Municipio)').toUpperCase()}
+                    </button>
+                </div>
+
                 {/* POI cards grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {pois.length === 0 ? (
+                    {filteredPois.length === 0 ? (
                         // Empty state message
                         <div className="col-span-full text-center text-gray-500">
                             {t('noPois')}
                         </div>
                     ) : (
                         // Render POI cards
-                        pois.map((poi) => (
+                        filteredPois.map((poi) => (
                             <POICard
                                 key={poi.id}
                                 poi={poi}
