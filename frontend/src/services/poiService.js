@@ -6,8 +6,13 @@ const API_BASE = import.meta.env.VITE_API_BASE;
 
 // Function to fetch all Points of Interest from the API
 export async function fetchPois() {
+  // Get auth token for authorization
+  const token = localStorage.getItem("authToken");
+  const headers = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
+
   // Make GET request to POIs endpoint
-  const response = await fetch(`${API_BASE}/pois`);
+  const response = await fetch(`${API_BASE}/pois`, { headers });
   // Throw error if response is not ok
   if (!response.ok) throw new Error("Error fetching POIs");
   // Return parsed JSON data
@@ -25,6 +30,10 @@ export async function createOrUpdatePoi(formData, editingId, imageFile) {
 
   let body;
   let headers = {};
+
+  // Add authorization header for both create and update operations
+  const token = localStorage.getItem("authToken");
+  if (token) headers.Authorization = `Bearer ${token}`;
 
   if (imageFile) {
     // If an image file is provided, use FormData for multipart upload
@@ -79,9 +88,15 @@ export async function createOrUpdatePoi(formData, editingId, imageFile) {
 
 // Function to delete a POI by ID
 export async function deletePoi(id) {
+  // Get auth token for authorization
+  const token = localStorage.getItem("authToken");
+  const headers = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
+
   // Make DELETE request to specific POI endpoint
   const response = await fetch(`${API_BASE}/pois/${id}`, {
     method: "DELETE",
+    headers,
   });
   // Throw error if response is not ok
   if (!response.ok) throw new Error("Error deleting POI");
