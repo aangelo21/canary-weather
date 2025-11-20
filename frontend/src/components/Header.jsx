@@ -32,6 +32,19 @@ function Header() {
   // Translation hook
   const { t, i18n } = useTranslation();
 
+  // Effect to load user from localStorage on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("cw_user");
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Error parsing stored user:", error);
+        localStorage.removeItem("cw_user");
+      }
+    }
+  }, []);
+
   // Effect to close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -61,6 +74,8 @@ function Header() {
     localStorage.setItem("cw_user", JSON.stringify(userObj));
     setUser(userObj);
     setShowLogin(false);
+    // Dispatch custom event to notify other components of login
+    window.dispatchEvent(new Event('userLoggedIn'));
   };
 
   // Handler for logout - clears localStorage and reloads page

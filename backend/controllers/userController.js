@@ -1,5 +1,5 @@
 // Import User model and related dependencies
-import { User, PointOfInterest, Location } from "../models/index.js";
+import { User, PointOfInterest, Location, UserPointOfInterest } from "../models/index.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Op } from "sequelize";
@@ -10,25 +10,39 @@ const createDefaultLocationPOI = async (userId, locationId) => {
     const location = await Location.findByPk(locationId);
     if (!location) return;
 
-    // Check if POI already exists for this user and location
-    const existingPOI = await PointOfInterest.findOne({
+    // Check if this user already has a personal POI for this location
+    const existingUserPOI = await PointOfInterest.findOne({
+      include: [{
+        model: UserPointOfInterest,
+        where: { user_id: userId },
+        required: true
+      }],
       where: {
-        name: `Municipio: ${location.name}`,
         location_id: locationId,
-        is_global: false,
+        type: 'personal',
       },
     });
 
-    if (!existingPOI) {
-      await PointOfInterest.create({
-        name: `Municipio: ${location.name}`,
-        description: `Punto de interés automático para el municipio ${location.name}`,
+    if (!existingUserPOI) {
+      // Create the personal POI
+      const newPOI = await PointOfInterest.create({
+        name: `Mi municipio: ${location.name}`,
+        description: `Punto de interés personal para el municipio ${location.name}`,
         latitude: location.latitude,
         longitude: location.longitude,
         is_global: false,
+        type: 'personal',
         location_id: locationId,
       });
-      console.log(`Created default POI for user ${userId} in ${location.name}`);
+
+      // Link the POI to the user
+      await UserPointOfInterest.create({
+        user_id: userId,
+        point_of_interest_id: newPOI.id,
+        favorited_at: new Date()
+      });
+
+      console.log(`Created personal POI for user ${userId} in ${location.name}`);
     }
   } catch (error) {
     console.error("Error creating default location POI:", error);

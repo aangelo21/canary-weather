@@ -38,6 +38,12 @@ const PointOfInterest = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    // Type of POI: 'global' (visible to all), 'local' (location-based), or 'personal' (user-specific)
+    type: {
+      type: DataTypes.ENUM('global', 'local', 'personal'),
+      allowNull: false,
+      defaultValue: 'local',
+    },
     // Foreign key reference to Location if the POI is tied to a specific location
     location_id: {
       type: DataTypes.UUID,

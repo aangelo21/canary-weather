@@ -6,39 +6,44 @@ import sequelize from "../controllers/dbController.js";
 // Controller function to get all points of interest
 export const getAllPointsOfInterest = async (req, res) => {
   try {
+    // Only return global POIs
+    // Personal and local POIs are fetched separately via /pois/personal endpoint
+    const items = await PointOfInterest.findAll({
+      where: { 
+        type: 'global'
+      }
+    });
+    return res.json(items);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+// Controller function to get only personal and local POIs for authenticated user
+export const getPersonalPointsOfInterest = async (req, res) => {
+  try {
     // Get user ID from authenticated request
     const userId = req.user ? req.user.id : null;
-
-    if (userId) {
-      // If user is authenticated, get all POIs that are either global or created by this user
-      // First get global POIs
-      const globalPois = await PointOfInterest.findAll({
-        where: { is_global: true }
-      });
-
-      // Then get POIs created by this user (those with UserPointOfInterest records)
-      const userCreatedPois = await PointOfInterest.findAll({
-        include: [{
-          model: UserPointOfInterest,
-          where: { user_id: userId },
-          required: true
-        }]
-      });
-
-      // Combine results, removing duplicates
-      const poiMap = new Map();
-      globalPois.forEach(poi => poiMap.set(poi.id, poi));
-      userCreatedPois.forEach(poi => poiMap.set(poi.id, poi));
-
-      const allPois = Array.from(poiMap.values());
-      return res.json(allPois);
-    } else {
-      // If not authenticated, only show global POIs
-      const items = await PointOfInterest.findAll({
-        where: { is_global: true }
-      });
-      return res.json(items);
+    
+    if (!userId) {
+      return res.status(401).json({ error: 'Authentication required' });
     }
+
+    // Get personal and local POIs for this specific user
+    const userPois = await PointOfInterest.findAll({
+      where: { 
+        type: {
+          [Op.in]: ['personal', 'local']
+        }
+      },
+      include: [{
+        model: UserPointOfInterest,
+        where: { user_id: userId },
+        required: true
+      }]
+    });
+
+    return res.json(userPois);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -64,6 +69,12 @@ export const getPointOfInterestById = async (req, res) => {
 export const createPointOfInterest = async (req, res) => {
   try {
     const payload = req.body;
+    
+    // Set default type to 'personal' if not specified and not global
+    if (!payload.type) {
+      payload.type = payload.is_global ? 'global' : 'personal';
+    }
+    
     // Create new POI with provided data
     const item = await PointOfInterest.create(payload);
 

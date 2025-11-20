@@ -6,6 +6,7 @@
 import { useState, useEffect } from "react";
 import {
   fetchPois as fetchPoisService,
+  fetchPersonalPois,
   createOrUpdatePoi,
   deletePoi as deletePoiService,
 } from "../services/poiService";
@@ -16,6 +17,8 @@ import { useTranslation } from "react-i18next";
 // PointsOfInterest component - Main POI management interface
 export default function PointsOfInterest() {
     const { t } = useTranslation();
+    // Check if user is authenticated
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     // State for storing all POIs
     const [pois, setPois] = useState([]);
     // State for filtered POIs based on selected filter
@@ -56,6 +59,18 @@ export default function PointsOfInterest() {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Function to fetch personal POIs from the API
+  const fetchPersonalPoisData = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return [];
+      return await fetchPersonalPois();
+    } catch (err) {
+      console.error("Error fetching personal POIs:", err);
+      return [];
     }
   };
 
@@ -157,9 +172,35 @@ export default function PointsOfInterest() {
     }
   };
 
-  // useEffect hook - Load POIs on component mount
+  // useEffect hook - Load POIs on component mount and check authentication
   useEffect(() => {
+    // Check if user is authenticated
+    const token = localStorage.getItem("authToken");
+    setIsAuthenticated(!!token);
     fetchPois();
+    
+    // Listen for login events to refresh POIs and authentication state
+    const handleUserLogin = () => {
+      const token = localStorage.getItem("authToken");
+      setIsAuthenticated(!!token);
+      fetchPois();
+      // Reset filter to 'all' to show newly available POIs
+      setFilter('all');
+    };
+    
+    // Listen for POI created events to refresh the list
+    const handlePoiCreated = () => {
+      fetchPois();
+      // Trigger filter reapplication to include new POIs
+      applyFilter();
+    };
+    
+    window.addEventListener('userLoggedIn', handleUserLogin);
+    window.addEventListener('poiCreated', handlePoiCreated);
+    return () => {
+      window.removeEventListener('userLoggedIn', handleUserLogin);
+      window.removeEventListener('poiCreated', handlePoiCreated);
+    };
   }, []);
 
   // useEffect hook - Apply filter when POIs or filter changes
@@ -168,26 +209,30 @@ export default function PointsOfInterest() {
   }, [pois, filter]);
 
   // Function to apply the selected filter
-  const applyFilter = () => {
+  const applyFilter = async () => {
     if (filter === 'all') {
-      setFilteredPois(pois);
+      // Show all POIs (global + user's personal and local)
+      const userPois = await fetchPersonalPoisData();
+      setFilteredPois([...pois, ...userPois]);
     } else if (filter === 'global') {
-      setFilteredPois(pois.filter(poi => poi.is_global === true));
+      setFilteredPois(pois.filter(poi => poi.type === 'global'));
     } else if (filter === 'local') {
-      // Local: created by user, not global, not municipality
-      setFilteredPois(pois.filter(poi => poi.is_global === false && poi.location_id === null));
+      // Fetch and show only user's local POIs
+      const userPois = await fetchPersonalPoisData();
+      setFilteredPois(userPois.filter(poi => poi.type === 'local'));
     } else if (filter === 'personal') {
-      // Personal: municipality POIs (have location_id)
-      setFilteredPois(pois.filter(poi => poi.location_id !== null));
+      // Fetch and show only user's personal POIs (municipalities)
+      const userPois = await fetchPersonalPoisData();
+      setFilteredPois(userPois.filter(poi => poi.type === 'personal'));
     }
   };
 
-  // useEffect hook - Fetch weather data for all POIs when POI list changes
+  // useEffect hook - Fetch weather data for filtered POIs
   useEffect(() => {
     async function fetchWeatherForPois() {
-      // Create array of promises to fetch weather for each POI
+      // Create array of promises to fetch weather for each filtered POI
       const entries = await Promise.all(
-        pois.map(async (poi) => {
+        filteredPois.map(async (poi) => {
           // Skip POIs without coordinates
           if (!poi.latitude || !poi.longitude) return [poi.id, null];
           try {
@@ -219,11 +264,11 @@ export default function PointsOfInterest() {
       // Convert array of entries to object
       setWeatherData(Object.fromEntries(entries));
     }
-    // Only fetch weather if there are POIs
-    if (pois.length > 0) {
+    // Only fetch weather if there are filtered POIs
+    if (filteredPois.length > 0) {
       fetchWeatherForPois();
     }
-  }, [pois]);
+  }, [filteredPois]);
 
     // Return the JSX structure
     return (
@@ -285,26 +330,32 @@ export default function PointsOfInterest() {
                     >
                         {(t('global') || 'Global').toUpperCase()}
                     </button>
-                    <button
-                        onClick={() => setFilter('local')}
-                        className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                            filter === 'local'
-                                ? 'bg-[#0f6fb9] text-white'
-                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                        }`}
-                    >
-                        {(t('local') || 'Local').toUpperCase()}
-                    </button>
-                    <button
-                        onClick={() => setFilter('personal')}
-                        className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                            filter === 'personal'
-                                ? 'bg-[#0f6fb9] text-white'
-                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                        }`}
-                    >
-                        {(t('personal') || 'Personal (Municipio)').toUpperCase()}
-                    </button>
+                    {/* Only show Local filter if user is authenticated */}
+                    {isAuthenticated && (
+                        <button
+                            onClick={() => setFilter('local')}
+                            className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                                filter === 'local'
+                                    ? 'bg-[#0f6fb9] text-white'
+                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            }`}
+                        >
+                            {(t('local') || 'Local').toUpperCase()}
+                        </button>
+                    )}
+                    {/* Only show Personal filter if user is authenticated */}
+                    {isAuthenticated && (
+                        <button
+                            onClick={() => setFilter('personal')}
+                            className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                                filter === 'personal'
+                                    ? 'bg-[#0f6fb9] text-white'
+                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            }`}
+                        >
+                            {(t('personal') || 'Personal').toUpperCase()}
+                        </button>
+                    )}
                 </div>
 
                 {/* POI cards grid */}
