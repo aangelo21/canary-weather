@@ -100,6 +100,31 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
             <dd>{poi.longitude}</dd>
           </div>
         )}
+        {/* Weather information from API */}
+        {weather && weather.description && (
+          <div className="flex items-center justify-between py-1">
+            <dt className="font-medium">Condition:</dt>
+            <dd>{weather.description}</dd>
+          </div>
+        )}
+        {weather && weather.humidity && (
+          <div className="flex items-center justify-between py-1">
+            <dt className="font-medium">Humidity:</dt>
+            <dd>{weather.humidity}%</dd>
+          </div>
+        )}
+        {weather && weather.pressure && (
+          <div className="flex items-center justify-between py-1">
+            <dt className="font-medium">Pressure:</dt>
+            <dd>{weather.pressure} hPa</dd>
+          </div>
+        )}
+        {weather && weather.wind && (
+          <div className="flex items-center justify-between py-1">
+            <dt className="font-medium">Wind:</dt>
+            <dd>{weather.wind} m/s</dd>
+          </div>
+        )}
         {/* Location ID display */}
         {poi.location_id && (
           <div className="flex items-center justify-between py-1">

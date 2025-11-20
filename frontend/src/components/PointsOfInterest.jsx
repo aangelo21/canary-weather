@@ -181,6 +181,9 @@ export default function PointsOfInterest() {
               {
                 temp: data.main?.temp ?? null,
                 description: data.weather?.[0]?.description ?? "",
+                humidity: data.main?.humidity ?? null,
+                pressure: data.main?.pressure ?? null,
+                wind: data.wind?.speed ?? null,
               },
             ];
           } catch {
