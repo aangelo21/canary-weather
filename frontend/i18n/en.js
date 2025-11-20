@@ -77,7 +77,7 @@ export const en = {
     discoverWeather:
       "Discover the weather in your favorite places. Explore maps and see detailed forecasts, tides and points of interest around the Canary Islands.",
     maps: "maps",
-    tides: "tides",
+    tidesLower: "tides",
     heroImage: "Hero image / phones",
     responsive: "Responsive",
     responsiveDesc:
