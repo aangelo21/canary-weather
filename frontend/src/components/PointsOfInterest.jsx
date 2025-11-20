@@ -17,6 +17,8 @@ import { useTranslation } from "react-i18next";
 // PointsOfInterest component - Main POI management interface
 export default function PointsOfInterest() {
     const { t } = useTranslation();
+    // Check if user is authenticated
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     // State for storing all POIs
     const [pois, setPois] = useState([]);
     // State for filtered POIs based on selected filter
@@ -170,9 +172,24 @@ export default function PointsOfInterest() {
     }
   };
 
-  // useEffect hook - Load POIs on component mount
+  // useEffect hook - Load POIs on component mount and check authentication
   useEffect(() => {
+    // Check if user is authenticated
+    const token = localStorage.getItem("authToken");
+    setIsAuthenticated(!!token);
     fetchPois();
+    
+    // Listen for login events to refresh POIs and authentication state
+    const handleUserLogin = () => {
+      const token = localStorage.getItem("authToken");
+      setIsAuthenticated(!!token);
+      fetchPois();
+      // Reset filter to 'all' to show newly available POIs
+      setFilter('all');
+    };
+    
+    window.addEventListener('userLoggedIn', handleUserLogin);
+    return () => window.removeEventListener('userLoggedIn', handleUserLogin);
   }, []);
 
   // useEffect hook - Apply filter when POIs or filter changes
@@ -183,17 +200,19 @@ export default function PointsOfInterest() {
   // Function to apply the selected filter
   const applyFilter = async () => {
     if (filter === 'all') {
-      // Show all POIs (global, local, and personal)
-      const personalData = await fetchPersonalPoisData();
-      setFilteredPois([...pois, ...personalData]);
+      // Show all POIs (global + user's personal and local)
+      const userPois = await fetchPersonalPoisData();
+      setFilteredPois([...pois, ...userPois]);
     } else if (filter === 'global') {
       setFilteredPois(pois.filter(poi => poi.type === 'global'));
     } else if (filter === 'local') {
-      setFilteredPois(pois.filter(poi => poi.type === 'local'));
+      // Fetch and show only user's local POIs
+      const userPois = await fetchPersonalPoisData();
+      setFilteredPois(userPois.filter(poi => poi.type === 'local'));
     } else if (filter === 'personal') {
-      // Fetch and show only personal POIs (user's municipalities)
-      const personalData = await fetchPersonalPoisData();
-      setFilteredPois(personalData);
+      // Fetch and show only user's personal POIs (municipalities)
+      const userPois = await fetchPersonalPoisData();
+      setFilteredPois(userPois.filter(poi => poi.type === 'personal'));
     }
   };
 
@@ -300,26 +319,32 @@ export default function PointsOfInterest() {
                     >
                         {(t('global') || 'Global').toUpperCase()}
                     </button>
-                    <button
-                        onClick={() => setFilter('local')}
-                        className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                            filter === 'local'
-                                ? 'bg-[#0f6fb9] text-white'
-                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                        }`}
-                    >
-                        {(t('local') || 'Local').toUpperCase()}
-                    </button>
-                    <button
-                        onClick={() => setFilter('personal')}
-                        className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                            filter === 'personal'
-                                ? 'bg-[#0f6fb9] text-white'
-                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                        }`}
-                    >
-                        {(t('personal') || 'Personal').toUpperCase()}
-                    </button>
+                    {/* Only show Local filter if user is authenticated */}
+                    {isAuthenticated && (
+                        <button
+                            onClick={() => setFilter('local')}
+                            className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                                filter === 'local'
+                                    ? 'bg-[#0f6fb9] text-white'
+                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            }`}
+                        >
+                            {(t('local') || 'Local').toUpperCase()}
+                        </button>
+                    )}
+                    {/* Only show Personal filter if user is authenticated */}
+                    {isAuthenticated && (
+                        <button
+                            onClick={() => setFilter('personal')}
+                            className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                                filter === 'personal'
+                                    ? 'bg-[#0f6fb9] text-white'
+                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            }`}
+                        >
+                            {(t('personal') || 'Personal').toUpperCase()}
+                        </button>
+                    )}
                 </div>
 
                 {/* POI cards grid */}

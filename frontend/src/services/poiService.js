@@ -19,7 +19,7 @@ export async function fetchPois() {
   return response.json();
 }
 
-// Function to fetch only personal POIs for the authenticated user
+// Function to fetch only personal and local POIs for the authenticated user
 export async function fetchPersonalPois() {
   // Get auth token for authorization
   const token = localStorage.getItem("authToken");
@@ -27,10 +27,10 @@ export async function fetchPersonalPois() {
   
   const headers = { Authorization: `Bearer ${token}` };
 
-  // Make GET request to personal POIs endpoint
+  // Make GET request to personal POIs endpoint (includes both personal and local)
   const response = await fetch(`${API_BASE}/pois/personal`, { headers });
   // Throw error if response is not ok
-  if (!response.ok) throw new Error("Error fetching personal POIs");
+  if (!response.ok) throw new Error("Error fetching user POIs");
   // Return parsed JSON data
   return response.json();
 }
@@ -68,6 +68,10 @@ export async function createOrUpdatePoi(formData, editingId, imageFile) {
       formDataObj.append("longitude", formData.longitude);
     }
     formDataObj.append("is_global", formData.is_global || false);
+    // Append type if provided
+    if (formData.type) {
+      formDataObj.append("type", formData.type);
+    }
     // Only append location_id if it has a valid value
     if (formData.location_id && formData.location_id.trim() !== "") {
       formDataObj.append("location_id", formData.location_id);

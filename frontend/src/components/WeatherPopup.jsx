@@ -53,7 +53,8 @@ function WeatherPopup({ position, weather, markerRef }) {
         latitude: position[0],
         longitude: position[1],
         description: "",
-        is_global: false, // Local POI by default
+        is_global: false,
+        type: 'local', // Local POI by default
       });
       // Mark as saved to update UI
       setSaved(true);

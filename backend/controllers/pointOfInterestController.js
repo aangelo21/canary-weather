@@ -6,37 +6,20 @@ import sequelize from "../controllers/dbController.js";
 // Controller function to get all points of interest
 export const getAllPointsOfInterest = async (req, res) => {
   try {
-    // Get user ID from authenticated request
-    const userId = req.user ? req.user.id : null;
-
-    if (userId) {
-      // If user is authenticated, get global and local POIs only
-      // Personal POIs are fetched separately via /pois/personal endpoint
-      const items = await PointOfInterest.findAll({
-        where: { 
-          type: {
-            [Op.in]: ['global', 'local']
-          }
-        }
-      });
-      return res.json(items);
-    } else {
-      // If not authenticated, show global and local POIs only
-      const items = await PointOfInterest.findAll({
-        where: { 
-          type: {
-            [Op.in]: ['global', 'local']
-          }
-        }
-      });
-      return res.json(items);
-    }
+    // Only return global POIs
+    // Personal and local POIs are fetched separately via /pois/personal endpoint
+    const items = await PointOfInterest.findAll({
+      where: { 
+        type: 'global'
+      }
+    });
+    return res.json(items);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
 };
 
-// Controller function to get only personal POIs for authenticated user
+// Controller function to get only personal and local POIs for authenticated user
 export const getPersonalPointsOfInterest = async (req, res) => {
   try {
     // Get user ID from authenticated request
@@ -46,9 +29,13 @@ export const getPersonalPointsOfInterest = async (req, res) => {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    // Get only personal POIs for this specific user
-    const personalPois = await PointOfInterest.findAll({
-      where: { type: 'personal' },
+    // Get personal and local POIs for this specific user
+    const userPois = await PointOfInterest.findAll({
+      where: { 
+        type: {
+          [Op.in]: ['personal', 'local']
+        }
+      },
       include: [{
         model: UserPointOfInterest,
         where: { user_id: userId },
@@ -56,7 +43,7 @@ export const getPersonalPointsOfInterest = async (req, res) => {
       }]
     });
 
-    return res.json(personalPois);
+    return res.json(userPois);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

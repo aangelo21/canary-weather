@@ -16,15 +16,15 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
 
   return (
     // Main card container with white background, rounded corners, shadow, and border
-    <article className="bg-white rounded-lg shadow p-5 border border-gray-100">
+    <article className="bg-white rounded-lg shadow border border-gray-100 overflow-hidden">
       {/* Image section */}
-      <div className="mb-4">
+      <div className="w-full">
         {imageUrl ? (
           // Display POI image if available
           <img
             src={imageUrl}
             alt={poi.name}
-            className="w-full h-48 object-cover rounded-lg"
+            className="w-full h-48 object-cover"
             onError={(e) => {
               // Fallback to placeholder image if image fails to load
               e.target.src =
@@ -33,7 +33,7 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
           />
         ) : (
           // Placeholder div with gradient background when no image
-          <div className="w-full h-48 bg-linear-to-br from-[#0f6fb9] to-[#0a5a96] rounded-lg flex items-center justify-center">
+          <div className="w-full h-48 bg-gradient-to-br from-[#0f6fb9] to-[#0a5a96] flex items-center justify-center">
             <div className="text-center text-white">
               {/* Camera icon SVG */}
               <svg
@@ -55,6 +55,9 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
           </div>
         )}
       </div>
+      
+      {/* Content section with padding */}
+      <div className="p-5">
 
       {/* Main content section with POI info and global/local badge */}
       <div className="flex justify-between items-start">
@@ -160,6 +163,7 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
           {t('delete')}
         </button>
       </div>
+      </div> {/* Close content section with padding */}
     </article>
   );
 }
