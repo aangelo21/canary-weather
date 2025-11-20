@@ -1,26 +1,25 @@
-"use strict";
+'use strict';
 
-export default {
+module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("User", {
+    await queryInterface.createTable('CoastCode', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         allowNull: false,
         primaryKey: true,
       },
-      email: {
+      code: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true,
       },
-      username: {
+      name: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      password: {
-        type: Sequelize.STRING,
-        allowNull: false,
+      description: {
+        type: Sequelize.TEXT,
+        allowNull: true,
       },
       createdAt: {
         allowNull: false,
@@ -34,6 +33,6 @@ export default {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("User");
+    await queryInterface.dropTable('CoastCode');
   },
 };

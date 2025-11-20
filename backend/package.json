@@ -26,6 +26,12 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed:pois": "node seeders/seed_pois_canarias.js",
     "seed:users": "node seeders/seed_users.js",
+    "seed:coast-codes": "node seeders/20251120161745-seed-coast-codes.js",
+    "seed:alerts": "node seeders/20251120161943-seed-alerts.js",
+    "seed:forecasts": "node seeders/20251120162220-seed-forecasts.js",
+    "seed:user-locations": "node seeders/20251120162236-seed-user-locations.js",
+    "seed:user-pois": "node seeders/20251120162257-seed-user-point-of-interest.js",
+    "seed:all": "npm run seed:users && npm run seed:pois && npm run seed:coast-codes && npm run seed:alerts && npm run seed:forecasts && npm run seed:user-locations && npm run seed:user-pois",
     "migrate": "npx sequelize-cli db:migrate",
     "migrate:undo": "npx sequelize-cli db:migrate:undo"
   }

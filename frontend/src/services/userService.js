@@ -111,3 +111,12 @@ export async function deleteUser(id) {
   // Return success response (204 No Content or JSON)
   return response.status === 204 ? { success: true } : response.json();
 }
+
+// Function to fetch all available municipalities
+export async function fetchMunicipalities() {
+  // Make GET request to municipalities endpoint
+  const response = await fetch(`${API_BASE}/users/municipalities`);
+  if (!response.ok) throw new Error("Error fetching municipalities");
+  // Return array of municipalities
+  return response.json();
+}

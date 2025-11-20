@@ -1,43 +1,39 @@
-"use strict";
+'use strict';
 
-export default {
+module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("PointOfInterest", {
+    await queryInterface.createTable('Forecast', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         allowNull: false,
         primaryKey: true,
       },
-      name: {
+      temperature: {
+        type: Sequelize.DOUBLE,
+        allowNull: true,
+      },
+      wind: {
         type: Sequelize.STRING,
+        allowNull: true,
+      },
+      rain_probability: {
+        type: Sequelize.DOUBLE,
+        allowNull: true,
+      },
+      date_time: {
+        type: Sequelize.DATE,
         allowNull: false,
-      },
-      latitude: {
-        type: Sequelize.DOUBLE,
-        allowNull: true,
-      },
-      longitude: {
-        type: Sequelize.DOUBLE,
-        allowNull: true,
-      },
-      description: {
-        type: Sequelize.TEXT,
-        allowNull: true,
-      },
-      is_global: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
       },
       location_id: {
         type: Sequelize.UUID,
-        allowNull: true,
+        allowNull: false,
         references: {
-          model: "Location",
-          key: "id",
+          model: 'Location',
+          key: 'id',
         },
-        onUpdate: "CASCADE",
-        onDelete: "SET NULL",
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       createdAt: {
         allowNull: false,
@@ -51,6 +47,6 @@ export default {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("PointOfInterest");
+    await queryInterface.dropTable('Forecast');
   },
 };

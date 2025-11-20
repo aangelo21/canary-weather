@@ -1,7 +1,39 @@
 // Import User model and related dependencies
-import { User } from "../models/index.js";
+import { User, PointOfInterest, Location } from "../models/index.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { Op } from "sequelize";
+
+// Helper function to create a POI for the user's default location
+const createDefaultLocationPOI = async (userId, locationId) => {
+  try {
+    const location = await Location.findByPk(locationId);
+    if (!location) return;
+
+    // Check if POI already exists for this user and location
+    const existingPOI = await PointOfInterest.findOne({
+      where: {
+        name: `Municipio: ${location.name}`,
+        location_id: locationId,
+        is_global: false,
+      },
+    });
+
+    if (!existingPOI) {
+      await PointOfInterest.create({
+        name: `Municipio: ${location.name}`,
+        description: `Punto de interés automático para el municipio ${location.name}`,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        is_global: false,
+        location_id: locationId,
+      });
+      console.log(`Created default POI for user ${userId} in ${location.name}`);
+    }
+  } catch (error) {
+    console.error("Error creating default location POI:", error);
+  }
+};
 
 // Controller function to handle user login with Basic Authentication
 export const loginUser = async (req, res) => {
@@ -94,7 +126,7 @@ export const getUserById = async (req, res) => {
 // Controller function to create a new user
 export const createUser = async (req, res) => {
   try {
-    const { email, username, password } = req.body;
+    const { email, username, password, default_location_id } = req.body;
     // Validate required fields
     if (!email || !username || !password) {
       return res.status(400).json({ error: "Faltan campos obligatorios" });
@@ -105,10 +137,16 @@ export const createUser = async (req, res) => {
       return res.status(409).json({ error: "El email ya está registrado" });
     }
     // Create new user (password hashed by model hook)
-    const user = await User.create({ email, username, password });
+    const user = await User.create({ email, username, password, default_location_id });
     // Remove password from response
     const safe = user.toJSON();
     delete safe.password;
+
+    // Create default location POI if specified
+    if (default_location_id) {
+      await createDefaultLocationPOI(user.id, default_location_id);
+    }
+
     // Generate JWT token for immediate login
     const token = jwt.sign(
       { id: user.id, username: user.username },
@@ -132,8 +170,18 @@ export const updateUser = async (req, res) => {
       payload.profile_picture_url = `/uploads/profile-pictures/${req.file.filename}`;
     }
 
+    // Get current user to check if default_location_id changed
+    const currentUser = await User.findByPk(id);
+    if (!currentUser) return res.status(404).json({ error: "User not found" });
+
     // Update user with provided data, enabling individualHooks to trigger beforeUpdate
     await User.update(payload, { where: { id }, individualHooks: true });
+
+    // Create default location POI if default_location_id was changed
+    if (payload.default_location_id && payload.default_location_id !== currentUser.default_location_id) {
+      await createDefaultLocationPOI(id, payload.default_location_id);
+    }
+
     // Fetch updated user, excluding password
     const updated = await User.findByPk(id, {
       attributes: { exclude: ["password"] },
@@ -154,6 +202,24 @@ export const deleteUser = async (req, res) => {
     if (!deleted) return res.status(404).json({ error: "User not found" });
     // Return 204 No Content on success
     return res.status(204).send();
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+// Controller function to get all available municipalities
+export const getMunicipalities = async (req, res) => {
+  try {
+    // Get all locations that are municipalities (not just islands)
+    const municipalities = await Location.findAll({
+      where: {
+        // Assuming municipalities have coordinates (islands might not in some cases)
+        latitude: { [Op.ne]: null },
+        longitude: { [Op.ne]: null },
+      },
+      order: [['name', 'ASC']],
+    });
+    return res.json(municipalities);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
