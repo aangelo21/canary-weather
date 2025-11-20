@@ -195,7 +195,7 @@ async function seed() {
       latitude: p.latitude,
       longitude: p.longitude,
       description: p.description,
-      is_global: false,
+      is_global: true,
       location_id: loc ? loc.id : null,
     };
 
