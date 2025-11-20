@@ -35,7 +35,8 @@ export const en = {
     website: "canaryweather.com",
     // LoginModal
     deleteAccount: "Delete Account",
-    confirmDeleteAccount: "Are you sure you want to delete your account? This action cannot be undone.",
+    confirmDeleteAccount:
+      "Are you sure you want to delete your account? This action cannot be undone.",
     deletingAccount: "Deleting account...",
     updating: "Updating...",
     updateAccount: "Update Account",
@@ -66,22 +67,29 @@ export const en = {
     saved: "Saved",
     saveAsPoi: "Save as POI",
     poiSaved: "POI saved!",
+    loginRequired: "Please log in to save POIs",
+    errorSavingPoi: "Error saving POI",
+    loginToSave: "Login to Save",
     // Home
     welcomeTo: "Welcome to",
     canaryWeather: "Canary Weather",
-    discoverWeather: "Discover the weather in your favorite places. Explore maps and see detailed forecasts, tides and points of interest around the Canary Islands.",
+    discoverWeather:
+      "Discover the weather in your favorite places. Explore maps and see detailed forecasts, tides and points of interest around the Canary Islands.",
     maps: "maps",
     tides: "tides",
     heroImage: "Hero image / phones",
     responsive: "Responsive",
-    responsiveDesc: "Select a destination on the map and check the weather and points of interest on mobile",
+    responsiveDesc:
+      "Select a destination on the map and check the weather and points of interest on mobile",
     windAlert: "Wind Alert",
-    windAlertDesc: "On this website you can see the different forecasts and wind alerts for different locations",
+    windAlertDesc:
+      "On this website you can see the different forecasts and wind alerts for different locations",
     locations: "Locations",
-    locationsDesc: "Explore different locations on the map and check the location forecast",
+    locationsDesc:
+      "Explore different locations on the map and check the location forecast",
     // Map
     exploreMap: "Explore the Map",
     clickLocation: "Click on a Location to see its forecast",
-    language: "Language"
-  }
+    language: "Language",
+  },
 };

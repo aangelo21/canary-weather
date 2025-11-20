@@ -12,13 +12,13 @@ import {
 // Import multer middleware for POI image uploads
 import { uploadPOI } from "../middleware/uploadMiddleware.js";
 // Import authentication middleware
-import { authenticateToken } from "../middleware/authenticateToken.js";
+import { authenticateToken, optionalAuthenticateToken } from "../middleware/authenticateToken.js";
 
 // Create Express router instance
 const router = express.Router();
 
-// Route to get all points of interest
-router.get("/", getAllPointsOfInterest);
+// Route to get all points of interest (optional authentication)
+router.get("/", optionalAuthenticateToken, getAllPointsOfInterest);
 // Route to get a specific point of interest by ID
 router.get("/:id", getPointOfInterestById);
 // Route to create a new point of interest (requires authentication)

@@ -1,12 +1,44 @@
-// Import PointOfInterest and Location models
-import { PointOfInterest, Location } from "../models/index.js";
+// Import PointOfInterest, Location and UserPointOfInterest models
+import { PointOfInterest, Location, UserPointOfInterest } from "../models/index.js";
+import { Op } from "sequelize";
+import sequelize from "../controllers/dbController.js";
 
 // Controller function to get all points of interest
 export const getAllPointsOfInterest = async (req, res) => {
   try {
-    // Fetch all POIs from database
-    const items = await PointOfInterest.findAll();
-    return res.json(items);
+    // Get user ID from authenticated request
+    const userId = req.user ? req.user.id : null;
+
+    if (userId) {
+      // If user is authenticated, get all POIs that are either global or created by this user
+      // First get global POIs
+      const globalPois = await PointOfInterest.findAll({
+        where: { is_global: true }
+      });
+
+      // Then get POIs created by this user (those with UserPointOfInterest records)
+      const userCreatedPois = await PointOfInterest.findAll({
+        include: [{
+          model: UserPointOfInterest,
+          where: { user_id: userId },
+          required: true
+        }]
+      });
+
+      // Combine results, removing duplicates
+      const poiMap = new Map();
+      globalPois.forEach(poi => poiMap.set(poi.id, poi));
+      userCreatedPois.forEach(poi => poiMap.set(poi.id, poi));
+
+      const allPois = Array.from(poiMap.values());
+      return res.json(allPois);
+    } else {
+      // If not authenticated, only show global POIs
+      const items = await PointOfInterest.findAll({
+        where: { is_global: true }
+      });
+      return res.json(items);
+    }
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -34,6 +66,15 @@ export const createPointOfInterest = async (req, res) => {
     const payload = req.body;
     // Create new POI with provided data
     const item = await PointOfInterest.create(payload);
+
+    // Create UserPointOfInterest record to track that this user created this POI
+    const userId = req.user.id;
+    await UserPointOfInterest.create({
+      user_id: userId,
+      point_of_interest_id: item.id,
+      favorited_at: new Date()
+    });
+
     return res.status(201).json(item);
   } catch (err) {
     return res.status(400).json({ error: err.message });

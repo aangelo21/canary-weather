@@ -35,7 +35,8 @@ export const es = {
     website: "canaryweather.com",
     // LoginModal
     deleteAccount: "Eliminar Cuenta",
-    confirmDeleteAccount: "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.",
+    confirmDeleteAccount:
+      "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.",
     deletingAccount: "Eliminando cuenta...",
     updating: "Actualizando...",
     updateAccount: "Actualizar Cuenta",
@@ -66,22 +67,29 @@ export const es = {
     saved: "Guardado",
     saveAsPoi: "Guardar como POI",
     poiSaved: "¡POI guardado!",
+    loginRequired: "Por favor inicia sesión para guardar POIs",
+    errorSavingPoi: "Error al guardar POI",
+    loginToSave: "Inicia Sesión para Guardar",
     // Home
     welcomeTo: "Bienvenido a",
     canaryWeather: "Canary Weather",
-    discoverWeather: "Descubre el clima en tus lugares favoritos. Explora los mapas y ve pronósticos detallados, mareas y puntos de interés alrededor de las Islas Canarias.",
+    discoverWeather:
+      "Descubre el clima en tus lugares favoritos. Explora los mapas y ve pronósticos detallados, mareas y puntos de interés alrededor de las Islas Canarias.",
     maps: "mapas",
     tides: "mareas",
     heroImage: "Imagen heroica / teléfonos",
     responsive: "Responsivo",
-    responsiveDesc: "Selecciona un destino en el mapa y mira el clima y los puntos de interés en móvil",
+    responsiveDesc:
+      "Selecciona un destino en el mapa y mira el clima y los puntos de interés en móvil",
     windAlert: "Alerta de viento",
-    windAlertDesc: "En este sitio web puedes ver los diferentes pronósticos y alertas de viento de las diferentes ubicaciones",
+    windAlertDesc:
+      "En este sitio web puedes ver los diferentes pronósticos y alertas de viento de las diferentes ubicaciones",
     locations: "Ubicaciones",
-    locationsDesc: "Explora las diferentes ubicaciones en el mapa y verifica el pronóstico de la ubicación",
+    locationsDesc:
+      "Explora las diferentes ubicaciones en el mapa y verifica el pronóstico de la ubicación",
     // Map
     exploreMap: "Explora el Mapa",
     clickLocation: "Haz clic en una Ubicación para ver su pronóstico",
-    language: "Idioma"
-  }
+    language: "Idioma",
+  },
 };
