@@ -624,6 +624,12 @@ async function seed() {
       longitude: -17.9158,
       is_coastal: true,
     },
+    {
+      name: "Canary Islands",
+      latitude: 28.0,
+      longitude: -15.5,
+      is_coastal: true,
+    },
   ];
 
   for (const loc of locations) {

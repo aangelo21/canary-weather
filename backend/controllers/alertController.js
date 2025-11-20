@@ -1,5 +1,6 @@
 // Import Alert and Location models
 import { Alert, Location } from "../models/index.js";
+import { fetchAndStoreWarnings } from "../services/aemetService.js";
 
 // Controller function to get all alerts
 export const getAllAlerts = async (req, res) => {
@@ -76,6 +77,16 @@ export const getAlertsByLocation = async (req, res) => {
       where: { location_id: locationId },
     });
     return res.json(items);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+// Controller function to fetch and store warnings from AEMET
+export const fetchWarnings = async (req, res) => {
+  try {
+    await fetchAndStoreWarnings();
+    return res.json({ message: 'Warnings fetched and stored successfully' });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

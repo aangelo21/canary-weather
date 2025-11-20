@@ -6,6 +6,8 @@ import LoginModal from "./LoginModal";
 import { NavLink } from "react-router-dom";
 // Import user service for profile picture updates
 import { createOrUpdateUser } from "../services/userService";
+// Import alert service for fetching alerts
+import { fetchAlerts } from "../services/alertService";
 // Import i18n for translations
 import { useTranslation } from "react-i18next";
 
@@ -21,6 +23,8 @@ function Header() {
   const [uploading, setUploading] = useState(false);
   // State for language selector dropdown
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  // State for alerts
+  const [alerts, setAlerts] = useState([]);
   // Ref for hidden file input
   const fileInputRef = useRef(null);
   // API base URL from environment variables
@@ -38,6 +42,19 @@ function Header() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showLanguageDropdown]);
+
+  // Effect to fetch alerts on component mount
+  useEffect(() => {
+    const loadAlerts = async () => {
+      try {
+        const data = await fetchAlerts();
+        setAlerts(data);
+      } catch (error) {
+        console.error('Error fetching alerts:', error);
+      }
+    };
+    loadAlerts();
+  }, []);
 
   // Handler for successful login - stores user data and closes modal
   const handleLogin = (userObj) => {
@@ -97,6 +114,16 @@ function Header() {
       return `${baseUrl}${user.profile_picture_url}`;
     }
     return null;
+  };
+
+  // Function to get the highest alert level color
+  const getAlertColor = () => {
+    if (alerts.length === 0) return 'bg-[#00a91c]'; // No alerts: success green
+    const levels = alerts.map(alert => alert.level.toLowerCase());
+    if (levels.includes('rojo') || levels.includes('red')) return 'bg-[#b50909]'; // error red
+    if (levels.includes('naranja') || levels.includes('orange')) return 'bg-orange-500'; // orange
+    if (levels.includes('amarillo') || levels.includes('yellow')) return 'bg-[#e5a000]'; // warning yellow
+    return 'bg-[#00a91c]'; // Default to green
   };
 
   // Toggle mobile menu visibility
@@ -174,11 +201,12 @@ function Header() {
                 <NavLink
                   to="/warnings"
                   className={({ isActive }) =>
-                    isActive
+                    `flex items-center gap-2 ${isActive
                       ? "text-gray-900 font-semibold"
-                      : "text-gray-700 hover:text-gray-900 transition-colors"
+                      : "text-gray-700 hover:text-gray-900 transition-colors"}`
                   }
                 >
+                  <span className={`w-3 h-3 rounded-full ${getAlertColor()}`}></span>
                   {t('warnings')}
                 </NavLink>
               </li>
@@ -427,12 +455,13 @@ function Header() {
                 <NavLink
                   to="/warnings"
                   className={({ isActive }) =>
-                    isActive
+                    `flex items-center gap-2 ${isActive
                       ? "block text-gray-900 font-semibold py-2"
-                      : "block text-gray-700 hover:text-gray-900 py-2"
+                      : "block text-gray-700 hover:text-gray-900 py-2"}`
                   }
                   onClick={() => setIsOpen(false)}
                 >
+                  <span className={`w-3 h-3 rounded-full ${getAlertColor()}`}></span>
                   {t('warnings')}
                 </NavLink>
               </li>
