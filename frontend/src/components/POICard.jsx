@@ -70,16 +70,18 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
             </div>
           )}
         </div>
-        {/* Global/Local indicator badge */}
+        {/* Global/Local/Personal indicator badge */}
         <div className="text-right">
           <span
             className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-              poi.is_global
+              poi.type === 'global'
                 ? "bg-[#f2c200] text-black" // Yellow badge for global POIs
+                : poi.type === 'personal'
+                ? "bg-[#9b59b6] text-white" // Purple badge for personal POIs
                 : "bg-[#0f6fb9] text-white" // Blue badge for local POIs
             }`}
           >
-            {poi.is_global ? t('global') : t('local')}
+            {poi.type === 'global' ? t('global') : poi.type === 'personal' ? t('personal') : t('local')}
           </span>
         </div>
       </div>

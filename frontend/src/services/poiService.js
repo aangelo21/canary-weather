@@ -4,7 +4,7 @@
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 
-// Function to fetch all Points of Interest from the API
+// Function to fetch all Points of Interest from the API (global and local only)
 export async function fetchPois() {
   // Get auth token for authorization
   const token = localStorage.getItem("authToken");
@@ -15,6 +15,22 @@ export async function fetchPois() {
   const response = await fetch(`${API_BASE}/pois`, { headers });
   // Throw error if response is not ok
   if (!response.ok) throw new Error("Error fetching POIs");
+  // Return parsed JSON data
+  return response.json();
+}
+
+// Function to fetch only personal POIs for the authenticated user
+export async function fetchPersonalPois() {
+  // Get auth token for authorization
+  const token = localStorage.getItem("authToken");
+  if (!token) throw new Error("Authentication required");
+  
+  const headers = { Authorization: `Bearer ${token}` };
+
+  // Make GET request to personal POIs endpoint
+  const response = await fetch(`${API_BASE}/pois/personal`, { headers });
+  // Throw error if response is not ok
+  if (!response.ok) throw new Error("Error fetching personal POIs");
   // Return parsed JSON data
   return response.json();
 }

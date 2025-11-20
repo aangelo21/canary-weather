@@ -6,6 +6,7 @@
 import { useState, useEffect } from "react";
 import {
   fetchPois as fetchPoisService,
+  fetchPersonalPois,
   createOrUpdatePoi,
   deletePoi as deletePoiService,
 } from "../services/poiService";
@@ -56,6 +57,18 @@ export default function PointsOfInterest() {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Function to fetch personal POIs from the API
+  const fetchPersonalPoisData = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return [];
+      return await fetchPersonalPois();
+    } catch (err) {
+      console.error("Error fetching personal POIs:", err);
+      return [];
     }
   };
 
@@ -168,17 +181,19 @@ export default function PointsOfInterest() {
   }, [pois, filter]);
 
   // Function to apply the selected filter
-  const applyFilter = () => {
+  const applyFilter = async () => {
     if (filter === 'all') {
-      setFilteredPois(pois);
+      // Show all POIs (global, local, and personal)
+      const personalData = await fetchPersonalPoisData();
+      setFilteredPois([...pois, ...personalData]);
     } else if (filter === 'global') {
-      setFilteredPois(pois.filter(poi => poi.is_global === true));
+      setFilteredPois(pois.filter(poi => poi.type === 'global'));
     } else if (filter === 'local') {
-      // Local: created by user, not global, not municipality
-      setFilteredPois(pois.filter(poi => poi.is_global === false && poi.location_id === null));
+      setFilteredPois(pois.filter(poi => poi.type === 'local'));
     } else if (filter === 'personal') {
-      // Personal: municipality POIs (have location_id)
-      setFilteredPois(pois.filter(poi => poi.location_id !== null));
+      // Fetch and show only personal POIs (user's municipalities)
+      const personalData = await fetchPersonalPoisData();
+      setFilteredPois(personalData);
     }
   };
 
@@ -303,7 +318,7 @@ export default function PointsOfInterest() {
                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                         }`}
                     >
-                        {(t('personal') || 'Personal (Municipio)').toUpperCase()}
+                        {(t('personal') || 'Personal').toUpperCase()}
                     </button>
                 </div>
 

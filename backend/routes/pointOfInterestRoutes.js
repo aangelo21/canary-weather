@@ -3,6 +3,7 @@ import express from "express";
 // Import controller functions for POI operations
 import {
   getAllPointsOfInterest,
+  getPersonalPointsOfInterest,
   getPointOfInterestById,
   createPointOfInterest,
   updatePointOfInterest,
@@ -19,6 +20,8 @@ const router = express.Router();
 
 // Route to get all points of interest (optional authentication)
 router.get("/", optionalAuthenticateToken, getAllPointsOfInterest);
+// Route to get only personal POIs for authenticated user
+router.get("/personal", authenticateToken, getPersonalPointsOfInterest);
 // Route to get a specific point of interest by ID
 router.get("/:id", getPointOfInterestById);
 // Route to create a new point of interest (requires authentication)

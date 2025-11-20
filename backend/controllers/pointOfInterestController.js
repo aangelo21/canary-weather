@@ -10,32 +10,16 @@ export const getAllPointsOfInterest = async (req, res) => {
     const userId = req.user ? req.user.id : null;
 
     if (userId) {
-      // If user is authenticated, get:
-      // 1. Global POIs (type='global')
-      // 2. Local POIs (type='local')
-      // 3. Personal POIs for this user (type='personal')
-      
-      const globalAndLocalPois = await PointOfInterest.findAll({
+      // If user is authenticated, get global and local POIs only
+      // Personal POIs are fetched separately via /pois/personal endpoint
+      const items = await PointOfInterest.findAll({
         where: { 
           type: {
             [Op.in]: ['global', 'local']
           }
         }
       });
-
-      // Get personal POIs for this user
-      const personalPois = await PointOfInterest.findAll({
-        where: { type: 'personal' },
-        include: [{
-          model: UserPointOfInterest,
-          where: { user_id: userId },
-          required: true
-        }]
-      });
-
-      // Combine results
-      const allPois = [...globalAndLocalPois, ...personalPois];
-      return res.json(allPois);
+      return res.json(items);
     } else {
       // If not authenticated, show global and local POIs only
       const items = await PointOfInterest.findAll({
@@ -47,6 +31,32 @@ export const getAllPointsOfInterest = async (req, res) => {
       });
       return res.json(items);
     }
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+// Controller function to get only personal POIs for authenticated user
+export const getPersonalPointsOfInterest = async (req, res) => {
+  try {
+    // Get user ID from authenticated request
+    const userId = req.user ? req.user.id : null;
+    
+    if (!userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    // Get only personal POIs for this specific user
+    const personalPois = await PointOfInterest.findAll({
+      where: { type: 'personal' },
+      include: [{
+        model: UserPointOfInterest,
+        where: { user_id: userId },
+        required: true
+      }]
+    });
+
+    return res.json(personalPois);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
