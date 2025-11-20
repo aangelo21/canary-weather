@@ -23,6 +23,11 @@ export const es = {
     map: "Mapa",
     tides: "Mareas",
     warnings: "Advertencias",
+    warningsTitle: "Avisos Meteorológicos",
+    loading: "Cargando...",
+    noWarnings: "No hay avisos meteorológicos en este momento",
+    start: "Inicio",
+    end: "Fin",
     editProfile: "Editar Perfil",
     logout: "Cerrar Sesión",
     login: "Iniciar Sesión",
@@ -77,7 +82,7 @@ export const es = {
     discoverWeather:
       "Descubre el clima en tus lugares favoritos. Explora los mapas y ve pronósticos detallados, mareas y puntos de interés alrededor de las Islas Canarias.",
     maps: "mapas",
-    tides: "mareas",
+    tidesLower: "mareas",
     heroImage: "Imagen heroica / teléfonos",
     responsive: "Responsivo",
     responsiveDesc:

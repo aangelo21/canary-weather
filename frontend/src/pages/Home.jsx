@@ -44,7 +44,7 @@ function Home() {
                                     onClick={() => navigate("/tides")}
                                     className="inline-flex items-center gap-2 bg-brand-primary hover:bg-accent-blue-200 text-white px-5 py-3 rounded-full font-semibold shadow"
                                 >
-                                    {t('tides')}
+                                    {t('tidesLower')}
                                 </button>
                             </div>
                         </div>

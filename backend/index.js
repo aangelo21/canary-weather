@@ -11,6 +11,7 @@ import { fileURLToPath } from "url";
 // Import route handlers for different API endpoints
 import pointOfInterestRoutes from "./routes/pointOfInterestRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import alertRoutes from "./routes/alertRoutes.js";
 
 // Define __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -34,6 +35,9 @@ app.use("/api/pois", pointOfInterestRoutes);
 
 // Mount routes for user-related API
 app.use("/api/users", userRoutes);
+
+// Mount routes for alerts API
+app.use("/api/alerts", alertRoutes);
 
 // Health check endpoint to verify server status
 app.get("/api/health", (req, res) => {
