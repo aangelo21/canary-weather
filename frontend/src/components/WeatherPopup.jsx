@@ -58,6 +58,8 @@ function WeatherPopup({ position, weather, markerRef }) {
       });
       // Mark as saved to update UI
       setSaved(true);
+      // Dispatch event to notify POI list to refresh
+      window.dispatchEvent(new Event('poiCreated'));
     } catch (error) {
       alert(t("errorSavingPoi") + ": " + error.message);
     }

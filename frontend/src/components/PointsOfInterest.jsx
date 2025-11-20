@@ -188,8 +188,19 @@ export default function PointsOfInterest() {
       setFilter('all');
     };
     
+    // Listen for POI created events to refresh the list
+    const handlePoiCreated = () => {
+      fetchPois();
+      // Trigger filter reapplication to include new POIs
+      applyFilter();
+    };
+    
     window.addEventListener('userLoggedIn', handleUserLogin);
-    return () => window.removeEventListener('userLoggedIn', handleUserLogin);
+    window.addEventListener('poiCreated', handlePoiCreated);
+    return () => {
+      window.removeEventListener('userLoggedIn', handleUserLogin);
+      window.removeEventListener('poiCreated', handlePoiCreated);
+    };
   }, []);
 
   // useEffect hook - Apply filter when POIs or filter changes
@@ -216,12 +227,12 @@ export default function PointsOfInterest() {
     }
   };
 
-  // useEffect hook - Fetch weather data for all POIs when POI list changes
+  // useEffect hook - Fetch weather data for filtered POIs
   useEffect(() => {
     async function fetchWeatherForPois() {
-      // Create array of promises to fetch weather for each POI
+      // Create array of promises to fetch weather for each filtered POI
       const entries = await Promise.all(
-        pois.map(async (poi) => {
+        filteredPois.map(async (poi) => {
           // Skip POIs without coordinates
           if (!poi.latitude || !poi.longitude) return [poi.id, null];
           try {
@@ -253,11 +264,11 @@ export default function PointsOfInterest() {
       // Convert array of entries to object
       setWeatherData(Object.fromEntries(entries));
     }
-    // Only fetch weather if there are POIs
-    if (pois.length > 0) {
+    // Only fetch weather if there are filtered POIs
+    if (filteredPois.length > 0) {
       fetchWeatherForPois();
     }
-  }, [pois]);
+  }, [filteredPois]);
 
     // Return the JSX structure
     return (
