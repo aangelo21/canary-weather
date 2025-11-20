@@ -10,14 +10,22 @@ export const getAllPointsOfInterest = async (req, res) => {
     const userId = req.user ? req.user.id : null;
 
     if (userId) {
-      // If user is authenticated, get all POIs that are either global or created by this user
-      // First get global POIs
-      const globalPois = await PointOfInterest.findAll({
-        where: { is_global: true }
+      // If user is authenticated, get:
+      // 1. Global POIs (type='global')
+      // 2. Local POIs (type='local')
+      // 3. Personal POIs for this user (type='personal')
+      
+      const globalAndLocalPois = await PointOfInterest.findAll({
+        where: { 
+          type: {
+            [Op.in]: ['global', 'local']
+          }
+        }
       });
 
-      // Then get POIs created by this user (those with UserPointOfInterest records)
-      const userCreatedPois = await PointOfInterest.findAll({
+      // Get personal POIs for this user
+      const personalPois = await PointOfInterest.findAll({
+        where: { type: 'personal' },
         include: [{
           model: UserPointOfInterest,
           where: { user_id: userId },
@@ -25,17 +33,17 @@ export const getAllPointsOfInterest = async (req, res) => {
         }]
       });
 
-      // Combine results, removing duplicates
-      const poiMap = new Map();
-      globalPois.forEach(poi => poiMap.set(poi.id, poi));
-      userCreatedPois.forEach(poi => poiMap.set(poi.id, poi));
-
-      const allPois = Array.from(poiMap.values());
+      // Combine results
+      const allPois = [...globalAndLocalPois, ...personalPois];
       return res.json(allPois);
     } else {
-      // If not authenticated, only show global POIs
+      // If not authenticated, show global and local POIs only
       const items = await PointOfInterest.findAll({
-        where: { is_global: true }
+        where: { 
+          type: {
+            [Op.in]: ['global', 'local']
+          }
+        }
       });
       return res.json(items);
     }
@@ -64,6 +72,12 @@ export const getPointOfInterestById = async (req, res) => {
 export const createPointOfInterest = async (req, res) => {
   try {
     const payload = req.body;
+    
+    // Set default type to 'personal' if not specified and not global
+    if (!payload.type) {
+      payload.type = payload.is_global ? 'global' : 'personal';
+    }
+    
     // Create new POI with provided data
     const item = await PointOfInterest.create(payload);
 
