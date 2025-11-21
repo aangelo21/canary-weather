@@ -396,7 +396,7 @@ export default function PointsOfInterest() {
                 {/* Edit POI Modal */}
                 {showEditModal && (
                     <>
-                        <div className="fixed inset-0 bg-black bg-opacity-50 z-[9998]" onClick={() => {
+                        <div className="fixed inset-0 bg-gray-900 bg-opacity-20 backdrop-blur-md z-[9998]" onClick={() => {
                             setShowEditModal(false);
                             setEditingId(null);
                             resetForm();
@@ -443,7 +443,7 @@ export default function PointsOfInterest() {
                 {/* Delete Confirmation Modal */}
                 {showDeleteModal && (
                     <>
-                        <div className="fixed inset-0 bg-black bg-opacity-50 z-[9998]" onClick={() => {
+                        <div className="fixed inset-0 bg-gray-900 bg-opacity-20 backdrop-blur-md z-[9998]" onClick={() => {
                             setShowDeleteModal(false);
                             setDeletingId(null);
                         }}></div>
