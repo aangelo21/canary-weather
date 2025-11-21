@@ -393,12 +393,12 @@ export default function PointsOfInterest() {
                 {/* Edit POI Modal */}
                 {showEditModal && (
                     <>
-                        <div className="fixed inset-0 backdrop-blur-sm z-[9998]" onClick={() => {
+                        <div className="fixed inset-0 backdrop-blur-sm z-9998" onClick={() => {
                             setShowEditModal(false);
                             setEditingId(null);
                             resetForm();
                         }}></div>
-                        <div className="fixed inset-0 flex items-center justify-center z-[9999] p-4" onClick={() => {
+                        <div className="fixed inset-0 flex items-center justify-center z-9999 p-4" onClick={() => {
                             setShowEditModal(false);
                             setEditingId(null);
                             resetForm();
@@ -440,11 +440,11 @@ export default function PointsOfInterest() {
                 {/* Delete Confirmation Modal */}
                 {showDeleteModal && (
                     <>
-                        <div className="fixed inset-0 backdrop-blur-sm z-[9998]" onClick={() => {
+                        <div className="fixed inset-0 backdrop-blur-sm z-9998" onClick={() => {
                             setShowDeleteModal(false);
                             setDeletingId(null);
                         }}></div>
-                        <div className="fixed inset-0 flex items-center justify-center z-[9999] p-4" onClick={() => {
+                        <div className="fixed inset-0 flex items-center justify-center z-9999 p-4" onClick={() => {
                             setShowDeleteModal(false);
                             setDeletingId(null);
                         }}>

@@ -180,7 +180,7 @@ export default function LoginModal({
                                     onClose();
                                 } catch (err) {
                                     setLoading(false);
-                                    setError(err.message || "Error al eliminar usuario");
+                                    setError(err.message || t('errorDeleteUser'));
                                 }
                             }}
                             disabled={loading}
@@ -225,7 +225,7 @@ export default function LoginModal({
                                     // Display uploaded profile picture
                                     <img
                                         src={getProfileImageUrl()}
-                                        alt="Perfil"
+                                        alt={t('profile')}
                                         className="w-full h-full object-cover"
                                     />
                                 ) : (

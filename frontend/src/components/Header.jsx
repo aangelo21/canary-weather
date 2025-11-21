@@ -177,7 +177,7 @@ function Header() {
                       : "text-gray-700 hover:text-gray-900 transition-colors"
                   }
                 >
-                  {t('About Us')}
+                  {t('aboutUs')}
                 </NavLink>
               </li>
               <li>
@@ -257,7 +257,7 @@ function Header() {
                     // Display uploaded profile picture
                     <img
                       src={getProfileImageUrl()}
-                      alt="Perfil"
+                      alt={t('profile')}
                       className="w-full h-full object-cover"
                     />
                   ) : (
