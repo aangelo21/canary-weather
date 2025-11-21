@@ -1,232 +1,204 @@
 # Diagrams
 
-### Use case diagram
+## Use case diagram
 
-![Use case diagram](/public/use_case_diagram/use_case_diagram.png)
+```mermaid
+graph LR
+    User((User))
+    Admin((Administrator))
+    API((External API))
 
-```plantuml
-@startuml Use Case Diagram
-left to right direction
+    subgraph CanaryWeather
+        UC1(Login and Registration)
+        UC2(Check Weather)
+        UC3(Save Locations and POIs)
+        UC4(View Alerts)
+        UC5(Manage Global POIs)
+        UC6(Manage Users)
+        UC7(Generate Forecasts)
+        UC8(Generate Alerts)
+    end
 
-actor User as U
-actor Administrator as A
+    User --> UC1
+    User --> UC2
+    User --> UC3
+    User --> UC4
 
-rectangle "Meteo Canary Islands App" {
+    Admin --> UC5
+    Admin --> UC6
 
-  ' Standard User use cases
-  usecase "Add Personal Point of Interest" as UC1
-
-  ' Administrator use cases for global POIs
-  usecase "Manage Global Points of Interest" as UC1A
-
-  usecase "View Weather Forecast (AEMET)" as UC2
-  usecase "View Weather Alerts (Canary Islands)" as UC3
-  usecase "View Tides Information" as UC4
-  usecase "Logs in/Signs up" as UC5
-}
-
-' User relations
-U --> UC1
-U --> UC2
-U --> UC3
-U --> UC4
-U --> UC5
-
-' Admin relations
-A --> UC1A
-A --> UC5
-
-@enduml
+    API --> UC7
+    API --> UC8
 ```
 
-### Class diagram
+## Class diagram
 
-![Class diagram](/public/class_diagram/class_diagram.png)
+```mermaid
+classDiagram
+    class User {
+        +int id
+        +String email
+        +String username
+        +String password
+        +bool is_admin
+        +String profile_picture_url
+    }
+    
+    class POI {
+        +int id
+        +String name
+        +double latitude
+        +double longitude
+        +bool in_global
+        +String image_url
+        +enum type
+    }
 
-```plantuml
-@startuml Class Diagram
-class User {
-    -id: String (PK)
-    -email: String
-    -username: String
-    -password: String
-    +register()
-    +login()
-}
+    class Location {
+        +int id
+        +String aemet_code
+        +String name
+        +double latitude
+        +double longitude
+    }
 
-class Location {
-    -id: String (PK)
-    -aemet_code: String
-    -name: String
-    -latitude: Double
-    -longitude: Double
-    -is_coastal: Boolean
-    -coast_code_id: String (FK -> coast_code.id)
-}
+    class Forecast {
+        +int id
+        +double temperature
+        +String condition
+        +int humidity
+        +int air_pressure
+        +double wind_speed
+        +int poi_id
+    }
+    
+    class Alert {
+        +int id
+        +enum level
+        +String phenomenom
+        +date start_date
+        +date end_date
+        +int location_id
+    }
 
-class PointOfInterest {
-    -id: String (PK)
-    -name: String
-    -latitude: Double
-    -longitude: Double
-    -description: String
-    -is_global: Boolean
-    -location_id: String (FK -> location.id)  ' optional
-}
+    class UserLocation {
+        +int id
+        +int user_id
+        +int location_id
+    }
+    
+    class UserPOI {
+        +int id
+        +int user_id
+        +int poi_id
+    }
+    
+    class Notification {
+        +int id
+        +String message
+        +enum type
+        +datetime sent_at
+        +int user_id
+        +int alert_id
+    }
+    
+    User "1" *-- "0..*" UserLocation : has_saved
+    User "1" *-- "0..*" UserPOI : saves_poi
+    
+    POI "1" *-- "0..*" Forecast : has_weather_data 
+    
+    UserLocation "0..*" --* "1" User : belongs_to
+    UserLocation "0..*" --* "1" Location : points_to
 
-class Forecast {
-    -id: String (PK)
-    -temperature: Double
-    -wind: String
-    -rain_probability: Double
-    -date_time: DateTime
-    -location_id: String (FK -> location.id)
-}
-
-class Alert {
-    -id: String (PK)
-    -level: String
-    -phenomenon: String
-    -start_date: DateTime
-    -end_date: DateTime
-    -location_id: String (FK -> location.id)
-}
-
-class Tide {
-    -id: String (PK)
-    -timestamp: DateTime
-    -height: Double
-    -location_id: String (FK -> location.id)
-    -coast_code_id: String (FK -> coast_code.id)
-}
-
-class CoastCode {
-    -id: String (PK)
-    -code: String
-    -name: String
-    -description: String
-}
-
-class UserPointOfInterest {
-    -user_id: String (PK, FK -> user.id)
-    -point_of_interest_id: String (PK, FK -> point_of_interest.id)
-    -favorited_at: DateTime
-}
-
-class UserLocation {
-    -user_id: String (PK, FK -> user.id)
-    -location_id: String (PK, FK -> location.id)
-    -selected_at: DateTime
-}
-
-' User relationships
-User "1..*" -- "0..*" UserLocation : selects >
-UserLocation "0..*" -- "1" Location : refers >
-
-User "1..*" -- "0..*" UserPointOfInterest : has >
-UserPointOfInterest "0..*" -- "1" PointOfInterest : refers >
-
-' AEMET data linked with location
-Location "1" -- "0..*" Forecast : has >
-Location "1" -- "0..*" Alert : has >
-Location "1" -- "0..*" Tide : has >
-
-' Relations for coast codes
-CoastCode "1" -- "0..*" Tide : used by >
-Location "0..1" -- "0..1" CoastCode : may reference >
-
-' POIs can optionally be linked to a location
-PointOfInterest "0..*" .. "0..1" Location : near >
-@enduml
+    UserPOI "0..*" --* "1" User : belongs_to
+    UserPOI "0..*" --* "1" POI : points_to
+    
+    Alert "1" *-- "0..*" Notification : generates
+    User "1" *-- "0..*" Notification : receives_via
 ```
 
-### Entity relantionship diagram
+## Entity relationship diagram
 
 ```mermaid
 erDiagram
-    %% Entities and attributes (PK = primary key)
-    USER {
-        string id PK
-        string email
-        string username
-        string password
+    User ||--o{ UserLocation : has_saved
+    User ||--o{ UserPOI : saves_poi
+    
+    POI ||--o{ Forecast : has_weather_data 
+    
+    UserLocation ||--|{ User : belongs_to
+    UserLocation ||--|{ Location : points_to
+
+    UserPOI ||--|{ User : belongs_to
+    UserPOI ||--|{ POI : points_to
+    
+    Alert ||--o{ Notification : generates
+    User ||--o{ Notification : receives_via
+    
+    User {
+        int id PK
+        String email
+        String username
+        String password
+        bool is_admin
+        String profile_picture_url
+    }
+    
+    POI {
+        int id PK
+        String name
+        double latitude
+        double longitude
+        bool in_global
+        String image_url
+        enum type
     }
 
-    LOCATION {
-        string id PK
-        string aemet_code
-        string name
+    Location {
+        int id PK
+        String aemet_code
+        String name
         double latitude
         double longitude
     }
 
-    POINT_OF_INTEREST {
-        string id PK
-        string name
-        string type
-        string description
-        string location_id FK
+    Forecast {
+        int id PK
+        double temperature
+        String condition
+        int humidity
+        int air_pressure
+        double wind_speed
+        int poi_id FK
+    }
+    
+    Alert {
+        int id PK
+        enum level
+        String phenomenom
+        date start_date
+        date end_date
+        int location_id FK
     }
 
-    USER_POINT_OF_INTEREST {
-        string id PK
-        string user_id FK
-        string poi_id FK
-        datetime favorited_at
+    UserLocation {
+        int id PK
+        int user_id FK
+        int location_id FK
     }
-
-    FORECAST {
-        string id PK
-        string location_id FK
-        date forecast_date
-        double temp_min
-        double temp_max
-        string source
+    
+    UserPOI {
+        int id PK
+        int user_id FK
+        int poi_id FK
     }
-
-    ALERT {
-        string id PK
-        string location_id FK
-        string alert_type
-        string description
-        datetime start_at
-        datetime end_at
+    
+    Notification {
+        int id PK
+        String message
+        enum type
+        datetime sent_at
+        int user_id FK
+        int alert_id FK
     }
-
-    TIDE {
-        string id PK
-        string location_id FK
-        date tide_date
-        double height
-        string coast_code_id FK
-    }
-
-    COAST_CODE {
-        string id PK
-        string code
-        string name
-        string description
-    }
-
-    %% Relationships (text labels approximate original cardinalities)
-    USER ||--o{ USER_POINT_OF_INTEREST : "has"
-    POINT_OF_INTEREST ||--o{ USER_POINT_OF_INTEREST : "referenced_by"
-
-    POINT_OF_INTEREST }o--|| LOCATION : "near (0..1)"
-    LOCATION ||--o{ FORECAST : "provides"
-    LOCATION ||--o{ ALERT : "has"
-    LOCATION ||--o{ TIDE : "has"
-
-    COAST_CODE ||--o{ TIDE : "associated_with"
-    LOCATION }o--|| COAST_CODE : "may_reference (0..1)"
-
-    %% Estilos
-    style USER fill:#8B0000,stroke:#fff,color:#000000
-    style LOCATION fill:#8B0000,stroke:#fff,color:#000000
-    style ALERT fill:#8B0000,stroke:#fff,color:#000000
-    style TIDE fill:#8B0000,stroke:#fff,color:#000000
-    style POINT_OF_INTEREST fill:#00008B,stroke:#fff,color:#000000
-    style USER_POINT_OF_INTEREST fill:#00008B,stroke:#fff,color:#000000
-    style FORECAST fill:#00008B,stroke:#fff,color:#000000
-    style COAST_CODE fill:#00008B,stroke:#fff,color:#000000
 ```
