@@ -130,13 +130,6 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
             <dd>{weather.wind} m/s</dd>
           </div>
         )}
-        {/* Location ID display */}
-        {poi.location_id && (
-          <div className="flex items-center justify-between py-1">
-            <dt className="font-medium">{t('locationId')}</dt>
-            <dd className="text-xs text-gray-400">{poi.location_id}</dd>
-          </div>
-        )}
         {/* Creation date */}
         <div className="flex items-center justify-between py-1">
           <dt className="font-medium">{t('created')}</dt>

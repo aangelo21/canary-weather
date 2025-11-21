@@ -1,16 +1,13 @@
-// Import User model and related dependencies
-import { User, PointOfInterest, Location, UserPointOfInterest } from "../models/index.js";
+import { User, Location, UserLocation, PointOfInterest, UserPointOfInterest } from "../models/index.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Op } from "sequelize";
 
-// Helper function to create a POI for the user's default location
-const createDefaultLocationPOI = async (userId, locationId) => {
+const createLocationPOI = async (userId, locationId) => {
   try {
     const location = await Location.findByPk(locationId);
     if (!location) return;
 
-    // Check if this user already has a personal POI for this location
     const existingUserPOI = await PointOfInterest.findOne({
       include: [{
         model: UserPointOfInterest,
@@ -18,24 +15,20 @@ const createDefaultLocationPOI = async (userId, locationId) => {
         required: true
       }],
       where: {
-        location_id: locationId,
+        name: `Mi municipio: ${location.name}`,
         type: 'local',
       },
     });
 
     if (!existingUserPOI) {
-      // Create the local POI
       const newPOI = await PointOfInterest.create({
         name: `Mi municipio: ${location.name}`,
-        description: `Punto de interés local para el municipio ${location.name}`,
         latitude: location.latitude,
         longitude: location.longitude,
         is_global: false,
         type: 'local',
-        location_id: locationId,
       });
 
-      // Link the POI to the user
       await UserPointOfInterest.create({
         user_id: userId,
         point_of_interest_id: newPOI.id,
@@ -45,7 +38,7 @@ const createDefaultLocationPOI = async (userId, locationId) => {
       console.log(`Created local POI for user ${userId} in ${location.name}`);
     }
   } catch (error) {
-    console.error("Error creating default location POI:", error);
+    console.error("Error creating location POI:", error);
   }
 };
 
@@ -140,28 +133,28 @@ export const getUserById = async (req, res) => {
 // Controller function to create a new user
 export const createUser = async (req, res) => {
   try {
-    const { email, username, password, default_location_id } = req.body;
-    // Validate required fields
+    const { email, username, password, location_id } = req.body;
     if (!email || !username || !password) {
       return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
-    // Check if email already exists
     const exists = await User.findOne({ where: { email } });
     if (exists) {
       return res.status(409).json({ error: "El email ya está registrado" });
     }
-    // Create new user (password hashed by model hook)
-    const user = await User.create({ email, username, password, default_location_id });
-    // Remove password from response
+    const user = await User.create({ email, username, password });
     const safe = user.toJSON();
     delete safe.password;
 
-    // Create default location POI if specified
-    if (default_location_id) {
-      await createDefaultLocationPOI(user.id, default_location_id);
+    if (location_id) {
+      await UserLocation.create({
+        user_id: user.id,
+        location_id: location_id,
+        selected_at: new Date()
+      });
+      
+      await createLocationPOI(user.id, location_id);
     }
 
-    // Generate JWT token for immediate login
     const token = jwt.sign(
       { id: user.id, username: user.username },
       process.env.JWT_SECRET || "secret",
@@ -177,26 +170,36 @@ export const createUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const payload = req.body;
+    const payload = { ...req.body };
 
-    // Handle profile picture upload if present
     if (req.file) {
       payload.profile_picture_url = `/uploads/profile-pictures/${req.file.filename}`;
     }
 
-    // Get current user to check if default_location_id changed
     const currentUser = await User.findByPk(id);
     if (!currentUser) return res.status(404).json({ error: "User not found" });
 
-    // Update user with provided data, enabling individualHooks to trigger beforeUpdate
+    const location_id = payload.location_id;
+    delete payload.location_id;
+
     await User.update(payload, { where: { id }, individualHooks: true });
 
-    // Create default location POI if default_location_id was changed
-    if (payload.default_location_id && payload.default_location_id !== currentUser.default_location_id) {
-      await createDefaultLocationPOI(id, payload.default_location_id);
+    if (location_id) {
+      const existingUserLocation = await UserLocation.findOne({
+        where: { user_id: id, location_id: location_id }
+      });
+      
+      if (!existingUserLocation) {
+        await UserLocation.create({
+          user_id: id,
+          location_id: location_id,
+          selected_at: new Date()
+        });
+        
+        await createLocationPOI(id, location_id);
+      }
     }
 
-    // Fetch updated user, excluding password
     const updated = await User.findByPk(id, {
       attributes: { exclude: ["password"] },
     });

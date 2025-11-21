@@ -34,7 +34,6 @@ export default function PointsOfInterest() {
         longitude: "",
         description: "",
         is_global: false,
-        location_id: "",
     });
     // State to control form visibility
     const [showEditForm, setShowEditForm] = useState(false);
@@ -133,7 +132,6 @@ export default function PointsOfInterest() {
       longitude: poi.longitude?.toString() || "",
       description: poi.description || "",
       is_global: poi.is_global,
-      location_id: poi.location_id || "",
     });
     setEditingId(poi.id);
     setShowEditModal(true);
@@ -156,7 +154,6 @@ export default function PointsOfInterest() {
       longitude: "",
       description: "",
       is_global: false,
-      location_id: "",
     });
     setEditingId(null);
     setSelectedImage(null);
