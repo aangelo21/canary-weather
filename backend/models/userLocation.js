@@ -8,26 +8,25 @@ import { DataTypes } from "sequelize";
 const UserLocation = sequelize.define(
   "UserLocation",
   {
-    // Foreign key to User table, part of composite primary key
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     user_id: {
       type: DataTypes.UUID,
       allowNull: false,
-      primaryKey: true,
     },
-    // Foreign key to Location table, part of composite primary key
     location_id: {
       type: DataTypes.UUID,
       allowNull: false,
-      primaryKey: true,
     },
-    // Timestamp when the user selected/favorited this location
     selected_at: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
     },
   },
-  // Disable automatic timestamps since we have selected_at
   { timestamps: false }
 );
 

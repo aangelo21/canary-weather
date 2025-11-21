@@ -7,39 +7,36 @@ import { DataTypes } from "sequelize";
 const Forecast = sequelize.define(
   "Forecast",
   {
-    // Unique identifier for each forecast entry, auto-generated UUID
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    // Temperature value in degrees Celsius
     temperature: {
       type: DataTypes.DOUBLE,
       allowNull: true,
     },
-    // Wind information (speed and direction)
-    wind: {
+    condition: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    // Probability of rain as a percentage
-    rain_probability: {
+    humidity: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    air_pressure: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    wind_speed: {
       type: DataTypes.DOUBLE,
       allowNull: true,
     },
-    // Date and time of the forecast
-    date_time: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    // Foreign key reference to the associated Location
-    location_id: {
+    poi_id: {
       type: DataTypes.UUID,
       allowNull: false,
     },
   },
-  // Enable automatic timestamps (createdAt, updatedAt)
   { timestamps: true }
 );
 

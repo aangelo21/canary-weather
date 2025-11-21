@@ -35,10 +35,11 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    // Default location (municipality) selected by the user
-    default_location_id: {
-      type: DataTypes.UUID,
-      allowNull: true,
+    // Boolean flag to indicate if the user has administrator privileges
+    is_admin: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
     },
   },
   {
