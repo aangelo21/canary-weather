@@ -97,5 +97,9 @@ export const es = {
     exploreMap: "Explora el Mapa",
     clickLocation: "Haz clic en una Ubicación para ver su pronóstico",
     language: "Idioma",
+    // User Profile
+    userProfile: "Perfil de Usuario",
+    clickToChangePhoto: "Haz clic en la foto para cambiarla",
+    uploadingPhoto: "Subiendo foto...",
   },
 };

@@ -4,8 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import LoginModal from "./LoginModal";
 // Import NavLink for navigation with active state styling
 import { NavLink } from "react-router-dom";
-// Import user service for profile picture updates
-import { createOrUpdateUser } from "../services/userService";
 // Import alert service for fetching alerts
 import { fetchAlerts } from "../services/alertService";
 // Import i18n for translations
@@ -19,14 +17,14 @@ function Header() {
   const [showLogin, setShowLogin] = useState(false);
   // State for current user data
   const [user, setUser] = useState(null);
-  // State for profile picture upload loading
-  const [uploading, setUploading] = useState(false);
   // State for language selector dropdown
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  // State for user profile dropdown
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
   // State for alerts
   const [alerts, setAlerts] = useState([]);
-  // Ref for hidden file input
-  const fileInputRef = useRef(null);
+  // Ref for user dropdown
+  const userDropdownRef = useRef(null);
   // API base URL from environment variables
   const API_BASE = import.meta.env.VITE_API_BASE;
   // Translation hook
@@ -51,10 +49,13 @@ function Header() {
       if (showLanguageDropdown && !event.target.closest('.language-dropdown')) {
         setShowLanguageDropdown(false);
       }
+      if (showUserDropdown && userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+        setShowUserDropdown(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showLanguageDropdown]);
+  }, [showLanguageDropdown, showUserDropdown]);
 
   // Effect to fetch alerts on component mount
   useEffect(() => {
@@ -85,41 +86,8 @@ function Header() {
     localStorage.removeItem("userId");
     setUser(null);
     setShowLogin(false);
+    setShowUserDropdown(false);
     window.location.reload();
-  };
-
-  // Handler for profile image click - triggers file input
-  const handleImageClick = () => {
-    if (user && fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  // Handler for profile image file change - uploads new profile picture
-  const handleImageChange = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
-
-    const formData = new FormData();
-    formData.append("profile_picture", file);
-
-    setUploading(true);
-    try {
-      // Upload profile picture via API
-      const updatedUser = await createOrUpdateUser(formData, user.id);
-      const newUser = {
-        ...user,
-        profile_picture_url: updatedUser.profile_picture_url,
-      };
-      // Update localStorage and state with new profile picture URL
-      localStorage.setItem("cw_user", JSON.stringify(newUser));
-      setUser(newUser);
-    } catch (error) {
-      console.error("Error uploading profile picture:", error);
-      alert(t('errorUploadProfile'));
-    } finally {
-      setUploading(false);
-    }
   };
 
   // Helper function to construct full profile image URL
@@ -276,69 +244,64 @@ function Header() {
           </div>          {/* User authentication section */}
           <div className="md:block relative flex flex-col items-center">
             {user ? (
-              // Logged in user section with profile picture and buttons
-              <div className="flex gap-2 items-center">
-                {/* Profile picture upload area */}
-                <div className="relative group">
-                  <button
-                    onClick={handleImageClick}
-                    disabled={uploading}
-                    className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-blue-600 hover:border-blue-700 transition-all cursor-pointer"
-                    title={t('changeProfilePic')}
-                  >
-                    {getProfileImageUrl() ? (
-                      // Display uploaded profile picture
-                      <img
-                        src={getProfileImageUrl()}
-                        alt="Perfil"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      // Default user icon
-                      <div className="w-full h-full bg-blue-600 flex items-center justify-center">
-                        <svg
-                          className="w-6 h-6 text-white"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    )}
-                    {/* Loading spinner during upload */}
-                    {uploading && (
-                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      </div>
-                    )}
-                  </button>
-                  {/* Hidden file input for profile picture selection */}
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                  />
-                </div>
-                {/* Edit profile button */}
+              // Logged in user section with profile picture dropdown
+              <div className="relative" ref={userDropdownRef}>
+                {/* Profile picture button */}
                 <button
-                  className="bg-accent-blue-200 text-white px-4 py-2 rounded hover:bg-accent-blue-100 transition-colors"
-                  onClick={() => setShowLogin(true)}
+                  onClick={() => setShowUserDropdown(!showUserDropdown)}
+                  className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-blue-600 hover:border-blue-700 transition-all cursor-pointer"
+                  title={user.username || t('userProfile')}
                 >
-                  {t('editProfile')}
+                  {getProfileImageUrl() ? (
+                    // Display uploaded profile picture
+                    <img
+                      src={getProfileImageUrl()}
+                      alt="Perfil"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    // Default user icon
+                    <div className="w-full h-full bg-blue-600 flex items-center justify-center">
+                      <svg
+                        className="w-6 h-6 text-white"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  )}
                 </button>
-                {/* Logout button */}
-                <button
-                  className="bg-error text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
-                  onClick={handleLogout}
-                >
-                  {t('logout')}
-                </button>
+                {/* Dropdown menu */}
+                {showUserDropdown && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                    <button
+                      onClick={() => {
+                        setShowLogin(true);
+                        setShowUserDropdown(false);
+                      }}
+                      className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 rounded-t-lg text-gray-700 flex items-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                      {t('editProfile')}
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 rounded-b-lg text-red-600 flex items-center gap-2 border-t border-gray-100"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                      {t('logout')}
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               // Login button for unauthenticated users
