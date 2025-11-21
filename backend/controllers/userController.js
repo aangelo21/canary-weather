@@ -19,19 +19,19 @@ const createDefaultLocationPOI = async (userId, locationId) => {
       }],
       where: {
         location_id: locationId,
-        type: 'personal',
+        type: 'local',
       },
     });
 
     if (!existingUserPOI) {
-      // Create the personal POI
+      // Create the local POI
       const newPOI = await PointOfInterest.create({
         name: `Mi municipio: ${location.name}`,
-        description: `Punto de interés personal para el municipio ${location.name}`,
+        description: `Punto de interés local para el municipio ${location.name}`,
         latitude: location.latitude,
         longitude: location.longitude,
         is_global: false,
-        type: 'personal',
+        type: 'local',
         location_id: locationId,
       });
 
@@ -42,7 +42,7 @@ const createDefaultLocationPOI = async (userId, locationId) => {
         favorited_at: new Date()
       });
 
-      console.log(`Created personal POI for user ${userId} in ${location.name}`);
+      console.log(`Created local POI for user ${userId} in ${location.name}`);
     }
   } catch (error) {
     console.error("Error creating default location POI:", error);
