@@ -38,8 +38,14 @@ export default function PointsOfInterest() {
     });
     // State to control form visibility
     const [showEditForm, setShowEditForm] = useState(false);
+    // State to control edit modal visibility
+    const [showEditModal, setShowEditModal] = useState(false);
+    // State to control delete confirmation modal visibility
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     // State to track which POI is being edited (null for new POI)
     const [editingId, setEditingId] = useState(null);
+    // State to track which POI is being deleted
+    const [deletingId, setDeletingId] = useState(null);
     // State for loading indicators
     const [loading, setLoading] = useState(false);
     // State for error messages
@@ -82,9 +88,10 @@ export default function PointsOfInterest() {
     try {
       // Call API to create or update POI with optional image
       await createOrUpdatePoi(formData, editingId, selectedImage);
-      // Reset form and hide it
+      // Reset form and hide modals
       resetForm();
       setShowEditForm(false);
+      setShowEditModal(false);
       setEditingId(null);
       // Refresh POI list
       fetchPois();
@@ -95,13 +102,20 @@ export default function PointsOfInterest() {
     }
   };
 
-    // Function to handle POI deletion
-    const handleDelete = async (id) => {
-        // Show confirmation dialog
-        if (!confirm(t('confirmDelete'))) return;
+    // Function to open delete confirmation modal
+    const handleDeleteClick = (id) => {
+        setDeletingId(id);
+        setShowDeleteModal(true);
+    };
+
+    // Function to confirm POI deletion
+    const confirmDelete = async () => {
+        if (!deletingId) return;
         try {
             setLoading(true);
-            await deletePoiService(id);
+            await deletePoiService(deletingId);
+            setShowDeleteModal(false);
+            setDeletingId(null);
             // Refresh POI list after deletion
             fetchPois();
         } catch (err) {
@@ -111,7 +125,7 @@ export default function PointsOfInterest() {
         }
     };
 
-  // Function to handle editing a POI - populates form with POI data
+  // Function to handle editing a POI - populates form with POI data and opens modal
   const handleEdit = (poi) => {
     setFormData({
       name: poi.name,
@@ -122,7 +136,7 @@ export default function PointsOfInterest() {
       location_id: poi.location_id || "",
     });
     setEditingId(poi.id);
-    setShowEditForm(true);
+    setShowEditModal(true);
     // Set up image preview for existing POI image
     if (poi.image_url) {
       const API_BASE = import.meta.env.VITE_API_BASE;
@@ -373,11 +387,114 @@ export default function PointsOfInterest() {
                                 poi={poi}
                                 weather={weatherData[poi.id]}
                                 onEdit={() => handleEdit(poi)}
-                                onDelete={() => handleDelete(poi.id)}
+                                onDelete={() => handleDeleteClick(poi.id)}
                             />
                         ))
                     )}
                 </div>
+
+                {/* Edit POI Modal */}
+                {showEditModal && (
+                    <>
+                        <div className="fixed inset-0 bg-black bg-opacity-50 z-[9998]" onClick={() => {
+                            setShowEditModal(false);
+                            setEditingId(null);
+                            resetForm();
+                        }}></div>
+                        <div className="fixed inset-0 flex items-center justify-center z-[9999] p-4" onClick={() => {
+                            setShowEditModal(false);
+                            setEditingId(null);
+                            resetForm();
+                        }}>
+                            <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                                <div className="p-6">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h2 className="text-2xl font-bold text-gray-800">{t('editPOI')}</h2>
+                                        <button
+                                            onClick={() => {
+                                                setShowEditModal(false);
+                                                setEditingId(null);
+                                                resetForm();
+                                            }}
+                                            className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+                                        >
+                                            &times;
+                                        </button>
+                                    </div>
+                                    <POIForm
+                                        formData={formData}
+                                        onChange={handleInputChange}
+                                        onSubmit={handleSubmit}
+                                        loading={loading}
+                                        onCancel={() => {
+                                            setShowEditModal(false);
+                                            setEditingId(null);
+                                            resetForm();
+                                        }}
+                                        onImageChange={handleImageChange}
+                                        imagePreview={imagePreview}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                )}
+
+                {/* Delete Confirmation Modal */}
+                {showDeleteModal && (
+                    <>
+                        <div className="fixed inset-0 bg-black bg-opacity-50 z-[9998]" onClick={() => {
+                            setShowDeleteModal(false);
+                            setDeletingId(null);
+                        }}></div>
+                        <div className="fixed inset-0 flex items-center justify-center z-[9999] p-4" onClick={() => {
+                            setShowDeleteModal(false);
+                            setDeletingId(null);
+                        }}>
+                            <div className="bg-white rounded-lg shadow-lg w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+                                <div className="p-6">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h2 className="text-xl font-bold text-gray-800">{t('deletePOI')}</h2>
+                                        <button
+                                            onClick={() => {
+                                                setShowDeleteModal(false);
+                                                setDeletingId(null);
+                                            }}
+                                            className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+                                        >
+                                            &times;
+                                        </button>
+                                    </div>
+                                    <p className="text-gray-600 mb-6">{t('confirmDelete')}</p>
+                                    {error && (
+                                        <div className="mb-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm">
+                                            {error}
+                                        </div>
+                                    )}
+                                    <div className="flex gap-3 justify-end">
+                                        <button
+                                            onClick={() => {
+                                                setShowDeleteModal(false);
+                                                setDeletingId(null);
+                                            }}
+                                            className="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors"
+                                            disabled={loading}
+                                        >
+                                            {t('cancel')}
+                                        </button>
+                                        <button
+                                            onClick={confirmDelete}
+                                            className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors"
+                                            disabled={loading}
+                                        >
+                                            {loading ? t('deleting') : t('delete')}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );

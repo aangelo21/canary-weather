@@ -101,5 +101,9 @@ export const es = {
     userProfile: "Perfil de Usuario",
     clickToChangePhoto: "Haz clic en la foto para cambiarla",
     uploadingPhoto: "Subiendo foto...",
+    deletePOI: "Eliminar Punto de Interés",
+    deleting: "Eliminando...",
+    all: "Todos",
+    personal: "Personal",
   },
 };
