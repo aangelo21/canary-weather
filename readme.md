@@ -97,3 +97,6 @@ This project is licensed under the terms specified in the `license` file.
 
 For deployment instructions, refer to `docs/deployment.md`.
 
+## Acknowledgements
+
+- Samuel Ponce @ github.com/s-pl
