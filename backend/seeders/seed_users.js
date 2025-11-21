@@ -12,26 +12,31 @@ async function seed() {
       email: "admin@canaryweather.com",
       username: "admin",
       password: "password123",
+      is_admin: true,
     },
     {
       email: "user1@example.com",
       username: "user1",
       password: "password123",
+      is_admin: false,
     },
     {
       email: "user2@example.com",
       username: "user2",
       password: "password123",
+      is_admin: false,
     },
     {
       email: "testuser@canaryweather.com",
       username: "testuser",
       password: "test123",
+      is_admin: false,
     },
     {
       email: "demo@canaryweather.com",
       username: "demo",
       password: "demo123",
+      is_admin: false,
     },
   ];
 
