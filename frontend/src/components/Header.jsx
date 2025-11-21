@@ -170,14 +170,14 @@ function Header() {
               </li>
               <li>
                 <NavLink
-                  to="/tides"
+                  to="/AboutUs"
                   className={({ isActive }) =>
                     isActive
                       ? "text-gray-900 font-semibold"
                       : "text-gray-700 hover:text-gray-900 transition-colors"
                   }
                 >
-                  {t('tides')}
+                  {t('About Us')}
                 </NavLink>
               </li>
               <li>
@@ -415,19 +415,6 @@ function Header() {
                   onClick={() => setIsOpen(false)}
                 >
                   {t('pointsOfInterest')}
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/tides"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block text-gray-900 font-semibold py-2"
-                      : "block text-gray-700 hover:text-gray-900 py-2"
-                  }
-                  onClick={() => setIsOpen(false)}
-                >
-                  {t('tides')}
                 </NavLink>
               </li>
               <li>
