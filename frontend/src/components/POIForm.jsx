@@ -16,10 +16,8 @@ export default function POIForm({
 }) {
     const { t } = useTranslation();
     return (
-        // Form container with white background, padding, shadow, and border
-        <div className="mb-6 p-4 bg-white rounded shadow border border-gray-200">
-            {/* Form title */}
-            <h2 className="text-lg font-bold mb-2">{t('editPOI')}</h2>
+        // Form container
+        <div>
             {/* Main form element */}
             <form onSubmit={onSubmit}>
                 {/* Name input field */}

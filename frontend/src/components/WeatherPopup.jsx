@@ -54,7 +54,7 @@ function WeatherPopup({ position, weather, markerRef }) {
         longitude: position[1],
         description: "",
         is_global: false,
-        type: 'local', // Local POI by default
+        type: 'personal', // Personal POI by default
       });
       // Mark as saved to update UI
       setSaved(true);

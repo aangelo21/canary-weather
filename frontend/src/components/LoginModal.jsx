@@ -3,7 +3,7 @@
 // and account deletion. It provides a modal interface with form validation and
 // integrates with the user service for API calls.
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   createOrUpdateUser,
   loginUser,
@@ -42,6 +42,12 @@ export default function LoginModal({
     const [loading, setLoading] = useState(false);
     // State for municipalities data
     const [municipalities, setMunicipalities] = useState([]);
+    // State for profile picture upload loading
+    const [uploading, setUploading] = useState(false);
+    // Ref for hidden file input
+    const fileInputRef = useRef(null);
+    // API base URL from environment variables
+    const API_BASE = import.meta.env.VITE_API_BASE;
 
     // useEffect hook - Populates form fields when editing existing user account
     // Runs when user data changes or modal opens
@@ -66,6 +72,49 @@ export default function LoginModal({
                 .catch(err => console.error("Error loading municipalities:", err));
         }
     }, [isOpen]);
+
+    // Handler for profile image click - triggers file input
+    const handleImageClick = () => {
+        if (user && fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    // Handler for profile image file change - uploads new profile picture
+    const handleImageChange = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file || !user) return;
+
+        const formData = new FormData();
+        formData.append("profile_picture", file);
+
+        setUploading(true);
+        try {
+            // Upload profile picture via API
+            const updatedUser = await createOrUpdateUser(formData, user.id);
+            const newUser = {
+                ...user,
+                profile_picture_url: updatedUser.profile_picture_url,
+            };
+            // Update localStorage and state with new profile picture URL
+            localStorage.setItem("cw_user", JSON.stringify(newUser));
+            onLogin(newUser);
+        } catch (error) {
+            console.error("Error uploading profile picture:", error);
+            setError(t('errorUploadProfile'));
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    // Helper function to construct full profile image URL
+    const getProfileImageUrl = () => {
+        if (user?.profile_picture_url) {
+            const baseUrl = API_BASE.replace("/api", "");
+            return `${baseUrl}${user.profile_picture_url}`;
+        }
+        return null;
+    };
 
     // Early return if modal is not open
     if (!isOpen) return null;
@@ -162,6 +211,79 @@ export default function LoginModal({
                     <h2 className="text-xl font-semibold mb-4 text-center">
                         {t('editProfile')}
                     </h2>
+                    {/* Profile picture upload section */}
+                    <div className="flex flex-col items-center mb-4">
+                        <div className="relative group">
+                            <button
+                                onClick={handleImageClick}
+                                disabled={uploading}
+                                type="button"
+                                className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-blue-600 hover:border-blue-700 transition-all cursor-pointer"
+                                title={t('changeProfilePic')}
+                            >
+                                {getProfileImageUrl() ? (
+                                    // Display uploaded profile picture
+                                    <img
+                                        src={getProfileImageUrl()}
+                                        alt="Perfil"
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    // Default user icon
+                                    <div className="w-full h-full bg-blue-600 flex items-center justify-center">
+                                        <svg
+                                            className="w-12 h-12 text-white"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                fillRule="evenodd"
+                                                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                                clipRule="evenodd"
+                                            />
+                                        </svg>
+                                    </div>
+                                )}
+                                {/* Loading spinner during upload */}
+                                {uploading && (
+                                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                                    </div>
+                                )}
+                                {/* Camera icon overlay on hover */}
+                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
+                                    <svg
+                                        className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                                        />
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                                        />
+                                    </svg>
+                                </div>
+                            </button>
+                            {/* Hidden file input for profile picture selection */}
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                className="hidden"
+                            />
+                        </div>
+                        <p className="text-sm text-gray-600 mt-2">{t('clickToChangePhoto')}</p>
+                    </div>
                     {error && (
                         <div className="text-error text-sm mb-2 text-center">
                             {error}
@@ -170,6 +292,11 @@ export default function LoginModal({
                     {loading && (
                         <div className="text-info text-sm mb-2 text-center">
                             {t('updating')}
+                        </div>
+                    )}
+                    {uploading && (
+                        <div className="text-blue-600 text-sm mb-2 text-center">
+                            {t('uploadingPhoto')}
                         </div>
                     )}
                     {/* Account update form */}

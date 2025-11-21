@@ -97,5 +97,13 @@ export const en = {
     exploreMap: "Explore the Map",
     clickLocation: "Click on a Location to see its forecast",
     language: "Language",
+    // User Profile
+    userProfile: "User Profile",
+    clickToChangePhoto: "Click on the photo to change it",
+    uploadingPhoto: "Uploading photo...",
+    deletePOI: "Delete Point of Interest",
+    deleting: "Deleting...",
+    all: "All",
+    personal: "Personal",
   },
 };
