@@ -193,56 +193,57 @@ function Header() {
                   {t('warnings')}
                 </NavLink>
               </li>
-              {/* Language selector dropdown attached to navigation */}
-              <li>
-                <div className="relative language-dropdown">
-                  <button
-                    onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-                    className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg transition-colors border border-gray-300"
-                  >
-                    <span className="text-sm font-medium">
-                      {i18n.language === 'en' ? 'EN' : 'ES'}
-                    </span>
-                    <svg
-                      className={`w-4 h-4 transition-transform ${showLanguageDropdown ? 'rotate-180' : ''}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-                  {showLanguageDropdown && (
-                    <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-                      <button
-                        onClick={() => {
-                          i18n.changeLanguage('es');
-                          setShowLanguageDropdown(false);
-                        }}
-                        className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 rounded-t-lg ${
-                          i18n.language === 'es' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
-                        }`}
-                      >
-                        🇪🇸 Español
-                      </button>
-                      <button
-                        onClick={() => {
-                          i18n.changeLanguage('en');
-                          setShowLanguageDropdown(false);
-                        }}
-                        className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 rounded-b-lg ${
-                          i18n.language === 'en' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
-                        }`}
-                      >
-                        🇺🇸 English
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </li>
             </ul>
-          </div>          {/* User authentication section */}
-          <div className="md:block relative flex flex-col items-center">
+          </div>
+
+          {/* Language selector and user authentication section */}
+          <div className="md:flex hidden items-center gap-3">
+            {/* Language selector dropdown */}
+            <div className="relative language-dropdown">
+              <button
+                onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+                className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg transition-colors border border-gray-300"
+              >
+                <span className="text-sm font-medium">
+                  {i18n.language === 'en' ? 'EN' : 'ES'}
+                </span>
+                <svg
+                  className={`w-4 h-4 transition-transform ${showLanguageDropdown ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {showLanguageDropdown && (
+                <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                  <button
+                    onClick={() => {
+                      i18n.changeLanguage('es');
+                      setShowLanguageDropdown(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 rounded-t-lg ${
+                      i18n.language === 'es' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                    }`}
+                  >
+                    🇪🇸 Español
+                  </button>
+                  <button
+                    onClick={() => {
+                      i18n.changeLanguage('en');
+                      setShowLanguageDropdown(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 rounded-b-lg ${
+                      i18n.language === 'en' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                    }`}
+                  >
+                    🇺🇸 English
+                  </button>
+                </div>
+              )}
+            </div>
+
             {user ? (
               // Logged in user section with profile picture dropdown
               <div className="relative" ref={userDropdownRef}>

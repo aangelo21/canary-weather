@@ -286,8 +286,8 @@ export default function PointsOfInterest() {
 
     // Return the JSX structure
     return (
-        // Main container with gray background and padding
-        <div className="min-h-screen bg-gray-50 py-8">
+        // Main container with white background and padding
+        <div className="min-h-screen bg-white py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header section with title and POI count */}
                 <div className="flex items-center justify-between mb-6">
@@ -396,7 +396,7 @@ export default function PointsOfInterest() {
                 {/* Edit POI Modal */}
                 {showEditModal && (
                     <>
-                        <div className="fixed inset-0 bg-gray-900 bg-opacity-20 backdrop-blur-md z-[9998]" onClick={() => {
+                        <div className="fixed inset-0 backdrop-blur-sm z-[9998]" onClick={() => {
                             setShowEditModal(false);
                             setEditingId(null);
                             resetForm();
@@ -443,7 +443,7 @@ export default function PointsOfInterest() {
                 {/* Delete Confirmation Modal */}
                 {showDeleteModal && (
                     <>
-                        <div className="fixed inset-0 bg-gray-900 bg-opacity-20 backdrop-blur-md z-[9998]" onClick={() => {
+                        <div className="fixed inset-0 backdrop-blur-sm z-[9998]" onClick={() => {
                             setShowDeleteModal(false);
                             setDeletingId(null);
                         }}></div>
