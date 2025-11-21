@@ -5,7 +5,6 @@ import tailwind from "@tailwindcss/vite";
 export default defineConfig({
     plugins: [react(), tailwind()],
     server: {
-         server: {
-    allowedHosts: ['canaryweather.xyz']
-  }
-},});
+        allowedHosts: ['canaryweather.xyz'],
+    }
+});
