@@ -178,7 +178,6 @@ erDiagram
         String phenomenom
         date start_date
         date end_date
-        int location_id FK
     }
 
     UserLocation {
@@ -201,4 +200,16 @@ erDiagram
         int user_id FK
         int alert_id FK
     }
+
+style User fill:#00008B,stroke:#fff,color:#000000
+style UserPOI fill:#FF0000,stroke:#fff,color:#000000
+style UserLocation fill:#FF0000,stroke:#fff,color:#000000
+style POI fill:#FF0000,stroke:#fff,color:#000000
+style Location fill:#FF0000,stroke:#fff,color:#000000
+style Forecast fill:#00008B,stroke:#fff,color:#000000
+style Alert fill:#00008B,stroke:#fff,color:#000000
+style Notification fill:#00008B,stroke:#fff,color:#000000
 ```
+
+**Gabriel** -> Red
+**Angelo** -> Blue
