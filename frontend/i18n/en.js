@@ -105,5 +105,8 @@ export const en = {
     deleting: "Deleting...",
     all: "All",
     personal: "Personal",
+    aboutUs: "About Us",
+    profile: "Profile",
+    errorDeleteUser: "Error deleting user",
   },
 };

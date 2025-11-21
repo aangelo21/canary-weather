@@ -7,55 +7,37 @@ import { DataTypes } from "sequelize";
 const PointOfInterest = sequelize.define(
   "PointOfInterest",
   {
-    // Unique identifier for each POI, auto-generated UUID
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    // Name of the point of interest
     name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    // Latitude coordinate for mapping
     latitude: {
       type: DataTypes.DOUBLE,
       allowNull: true,
     },
-    // Longitude coordinate for mapping
     longitude: {
       type: DataTypes.DOUBLE,
       allowNull: true,
     },
-    // Optional description of the POI
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
-    // Boolean flag indicating if the POI is global (visible to all users) or user-specific
     is_global: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    // Type of POI: 'global' (visible to all), 'local' (location-based), or 'personal' (user-specific)
     type: {
       type: DataTypes.ENUM('global', 'local', 'personal'),
       allowNull: false,
       defaultValue: 'local',
     },
-    // Foreign key reference to Location if the POI is tied to a specific location
-    location_id: {
-      type: DataTypes.UUID,
-      allowNull: true,
-    },
-    // URL to an image associated with the POI
     image_url: {
       type: DataTypes.STRING,
       allowNull: true,
     },
   },
-  // Enable automatic timestamps (createdAt, updatedAt)
   { timestamps: true }
 );
 

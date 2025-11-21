@@ -34,7 +34,7 @@ export default function LoginModal({
         username: "",         // For signup and account editing
         email: "",            // For signup and account editing
         confirm: "",          // Password confirmation for signup/editing
-        default_location_id: "", // For signup and account editing
+        location_id: "",
     });
     // State for displaying error messages
     const [error, setError] = useState("");
@@ -59,7 +59,7 @@ export default function LoginModal({
                 password: "",
                 confirm: "",
                 emailOrUsername: "",
-                default_location_id: user.default_location_id || "",
+                location_id: user.location_id || "",
             });
         }
     }, [user, isOpen]);
@@ -180,7 +180,7 @@ export default function LoginModal({
                                     onClose();
                                 } catch (err) {
                                     setLoading(false);
-                                    setError(err.message || "Error al eliminar usuario");
+                                    setError(err.message || t('errorDeleteUser'));
                                 }
                             }}
                             disabled={loading}
@@ -225,7 +225,7 @@ export default function LoginModal({
                                     // Display uploaded profile picture
                                     <img
                                         src={getProfileImageUrl()}
-                                        alt="Perfil"
+                                        alt={t('profile')}
                                         className="w-full h-full object-cover"
                                     />
                                 ) : (
@@ -323,8 +323,8 @@ export default function LoginModal({
                                     updateData.username = input.username;
                                 if (input.password)
                                     updateData.password = input.password;
-                                if (input.default_location_id)
-                                    updateData.default_location_id = input.default_location_id;
+                                if (input.location_id)
+                                    updateData.location_id = input.location_id;
                                 // Call API to update user account
                                 const result = await createOrUpdateUser(
                                     updateData,
@@ -371,11 +371,11 @@ export default function LoginModal({
                         {/* Municipality selector */}
                         <select
                             className="border rounded px-3 py-2"
-                            value={input.default_location_id}
+                            value={input.location_id}
                             onChange={(e) =>
                                 setInput((i) => ({
                                     ...i,
-                                    default_location_id: e.target.value,
+                                    location_id: e.target.value,
                                 }))
                             }
                         >
@@ -511,7 +511,7 @@ export default function LoginModal({
                                     !input.username ||
                                     !input.password ||
                                     !input.confirm ||
-                                    !input.default_location_id
+                                    !input.location_id
                                 ) {
                                     setError(t('allFieldsRequired'));
                                     return;
@@ -527,7 +527,7 @@ export default function LoginModal({
                                         email: input.email,
                                         username: input.username,
                                         password: input.password,
-                                        default_location_id: input.default_location_id,
+                                        location_id: input.location_id,
                                     });
                                     setLoading(false);
                                     if (result && result.token) {
@@ -680,11 +680,11 @@ export default function LoginModal({
                                 {/* Municipality selector for signup */}
                                 <select
                                     className="border rounded px-3 py-2"
-                                    value={input.default_location_id}
+                                    value={input.location_id}
                                     onChange={(e) =>
                                         setInput((i) => ({
                                             ...i,
-                                            default_location_id: e.target.value,
+                                            location_id: e.target.value,
                                         }))
                                     }
                                 >

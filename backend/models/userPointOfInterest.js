@@ -8,26 +8,25 @@ import { DataTypes } from "sequelize";
 const UserPointOfInterest = sequelize.define(
   "UserPointOfInterest",
   {
-    // Foreign key to User table, part of composite primary key
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     user_id: {
       type: DataTypes.UUID,
       allowNull: false,
-      primaryKey: true,
     },
-    // Foreign key to PointOfInterest table, part of composite primary key
     point_of_interest_id: {
       type: DataTypes.UUID,
       allowNull: false,
-      primaryKey: true,
     },
-    // Timestamp when the user favorited this point of interest
     favorited_at: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
     },
   },
-  // Disable automatic timestamps since we have favorited_at
   { timestamps: false }
 );
 

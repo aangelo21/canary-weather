@@ -34,7 +34,6 @@ export default function PointsOfInterest() {
         longitude: "",
         description: "",
         is_global: false,
-        location_id: "",
     });
     // State to control form visibility
     const [showEditForm, setShowEditForm] = useState(false);
@@ -133,7 +132,6 @@ export default function PointsOfInterest() {
       longitude: poi.longitude?.toString() || "",
       description: poi.description || "",
       is_global: poi.is_global,
-      location_id: poi.location_id || "",
     });
     setEditingId(poi.id);
     setShowEditModal(true);
@@ -156,7 +154,6 @@ export default function PointsOfInterest() {
       longitude: "",
       description: "",
       is_global: false,
-      location_id: "",
     });
     setEditingId(null);
     setSelectedImage(null);
@@ -396,12 +393,12 @@ export default function PointsOfInterest() {
                 {/* Edit POI Modal */}
                 {showEditModal && (
                     <>
-                        <div className="fixed inset-0 backdrop-blur-sm z-[9998]" onClick={() => {
+                        <div className="fixed inset-0 backdrop-blur-sm z-9998" onClick={() => {
                             setShowEditModal(false);
                             setEditingId(null);
                             resetForm();
                         }}></div>
-                        <div className="fixed inset-0 flex items-center justify-center z-[9999] p-4" onClick={() => {
+                        <div className="fixed inset-0 flex items-center justify-center z-9999 p-4" onClick={() => {
                             setShowEditModal(false);
                             setEditingId(null);
                             resetForm();
@@ -443,11 +440,11 @@ export default function PointsOfInterest() {
                 {/* Delete Confirmation Modal */}
                 {showDeleteModal && (
                     <>
-                        <div className="fixed inset-0 backdrop-blur-sm z-[9998]" onClick={() => {
+                        <div className="fixed inset-0 backdrop-blur-sm z-9998" onClick={() => {
                             setShowDeleteModal(false);
                             setDeletingId(null);
                         }}></div>
-                        <div className="fixed inset-0 flex items-center justify-center z-[9999] p-4" onClick={() => {
+                        <div className="fixed inset-0 flex items-center justify-center z-9999 p-4" onClick={() => {
                             setShowDeleteModal(false);
                             setDeletingId(null);
                         }}>

@@ -33,7 +33,7 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
           />
         ) : (
           // Placeholder div with gradient background when no image
-          <div className="w-full h-48 bg-gradient-to-br from-[#0f6fb9] to-[#0a5a96] flex items-center justify-center">
+          <div className="w-full h-48 bg-linear-to-br from-[#0f6fb9] to-[#0a5a96] flex items-center justify-center">
             <div className="text-center text-white">
               {/* Camera icon SVG */}
               <svg
@@ -108,33 +108,26 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
         {/* Weather information from API */}
         {weather && weather.description && (
           <div className="flex items-center justify-between py-1">
-            <dt className="font-medium">Condition:</dt>
+            <dt className="font-medium">{t('condition')}</dt>
             <dd>{weather.description}</dd>
           </div>
         )}
         {weather && weather.humidity && (
           <div className="flex items-center justify-between py-1">
-            <dt className="font-medium">Humidity:</dt>
+            <dt className="font-medium">{t('humidity')}</dt>
             <dd>{weather.humidity}%</dd>
           </div>
         )}
         {weather && weather.pressure && (
           <div className="flex items-center justify-between py-1">
-            <dt className="font-medium">Pressure:</dt>
+            <dt className="font-medium">{t('pressure')}</dt>
             <dd>{weather.pressure} hPa</dd>
           </div>
         )}
         {weather && weather.wind && (
           <div className="flex items-center justify-between py-1">
-            <dt className="font-medium">Wind:</dt>
+            <dt className="font-medium">{t('wind')}</dt>
             <dd>{weather.wind} m/s</dd>
-          </div>
-        )}
-        {/* Location ID display */}
-        {poi.location_id && (
-          <div className="flex items-center justify-between py-1">
-            <dt className="font-medium">{t('locationId')}</dt>
-            <dd className="text-xs text-gray-400">{poi.location_id}</dd>
           </div>
         )}
         {/* Creation date */}

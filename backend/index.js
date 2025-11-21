@@ -8,10 +8,11 @@ import "./models/index.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// Import route handlers for different API endpoints
 import pointOfInterestRoutes from "./routes/pointOfInterestRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import alertRoutes from "./routes/alertRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
+import userLocationRoutes from "./routes/userLocationRoutes.js";
 
 // Define __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -30,14 +31,15 @@ app.use(express.json());
 // Serve static files from the uploads directory for profile pictures and POI images
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Mount routes for points of interest API
 app.use("/api/pois", pointOfInterestRoutes);
 
-// Mount routes for user-related API
 app.use("/api/users", userRoutes);
 
-// Mount routes for alerts API
 app.use("/api/alerts", alertRoutes);
+
+app.use("/api/notifications", notificationRoutes);
+
+app.use("/api/user-locations", userLocationRoutes);
 
 // Health check endpoint to verify server status
 app.get("/api/health", (req, res) => {

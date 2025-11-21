@@ -105,5 +105,8 @@ export const es = {
     deleting: "Eliminando...",
     all: "Todos",
     personal: "Personal",
+    aboutUs: "Sobre Nosotros",
+    profile: "Perfil",
+    errorDeleteUser: "Error al eliminar usuario",
   },
 };
