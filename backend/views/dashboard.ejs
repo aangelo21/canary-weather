@@ -199,7 +199,7 @@
                                             <%= new Date(user.createdAt).toLocaleDateString() %>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <button onclick="openEditUserModal('<%= user.id %>', '<%= user.username %>', '<%= user.email %>', <%= user.is_admin %>)" class="text-indigo-600 hover:text-indigo-900 mr-4">Editar</button>
+                                            <button onclick="openEditUserModal('<%= user.id %>', '<%= user.username %>', '<%= user.email %>', '<%= user.is_admin %>')" class="text-indigo-600 hover:text-indigo-900 mr-4">Editar</button>
                                             <button onclick="openDeleteUserModal('<%= user.id %>')" class="text-red-600 hover:text-red-900">Eliminar</button>
                                         </td>
                                     </tr>
@@ -420,7 +420,7 @@
         function openEditUserModal(id, username, email, isAdmin) {
             document.getElementById('editUsername').value = username;
             document.getElementById('editEmail').value = email;
-            document.getElementById('editIsAdmin').checked = isAdmin;
+            document.getElementById('editIsAdmin').checked = (isAdmin === 'true');
             document.getElementById('editUserForm').action = `/admin/users/${id}/update`;
             document.getElementById('editUserModal').classList.remove('hidden');
         }
