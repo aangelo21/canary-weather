@@ -8,6 +8,7 @@ import Layout from "./layout/Layout";
 import Home from "./pages/Home";
 import Map from "./pages/Map";
 import Warnings from "./pages/Warnings";
+import AdminDashboard from "./pages/AdminDashboard";
 // Import i18n for internationalization
 import "../i18n/index.js";
 import { I18nextProvider } from "react-i18next";
@@ -21,9 +22,9 @@ function App() {
     <ThemeProvider>
       <I18nextProvider i18n={i18n}>
         {/* BrowserRouter enables client-side routing */}
-        <BrowserRouter>
+       <BrowserRouter>
           {/* Routes component contains all route definitions */}
-          <Routes>
+         <Routes>
             {/* Layout component wraps all routes for consistent UI structure */}
             <Route element={<Layout />}>
               {/* Home page route */}
@@ -34,6 +35,8 @@ function App() {
               <Route path="/map" element={<Map />} />
               {/* Interactive Map page route */}
               <Route path="/warnings" element={<Warnings />} />
+              {/* Admin Dashboard route */}
+              <Route path="/admin" element={<AdminDashboard />} />
             </Route>
           </Routes>
         </BrowserRouter>

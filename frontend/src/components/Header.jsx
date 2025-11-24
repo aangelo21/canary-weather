@@ -3,9 +3,10 @@ import { useState, useEffect, useRef } from "react";
 // Import LoginModal component for authentication
 import LoginModal from "./LoginModal";
 // Import NavLink for navigation with active state styling
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 // Import alert service for fetching alerts
 import { fetchAlerts } from "../services/alertService";
+import { logoutUser } from "../services/userService";
 // Import i18n for translations
 import { useTranslation } from "react-i18next";
 // Import ThemeSwitch for dark mode toggle
@@ -31,6 +32,8 @@ function Header() {
   const API_BASE = import.meta.env.VITE_API_BASE;
   // Translation hook
   const { t, i18n } = useTranslation();
+  // Navigation hook
+  const navigate = useNavigate();
 
   // Effect to load user from localStorage on mount
   useEffect(() => {
@@ -82,9 +85,13 @@ function Header() {
   };
 
   // Handler for logout - clears localStorage and reloads page
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
     localStorage.removeItem("cw_user");
-    localStorage.removeItem("authToken");
     localStorage.removeItem("userId");
     setUser(null);
     setShowLogin(false);
@@ -297,6 +304,20 @@ function Header() {
                       </svg>
                       {t('editProfile')}
                     </button>
+                    {user.is_admin && (
+                      <button
+                        onClick={() => {
+                          navigate('/admin');
+                          setShowUserDropdown(false);
+                        }}
+                        className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 text-gray-700 flex items-center gap-2 border-t border-gray-100"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                        </svg>
+                        {t('dashboard')}
+                      </button>
+                    )}
                     <button
                       onClick={handleLogout}
                       className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 rounded-b-lg text-red-600 flex items-center gap-2 border-t border-gray-100"
