@@ -37,7 +37,7 @@ export const en = {
     local: "LOCAL",
     // Footer
     copyright: "©CanaryWeather |",
-    website: "canaryweather.com",
+    website: "canaryweather.xyz",
     // LoginModal
     deleteAccount: "Delete Account",
     confirmDeleteAccount:

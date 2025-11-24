@@ -28,7 +28,7 @@ export default function Footer() {
                         href="https://canaryweather.xyz"
                         target="_blank"
                         rel="noreferrer"
-                        className="underline underline-offset-2 hover:text-neutral-4"
+                        className="underline underline-offset-2 hover:text-neutral-4 dark:text-white"
                     >
                         {t('website')}
                     </a>
