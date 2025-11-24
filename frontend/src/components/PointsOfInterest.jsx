@@ -19,6 +19,8 @@ export default function PointsOfInterest() {
     const { t } = useTranslation();
     // Check if user is authenticated
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    // Check if user is admin
+    const [isAdmin, setIsAdmin] = useState(false);
     // State for storing all POIs
     const [pois, setPois] = useState([]);
     // State for filtered POIs based on selected filter
@@ -186,14 +188,28 @@ export default function PointsOfInterest() {
   // useEffect hook - Load POIs on component mount and check authentication
   useEffect(() => {
     // Check if user is authenticated
-    const user = localStorage.getItem("cw_user");
-    setIsAuthenticated(!!user);
+    const userStr = localStorage.getItem("cw_user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      setIsAuthenticated(true);
+      setIsAdmin(user.is_admin);
+    } else {
+      setIsAuthenticated(false);
+      setIsAdmin(false);
+    }
     fetchPois();
     
     // Listen for login events to refresh POIs and authentication state
     const handleUserLogin = () => {
-      const user = localStorage.getItem("cw_user");
-      setIsAuthenticated(!!user);
+      const userStr = localStorage.getItem("cw_user");
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        setIsAuthenticated(true);
+        setIsAdmin(user.is_admin);
+      } else {
+        setIsAuthenticated(false);
+        setIsAdmin(false);
+      }
       fetchPois();
       // Reset filter to 'all' to show newly available POIs
       setFilter('all');
@@ -378,15 +394,19 @@ export default function PointsOfInterest() {
                         </div>
                     ) : (
                         // Render POI cards
-                        filteredPois.map((poi) => (
-                            <POICard
-                                key={poi.id}
-                                poi={poi}
-                                weather={weatherData[poi.id]}
-                                onEdit={() => handleEdit(poi)}
-                                onDelete={() => handleDeleteClick(poi.id)}
-                            />
-                        ))
+                        filteredPois.map((poi) => {
+                            const isRestricted = poi.type === 'global' || poi.type === 'local' || poi.is_global;
+                            const canEdit = isAdmin || !isRestricted;
+                            return (
+                                <POICard
+                                    key={poi.id}
+                                    poi={poi}
+                                    weather={weatherData[poi.id]}
+                                    onEdit={canEdit ? () => handleEdit(poi) : undefined}
+                                    onDelete={canEdit ? () => handleDeleteClick(poi.id) : undefined}
+                                />
+                            );
+                        })
                     )}
                 </div>
 

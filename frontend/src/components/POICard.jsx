@@ -142,19 +142,23 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
       {/* Action buttons section */}
       <div className="mt-4 flex items-center justify-end gap-2">
         {/* Edit button */}
-        <button
-          onClick={onEdit}
-          className="px-3 py-1 rounded-md bg-[#ffd966] text-sm"
-        >
-          {t('edit')}
-        </button>
+        {onEdit && (
+          <button
+            onClick={onEdit}
+            className="px-3 py-1 rounded-md bg-[#ffd966] text-sm"
+          >
+            {t('edit')}
+          </button>
+        )}
         {/* Delete button */}
-        <button
-          onClick={onDelete}
-          className="px-3 py-1 rounded-md bg-[#d64545] text-white text-sm"
-        >
-          {t('delete')}
-        </button>
+        {onDelete && (
+          <button
+            onClick={onDelete}
+            className="px-3 py-1 rounded-md bg-[#d64545] text-white text-sm"
+          >
+            {t('delete')}
+          </button>
+        )}
       </div>
       </div> {/* Close content section with padding */}
     </article>

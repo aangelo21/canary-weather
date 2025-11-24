@@ -29,6 +29,7 @@ export const en = {
     start: "Start",
     end: "End",
     editProfile: "Edit Profile",
+    dashboard: "Dashboard",
     logout: "Logout",
     login: "Login",
     changeProfilePic: "Change profile picture",
