@@ -201,13 +201,11 @@ body {
 }
 
 /* Links - excluding header links which are handled separately */
-.dark main a:not(.bg-brand-primary):not(.bg-blue-600),
-.dark footer a:not(.bg-brand-primary):not(.bg-blue-600) {
+.dark main a:not(.bg-brand-primary):not(.bg-blue-600) {
   color: #60a5fa !important;
 }
 
-.dark main a:hover:not(.bg-brand-primary):not(.bg-blue-600),
-.dark footer a:hover:not(.bg-brand-primary):not(.bg-blue-600) {
+.dark main a:hover:not(.bg-brand-primary):not(.bg-blue-600) {
   color: #93c5fd !important;
 }
 
