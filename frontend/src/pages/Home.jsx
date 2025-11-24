@@ -41,10 +41,10 @@ function Home() {
 
                                 {/* Button to navigate to tides page */}
                                 <button
-                                    onClick={() => navigate("/tides")}
+                                    onClick={() => navigate("/about us")}
                                     className="inline-flex items-center gap-2 bg-brand-primary hover:bg-accent-blue-200 text-white px-5 py-3 rounded-full font-semibold shadow"
                                 >
-                                    {t('tidesLower')}
+                                    {t('about us')}
                                 </button>
                             </div>
                         </div>
@@ -119,7 +119,7 @@ function Home() {
                             >
                                 {/* Icon container */}
                                 <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center mb-4">
-                                    <div className="text-yellow-400">
+                                    <div className="text-yellow-400 dark:text-white">
                                         {card.icon}
                                     </div>
                                 </div>

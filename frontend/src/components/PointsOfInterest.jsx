@@ -300,14 +300,14 @@ export default function PointsOfInterest() {
     // Return the JSX structure
     return (
         // Main container with white background and padding
-        <div className="min-h-screen bg-white py-8">
+        <div className="min-h-screen bg-white dark:bg-[#1a1a1a] py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header section with title and POI count */}
                 <div className="flex items-center justify-between mb-6">
-                    <h1 className="text-2xl font-extrabold text-[#0f6fb9]">
+                    <h1 className="text-2xl font-extrabold text-[#0f6fb9] dark:text-white">
                         {t('pointsOfInterest')}
                     </h1>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
                         {pois.length} {t('points')}
                     </div>
                 </div>

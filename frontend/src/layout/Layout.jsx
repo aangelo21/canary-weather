@@ -9,7 +9,7 @@ import Footer from "../components/Footer";
 export default function Layout() {
   return (
     // Flexbox container with full height and column direction
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-white">
       {/* Header component at the top */}
       <Header />
       {/* Main content area that grows to fill available space */}
