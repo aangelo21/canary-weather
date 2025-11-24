@@ -8,6 +8,8 @@ import { NavLink } from "react-router-dom";
 import { fetchAlerts } from "../services/alertService";
 // Import i18n for translations
 import { useTranslation } from "react-i18next";
+// Import ThemeSwitch for dark mode toggle
+import ThemeSwitch from "./ThemeSwitch";
 
 // Header component - main navigation bar with authentication and user profile management
 function Header() {
@@ -198,6 +200,9 @@ function Header() {
 
           {/* Language selector and user authentication section */}
           <div className="md:flex hidden items-center gap-3">
+            {/* Theme switch for dark mode */}
+            <ThemeSwitch />
+            
             {/* Language selector dropdown */}
             <div className="relative language-dropdown">
               <button
