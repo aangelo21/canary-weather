@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 
 // WeatherPopup component - Displays weather info and POI creation option
 // Used by InteractiveMap component when user clicks on map locations
-function WeatherPopup({ position, weather, markerRef }) {
+function WeatherPopup({ position, weather, markerRef, onClose }) {
   const { t } = useTranslation();
   // Ref for the popup element
   const popupRef = useRef(null);
@@ -72,140 +72,233 @@ function WeatherPopup({ position, weather, markerRef }) {
     ? (currentTime < weather.sunrise || currentTime > weather.sunset)
     : false;
 
-  // Determine Theme
-  const themeClass = isNight
-    ? "bg-gradient-to-br from-[#1e293b] to-[#0f172a] text-white"
-    : "bg-gradient-to-br from-[#dbeafe] to-[#eff6ff] text-slate-800";
+  // Determine Theme based on weather condition and time
+  const getTheme = () => {
+    const main = (weather.main || "").toLowerCase();
+    
+    if (main.includes('thunder')) {
+        return "bg-gradient-to-br from-[#1e293b] to-[#334155] text-white shadow-indigo-900/50"; // Dark/Thunder
+    }
+    if (isNight) {
+        return "bg-gradient-to-br from-[#0f172a] to-[#1e293b] text-white shadow-slate-900/50"; // Night
+    }
+    // Day default (Sunny/Cloudy) - Light Blue
+    return "bg-gradient-to-br from-[#dbeafe] to-[#eff6ff] text-slate-700 shadow-blue-200/50";
+  };
 
-  // Icons (SVGs)
+  const themeClass = getTheme();
+  const isDarkTheme = isNight || (weather.main || "").toLowerCase().includes('thunder');
+
+  // Icons (SVGs) - Enhanced for "3D-like" look with gradients
   const getIcon = () => {
     const main = (weather.main || "").toLowerCase();
     const description = (weather.description || "").toLowerCase();
-    const isCloudy = weather.clouds > 20;
 
-    if (main.includes('thunder') || description.includes('thunder')) return <ThunderIcon />;
-    if (main.includes('rain') || main.includes('drizzle')) return isNight ? <NightRainIcon /> : <DayRainIcon />;
-    if (main.includes('clear')) return isNight ? <MoonIcon /> : <SunIcon />;
-    if (main.includes('clouds')) return isNight ? <MoonCloudIcon /> : <SunCloudIcon />;
+    if (main.includes('thunder') || description.includes('thunder')) return <ThunderIcon3D />;
+    if (main.includes('rain') || main.includes('drizzle')) return isNight ? <NightRainIcon3D /> : <DayRainIcon3D />;
+    if (main.includes('clear')) return isNight ? <MoonIcon3D /> : <SunIcon3D />;
+    if (main.includes('clouds')) return isNight ? <MoonCloudIcon3D /> : <SunCloudIcon3D />;
     
-    return isNight ? <MoonIcon /> : <SunIcon />; // Default
+    return isNight ? <MoonIcon3D /> : <SunIcon3D />; // Default
   };
 
   // Return the Popup JSX structure
   return (
     // Leaflet Popup component positioned at clicked coordinates
-    <Popup position={position} ref={popupRef} className="custom-popup-clean">
-      {/* Popup content container */}
-      <div className={`w-64 p-5 rounded-xl shadow-lg ${themeClass} font-sans overflow-hidden relative`}>
-        {/* Background Glow Effect */}
-        <div className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-30 ${isNight ? 'bg-purple-500' : 'bg-yellow-300'}`}></div>
-
+    <Popup 
+      position={position} 
+      ref={popupRef} 
+      className="custom-popup-clean"
+      eventHandlers={{
+        remove: () => {
+          if (onClose) onClose();
+        }
+      }}
+    >
+      {/* Popup content container - Card Style */}
+      <div className={`w-72 p-6 rounded-3xl shadow-2xl ${themeClass} font-sans overflow-hidden relative select-none`}>
+        
         {/* Top Section: Icon & Temp */}
-        <div className="flex justify-between items-start mb-6 relative z-10">
-            <div className="w-16 h-16 filter drop-shadow-lg transform hover:scale-110 transition-transform duration-300">
+        <div className="flex justify-between items-center mb-8 relative z-10">
+            {/* Icon Container */}
+            <div className="w-24 h-24 filter drop-shadow-xl transform -translate-x-2">
                 {getIcon()}
             </div>
-            <div className="text-right">
-                <div className="text-4xl font-bold tracking-tighter">{Math.round(weather.temp)}°</div>
-                <div className="text-sm opacity-80 capitalize font-medium">{weather.description}</div>
+            
+            {/* Temp & Desc */}
+            <div className="text-right flex flex-col justify-center">
+                <div className="text-5xl font-bold tracking-tighter leading-none">
+                    {Math.round(weather.temp)}<span className="text-3xl align-top">°</span>
+                </div>
+                <div className={`text-sm font-medium mt-1 capitalize ${isDarkTheme ? 'text-blue-200' : 'text-blue-500'}`}>
+                    {weather.description}
+                </div>
             </div>
         </div>
 
-        {/* Bottom Section: Stats */}
-        <div className="flex justify-between items-center text-xs opacity-90 mt-4 pt-4 border-t border-white/10 relative z-10">
+        {/* Bottom Section: Stats Row */}
+        <div className={`flex justify-between items-center px-2 relative z-10 ${isDarkTheme ? 'text-gray-300' : 'text-slate-500'}`}>
+            {/* Wind */}
             <div className="flex flex-col items-center gap-1">
-                <WindIcon className="w-4 h-4" />
-                <span className="font-medium">{weather.wind} m/s</span>
+                <WindIcon className="w-5 h-5 mb-1 opacity-70" />
+                <span className="text-xs font-semibold">{weather.wind} km/h</span>
+                <span className="text-[10px] opacity-60">Wind</span>
             </div>
+            
+            {/* Humidity */}
             <div className="flex flex-col items-center gap-1">
-                <HumidityIcon className="w-4 h-4" />
-                <span className="font-medium">{weather.humidity}%</span>
+                <HumidityIcon className="w-5 h-5 mb-1 opacity-70" />
+                <span className="text-xs font-semibold">{weather.humidity}%</span>
+                <span className="text-[10px] opacity-60">Humidity</span>
             </div>
+            
+            {/* Clouds/Pressure (Using Clouds as 3rd metric to match visual style of 'coverage') */}
              <div className="flex flex-col items-center gap-1">
-                <PressureIcon className="w-4 h-4" />
-                <span className="font-medium">{weather.pressure}</span>
+                <CloudIcon className="w-5 h-5 mb-1 opacity-70" />
+                <span className="text-xs font-semibold">{weather.clouds}%</span>
+                <span className="text-[10px] opacity-60">Clouds</span>
             </div>
         </div>
         
-        {/* Save Button */}
+        {/* Save Button - Subtle & Integrated */}
         <button
-          className={`mt-4 w-full py-2 rounded-lg text-sm font-semibold transition-all duration-200 relative z-10 ${
-            isNight 
-                ? "bg-white/10 hover:bg-white/20 text-white border border-white/10" 
-                : "bg-blue-500/10 hover:bg-blue-500/20 text-blue-700 border border-blue-200"
+          className={`mt-6 w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 relative z-10 flex items-center justify-center gap-2 ${
+            isDarkTheme 
+                ? "bg-white/10 hover:bg-white/20 text-white border border-white/5" 
+                : "bg-white/60 hover:bg-white/80 text-blue-600 shadow-sm"
           }`}
           onClick={handleSavePoi}
           disabled={saved || saving || !isAuthenticated}
         >
-          {saving
-            ? t("savingPoi")
-            : saved
-            ? t("saved")
-            : !isAuthenticated
-            ? t("loginToSave")
-            : t("saveAsPoi")}
+          {saving ? (
+             <span>{t("savingPoi")}...</span>
+          ) : saved ? (
+             <>
+                <CheckIcon className="w-4 h-4" />
+                <span>{t("saved")}</span>
+             </>
+          ) : !isAuthenticated ? (
+             <span>{t("loginToSave")}</span>
+          ) : (
+             <span>{t("saveAsPoi")}</span>
+          )}
         </button>
-
-        {/* Success message when POI is saved */}
-        {saved && (
-          <div className="mt-2 text-center text-xs font-medium text-green-500">{t("poiSaved")}</div>
-        )}
       </div>
     </Popup>
   );
 }
 
-// --- SVG Icons ---
+// --- 3D-like SVG Icons (Using gradients and layers) ---
 
-const SunIcon = () => (
-  <svg viewBox="0 0 64 64" className="w-full h-full text-yellow-400 fill-current">
-    <circle cx="32" cy="32" r="14" />
-    <path stroke="currentColor" strokeWidth="4" strokeLinecap="round" d="M32 8V4m0 56v-4m24-24h4M4 32h4m40.97 16.97l2.83 2.83M12.2 12.2l2.83 2.83m33.94 0l2.83-2.83M12.2 51.8l2.83-2.83" />
-  </svg>
-);
-
-const MoonIcon = () => (
-  <svg viewBox="0 0 64 64" className="w-full h-full text-purple-200 fill-current">
-    <path d="M46 42.67c-1.6 0-3.2-.3-4.7-.8-8.1-2.9-12.4-11.8-9.5-19.9.6-1.7 1.5-3.3 2.6-4.7-10.4 1.2-18.8 9.6-19.9 20.1-1.5 13.6 8.4 25.9 22 27.4 10.4 1.1 20.1-4.6 24.5-13.4-4.5 6.9-12.4 11.3-20.8 11.3-13.8 0-25-11.2-25-25 0-8.4 4.4-16.3 11.3-20.8-.9 4.4 4.8 14.1 13.4 24.5 1.4 1.1 3 2 4.7 2.6 1.5.5 3.1.8 4.7.8h.1z" />
-  </svg>
-);
-
-const SunCloudIcon = () => (
+const SunIcon3D = () => (
   <svg viewBox="0 0 64 64" className="w-full h-full">
-    <circle cx="24" cy="24" r="10" className="text-yellow-400 fill-current" />
-    <path className="text-white fill-current filter drop-shadow-md" d="M46 46H26c-4.4 0-8-3.6-8-8s3.6-8 8-8c.4 0 .7 0 1.1.1C28.5 25.6 32.9 22 38 22c5.5 0 10 4.5 10 10 0 .3 0 .7-.1 1 .3 0 .7-.1 1.1-.1 4.4 0 8 3.6 8 8s-3.6 8-8 8z" />
+    <defs>
+      <radialGradient id="sunGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+        <stop offset="0%" stopColor="#FDE047" />
+        <stop offset="100%" stopColor="#F59E0B" />
+      </radialGradient>
+      <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation="2" result="blur" />
+        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+      </filter>
+    </defs>
+    <circle cx="32" cy="32" r="16" fill="url(#sunGradient)" filter="url(#glow)" />
+    <circle cx="32" cy="32" r="22" stroke="#FDE047" strokeWidth="2" strokeOpacity="0.3" strokeDasharray="4 4" />
   </svg>
 );
 
-const MoonCloudIcon = () => (
+const MoonIcon3D = () => (
   <svg viewBox="0 0 64 64" className="w-full h-full">
-    <path className="text-purple-200 fill-current" d="M28 18c-5.8 0-10.9 3.1-13.7 7.8 1.8-1.1 3.9-1.8 6.2-1.8 6.6 0 12 5.4 12 12 0 2.3-.7 4.4-1.8 6.2 4.7-2.8 7.8-7.9 7.8-13.7C38.5 22.1 33.9 18 28 18z" />
-    <path className="text-white/90 fill-current filter drop-shadow-md" d="M46 46H26c-4.4 0-8-3.6-8-8s3.6-8 8-8c.4 0 .7 0 1.1.1C28.5 25.6 32.9 22 38 22c5.5 0 10 4.5 10 10 0 .3 0 .7-.1 1 .3 0 .7-.1 1.1-.1 4.4 0 8 3.6 8 8s-3.6 8-8 8z" />
+    <defs>
+      <linearGradient id="moonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#E9D5FF" />
+        <stop offset="100%" stopColor="#A855F7" />
+      </linearGradient>
+    </defs>
+    <path d="M42 38c-2 0-4-.5-6-1.5-10-5-14-16-10-26 .5-1.5 1.5-3 2.5-4-12 2-20 12-20 24 0 14 11 25 25 25 10 0 19-7 22-16-5 6-12 8.5-13.5 8.5z" fill="url(#moonGradient)" filter="drop-shadow(0px 4px 4px rgba(0,0,0,0.2))" />
+    <circle cx="48" cy="18" r="1" fill="white" opacity="0.8" />
+    <circle cx="54" cy="24" r="1.5" fill="white" opacity="0.6" />
   </svg>
 );
 
-const DayRainIcon = () => (
+const SunCloudIcon3D = () => (
   <svg viewBox="0 0 64 64" className="w-full h-full">
-    <circle cx="24" cy="24" r="10" className="text-yellow-400 fill-current" />
-    <path className="text-white fill-current filter drop-shadow-md" d="M46 40H26c-4.4 0-8-3.6-8-8s3.6-8 8-8c.4 0 .7 0 1.1.1C28.5 19.6 32.9 16 38 16c5.5 0 10 4.5 10 10 0 .3 0 .7-.1 1 .3 0 .7-.1 1.1-.1 4.4 0 8 3.6 8 8s-3.6 8-8 8z" />
-    <path className="text-blue-400 fill-current" d="M28 46l-2 6m8-6l-2 6m8-6l-2 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+    <defs>
+      <radialGradient id="sunGradientSmall" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stopColor="#FDE047" />
+        <stop offset="100%" stopColor="#F59E0B" />
+      </radialGradient>
+      <linearGradient id="cloudGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stopColor="#FFFFFF" />
+        <stop offset="100%" stopColor="#E2E8F0" />
+      </linearGradient>
+    </defs>
+    <circle cx="24" cy="24" r="12" fill="url(#sunGradientSmall)" />
+    <path d="M46 46H26c-4.4 0-8-3.6-8-8s3.6-8 8-8c.4 0 .7 0 1.1.1C28.5 25.6 32.9 22 38 22c5.5 0 10 4.5 10 10 0 .3 0 .7-.1 1 .3 0 .7-.1 1.1-.1 4.4 0 8 3.6 8 8s-3.6 8-8 8z" fill="url(#cloudGradient)" filter="drop-shadow(0px 4px 3px rgba(0,0,0,0.1))" />
   </svg>
 );
 
-const NightRainIcon = () => (
+const MoonCloudIcon3D = () => (
   <svg viewBox="0 0 64 64" className="w-full h-full">
-    <path className="text-purple-200 fill-current" d="M28 18c-5.8 0-10.9 3.1-13.7 7.8 1.8-1.1 3.9-1.8 6.2-1.8 6.6 0 12 5.4 12 12 0 2.3-.7 4.4-1.8 6.2 4.7-2.8 7.8-7.9 7.8-13.7C38.5 22.1 33.9 18 28 18z" />
-    <path className="text-white/80 fill-current filter drop-shadow-md" d="M46 40H26c-4.4 0-8-3.6-8-8s3.6-8 8-8c.4 0 .7 0 1.1.1C28.5 19.6 32.9 16 38 16c5.5 0 10 4.5 10 10 0 .3 0 .7-.1 1 .3 0 .7-.1 1.1-.1 4.4 0 8 3.6 8 8s-3.6 8-8 8z" />
-    <path className="text-blue-300 fill-current" d="M28 46l-2 6m8-6l-2 6m8-6l-2 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+    <defs>
+      <linearGradient id="moonGradientSmall" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#E9D5FF" />
+        <stop offset="100%" stopColor="#A855F7" />
+      </linearGradient>
+      <linearGradient id="cloudGradientNight" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stopColor="#94A3B8" />
+        <stop offset="100%" stopColor="#475569" />
+      </linearGradient>
+    </defs>
+    <path d="M28 18c-5.8 0-10.9 3.1-13.7 7.8 1.8-1.1 3.9-1.8 6.2-1.8 6.6 0 12 5.4 12 12 0 2.3-.7 4.4-1.8 6.2 4.7-2.8 7.8-7.9 7.8-13.7C38.5 22.1 33.9 18 28 18z" fill="url(#moonGradientSmall)" />
+    <path d="M46 46H26c-4.4 0-8-3.6-8-8s3.6-8 8-8c.4 0 .7 0 1.1.1C28.5 25.6 32.9 22 38 22c5.5 0 10 4.5 10 10 0 .3 0 .7-.1 1 .3 0 .7-.1 1.1-.1 4.4 0 8 3.6 8 8s-3.6 8-8 8z" fill="url(#cloudGradientNight)" filter="drop-shadow(0px 4px 3px rgba(0,0,0,0.3))" />
   </svg>
 );
 
-const ThunderIcon = () => (
+const DayRainIcon3D = () => (
   <svg viewBox="0 0 64 64" className="w-full h-full">
-    <path className="text-gray-400 fill-current filter drop-shadow-md" d="M46 40H26c-4.4 0-8-3.6-8-8s3.6-8 8-8c.4 0 .7 0 1.1.1C28.5 19.6 32.9 16 38 16c5.5 0 10 4.5 10 10 0 .3 0 .7-.1 1 .3 0 .7-.1 1.1-.1 4.4 0 8 3.6 8 8s-3.6 8-8 8z" />
-    <path className="text-yellow-500 fill-current" d="M34 38l-6 10h4l-2 8 10-10h-4l4-8z" />
+    <defs>
+      <linearGradient id="cloudGradientRain" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stopColor="#FFFFFF" />
+        <stop offset="100%" stopColor="#CBD5E1" />
+      </linearGradient>
+    </defs>
+    <path d="M46 40H26c-4.4 0-8-3.6-8-8s3.6-8 8-8c.4 0 .7 0 1.1.1C28.5 19.6 32.9 16 38 16c5.5 0 10 4.5 10 10 0 .3 0 .7-.1 1 .3 0 .7-.1 1.1-.1 4.4 0 8 3.6 8 8s-3.6 8-8 8z" fill="url(#cloudGradientRain)" filter="drop-shadow(0px 4px 3px rgba(0,0,0,0.1))" />
+    <path d="M28 46l-2 6m8-6l-2 6m8-6l-2 6" stroke="#3B82F6" strokeWidth="3" strokeLinecap="round" />
   </svg>
 );
+
+const NightRainIcon3D = () => (
+  <svg viewBox="0 0 64 64" className="w-full h-full">
+    <defs>
+      <linearGradient id="cloudGradientRainNight" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stopColor="#94A3B8" />
+        <stop offset="100%" stopColor="#475569" />
+      </linearGradient>
+    </defs>
+    <path d="M46 40H26c-4.4 0-8-3.6-8-8s3.6-8 8-8c.4 0 .7 0 1.1.1C28.5 19.6 32.9 16 38 16c5.5 0 10 4.5 10 10 0 .3 0 .7-.1 1 .3 0 .7-.1 1.1-.1 4.4 0 8 3.6 8 8s-3.6 8-8 8z" fill="url(#cloudGradientRainNight)" filter="drop-shadow(0px 4px 3px rgba(0,0,0,0.3))" />
+    <path d="M28 46l-2 6m8-6l-2 6m8-6l-2 6" stroke="#60A5FA" strokeWidth="3" strokeLinecap="round" />
+  </svg>
+);
+
+const ThunderIcon3D = () => (
+  <svg viewBox="0 0 64 64" className="w-full h-full">
+    <defs>
+      <linearGradient id="cloudGradientThunder" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stopColor="#64748B" />
+        <stop offset="100%" stopColor="#334155" />
+      </linearGradient>
+      <linearGradient id="boltGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#FDE047" />
+        <stop offset="100%" stopColor="#F59E0B" />
+      </linearGradient>
+    </defs>
+    <path d="M46 40H26c-4.4 0-8-3.6-8-8s3.6-8 8-8c.4 0 .7 0 1.1.1C28.5 19.6 32.9 16 38 16c5.5 0 10 4.5 10 10 0 .3 0 .7-.1 1 .3 0 .7-.1 1.1-.1 4.4 0 8 3.6 8 8s-3.6 8-8 8z" fill="url(#cloudGradientThunder)" filter="drop-shadow(0px 4px 3px rgba(0,0,0,0.3))" />
+    <path d="M34 38l-6 10h4l-2 8 10-10h-4l4-8z" fill="url(#boltGradient)" filter="drop-shadow(0px 0px 5px rgba(253, 224, 71, 0.5))" />
+  </svg>
+);
+
+// --- Simple Icons for Stats ---
 
 const WindIcon = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -215,13 +308,19 @@ const WindIcon = ({ className }) => (
 
 const HumidityIcon = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2.25c-5.385 5.965-8.25 10.575-8.25 13.5 0 4.557 3.693 8.25 8.25 8.25s8.25-3.693 8.25-8.25C20.25 12.825 17.385 8.215 12 2.25z" />
   </svg>
 );
 
-const PressureIcon = ({ className }) => (
+const CloudIcon = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+  </svg>
+);
+
+const CheckIcon = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
   </svg>
 );
 

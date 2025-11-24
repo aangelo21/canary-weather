@@ -64,6 +64,12 @@ function InteractiveMap() {
     return null;
   }
 
+  // Function to handle popup close event
+  const handlePopupClose = () => {
+    setClickedPos(null);
+    setWeather(null);
+  };
+
   // useEffect hook - Opens the marker popup when weather data is available
   // This ensures the popup appears after the async weather fetch completes
   useEffect(() => {
@@ -109,6 +115,7 @@ function InteractiveMap() {
                 position={clickedPos}
                 weather={weather}
                 markerRef={markerRef}
+                onClose={handlePopupClose}
               />
             )}
           </Marker>
