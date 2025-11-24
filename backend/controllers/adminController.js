@@ -6,8 +6,9 @@ import { Op } from "sequelize";
 // Get admin dashboard
 export const getDashboard = async (req, res) => {
   try {
-    const { search, type } = req.query;
+    const { search, type, userSearch } = req.query;
     const where = {};
+    const userWhere = {};
 
     if (search) {
       where.name = { [Op.like]: `%${search}%` };
@@ -15,6 +16,13 @@ export const getDashboard = async (req, res) => {
 
     if (type && type !== "") {
       where.type = type;
+    }
+
+    if (userSearch) {
+      userWhere[Op.or] = [
+        { username: { [Op.like]: `%${userSearch}%` } },
+        { email: { [Op.like]: `%${userSearch}%` } }
+      ];
     }
 
     const usersCount = await User.count();
@@ -32,6 +40,11 @@ export const getDashboard = async (req, res) => {
       order: [["createdAt", "DESC"]],
     });
 
+    const users = await User.findAll({
+      where: userWhere,
+      order: [["createdAt", "DESC"]],
+    });
+
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 
     return res.render("dashboard", {
@@ -40,7 +53,8 @@ export const getDashboard = async (req, res) => {
       alertsCount,
       frontendUrl,
       pois,
-      filters: { search, type },
+      users,
+      filters: { search, type, userSearch },
     });
   } catch (err) {
     return res.status(500).send("Error loading dashboard: " + err.message);
@@ -101,5 +115,49 @@ export const deletePOI = async (req, res) => {
     return res.redirect(`/admin?token=${token}`);
   } catch (err) {
     return res.status(500).send("Error deleting POI: " + err.message);
+  }
+};
+
+// User Management
+export const createUser = async (req, res) => {
+  try {
+    const { username, email, password, is_admin } = req.body;
+    await User.create({
+      username,
+      email,
+      password,
+      is_admin: is_admin === 'on'
+    });
+    return res.redirect('/admin');
+  } catch (err) {
+    return res.status(500).send("Error creating user: " + err.message);
+  }
+};
+
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { username, email, is_admin } = req.body;
+    
+    const updateData = {
+      username,
+      email,
+      is_admin: is_admin === 'on'
+    };
+
+    await User.update(updateData, { where: { id } });
+    return res.redirect('/admin');
+  } catch (err) {
+    return res.status(500).send("Error updating user: " + err.message);
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await User.destroy({ where: { id } });
+    return res.redirect('/admin');
+  } catch (err) {
+    return res.status(500).send("Error deleting user: " + err.message);
   }
 };

@@ -5,7 +5,10 @@ import {
     getDashboard, 
     createGlobalPOI, 
     updatePOI, 
-    deletePOI 
+    deletePOI,
+    createUser,
+    updateUser,
+    deleteUser
 } from "../controllers/adminController.js";
 
 const router = express.Router();
@@ -17,5 +20,10 @@ router.get("/", authenticateSession, checkAdmin, getDashboard);
 router.post("/poi", authenticateSession, checkAdmin, createGlobalPOI);
 router.post("/poi/:id/update", authenticateSession, checkAdmin, updatePOI);
 router.post("/poi/:id/delete", authenticateSession, checkAdmin, deletePOI);
+
+// User Management
+router.post("/users", authenticateSession, checkAdmin, createUser);
+router.post("/users/:id/update", authenticateSession, checkAdmin, updateUser);
+router.post("/users/:id/delete", authenticateSession, checkAdmin, deleteUser);
 
 export default router;
