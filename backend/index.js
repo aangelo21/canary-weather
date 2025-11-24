@@ -13,6 +13,7 @@ import userRoutes from "./routes/userRoutes.js";
 import alertRoutes from "./routes/alertRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import userLocationRoutes from "./routes/userLocationRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 // Define __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -40,6 +41,8 @@ app.use("/api/alerts", alertRoutes);
 app.use("/api/notifications", notificationRoutes);
 
 app.use("/api/user-locations", userLocationRoutes);
+
+app.use("/admin", adminRoutes);
 
 // Health check endpoint to verify server status
 app.get("/api/health", (req, res) => {
