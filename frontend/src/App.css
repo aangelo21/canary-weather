@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "@fontsource/poppins";
 
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-brand-primary: #0768a9;
   --color-brand-secondary: #ffcc00;

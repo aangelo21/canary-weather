@@ -16,7 +16,7 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
 
   return (
     // Main card container with white background, rounded corners, shadow, and border
-    <article className="bg-white rounded-lg shadow border border-gray-100 overflow-hidden">
+    <article className="bg-white dark:bg-[#262626] rounded-lg shadow border border-gray-100 dark:border-gray-700 overflow-hidden">
       {/* Image section */}
       <div className="w-full">
         {imageUrl ? (
@@ -63,11 +63,11 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
       <div className="flex justify-between items-start">
         <div>
           {/* POI name and description */}
-          <h3 className="text-lg font-semibold text-gray-800">{poi.name}</h3>
-          <p className="text-sm text-gray-500 mt-1">{poi.description}</p>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white">{poi.name}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">{poi.description}</p>
           {/* Weather information if available */}
           {weather && (
-            <div className="mt-2 text-blue-700 text-sm">
+            <div className="mt-2 text-blue-700 dark:text-blue-400 text-sm">
               <span className="font-semibold">{weather.temp}°C</span>{" "}
               <span>{weather.description}</span>
             </div>
@@ -90,7 +90,7 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
       </div>
 
       {/* Metadata section with location and creation info */}
-      <dl className="mt-4 text-sm text-gray-600">
+      <dl className="mt-4 text-sm text-gray-600 dark:text-gray-300">
         {/* Latitude display */}
         {poi.latitude && (
           <div className="flex items-center justify-between py-1">
@@ -133,7 +133,7 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
         {/* Creation date */}
         <div className="flex items-center justify-between py-1">
           <dt className="font-medium">{t('created')}</dt>
-          <dd className="text-sm text-gray-500">
+          <dd className="text-sm text-gray-500 dark:text-gray-400">
             {new Date(poi.createdAt).toLocaleDateString()}
           </dd>
         </div>
