@@ -30,8 +30,8 @@ function WeatherPopup({ position, weather, markerRef, onClose }) {
 
   // useEffect hook - Check authentication status
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    setIsAuthenticated(!!token);
+    const user = localStorage.getItem("cw_user");
+    setIsAuthenticated(!!user);
   }, []);
 
   // Early return if required props are missing

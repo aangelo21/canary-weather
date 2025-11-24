@@ -9,6 +9,7 @@ import {
   updateUser,
   deleteUser,
   loginUser,
+  logoutUser,
   getCurrentUser,
   getMunicipalities,
 } from "../controllers/userController.js";
@@ -19,27 +20,28 @@ import { upload } from "../middleware/uploadMiddleware.js";
 // Create Express router instance
 const router = express.Router();
 
-// Import JWT authentication middleware
-import { authenticateToken } from "../middleware/authenticateToken.js";
+// Import authentication middleware
+import { authenticateSession } from "../middleware/authMiddleware.js";
 
 // Public routes (no auth required) - must be defined first
 router.post("/login", loginUser);
+router.post("/logout", logoutUser);
 router.post("/", createUser);
 router.get("/municipalities", getMunicipalities);
 
 // Protected routes with specific paths (before /:id)
-router.get("/me", authenticateToken, getCurrentUser);
+router.get("/me", authenticateSession, getCurrentUser);
 
 // Protected routes with dynamic parameters
-router.get("/", authenticateToken, getAllUsers);
-router.get("/:id", authenticateToken, getUserById);
+router.get("/", authenticateSession, getAllUsers);
+router.get("/:id", authenticateSession, getUserById);
 router.put(
   "/:id",
-  authenticateToken,
+  authenticateSession,
   upload.single("profile_picture"),
   updateUser
 );
-router.delete("/:id", authenticateToken, deleteUser);
+router.delete("/:id", authenticateSession, deleteUser);
 
 // Export the router for use in the main app
 export default router;

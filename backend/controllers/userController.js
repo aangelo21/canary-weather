@@ -1,6 +1,5 @@
 import { User, Location, UserLocation, PointOfInterest, UserPointOfInterest } from "../models/index.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { Op } from "sequelize";
 
 const createLocationPOI = async (userId, locationId) => {
@@ -42,23 +41,15 @@ const createLocationPOI = async (userId, locationId) => {
   }
 };
 
-// Controller function to handle user login with Basic Authentication
+// Controller function to handle user login
 export const loginUser = async (req, res) => {
   try {
-    // Extract Authorization header and check for Basic auth
-    const authHeader = req.headers["authorization"];
-    if (!authHeader || !authHeader.startsWith("Basic ")) {
-      return res
-        .status(401)
-        .json({ error: "Missing Authorization Basic header" });
+    const { username, password } = req.body;
+    
+    if (!username || !password) {
+      return res.status(400).json({ error: "Username and password are required" });
     }
-    // Decode Base64 credentials
-    const base64Credentials = authHeader.split(" ")[1];
-    const credentials = Buffer.from(base64Credentials, "base64").toString(
-      "ascii"
-    );
-    // Split into username and password
-    const [username, password] = credentials.split(":");
+
     // Find user by username
     const user = await User.findOne({ where: { username } });
     if (!user) {
@@ -69,28 +60,37 @@ export const loginUser = async (req, res) => {
     if (!match) {
       return res.status(401).json({ error: "Invalid username or password" });
     }
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: user.id, username: user.username },
-      process.env.JWT_SECRET || "secret",
-      { expiresIn: "1h" }
-    );
-    // Remove password from user object for security
+    
+    // Set user in session
     const safe = user.toJSON();
     delete safe.password;
-    // Return token and user data
-    return res.json({ token, user: safe });
+    
+    req.session.user = safe;
+    
+    // Return user data
+    return res.json({ user: safe });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
 };
 
+// Controller function to logout user
+export const logoutUser = async (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ error: "Could not log out" });
+    }
+    res.clearCookie("connect.sid"); // Default cookie name
+    return res.json({ message: "Logged out successfully" });
+  });
+};
+
 // Controller function to get the current authenticated user
 export const getCurrentUser = async (req, res) => {
   try {
-    // Extract user ID from JWT payload (set by middleware)
-    const userId = req.user && req.user.id;
-    if (!userId) return res.status(401).json({ error: "Invalid token" });
+    // Extract user ID from session
+    const userId = req.session.user && req.session.user.id;
+    if (!userId) return res.status(401).json({ error: "Not authenticated" });
     // Find user by ID, excluding password
     const user = await User.findByPk(userId, {
       attributes: { exclude: ["password"] },
@@ -155,12 +155,10 @@ export const createUser = async (req, res) => {
       await createLocationPOI(user.id, location_id);
     }
 
-    const token = jwt.sign(
-      { id: user.id, username: user.username },
-      process.env.JWT_SECRET || "secret",
-      { expiresIn: "1h" }
-    );
-    return res.status(201).json({ token, user: safe });
+    // Set user in session
+    req.session.user = safe;
+
+    return res.status(201).json({ user: safe });
   } catch (err) {
     return res.status(400).json({ error: err.message });
   }

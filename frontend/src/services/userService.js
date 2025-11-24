@@ -6,32 +6,41 @@ const API_BASE = import.meta.env.VITE_API_BASE;
 
 // Function to authenticate a user with username/email and password
 export async function loginUser({ username, password }) {
-  // Encode credentials in Base64 for Basic Authentication
-  const credentials = btoa(`${username}:${password}`);
-  // Make POST request to login endpoint with Basic Auth header
+  // Make POST request to login endpoint with JSON body
   const response = await fetch(`${API_BASE}/users/login`, {
     method: "POST",
     headers: {
-      Authorization: `Basic ${credentials}`,
+      "Content-Type": "application/json",
     },
+    body: JSON.stringify({ username, password }),
+    credentials: "include",
   });
   // Handle error responses
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.error || "Error logging in");
   }
-  // Return user data and token
+  // Return user data
+  return response.json();
+}
+
+// Function to logout the user
+export async function logoutUser() {
+  const response = await fetch(`${API_BASE}/users/logout`, {
+    method: "POST",
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Error logging out");
+  }
   return response.json();
 }
 
 // Function to get the current authenticated user's profile
 export async function getCurrentUser() {
-  // Get JWT token from localStorage
-  const token = localStorage.getItem("authToken");
-  if (!token) throw new Error("No auth token");
-  // Make GET request to user profile endpoint with Bearer token
+  // Make GET request to user profile endpoint with credentials
   const response = await fetch(`${API_BASE}/users/me`, {
-    headers: { Authorization: `Bearer ${token}` },
+    credentials: "include",
   });
   // Handle error responses
   if (!response.ok) {
@@ -61,12 +70,6 @@ export async function createOrUpdateUser(formData, editingId) {
   const method = editingId ? "PUT" : "POST";
   const headers = {};
 
-  // Add authorization header for updates (requires authentication)
-  if (editingId) {
-    const token = localStorage.getItem("authToken");
-    if (token) headers.Authorization = `Bearer ${token}`;
-  }
-
   let body;
   if (formData instanceof FormData) {
     // If FormData (with profile picture), use as-is
@@ -82,6 +85,7 @@ export async function createOrUpdateUser(formData, editingId) {
     method,
     headers,
     body,
+    credentials: "include",
   });
   // Handle error responses
   if (!response.ok) {
@@ -94,14 +98,10 @@ export async function createOrUpdateUser(formData, editingId) {
 
 // Function to delete a user account
 export async function deleteUser(id) {
-  // Get auth token for authorization
-  const token = localStorage.getItem("authToken");
-  const headers = {};
-  if (token) headers.Authorization = `Bearer ${token}`;
   // Make DELETE request to specific user endpoint
   const response = await fetch(`${API_BASE}/users/${id}`, {
     method: "DELETE",
-    headers,
+    credentials: "include",
   });
   // Handle error responses
   if (!response.ok) {

@@ -530,30 +530,10 @@ export default function LoginModal({
                                         location_id: input.location_id,
                                     });
                                     setLoading(false);
-                                    if (result && result.token) {
-                                        // Store authentication token
-                                        localStorage.setItem(
-                                            "authToken",
-                                            result.token
-                                        );
+                                    if (result && result.user) {
                                         // Build user object from response
-                                        let loggedUser = {
-                                            username: input.username,
-                                        };
-                                        if (result.user) loggedUser = result.user;
-                                        else if (
-                                            result.id ||
-                                            result.username ||
-                                            result.email
-                                        ) {
-                                            loggedUser = {
-                                                id: result.id,
-                                                username:
-                                                    result.username ||
-                                                    input.username,
-                                                email: result.email,
-                                            };
-                                        }
+                                        let loggedUser = result.user;
+                                        
                                         // Store user ID in localStorage
                                         if (loggedUser.id)
                                             localStorage.setItem(
@@ -583,30 +563,10 @@ export default function LoginModal({
                                         password: input.password,
                                     });
                                     setLoading(false);
-                                    if (result.token) {
-                                        // Store authentication token
-                                        localStorage.setItem(
-                                            "authToken",
-                                            result.token
-                                        );
+                                    if (result.user) {
                                         // Build user object from response
-                                        let loggedUser = {
-                                            username: input.emailOrUsername,
-                                        };
-                                        if (result.user) loggedUser = result.user;
-                                        else if (
-                                            result.id ||
-                                            result.username ||
-                                            result.email
-                                        ) {
-                                            loggedUser = {
-                                                id: result.id,
-                                                username:
-                                                    result.username ||
-                                                    input.emailOrUsername,
-                                                email: result.email,
-                                            };
-                                        }
+                                        let loggedUser = result.user;
+                                        
                                         // Store user ID in localStorage
                                         if (loggedUser.id)
                                             localStorage.setItem(
@@ -616,7 +576,7 @@ export default function LoginModal({
                                         // Call onLogin callback
                                         onLogin(loggedUser);
                                     } else {
-                                        setError(t('noTokenReceived'));
+                                        setError(t('loginFailed'));
                                     }
                                 } catch (err) {
                                     setLoading(false);

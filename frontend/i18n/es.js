@@ -29,6 +29,7 @@ export const es = {
     start: "Inicio",
     end: "Fin",
     editProfile: "Editar Perfil",
+    dashboard: "Panel de Control",
     logout: "Cerrar Sesión",
     login: "Iniciar Sesión",
     changeProfilePic: "Cambiar foto de perfil",
