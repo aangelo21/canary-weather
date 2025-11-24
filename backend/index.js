@@ -33,6 +33,8 @@ const PORT = process.env.PORT || 85;
 app.use(cors());
 // Parse incoming JSON payloads
 app.use(express.json());
+// Parse incoming URL-encoded payloads (for forms)
+app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from the uploads directory for profile pictures and POI images
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

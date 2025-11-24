@@ -12,6 +12,9 @@ export function authenticateToken(req, res, next) {
   } else if (req.query.token) {
     // Allow token via query parameter for EJS views
     token = req.query.token;
+  } else if (req.body && req.body.token) {
+    // Allow token via body for form submissions
+    token = req.body.token;
   }
 
   if (!token) {

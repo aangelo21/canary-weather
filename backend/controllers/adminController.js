@@ -6,15 +6,15 @@ import { Op } from "sequelize";
 // Get admin dashboard
 export const getDashboard = async (req, res) => {
   try {
-    const { search, isGlobal } = req.query;
+    const { search, type } = req.query;
     const where = {};
 
     if (search) {
       where.name = { [Op.like]: `%${search}%` };
     }
 
-    if (isGlobal !== undefined && isGlobal !== "") {
-      where.is_global = isGlobal === "true";
+    if (type && type !== "") {
+      where.type = type;
     }
 
     const usersCount = await User.count();
@@ -40,10 +40,67 @@ export const getDashboard = async (req, res) => {
       alertsCount,
       frontendUrl,
       pois,
-      filters: { search, isGlobal },
+      filters: { search, type },
       token: req.token,
     });
   } catch (err) {
     return res.status(500).send("Error loading dashboard: " + err.message);
+  }
+};
+
+// Create Global POI
+export const createGlobalPOI = async (req, res) => {
+  try {
+    const { name, latitude, longitude, token } = req.body;
+
+    await PointOfInterest.create({
+      name,
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+      is_global: true,
+      type: 'global'
+    });
+    
+    return res.redirect(`/admin?token=${token}`);
+  } catch (err) {
+    return res.status(500).send("Error creating POI: " + err.message);
+  }
+};
+
+// Update POI
+export const updatePOI = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, latitude, longitude, type, token } = req.body;
+
+    await PointOfInterest.update({
+      name,
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+      is_global: type === 'global',
+      type: type
+    }, {
+      where: { id }
+    });
+
+    return res.redirect(`/admin?token=${token}`);
+  } catch (err) {
+    return res.status(500).send("Error updating POI: " + err.message);
+  }
+};
+
+// Delete POI
+export const deletePOI = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { token } = req.body;
+
+    await PointOfInterest.destroy({
+      where: { id }
+    });
+
+    return res.redirect(`/admin?token=${token}`);
+  } catch (err) {
+    return res.status(500).send("Error deleting POI: " + err.message);
   }
 };
