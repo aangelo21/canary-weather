@@ -1,5 +1,6 @@
-import { User, PointOfInterest, Alert } from "../models/index.js";
+import { User, PointOfInterest, Alert, Location, UserLocation } from "../models/index.js";
 import { Op } from "sequelize";
+import sequelize from "./dbController.js";
 
 // Controller for admin-related endpoints
 
@@ -45,6 +46,45 @@ export const getDashboard = async (req, res) => {
       order: [["createdAt", "DESC"]],
     });
 
+    // --- Dashboard Statistics ---
+    // 1. POI count by category
+    const poiByCategory = await PointOfInterest.findAll({
+      attributes: ['type', [sequelize.fn('COUNT', sequelize.col('PointOfInterest.id')), 'count']],
+      group: ['type']
+    });
+
+    // 2. Users count per selected location
+    const usersPerLocation = await UserLocation.findAll({
+      attributes: [
+        [sequelize.fn('COUNT', sequelize.col('user_id')), 'count']
+      ],
+      include: [{
+        model: Location,
+        attributes: ['name']
+      }],
+      group: ['location_id', 'Location.id', 'Location.name']
+    });
+
+    // 3. Users created per day
+    const usersPerDay = await User.findAll({
+      attributes: [
+        [sequelize.fn('DATE', sequelize.col('createdAt')), 'date'],
+        [sequelize.fn('COUNT', sequelize.col('id')), 'count']
+      ],
+      group: [sequelize.fn('DATE', sequelize.col('createdAt'))],
+      order: [[sequelize.fn('DATE', sequelize.col('createdAt')), 'ASC']]
+    });
+
+    // 4. POIs created per day
+    const poisPerDay = await PointOfInterest.findAll({
+      attributes: [
+        [sequelize.fn('DATE', sequelize.col('createdAt')), 'date'],
+        [sequelize.fn('COUNT', sequelize.col('id')), 'count']
+      ],
+      group: [sequelize.fn('DATE', sequelize.col('createdAt'))],
+      order: [[sequelize.fn('DATE', sequelize.col('createdAt')), 'ASC']]
+    });
+
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 
     return res.render("dashboard", {
@@ -55,6 +95,12 @@ export const getDashboard = async (req, res) => {
       pois,
       users,
       filters: { search, type, userSearch },
+      stats: {
+        poiByCategory,
+        usersPerLocation,
+        usersPerDay,
+        poisPerDay
+      }
     });
   } catch (err) {
     return res.status(500).send("Error loading dashboard: " + err.message);

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administración - Canary Weather</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -48,6 +49,26 @@
                 <h2 class="text-xl font-semibold text-gray-800 mb-2">Alertas</h2>
                 <p class="text-3xl font-bold text-brand-primary"><%= alertsCount %></p>
                 <p class="text-sm text-gray-500 mt-1">Alertas Activas</p>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">POIs por Categoría</h3>
+                <canvas id="poiCategoryChart"></canvas>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Usuarios por Localización</h3>
+                <canvas id="userLocationChart"></canvas>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Crecimiento de Usuarios</h3>
+                <canvas id="userGrowthChart"></canvas>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Crecimiento de POIs</h3>
+                <canvas id="poiGrowthChart"></canvas>
             </div>
         </div>
 
@@ -379,6 +400,69 @@
     </div>
 
     <script>
+        // Initialize Charts
+        document.addEventListener('DOMContentLoaded', function() {
+            const stats = <%- JSON.stringify(stats || {}) %>;
+            
+            if (stats.poiByCategory) {
+                new Chart(document.getElementById('poiCategoryChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: stats.poiByCategory.map(item => item.type),
+                        datasets: [{
+                            label: 'POIs por Categoría',
+                            data: stats.poiByCategory.map(item => item.count),
+                            backgroundColor: '#8884d8'
+                        }]
+                    }
+                });
+            }
+
+            if (stats.usersPerLocation) {
+                new Chart(document.getElementById('userLocationChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: stats.usersPerLocation.map(item => item.Location ? item.Location.name : 'Desconocido'),
+                        datasets: [{
+                            label: 'Usuarios por Localización',
+                            data: stats.usersPerLocation.map(item => item.count),
+                            backgroundColor: '#82ca9d'
+                        }]
+                    }
+                });
+            }
+
+            if (stats.usersPerDay) {
+                new Chart(document.getElementById('userGrowthChart'), {
+                    type: 'line',
+                    data: {
+                        labels: stats.usersPerDay.map(item => item.date),
+                        datasets: [{
+                            label: 'Nuevos Usuarios',
+                            data: stats.usersPerDay.map(item => item.count),
+                            borderColor: '#8884d8',
+                            tension: 0.1
+                        }]
+                    }
+                });
+            }
+
+            if (stats.poisPerDay) {
+                new Chart(document.getElementById('poiGrowthChart'), {
+                    type: 'line',
+                    data: {
+                        labels: stats.poisPerDay.map(item => item.date),
+                        datasets: [{
+                            label: 'Nuevos POIs',
+                            data: stats.poisPerDay.map(item => item.count),
+                            borderColor: '#82ca9d',
+                            tension: 0.1
+                        }]
+                    }
+                });
+            }
+        });
+
         function openCreateModal() {
             document.getElementById('createModal').classList.remove('hidden');
         }
