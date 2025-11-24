@@ -41,10 +41,10 @@ function Home() {
 
                                 {/* Button to navigate to tides page */}
                                 <button
-                                    onClick={() => navigate("/about us")}
+                                    onClick={() => navigate("/aboutus")}
                                     className="inline-flex items-center gap-2 bg-brand-primary hover:bg-accent-blue-200 text-white px-5 py-3 rounded-full font-semibold shadow"
                                 >
-                                    {t('about us')}
+                                    {t('aboutUs')}
                                 </button>
                             </div>
                         </div>
@@ -76,7 +76,7 @@ function Home() {
             {/* Feature Cards Section */}
             <div className="bg-white py-8">
                 <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                         {/* Array of feature cards with title, description, and icon */}
                         {[
                             {

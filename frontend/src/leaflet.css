@@ -5,7 +5,8 @@
   width: 100%;
 
   @media (min-width: 1024px) {
-    width: 1200px !important;
+    width: 100% !important;
+    max-width: 1200px !important;
     height: 500px !important;
     border-radius: 20px !important;
   }

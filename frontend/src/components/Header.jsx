@@ -133,7 +133,7 @@ function Header() {
 
           {/* Centered desktop navigation menu */}
           <div className="flex-1 flex justify-center">
-            <ul className="hidden md:flex items-center space-x-8">
+            <ul className="hidden md:flex items-center space-x-4 lg:space-x-8">
               <li>
                 <NavLink
                   to="/"
@@ -172,7 +172,7 @@ function Header() {
               </li>
               <li>
                 <NavLink
-                  to="/AboutUs"
+                  to="/aboutus"
                   className={({ isActive }) =>
                     isActive
                       ? "text-gray-900 font-semibold"
@@ -411,7 +411,7 @@ function Header() {
               </li>
               <li>
                 <NavLink
-                  to="/POI"
+                  to="/pois"
                   className={({ isActive }) =>
                     isActive
                       ? "block text-gray-900 font-semibold py-2"
@@ -437,24 +437,75 @@ function Header() {
                 </NavLink>
               </li>
               <li>
-                {/* Mobile login button */}
-                <button
-                  className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors"
-                  onClick={() => setShowLogin((prev) => !prev)}
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
+                {user ? (
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2 py-2">
+                      <div className="w-8 h-8 rounded-full overflow-hidden border border-blue-600">
+                        {getProfileImageUrl() ? (
+                          <img
+                            src={getProfileImageUrl()}
+                            alt={t('profile')}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-blue-600 flex items-center justify-center">
+                            <svg
+                              className="w-5 h-5 text-white"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                      <span className="font-medium text-gray-900">{user.username || t('userProfile')}</span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setShowLogin(true);
+                        setIsOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg flex items-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                      {t('editProfile')}
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                      {t('logout')}
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors"
+                    onClick={() => setShowLogin(true)}
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  {t('login')}
-                </button>
+                    <svg
+                      className="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    {t('login')}
+                  </button>
+                )}
                 {/* Mobile login modal */}
                 <LoginModal
                   isOpen={showLogin}
@@ -465,6 +516,10 @@ function Header() {
                 />
               </li>
               <li className="border-t border-gray-200 pt-3 mt-3">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-medium text-gray-700">{t('theme')}:</span>
+                  <ThemeSwitch />
+                </div>
                 {/* Mobile language selector */}
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-700">{t('language')}:</span>

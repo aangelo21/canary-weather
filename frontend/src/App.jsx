@@ -8,6 +8,7 @@ import Layout from "./layout/Layout";
 import Home from "./pages/Home";
 import Map from "./pages/Map";
 import Warnings from "./pages/Warnings";
+import AboutUs from "./pages/AboutUs";
 // Import i18n for internationalization
 import "../i18n/index.js";
 import { I18nextProvider } from "react-i18next";
@@ -34,6 +35,8 @@ function App() {
               <Route path="/map" element={<Map />} />
               {/* Interactive Map page route */}
               <Route path="/warnings" element={<Warnings />} />
+              {/* About Us page route */}
+              <Route path="/aboutus" element={<AboutUs />} />
             </Route>
           </Routes>
         </BrowserRouter>
