@@ -81,8 +81,8 @@ function InteractiveMap() {
   // Define geographical bounds for the Canary Islands
   // Restricts map panning to prevent users from navigating away from the region
   const bounds = [
-    [27.5, -18], // Southwest corner (latitude, longitude)
-    [29.5, -14], // Northeast corner
+    [26.5, -19.5], // Southwest corner (latitude, longitude) - Expanded
+    [30.5, -12.5], // Northeast corner - Expanded to allow popup space
   ];
 
   // Return the map JSX structure

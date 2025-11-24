@@ -109,6 +109,7 @@ function WeatherPopup({ position, weather, markerRef, onClose }) {
       position={position} 
       ref={popupRef} 
       className="custom-popup-clean"
+      autoPanPadding={[50, 50]}
       eventHandlers={{
         remove: () => {
           if (onClose) onClose();
