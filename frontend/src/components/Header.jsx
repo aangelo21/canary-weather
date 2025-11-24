@@ -225,25 +225,25 @@ function Header() {
                 <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                   <button
                     onClick={() => {
-                      i18n.changeLanguage('es');
-                      setShowLanguageDropdown(false);
-                    }}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 rounded-t-lg ${
-                      i18n.language === 'es' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
-                    }`}
-                  >
-                    🇪🇸 Español
-                  </button>
-                  <button
-                    onClick={() => {
                       i18n.changeLanguage('en');
                       setShowLanguageDropdown(false);
                     }}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 rounded-b-lg ${
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 rounded-t-lg ${
                       i18n.language === 'en' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
                     }`}
                   >
                     🇺🇸 English
+                  </button>
+                  <button
+                    onClick={() => {
+                      i18n.changeLanguage('es');
+                      setShowLanguageDropdown(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 rounded-b-lg ${
+                      i18n.language === 'es' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                    }`}
+                  >
+                    🇪🇸 Español
                   </button>
                 </div>
               )}
@@ -470,16 +470,6 @@ function Header() {
                   <span className="text-sm font-medium text-gray-700">{t('language')}:</span>
                   <div className="flex gap-2">
                     <button
-                      onClick={() => i18n.changeLanguage('es')}
-                      className={`px-3 py-1 text-sm rounded ${
-                        i18n.language === 'es'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                      }`}
-                    >
-                      🇪🇸 ES
-                    </button>
-                    <button
                       onClick={() => i18n.changeLanguage('en')}
                       className={`px-3 py-1 text-sm rounded ${
                         i18n.language === 'en'
@@ -488,6 +478,16 @@ function Header() {
                       }`}
                     >
                       🇺🇸 EN
+                    </button>
+                    <button
+                      onClick={() => i18n.changeLanguage('es')}
+                      className={`px-3 py-1 text-sm rounded ${
+                        i18n.language === 'es'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      🇪🇸 ES
                     </button>
                   </div>
                 </div>
