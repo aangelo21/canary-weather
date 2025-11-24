@@ -70,8 +70,8 @@ export default function PointsOfInterest() {
   // Function to fetch personal POIs from the API
   const fetchPersonalPoisData = async () => {
     try {
-      const token = localStorage.getItem("authToken");
-      if (!token) return [];
+      const user = localStorage.getItem("cw_user");
+      if (!user) return [];
       return await fetchPersonalPois();
     } catch (err) {
       console.error("Error fetching personal POIs:", err);
@@ -186,14 +186,14 @@ export default function PointsOfInterest() {
   // useEffect hook - Load POIs on component mount and check authentication
   useEffect(() => {
     // Check if user is authenticated
-    const token = localStorage.getItem("authToken");
-    setIsAuthenticated(!!token);
+    const user = localStorage.getItem("cw_user");
+    setIsAuthenticated(!!user);
     fetchPois();
     
     // Listen for login events to refresh POIs and authentication state
     const handleUserLogin = () => {
-      const token = localStorage.getItem("authToken");
-      setIsAuthenticated(!!token);
+      const user = localStorage.getItem("cw_user");
+      setIsAuthenticated(!!user);
       fetchPois();
       // Reset filter to 'all' to show newly available POIs
       setFilter('all');

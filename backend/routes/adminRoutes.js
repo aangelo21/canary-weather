@@ -1,5 +1,5 @@
 import express from "express";
-import { authenticateToken } from "../middleware/authenticateToken.js";
+import { authenticateSession } from "../middleware/authMiddleware.js";
 import { checkAdmin } from "../middleware/checkAdmin.js";
 import { 
     getDashboard, 
@@ -11,11 +11,11 @@ import {
 const router = express.Router();
 
 // GET /admin - Admin dashboard
-router.get("/", authenticateToken, checkAdmin, getDashboard);
+router.get("/", authenticateSession, checkAdmin, getDashboard);
 
 // POI Management
-router.post("/poi", authenticateToken, checkAdmin, createGlobalPOI);
-router.post("/poi/:id/update", authenticateToken, checkAdmin, updatePOI);
-router.post("/poi/:id/delete", authenticateToken, checkAdmin, deletePOI);
+router.post("/poi", authenticateSession, checkAdmin, createGlobalPOI);
+router.post("/poi/:id/update", authenticateSession, checkAdmin, updatePOI);
+router.post("/poi/:id/delete", authenticateSession, checkAdmin, deletePOI);
 
 export default router;

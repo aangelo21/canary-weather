@@ -6,6 +6,7 @@ import LoginModal from "./LoginModal";
 import { NavLink } from "react-router-dom";
 // Import alert service for fetching alerts
 import { fetchAlerts } from "../services/alertService";
+import { logoutUser } from "../services/userService";
 // Import i18n for translations
 import { useTranslation } from "react-i18next";
 
@@ -80,9 +81,13 @@ function Header() {
   };
 
   // Handler for logout - clears localStorage and reloads page
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
     localStorage.removeItem("cw_user");
-    localStorage.removeItem("authToken");
     localStorage.removeItem("userId");
     setUser(null);
     setShowLogin(false);

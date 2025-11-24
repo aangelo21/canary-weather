@@ -8,14 +8,9 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const redirectToDashboard = () => {
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        setError('No token found');
-        return;
-      }
       const API_BASE_ROOT = import.meta.env.VITE_API_BASE.replace('/api', '');
-      // Redirect to the backend EJS dashboard with the token
-      window.location.href = `${API_BASE_ROOT}/admin?token=${token}`;
+      // Redirect to the backend EJS dashboard
+      window.location.href = `${API_BASE_ROOT}/admin`;
     };
 
     redirectToDashboard();

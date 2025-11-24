@@ -1,6 +1,7 @@
 // Import necessary modules for the Express server
 import express from "express";
 import cors from "cors";
+import session from "express-session";
 // Import Sequelize instance for database connection
 import sequelize from "./controllers/dbController.js";
 // Import models to ensure they are registered with Sequelize
@@ -30,11 +31,26 @@ app.set("views", path.join(__dirname, "views"));
 const PORT = process.env.PORT || 85;
 
 // Enable CORS for cross-origin requests
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:5173", // Adjust this to match your frontend URL
+    credentials: true
+}));
 // Parse incoming JSON payloads
 app.use(express.json());
 // Parse incoming URL-encoded payloads (for forms)
 app.use(express.urlencoded({ extended: true }));
+
+// Configure session middleware
+app.use(session({
+    secret: process.env.SESSION_SECRET || "supersecretkey",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false, // Set to true if using HTTPS
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+}));
 
 // Serve static files from the uploads directory for profile pictures and POI images
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

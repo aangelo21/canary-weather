@@ -18,10 +18,9 @@ export async function fetchAlertsByLocation(locationId) {
 
 // Function to fetch warnings from AEMET (admin function)
 export async function fetchWarnings() {
-  const token = localStorage.getItem("authToken");
   const response = await fetch(`${API_BASE}/alerts/fetch`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
+    credentials: "include",
   });
   if (!response.ok) throw new Error("Error fetching warnings");
   return response.json();
