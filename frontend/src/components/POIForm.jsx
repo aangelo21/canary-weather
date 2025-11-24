@@ -35,19 +35,7 @@ export default function POIForm({
                     />
                 </div>
 
-                {/* Description textarea field */}
-                <div className="mb-2">
-                    <label className="block text-sm font-medium mb-1">
-                        {t('description')}
-                    </label>
-                    <textarea
-                        name="description"
-                        value={formData.description}
-                        onChange={onChange}
-                        className="border rounded px-3 py-2 w-full"
-                        rows={3}
-                    />
-                </div>
+
 
                 {/* Image upload field with preview */}
                 <div className="mb-2">

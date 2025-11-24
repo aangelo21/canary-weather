@@ -48,6 +48,11 @@ function InteractiveMap() {
             pressure: data.main?.pressure ?? null, // Atmospheric pressure
             wind: data.wind?.speed ?? null, // Wind speed
             description: data.weather?.[0]?.description ?? "", // Weather description
+            main: data.weather?.[0]?.main ?? "",
+            dt: data.dt,
+            sunrise: data.sys?.sunrise,
+            sunset: data.sys?.sunset,
+            clouds: data.clouds?.all ?? 0
           });
         } catch {
           // If API call fails, set weather to null (no popup will show)
