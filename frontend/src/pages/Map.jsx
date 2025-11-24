@@ -7,7 +7,7 @@ function Map() {
     const { t } = useTranslation();
     return (
         // Container with vertical spacing between elements
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-10 px-4 sm:px-6 lg:px-8 py-8">
             {/* Main heading for the map page */}
             <h2 className="text-4xl font-bold text-center">{t('exploreMap')}</h2>
             {/* Subtitle explaining how to interact with the map */}
