@@ -18,7 +18,7 @@ function Home() {
                     <div className="flex flex-col justify-center">
                         <div>
                             {/* Main heading welcoming users to Canary Weather */}
-                            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-black leading-tight">
+                            <h1 className="text-5xl md:text-5xl lg:text-7xl font-bold text-black leading-tight">
                                 {t('welcomeTo')}
                                 <br />
                                 <span className="block mt-1">{t('canaryWeather')}</span>

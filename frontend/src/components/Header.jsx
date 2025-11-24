@@ -133,7 +133,7 @@ function Header() {
 
           {/* Centered desktop navigation menu */}
           <div className="flex-1 flex justify-center">
-            <ul className="hidden md:flex items-center space-x-4 lg:space-x-8">
+            <ul className="hidden lg:flex items-center space-x-4 lg:space-x-8">
               <li>
                 <NavLink
                   to="/"
@@ -199,7 +199,7 @@ function Header() {
           </div>
 
           {/* Language selector and user authentication section */}
-          <div className="md:flex hidden items-center gap-3">
+          <div className="lg:flex hidden items-center gap-3">
             {/* Theme switch for dark mode */}
             <ThemeSwitch />
             
@@ -341,7 +341,7 @@ function Header() {
 
           {/* Mobile menu toggle button */}
           <button
-            className="md:hidden text-neutral-2 text-2xl p-2"
+            className="lg:hidden text-neutral-2 text-2xl p-2"
             onClick={toggleMenu}
             aria-label="Alternar menú"
           >
@@ -381,7 +381,7 @@ function Header() {
 
         {/* Mobile navigation menu */}
         {isOpen && (
-          <div className="md:hidden pb-4">
+          <div className="lg:hidden pb-4">
             <ul className="flex flex-col space-y-3">
               <li>
                 <NavLink
@@ -420,6 +420,19 @@ function Header() {
                   onClick={() => setIsOpen(false)}
                 >
                   {t('pointsOfInterest')}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/aboutus"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block text-gray-900 font-semibold py-2"
+                      : "block text-gray-700 hover:text-gray-900 py-2"
+                  }
+                  onClick={() => setIsOpen(false)}
+                >
+                  {t('aboutUs')}
                 </NavLink>
               </li>
               <li>
