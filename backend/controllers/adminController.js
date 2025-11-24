@@ -10,11 +10,13 @@ export const getDashboard = async (req, res) => {
     const usersCount = await User.count();
     const poisCount = await PointOfInterest.count();
     const alertsCount = await Alert.count();
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 
     return res.render("dashboard", {
       usersCount,
       poisCount,
       alertsCount,
+      frontendUrl,
     });
   } catch (err) {
     return res.status(500).send("Error loading dashboard: " + err.message);
