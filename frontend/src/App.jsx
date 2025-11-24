@@ -8,6 +8,7 @@ import Layout from "./layout/Layout";
 import Home from "./pages/Home";
 import Map from "./pages/Map";
 import Warnings from "./pages/Warnings";
+import AboutUs from "./pages/AboutUs";
 import AdminDashboard from "./pages/AdminDashboard";
 // Import i18n for internationalization
 import "../i18n/index.js";
@@ -35,6 +36,8 @@ function App() {
               <Route path="/map" element={<Map />} />
               {/* Interactive Map page route */}
               <Route path="/warnings" element={<Warnings />} />
+              {/* About Us page route */}
+              <Route path="/aboutus" element={<AboutUs />} />
               {/* Admin Dashboard route */}
               <Route path="/admin" element={<AdminDashboard />} />
             </Route>

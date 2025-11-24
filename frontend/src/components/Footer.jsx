@@ -17,9 +17,9 @@ export default function Footer() {
         <footer className="bg-brand-primary text-white py-4 shadow-[0_-2px_6px_rgba(0,0,0,0.08)]">
             {/* Container div with max width, auto margins, padding, and flexbox layout */}
             {/* Uses flexbox to space copyright on left and social links on right */}
-            <div className="max-w-6xl mx-auto px-4 flex items-center justify-between gap-4">
+            <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
                 {/* Left section: Copyright text and website link */}
-                <div className="text-sm">
+                <div className="text-sm text-center md:text-left">
                     {/* Copyright notice with brand name */}
                     {t('copyright')}{" "}
                     {/* External link to the main Canary Weather website */}

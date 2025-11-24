@@ -16,6 +16,10 @@ import ThemeSwitch from "./ThemeSwitch";
 function Header() {
   // State for mobile menu toggle
   const [isOpen, setIsOpen] = useState(false);
+  // State for mobile settings dropdown
+  const [showMobileSettings, setShowMobileSettings] = useState(false);
+  // State for mobile user profile dropdown
+  const [showMobileUserDropdown, setShowMobileUserDropdown] = useState(false);
   // State for showing login modal
   const [showLogin, setShowLogin] = useState(false);
   // State for current user data
@@ -57,10 +61,13 @@ function Header() {
       if (showUserDropdown && userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
         setShowUserDropdown(false);
       }
+      if (showMobileSettings && !event.target.closest('.mobile-settings-dropdown')) {
+        setShowMobileSettings(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showLanguageDropdown, showUserDropdown]);
+  }, [showLanguageDropdown, showUserDropdown, showMobileSettings]);
 
   // Effect to fetch alerts on component mount
   useEffect(() => {
@@ -140,7 +147,7 @@ function Header() {
 
           {/* Centered desktop navigation menu */}
           <div className="flex-1 flex justify-center">
-            <ul className="hidden md:flex items-center space-x-8">
+            <ul className="hidden lg:flex items-center space-x-4 lg:space-x-8">
               <li>
                 <NavLink
                   to="/"
@@ -179,7 +186,7 @@ function Header() {
               </li>
               <li>
                 <NavLink
-                  to="/AboutUs"
+                  to="/aboutus"
                   className={({ isActive }) =>
                     isActive
                       ? "text-gray-900 font-semibold"
@@ -206,7 +213,7 @@ function Header() {
           </div>
 
           {/* Language selector and user authentication section */}
-          <div className="md:flex hidden items-center gap-3">
+          <div className="lg:flex hidden items-center gap-3">
             {/* Theme switch for dark mode */}
             <ThemeSwitch />
             
@@ -361,48 +368,103 @@ function Header() {
           </div>
 
           {/* Mobile menu toggle button */}
-          <button
-            className="md:hidden text-neutral-2 text-2xl p-2"
-            onClick={toggleMenu}
-            aria-label="Alternar menú"
-          >
-            {isOpen ? (
-              // Close icon when menu is open
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          <div className="lg:hidden flex items-center gap-2">
+            {/* Mobile Settings Button */}
+            <div className="relative mobile-settings-dropdown">
+              <button
+                onClick={() => setShowMobileSettings(!showMobileSettings)}
+                className="text-neutral-2 text-2xl p-2"
+                aria-label="Ajustes"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            ) : (
-              // Hamburger icon when menu is closed
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            )}
-          </button>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </button>
+              {showMobileSettings && (
+                <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-50 p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-gray-700">{t('theme')}:</span>
+                    <ThemeSwitch />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">{t('language')}:</span>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          i18n.changeLanguage('en');
+                          setShowMobileSettings(false);
+                        }}
+                        className={`px-3 py-1 text-sm rounded ${
+                          i18n.language === 'en'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                      >
+                        🇺🇸 EN
+                      </button>
+                      <button
+                        onClick={() => {
+                          i18n.changeLanguage('es');
+                          setShowMobileSettings(false);
+                        }}
+                        className={`px-3 py-1 text-sm rounded ${
+                          i18n.language === 'es'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                      >
+                        🇪🇸 ES
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <button
+              className="text-neutral-2 text-2xl p-2"
+              onClick={toggleMenu}
+              aria-label="Alternar menú"
+            >
+              {isOpen ? (
+                // Close icon when menu is open
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              ) : (
+                // Hamburger icon when menu is closed
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
         </nav>
 
         {/* Mobile navigation menu */}
         {isOpen && (
-          <div className="md:hidden pb-4">
+          <div className="lg:hidden pb-4">
             <ul className="flex flex-col space-y-3">
               <li>
                 <NavLink
@@ -432,7 +494,7 @@ function Header() {
               </li>
               <li>
                 <NavLink
-                  to="/POI"
+                  to="/pois"
                   className={({ isActive }) =>
                     isActive
                       ? "block text-gray-900 font-semibold py-2"
@@ -441,6 +503,19 @@ function Header() {
                   onClick={() => setIsOpen(false)}
                 >
                   {t('pointsOfInterest')}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/aboutus"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block text-gray-900 font-semibold py-2"
+                      : "block text-gray-700 hover:text-gray-900 py-2"
+                  }
+                  onClick={() => setIsOpen(false)}
+                >
+                  {t('aboutUs')}
                 </NavLink>
               </li>
               <li>
@@ -458,24 +533,91 @@ function Header() {
                 </NavLink>
               </li>
               <li>
-                {/* Mobile login button */}
-                <button
-                  className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors"
-                  onClick={() => setShowLogin((prev) => !prev)}
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
+                {user ? (
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={() => setShowMobileUserDropdown(!showMobileUserDropdown)}
+                      className="flex items-center gap-2 py-2 w-full text-left"
+                    >
+                      <div className="w-8 h-8 rounded-full overflow-hidden border border-blue-600">
+                        {getProfileImageUrl() ? (
+                          <img
+                            src={getProfileImageUrl()}
+                            alt={t('profile')}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-blue-600 flex items-center justify-center">
+                            <svg
+                              className="w-5 h-5 text-white"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                      <span className="font-medium text-gray-900">{user.username || t('userProfile')}</span>
+                      <svg
+                        className={`w-4 h-4 ml-auto transition-transform ${showMobileUserDropdown ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    
+                    {showMobileUserDropdown && (
+                      <div className="pl-4 flex flex-col gap-2">
+                        <button
+                          onClick={() => {
+                            setShowLogin(true);
+                            setIsOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg flex items-center gap-2"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                          {t('editProfile')}
+                        </button>
+                        <button
+                          onClick={handleLogout}
+                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                          </svg>
+                          {t('logout')}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors"
+                    onClick={() => setShowLogin(true)}
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  {t('login')}
-                </button>
+                    <svg
+                      className="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    {t('login')}
+                  </button>
+                )}
                 {/* Mobile login modal */}
                 <LoginModal
                   isOpen={showLogin}
@@ -485,34 +627,7 @@ function Header() {
                   onLogout={handleLogout}
                 />
               </li>
-              <li className="border-t border-gray-200 pt-3 mt-3">
-                {/* Mobile language selector */}
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">{t('language')}:</span>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => i18n.changeLanguage('en')}
-                      className={`px-3 py-1 text-sm rounded ${
-                        i18n.language === 'en'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                      }`}
-                    >
-                      🇺🇸 EN
-                    </button>
-                    <button
-                      onClick={() => i18n.changeLanguage('es')}
-                      className={`px-3 py-1 text-sm rounded ${
-                        i18n.language === 'es'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                      }`}
-                    >
-                      🇪🇸 ES
-                    </button>
-                  </div>
-                </div>
-              </li>
+
             </ul>
           </div>
         )}

@@ -48,6 +48,11 @@ function InteractiveMap() {
             pressure: data.main?.pressure ?? null, // Atmospheric pressure
             wind: data.wind?.speed ?? null, // Wind speed
             description: data.weather?.[0]?.description ?? "", // Weather description
+            main: data.weather?.[0]?.main ?? "",
+            dt: data.dt,
+            sunrise: data.sys?.sunrise,
+            sunset: data.sys?.sunset,
+            clouds: data.clouds?.all ?? 0
           });
         } catch {
           // If API call fails, set weather to null (no popup will show)
@@ -58,6 +63,12 @@ function InteractiveMap() {
     // This component doesn't render anything visible, just handles events
     return null;
   }
+
+  // Function to handle popup close event
+  const handlePopupClose = () => {
+    setClickedPos(null);
+    setWeather(null);
+  };
 
   // useEffect hook - Opens the marker popup when weather data is available
   // This ensures the popup appears after the async weather fetch completes
@@ -70,8 +81,8 @@ function InteractiveMap() {
   // Define geographical bounds for the Canary Islands
   // Restricts map panning to prevent users from navigating away from the region
   const bounds = [
-    [27.5, -18], // Southwest corner (latitude, longitude)
-    [29.5, -14], // Northeast corner
+    [26.5, -19.5], // Southwest corner (latitude, longitude) - Expanded
+    [30.5, -12.5], // Northeast corner - Expanded to allow popup space
   ];
 
   // Return the map JSX structure
@@ -104,6 +115,7 @@ function InteractiveMap() {
                 position={clickedPos}
                 weather={weather}
                 markerRef={markerRef}
+                onClose={handlePopupClose}
               />
             )}
           </Marker>
