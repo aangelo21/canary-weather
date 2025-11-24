@@ -57,7 +57,8 @@
             </div>
 
             <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
-                <form action="/admin/dashboard" method="GET" class="flex flex-wrap gap-4 items-end">
+                <form action="/admin" method="GET" class="flex flex-wrap gap-4 items-end">
+                    <input type="hidden" name="token" value="<%= token %>">
                     <div class="flex-1 min-w-[200px]">
                         <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search by Name</label>
                         <input type="text" name="search" id="search" value="<%= filters.search || '' %>" placeholder="Search POIs..." class="w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-primary focus:ring-brand-primary">
@@ -74,7 +75,7 @@
                         Filter
                     </button>
                     <% if (filters.search || filters.isGlobal) { %>
-                        <a href="/admin/dashboard" class="text-gray-600 hover:text-gray-800 font-medium py-2 px-4">Clear</a>
+                        <a href="/admin?token=<%= token %>" class="text-gray-600 hover:text-gray-800 font-medium py-2 px-4">Clear</a>
                     <% } %>
                 </form>
             </div>

@@ -28,6 +28,8 @@ export function authenticateToken(req, res, next) {
     if (err) return res.status(403).json({ error: "Invalid token" });
     // Attach decoded user data to request object
     req.user = user;
+    // Attach raw token to request object for views
+    req.token = token;
     // Proceed to next middleware/route handler
     next();
   });

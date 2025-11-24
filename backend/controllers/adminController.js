@@ -41,6 +41,7 @@ export const getDashboard = async (req, res) => {
       frontendUrl,
       pois,
       filters: { search, isGlobal },
+      token: req.token,
     });
   } catch (err) {
     return res.status(500).send("Error loading dashboard: " + err.message);
