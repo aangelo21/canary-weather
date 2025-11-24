@@ -5,11 +5,19 @@ import jwt from "jsonwebtoken";
 export function authenticateToken(req, res, next) {
   // Extract Authorization header and check for Bearer token
   const authHeader = req.headers["authorization"];
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  let token;
+
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    token = authHeader.split(" ")[1];
+  } else if (req.query.token) {
+    // Allow token via query parameter for EJS views
+    token = req.query.token;
+  }
+
+  if (!token) {
     return res.status(401).json({ error: "Bearer token required" });
   }
-  // Extract the token from the header
-  const token = authHeader.split(" ")[1];
+
   // Get JWT secret from environment variables
   const secret = process.env.JWT_SECRET;
   if (!secret) {

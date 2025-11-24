@@ -1,11 +1,22 @@
+import User from "../models/user.js";
+import PointOfInterest from "../models/pointOfInterest.js";
+import Alert from "../models/alert.js";
+
 // Controller for admin-related endpoints
 
-// Get admin dashboard (empty for now)
+// Get admin dashboard
 export const getDashboard = async (req, res) => {
   try {
-    // For now, return an empty object
-    return res.json({ dashboard: {} });
+    const usersCount = await User.count();
+    const poisCount = await PointOfInterest.count();
+    const alertsCount = await Alert.count();
+
+    return res.render("dashboard", {
+      usersCount,
+      poisCount,
+      alertsCount,
+    });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    return res.status(500).send("Error loading dashboard: " + err.message);
   }
 };

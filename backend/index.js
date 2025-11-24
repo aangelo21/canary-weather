@@ -21,6 +21,11 @@ const __dirname = path.dirname(__filename);
 
 // Create an Express application instance
 const app = express();
+
+// Set EJS as the view engine
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
 // Set the port from environment variable or default to 85
 const PORT = process.env.PORT || 85;
 

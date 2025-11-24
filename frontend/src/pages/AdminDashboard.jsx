@@ -7,45 +7,28 @@ const AdminDashboard = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-          setError('No token found');
-          return;
-        }
-        const API_BASE_ROOT = import.meta.env.VITE_API_BASE.replace('/api', '');
-        const response = await fetch(`${API_BASE_ROOT}/admin`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
-        const data = await response.json();
-        setDashboardData(data);
-      } catch (err) {
-        setError(err.message);
+    const redirectToDashboard = () => {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        setError('No token found');
+        return;
       }
+      const API_BASE_ROOT = import.meta.env.VITE_API_BASE.replace('/api', '');
+      // Redirect to the backend EJS dashboard with the token
+      window.location.href = `${API_BASE_ROOT}/admin?token=${token}`;
     };
 
-    fetchDashboard();
+    redirectToDashboard();
   }, []);
 
   if (error) {
     return <div>Error: {error}</div>;
   }
 
-  if (!dashboardData) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div>
       <h1>{t('adminDashboard')}</h1>
-      <p>Dashboard is empty for now.</p>
-      <pre>{JSON.stringify(dashboardData, null, 2)}</pre>
+      <p>Redirecting to server-side dashboard...</p>
     </div>
   );
 };
