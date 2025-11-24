@@ -64,7 +64,7 @@ function Home() {
                                         e.target.nextSibling.style.display = 'flex';
                                     }}
                                 />
-                                <div className="w-full h-96 bg-gradient-to-br from-blue-100 to-blue-50 rounded-3xl shadow-2xl hidden items-center justify-center">
+                                <div className="w-full h-96 bg-linear-to-br from-blue-100 to-blue-50 rounded-3xl shadow-2xl hidden items-center justify-center">
                                     <span className="text-gray-400 text-lg">{t('heroImage')}</span>
                                 </div>
                             </div>
