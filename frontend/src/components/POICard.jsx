@@ -15,152 +15,127 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
   const imageUrl = poi.image_url ? `${baseUrl}${poi.image_url}` : null;
 
   return (
-    // Main card container with white background, rounded corners, shadow, and border
-    <article className="bg-white dark:bg-[#262626] rounded-lg shadow border border-gray-100 dark:border-gray-700 overflow-hidden">
-      {/* Image section */}
-      <div className="w-full">
+    // Main card container with modern styling
+    <article className="group bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col h-full transform hover:-translate-y-1">
+      
+      {/* Image section with overlay badge */}
+      <div className="relative h-48 overflow-hidden">
         {imageUrl ? (
-          // Display POI image if available
           <img
             src={imageUrl}
             alt={poi.name}
-            className="w-full h-48 object-cover"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             onError={(e) => {
-              // Fallback to placeholder image if image fails to load
-              e.target.src =
-                "https://via.placeholder.com/400x300/0f6fb9/ffffff?text=No+Image";
+              e.target.style.display = 'none';
+              e.target.nextSibling.classList.remove('hidden');
+              e.target.nextSibling.classList.add('flex');
             }}
           />
-        ) : (
-          // Placeholder div with gradient background when no image
-          <div className="w-full h-48 bg-linear-to-br from-[#0f6fb9] to-[#0a5a96] flex items-center justify-center">
-            <div className="text-center text-white">
-              {/* Camera icon SVG */}
-              <svg
-                className="w-16 h-16 mx-auto mb-2 opacity-70"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-              {/* "No Image" text */}
-              <p className="text-sm font-medium opacity-80">{t('noImage')}</p>
-            </div>
-          </div>
-        )}
-      </div>
-      
-      {/* Content section with padding */}
-      <div className="p-5">
-
-      {/* Main content section with POI info and global/local badge */}
-      <div className="flex justify-between items-start">
-        <div>
-          {/* POI name and description */}
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white">{poi.name}</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">{poi.description}</p>
-          {/* Weather information if available */}
-          {weather && (
-            <div className="mt-2 text-blue-700 dark:text-blue-400 text-sm">
-              <span className="font-semibold">{weather.temp}°C</span>{" "}
-              <span>{weather.description}</span>
-            </div>
-          )}
+        ) : null}
+        
+        {/* Fallback / Placeholder */}
+        <div className={`${imageUrl ? 'hidden' : 'flex'} w-full h-full bg-gradient-to-br from-blue-500 to-cyan-400 items-center justify-center`}>
+            <svg className="w-12 h-12 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
         </div>
-        {/* Global/Local/Personal indicator badge */}
-        <div className="text-right">
+
+        {/* Type Badge */}
+        <div className="absolute top-3 right-3">
           <span
-            className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+            className={`px-3 py-1 rounded-full text-xs font-bold shadow-sm backdrop-blur-md ${
               poi.type === 'global'
-                ? "bg-[#f2c200] text-black" // Yellow badge for global POIs
+                ? "bg-yellow-400/90 text-yellow-900"
                 : poi.type === 'personal'
-                ? "bg-[#9b59b6] text-white" // Purple badge for personal POIs
-                : "bg-[#0f6fb9] text-white" // Blue badge for local POIs
+                ? "bg-purple-500/90 text-white"
+                : "bg-blue-500/90 text-white"
             }`}
           >
-            {poi.type === 'global' ? t('global') : poi.type === 'personal' ? t('personal') : t('local')}
+            {(poi.type === 'global' ? t('global') : poi.type === 'personal' ? t('personal') : t('local')).toUpperCase()}
           </span>
         </div>
       </div>
-
-      {/* Metadata section with location and creation info */}
-      <dl className="mt-4 text-sm text-gray-600 dark:text-gray-300">
-        {/* Latitude display */}
-        {poi.latitude && (
-          <div className="flex items-center justify-between py-1">
-            <dt className="font-medium">{t('latitude')}</dt>
-            <dd>{poi.latitude}</dd>
-          </div>
-        )}
-        {/* Longitude display */}
-        {poi.longitude && (
-          <div className="flex items-center justify-between py-1">
-            <dt className="font-medium">{t('longitude')}</dt>
-            <dd>{poi.longitude}</dd>
-          </div>
-        )}
-        {/* Weather information from API */}
-        {weather && weather.description && (
-          <div className="flex items-center justify-between py-1">
-            <dt className="font-medium">{t('condition')}</dt>
-            <dd>{weather.description}</dd>
-          </div>
-        )}
-        {weather && weather.humidity && (
-          <div className="flex items-center justify-between py-1">
-            <dt className="font-medium">{t('humidity')}</dt>
-            <dd>{weather.humidity}%</dd>
-          </div>
-        )}
-        {weather && weather.pressure && (
-          <div className="flex items-center justify-between py-1">
-            <dt className="font-medium">{t('pressure')}</dt>
-            <dd>{weather.pressure} hPa</dd>
-          </div>
-        )}
-        {weather && weather.wind && (
-          <div className="flex items-center justify-between py-1">
-            <dt className="font-medium">{t('wind')}</dt>
-            <dd>{weather.wind} m/s</dd>
-          </div>
-        )}
-        {/* Creation date */}
-        <div className="flex items-center justify-between py-1">
-          <dt className="font-medium">{t('created')}</dt>
-          <dd className="text-sm text-gray-500 dark:text-gray-400">
-            {new Date(poi.createdAt).toLocaleDateString()}
-          </dd>
+      
+      {/* Content section */}
+      <div className="p-5 flex flex-col flex-grow">
+        
+        {/* Header */}
+        <div className="mb-3">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 line-clamp-1" title={poi.name}>
+            {poi.name}
+          </h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 h-10">
+            {poi.description}
+          </p>
         </div>
-      </dl>
 
-      {/* Action buttons section */}
-      <div className="mt-4 flex items-center justify-end gap-2">
-        {/* Edit button */}
-        {onEdit && (
-          <button
-            onClick={onEdit}
-            className="px-3 py-1 rounded-md bg-[#ffd966] text-sm"
-          >
-            {t('edit')}
-          </button>
+        {/* Weather Grid */}
+        {weather ? (
+          <div className="grid grid-cols-3 gap-2 mb-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3">
+            <div className="text-center">
+              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('condition')}</div>
+              <div className="font-semibold text-gray-800 dark:text-gray-200 text-sm truncate" title={weather.description}>
+                {weather.temp ? `${Math.round(weather.temp)}°C` : '--'}
+              </div>
+            </div>
+            <div className="text-center border-l border-gray-200 dark:border-gray-600">
+              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('wind')}</div>
+              <div className="font-semibold text-gray-800 dark:text-gray-200 text-sm">
+                {weather.wind ? `${Math.round(weather.wind)} m/s` : '--'}
+              </div>
+            </div>
+            <div className="text-center border-l border-gray-200 dark:border-gray-600">
+              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('humidity')}</div>
+              <div className="font-semibold text-gray-800 dark:text-gray-200 text-sm">
+                {weather.humidity ? `${weather.humidity}%` : '--'}
+              </div>
+            </div>
+          </div>
+        ) : (
+            <div className="mb-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 text-center text-sm text-gray-500 dark:text-gray-400">
+                {t('loading')}
+            </div>
         )}
-        {/* Delete button */}
-        {onDelete && (
-          <button
-            onClick={onDelete}
-            className="px-3 py-1 rounded-md bg-[#d64545] text-white text-sm"
-          >
-            {t('delete')}
-          </button>
+
+        {/* Location Info */}
+        <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 mb-4 mt-auto">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span>
+                {poi.latitude?.toFixed(4)}, {poi.longitude?.toFixed(4)}
+            </span>
+        </div>
+
+        {/* Action Buttons */}
+        {(onEdit || onDelete) && (
+          <div className="flex gap-2 pt-3 border-t border-gray-100 dark:border-gray-700">
+            {onEdit && (
+              <button
+                onClick={onEdit}
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors text-sm font-medium"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                {t('edit')}
+              </button>
+            )}
+            {onDelete && (
+              <button
+                onClick={onDelete}
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors text-sm font-medium"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                {t('delete')}
+              </button>
+            )}
+          </div>
         )}
       </div>
-      </div> {/* Close content section with padding */}
     </article>
   );
 }

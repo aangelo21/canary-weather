@@ -89,7 +89,7 @@ export const es = {
     // Home
     welcomeTo: "Bienvenido a",
     canaryWeather: "Canary Weather",
-    weatherApp: "Weather App",
+    weatherApp: "Aplicación del Tiempo",
     discoverWeather:
       "Descubre el clima en tus lugares favoritos. Explora los mapas y ve pronósticos detallados, mareas y puntos de interés alrededor de las Islas Canarias.",
     maps: "mapas",
