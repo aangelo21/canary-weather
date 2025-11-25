@@ -8,9 +8,9 @@ export default function Footer() {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="bg-brand-primary dark:bg-gray-900 text-white pt-16 pb-8 transition-colors duration-300">
+        <footer className="bg-gradient-to-b from-brand-primary to-blue-900 dark:from-gray-900 dark:to-black text-white pt-16 pb-8 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12 items-start">
                     {/* Brand Section */}
                     <div className="space-y-4">
                         <div className="flex items-center gap-2">
@@ -26,27 +26,27 @@ export default function Footer() {
                         <h3 className="text-lg font-bold mb-4 text-white">{t('quickLinks')}</h3>
                         <ul className="space-y-2">
                             <li>
-                                <Link to="/" className="text-blue-100 dark:text-gray-400 hover:text-white transition-colors text-sm">
+                                <Link to="/" className="text-blue-100 dark:text-gray-400 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block text-sm">
                                     {t('home')}
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/map" className="text-blue-100 dark:text-gray-400 hover:text-white transition-colors text-sm">
+                                <Link to="/map" className="text-blue-100 dark:text-gray-400 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block text-sm">
                                     {t('map')}
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/pois" className="text-blue-100 dark:text-gray-400 hover:text-white transition-colors text-sm">
+                                <Link to="/pois" className="text-blue-100 dark:text-gray-400 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block text-sm">
                                     {t('pointsOfInterest')}
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/warnings" className="text-blue-100 dark:text-gray-400 hover:text-white transition-colors text-sm">
+                                <Link to="/warnings" className="text-blue-100 dark:text-gray-400 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block text-sm">
                                     {t('warnings')}
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/aboutus" className="text-blue-100 dark:text-gray-400 hover:text-white transition-colors text-sm">
+                                <Link to="/aboutus" className="text-blue-100 dark:text-gray-400 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block text-sm">
                                     {t('aboutUs')}
                                 </Link>
                             </li>

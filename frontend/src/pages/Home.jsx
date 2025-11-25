@@ -126,7 +126,7 @@ function Home() {
             </div>
 
             {/* Activities Section */}
-            <div className="py-20">
+            <div className="pt-20 pb-10">
                 <div className="max-w-7xl mx-auto px-6 lg:px-8">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -181,7 +181,7 @@ function Home() {
             </div>
 
             {/* Carousel Section */}
-            <div className="py-16 bg-white dark:bg-gray-900">
+            <div className="pt-10 pb-16 bg-white dark:bg-gray-900">
                 <DestinationCarousel />
             </div>
         </div>

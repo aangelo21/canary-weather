@@ -39,7 +39,7 @@ export const es = {
     // Footer
     copyright: "©CanaryWeather |",
     website: "canaryweather.xyz",
-    quickLinks: "Enlaces Rápidos",
+    quickLinks: "Explorar",
     followUs: "Síguenos",
     privacyPolicy: "Política de Privacidad",
     termsOfService: "Términos de Servicio",
@@ -89,7 +89,7 @@ export const es = {
     // Home
     welcomeTo: "Bienvenido a",
     canaryWeather: "Canary Weather",
-    weatherApp: "Pronóstico Oficial",
+    weatherApp: "Weather App",
     discoverWeather:
       "Descubre el clima en tus lugares favoritos. Explora los mapas y ve pronósticos detallados, mareas y puntos de interés alrededor de las Islas Canarias.",
     maps: "mapas",
@@ -127,7 +127,7 @@ export const es = {
     personal: "Personal",
     aboutUs: "Sobre Nosotros",
     aboutUsTitle: "Sobre Nosotros",
-    aboutUsDesc: "Canary Weather es un proyecto dedicado a proporcionar información meteorológica precisa y en tiempo real para las Islas Canarias. Nuestra misión es ayudar a los residentes y visitantes a mantenerse informados sobre las condiciones climáticas, alertas y lugares interesantes.",
+    aboutUsDesc: "Información meteorológica precisa y en tiempo real para las Islas Canarias. Mantente informado sobre condiciones, alertas y lugares.",
     ourTeam: "Nuestro Equipo",
     contact: "Contacto",
     profile: "Perfil",

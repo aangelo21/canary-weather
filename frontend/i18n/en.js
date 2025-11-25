@@ -39,7 +39,7 @@ export const en = {
     // Footer
     copyright: "©CanaryWeather |",
     website: "canaryweather.xyz",
-    quickLinks: "Quick Links",
+    quickLinks: "Explore",
     followUs: "Follow Us",
     privacyPolicy: "Privacy Policy",
     termsOfService: "Terms of Service",
@@ -89,7 +89,7 @@ export const en = {
     // Home
     welcomeTo: "Welcome to",
     canaryWeather: "Canary Weather",
-    weatherApp: "Official Forecast",
+    weatherApp: "Weather App",
     discoverWeather:
       "Discover the weather in your favorite places. Explore maps and see detailed forecasts, tides and points of interest around the Canary Islands.",
     maps: "maps",
@@ -127,7 +127,7 @@ export const en = {
     personal: "Personal",
     aboutUs: "About Us",
     aboutUsTitle: "About Us",
-    aboutUsDesc: "Canary Weather is a project dedicated to providing accurate and real-time weather information for the Canary Islands. Our mission is to help residents and visitors stay informed about weather conditions, alerts, and interesting locations.",
+    aboutUsDesc: "Accurate and real-time weather information for the Canary Islands. Stay informed about conditions, alerts, and locations.",
     ourTeam: "Our Team",
     contact: "Contact",
     profile: "Profile",
