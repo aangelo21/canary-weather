@@ -45,6 +45,9 @@ UserPointOfInterest.belongsTo(PointOfInterest, {
 PointOfInterest.hasMany(Forecast, { foreignKey: "poi_id" });
 Forecast.belongsTo(PointOfInterest, { foreignKey: "poi_id" });
 
+Location.hasMany(Alert, { foreignKey: "location_id", onDelete: 'CASCADE' });
+Alert.belongsTo(Location, { foreignKey: "location_id", onDelete: 'CASCADE' });
+
 Alert.hasMany(Notification, { foreignKey: "alert_id" });
 Notification.belongsTo(Alert, { foreignKey: "alert_id" });
 

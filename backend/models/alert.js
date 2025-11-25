@@ -28,6 +28,10 @@ const Alert = sequelize.define(
       type: DataTypes.DATE,
       allowNull: true,
     },
+    location_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
   },
   { timestamps: true }
 );

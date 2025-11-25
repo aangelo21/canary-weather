@@ -22,6 +22,9 @@ export async function fetchWarnings() {
     method: "POST",
     credentials: "include",
   });
-  if (!response.ok) throw new Error("Error fetching warnings");
+  if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || "Error fetching warnings");
+  }
   return response.json();
 }
