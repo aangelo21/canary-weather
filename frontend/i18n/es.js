@@ -80,6 +80,7 @@ export const es = {
     // Home
     welcomeTo: "Bienvenido a",
     canaryWeather: "Canary Weather",
+    weatherApp: "Pronóstico de Islas Canarias",
     discoverWeather:
       "Descubre el clima en tus lugares favoritos. Explora los mapas y ve pronósticos detallados, mareas y puntos de interés alrededor de las Islas Canarias.",
     maps: "mapas",
@@ -94,10 +95,19 @@ export const es = {
     locations: "Ubicaciones",
     locationsDesc:
       "Explora las diferentes ubicaciones en el mapa y verifica el pronóstico de la ubicación",
-    // Map
-    exploreMap: "Explora el Mapa",
-    clickLocation: "Haz clic en una Ubicación para ver su pronóstico",
-    language: "Idioma",
+    popularDestinations: "Destinos populares",
+    forecastForYou: "Pronóstico para ti",
+    lifestyleDesc: "Ya sea que estés cogiendo olas o escalando picos, obtén los datos precisos que necesitas.",
+    surfing: "Surf y Deportes Acuáticos",
+    surfingDesc: "Altura del oleaje, dirección del viento y tablas de mareas.",
+    hiking: "Senderismo y Trekking",
+    hikingDesc: "Temperatura en altitud y pronósticos de visibilidad.",
+    stargazing: "Observación de Estrellas",
+    stargazingDesc: "Cobertura de nubes y fase lunar para cielos despejados.",
+    avgTemp: "Temp. Media",
+    sunHours: "Horas de Sol",
+    islands: "Islas",
+    reliable: "Fiable",
     // User Profile
     userProfile: "Perfil de Usuario",
     clickToChangePhoto: "Haz clic en la foto para cambiarla",
