@@ -77,9 +77,11 @@ export const es = {
     add: "Añadir",
     // WeatherPopup
     condition: "Condición:",
+    temperature: "Temperatura:",
     humidity: "Humedad:",
     pressure: "Presión:",
     wind: "Viento:",
+    clouds: "Nubosidad:",
     savingPoi: "Guardando...",
     saved: "Guardado",
     saveAsPoi: "Guardar como POI",
