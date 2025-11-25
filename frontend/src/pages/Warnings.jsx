@@ -29,12 +29,27 @@ function Warnings() {
         const past = [];
 
         data.forEach(alert => {
+            const startDate = new Date(alert.start_date);
             const endDate = new Date(alert.end_date);
-            if (endDate > now) {
+            const level = alert.level ? alert.level.toLowerCase() : '';
+
+            // Filter: Only show Yellow, Orange, and Red alerts. Ignore Green/Minor.
+            const isImportant = level.includes('amarillo') || level.includes('yellow') || 
+                                level.includes('naranja') || level.includes('orange') || 
+                                level.includes('rojo') || level.includes('red') ||
+                                level.includes('moderate') || level.includes('severe') || level.includes('extreme');
+
+            if (!isImportant) return;
+            
+            // Active: Started and not ended
+            if (startDate <= now && endDate > now) {
                 active.push(alert);
-            } else {
+            } 
+            // Past: Ended
+            else if (endDate <= now) {
                 past.push(alert);
             }
+            // Future: startDate > now (Ignored as per request)
         });
 
         // Sort past alerts by date descending
@@ -51,6 +66,27 @@ function Warnings() {
     loadData();
   }, []);
 
+  const getSeverityColor = (level) => {
+      if (!level) return 'gray';
+      const l = level.toLowerCase();
+      if (l.includes('red') || l.includes('rojo') || l.includes('extreme')) return 'red';
+      if (l.includes('orange') || l.includes('naranja') || l.includes('severe')) return 'orange';
+      if (l.includes('yellow') || l.includes('amarillo') || l.includes('moderate')) return 'yellow';
+      if (l.includes('green') || l.includes('verde') || l.includes('minor')) return 'green';
+      return 'gray';
+  };
+
+  const getSeverityClasses = (level) => {
+      const color = getSeverityColor(level);
+      switch (color) {
+          case 'red': return 'bg-red-50 border-red-500 text-red-700';
+          case 'orange': return 'bg-orange-50 border-orange-500 text-orange-700';
+          case 'yellow': return 'bg-yellow-50 border-yellow-500 text-yellow-700';
+          case 'green': return 'bg-green-50 border-green-500 text-green-700';
+          default: return 'bg-gray-50 border-gray-500 text-gray-700';
+      }
+  };
+
   if (loading) return <div className="text-center">{t('loading')}</div>;
   if (error) return <div className="text-center text-red-500">{error}</div>;
 
@@ -65,16 +101,16 @@ function Warnings() {
       )}
 
       <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-4 text-red-600">{t('activeWarnings') || 'Active Warnings'}</h2>
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">{t('activeWarnings') || 'Active Warnings'}</h2>
         {activeAlerts.length === 0 ? (
           <p className="text-center text-gray-500">{t('noActiveWarnings') || 'No active warnings.'}</p>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {activeAlerts.map((alert) => (
-              <div key={alert.id} className="bg-red-50 border-l-4 border-red-500 p-4 rounded shadow">
-                <h3 className="text-xl font-semibold text-red-700">{alert.phenomenon}</h3>
-                <p className="text-gray-700 font-medium">{alert.level}</p>
-                <div className="mt-2 text-sm text-gray-600">
+              <div key={alert.id} className={`border-l-4 p-4 rounded shadow ${getSeverityClasses(alert.level)}`}>
+                <h3 className="text-xl font-semibold">{alert.phenomenon}</h3>
+                <p className="font-medium">{alert.level}</p>
+                <div className="mt-2 text-sm opacity-90">
                     <p><span className="font-semibold">{t('start')}:</span> {new Date(alert.start_date).toLocaleString()}</p>
                     <p><span className="font-semibold">{t('end')}:</span> {new Date(alert.end_date).toLocaleString()}</p>
                 </div>
