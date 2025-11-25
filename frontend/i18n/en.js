@@ -80,7 +80,7 @@ export const en = {
     // Home
     welcomeTo: "Welcome to",
     canaryWeather: "Canary Weather",
-    weatherApp: "Canary Islands Forecast",
+    weatherApp: "Official Forecast",
     discoverWeather:
       "Discover the weather in your favorite places. Explore maps and see detailed forecasts, tides and points of interest around the Canary Islands.",
     maps: "maps",
