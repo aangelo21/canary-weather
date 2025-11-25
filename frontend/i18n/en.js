@@ -39,6 +39,15 @@ export const en = {
     // Footer
     copyright: "©CanaryWeather |",
     website: "canaryweather.xyz",
+    quickLinks: "Quick Links",
+    followUs: "Follow Us",
+    privacyPolicy: "Privacy Policy",
+    termsOfService: "Terms of Service",
+    allRightsReserved: "All rights reserved.",
+    contactInfo: "Contact Info",
+    emailUs: "Email us at",
+    location: "Location",
+    canaryIslands: "Canary Islands, Spain",
     // LoginModal
     deleteAccount: "Delete Account",
     confirmDeleteAccount:
