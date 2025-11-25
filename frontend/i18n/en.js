@@ -123,5 +123,9 @@ export const en = {
     contact: "Contact",
     profile: "Profile",
     errorDeleteUser: "Error deleting user",
+    // Map
+    exploreMap: "Explore the Map",
+    clickLocation: "Click on a Location to see its forecast",
+    mapDescription: "Navigate through the islands and discover real-time weather conditions.",
   },
 };
