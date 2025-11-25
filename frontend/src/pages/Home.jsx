@@ -10,17 +10,12 @@ function Home() {
     const { t } = useTranslation();
 
     return (
-        // Main container with gradient background
-        <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-black flex flex-col transition-colors duration-300">
+        // Main container with white background
+        <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col transition-colors duration-300">
             
             {/* Hero Section - main promotional area */}
             <div className="relative overflow-hidden">
-                {/* Decorative background elements */}
-                <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-                    <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-yellow-300/20 blur-3xl dark:bg-yellow-500/10"></div>
-                    <div className="absolute top-1/2 -left-24 w-72 h-72 rounded-full bg-blue-400/20 blur-3xl dark:bg-blue-600/10"></div>
-                </div>
-
+                
                 <div className="max-w-7xl mx-auto px-6 lg:px-8 py-20 lg:py-32 relative z-10">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                         {/* Left column - Hero text content */}
@@ -29,7 +24,7 @@ function Home() {
                                 {/* Badge */}
                                 <div className="inline-flex items-center justify-center lg:justify-start">
                                     <span className="px-4 py-1.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 text-sm font-semibold tracking-wide uppercase">
-                                        {t('weatherApp') || "The Ultimate Weather App"}
+                                        {t('weatherApp') || "Canary Islands Forecast"}
                                     </span>
                                 </div>
 
@@ -174,25 +169,6 @@ function Home() {
             {/* Carousel Section */}
             <div className="py-16 bg-gray-50 dark:bg-black/20">
                 <DestinationCarousel />
-            </div>
-
-            {/* Newsletter / CTA Section */}
-            <div className="py-20 px-6">
-                <div className="max-w-5xl mx-auto bg-brand-primary rounded-3xl p-8 md:p-16 text-center text-white shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-                    <div className="relative z-10">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-6">{t('readyToExplore') || "Ready to Explore?"}</h2>
-                        <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
-                            {t('joinCommunity') || "Join thousands of users who trust Canary Weather for their daily forecast."}
-                        </p>
-                        <button 
-                            onClick={() => navigate("/map")}
-                            className="px-8 py-4 bg-white text-brand-primary font-bold rounded-full shadow-lg hover:bg-gray-100 transition-colors transform hover:scale-105 duration-200"
-                        >
-                            {t('getStarted') || "Get Started Now"}
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
     );
