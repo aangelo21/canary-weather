@@ -105,6 +105,33 @@ export const es = {
     locationsDesc:
       "Explora las diferentes ubicaciones en el mapa y verifica el pronóstico de la ubicación",
     popularDestinations: "Destinos populares",
+    destinations: {
+      teide: {
+        name: "Parque Nacional del Teide",
+        location: "Tenerife",
+        description: "El pico más alto de España y Patrimonio de la Humanidad por la UNESCO.",
+      },
+      maspalomas: {
+        name: "Dunas de Maspalomas",
+        location: "Gran Canaria",
+        description: "Una vasta extensión de dunas de arena que parecen un desierto junto al mar.",
+      },
+      timanfaya: {
+        name: "Parque Nacional de Timanfaya",
+        location: "Lanzarote",
+        description: "Un paisaje volcánico único que parece la superficie de Marte.",
+      },
+      corralejo: {
+        name: "Parque Natural de Corralejo",
+        location: "Fuerteventura",
+        description: "Impresionantes dunas de arena blanca y aguas turquesas.",
+      },
+      garajonay: {
+        name: "Parque Nacional de Garajonay",
+        location: "La Gomera",
+        description: "Antiguos bosques de laurisilva envueltos en niebla.",
+      },
+    },
     forecastForYou: "Pronóstico para ti",
     lifestyleDesc: "Ya sea que estés cogiendo olas o escalando picos, obtén los datos precisos que necesitas.",
     surfing: "Surf y Deportes Acuáticos",
