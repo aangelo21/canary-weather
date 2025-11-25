@@ -99,19 +99,15 @@ function InteractiveMap() {
         maxBounds={bounds} // Restrict panning to Canary Islands
         maxBoundsViscosity={1.0} // How strictly to enforce bounds (1.0 = strict)
         scrollWheelZoom={true} // Allow zoom with mouse wheel
-        className="leaflet-container shadow-2xl dark:shadow-black/80 border-4 border-white dark:border-gray-800" // CSS class for styling
+        className="leaflet-container shadow-xl dark:shadow-black/50 border-2 border-gray-200 dark:border-gray-700 rounded-xl" // CSS class for styling
       >
-        {/* TileLayer - Map tiles from Google Maps satellite view */}
+        {/* TileLayer - Google Terrain (Relief) */}
         <TileLayer
-          attribution={isDarkMode 
-            ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-            : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          }
-          url={isDarkMode 
-            ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-            : "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
-          }
+          className={isDarkMode ? "dark-map-tiles" : ""}
+          attribution='&copy; <a href="https://www.google.com/permissions/geoguidelines/">Google</a>'
+          url="https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}"
         />
+
         {/* Include the click handler component */}
         <MapClickHandler />
         {/* Conditionally render marker when user has clicked */}
