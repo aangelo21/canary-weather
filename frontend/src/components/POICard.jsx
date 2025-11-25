@@ -5,6 +5,18 @@
 
 import { useTranslation } from "react-i18next";
 
+function getWeatherEmoji(condition) {
+  const c = (condition || '').toLowerCase();
+  if (c.includes('clear')) return '☀️';
+  if (c.includes('cloud')) return '☁️';
+  if (c.includes('rain')) return '🌧️';
+  if (c.includes('drizzle')) return '🌦️';
+  if (c.includes('thunder') || c.includes('storm')) return '⛈️';
+  if (c.includes('snow')) return '❄️';
+  if (c.includes('mist') || c.includes('fog') || c.includes('haze') || c.includes('smoke')) return '🌫️';
+  return '🌤️';
+}
+
 export default function POICard({ poi, weather, onEdit, onDelete }) {
   const { t } = useTranslation();
   // Get API base URL from environment variables
@@ -34,7 +46,7 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
         ) : null}
         
         {/* Fallback / Placeholder */}
-        <div className={`${imageUrl ? 'hidden' : 'flex'} w-full h-full bg-gradient-to-br from-blue-500 to-cyan-400 items-center justify-center`}>
+        <div className={`${imageUrl ? 'hidden' : 'flex'} w-full h-full bg-linear-to-br from-blue-500 to-cyan-400 items-center justify-center`}>
             <svg className="w-12 h-12 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
@@ -57,7 +69,7 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
       </div>
       
       {/* Content section */}
-      <div className="p-5 flex flex-col flex-grow">
+      <div className="p-5 flex flex-col grow">
         
         {/* Header */}
         <div className="mb-3">
@@ -69,32 +81,53 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
           </p>
         </div>
 
-        {/* Weather Grid */}
+        {/* Weather: temperature and emoji on top; wind/humidity/clouds below */}
         {weather ? (
-          <div className="grid grid-cols-3 gap-2 mb-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3">
-            <div className="text-center">
-              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('condition')}</div>
-              <div className="font-semibold text-gray-800 dark:text-gray-200 text-sm truncate" title={weather.description}>
-                {weather.temp ? `${Math.round(weather.temp)}°C` : '--'}
+          <div className="mb-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              {/* Temperature (centered) */}
+              <div className="text-center">
+                <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('temperature') || 'Temp'}</div>
+                <div className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">
+                  {weather.temp !== null && weather.temp !== undefined ? `${Math.round(weather.temp)}°C` : '--'}
+                </div>
+              </div>
+
+              {/* Condition: emoji only (visual) - centered and larger */}
+              <div className="text-center">
+                <span className="sr-only">{weather.description || t('condition')}</span>
+                <div className="text-4xl sm:text-5xl" title={weather.description} aria-hidden>
+                  {getWeatherEmoji(weather.condition || weather.description || '')}
+                </div>
               </div>
             </div>
-            <div className="text-center border-l border-gray-200 dark:border-gray-600">
-              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('wind')}</div>
-              <div className="font-semibold text-gray-800 dark:text-gray-200 text-sm">
-                {weather.wind ? `${Math.round(weather.wind)} m/s` : '--'}
+
+            {/* Bottom stats: wind, humidity, clouds */}
+            <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+              <div className="text-center">
+                <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('wind')}</div>
+                <div className="font-semibold text-gray-800 dark:text-gray-200 text-sm">
+                  {weather.wind ? `${Math.round(weather.wind)} m/s` : '--'}
+                </div>
               </div>
-            </div>
-            <div className="text-center border-l border-gray-200 dark:border-gray-600">
-              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('humidity')}</div>
-              <div className="font-semibold text-gray-800 dark:text-gray-200 text-sm">
-                {weather.humidity ? `${weather.humidity}%` : '--'}
+              <div className="text-center">
+                <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('humidity')}</div>
+                <div className="font-semibold text-gray-800 dark:text-gray-200 text-sm">
+                  {weather.humidity ? `${weather.humidity}%` : '--'}
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('clouds')}</div>
+                <div className="font-semibold text-gray-800 dark:text-gray-200 text-sm">
+                  {weather.clouds !== null && weather.clouds !== undefined ? `${weather.clouds}%` : '--'}
+                </div>
               </div>
             </div>
           </div>
         ) : (
-            <div className="mb-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 text-center text-sm text-gray-500 dark:text-gray-400">
-                {t('loading')}
-            </div>
+          <div className="mb-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 text-center text-sm text-gray-500 dark:text-gray-400">
+            {t('loading')}
+          </div>
         )}
 
         {/* Location Info */}

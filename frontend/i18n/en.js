@@ -74,11 +74,14 @@ export const en = {
     errorSignIn: "Error signing in",
     noTokenReceived: "No token received",
     selectMunicipality: "Select Municipality",
+    add: "Add",
     // WeatherPopup
     condition: "Condition:",
+    temperature: "Temperature:",
     humidity: "Humidity:",
     pressure: "Pressure:",
     wind: "Wind:",
+    clouds: "Clouds:",
     savingPoi: "Saving...",
     saved: "Saved",
     saveAsPoi: "Save as POI",
@@ -105,6 +108,33 @@ export const en = {
     locationsDesc:
       "Explore different locations on the map and check the location forecast",
     popularDestinations: "Popular destinations",
+    destinations: {
+      teide: {
+        name: "Teide National Park",
+        location: "Tenerife",
+        description: "Spain's highest peak and a UNESCO World Heritage Site.",
+      },
+      maspalomas: {
+        name: "Maspalomas Dunes",
+        location: "Gran Canaria",
+        description: "A vast expanse of sand dunes resembling a desert by the sea.",
+      },
+      timanfaya: {
+        name: "Timanfaya National Park",
+        location: "Lanzarote",
+        description: "A unique volcanic landscape that looks like the surface of Mars.",
+      },
+      corralejo: {
+        name: "Corralejo Natural Park",
+        location: "Fuerteventura",
+        description: "Stunning white sand dunes and turquoise waters.",
+      },
+      garajonay: {
+        name: "Garajonay National Park",
+        location: "La Gomera",
+        description: "Ancient laurel forests shrouded in mist.",
+      },
+    },
     forecastForYou: "Forecast for you",
     lifestyleDesc: "Whether you're catching waves or climbing peaks, get the precise data you need.",
     surfing: "Surfing & Water Sports",

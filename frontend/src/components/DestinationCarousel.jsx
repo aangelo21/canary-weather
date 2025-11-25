@@ -1,48 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
+// Use translation keys for the destination text so content can be localized
 const destinations = [
-  {
-    id: 1,
-    name: "Teide National Park",
-    location: "Tenerife",
-    image: "teide.webp",
-    description: "Spain's highest peak and a UNESCO World Heritage Site."
-  },
-  {
-    id: 2,
-    name: "Maspalomas Dunes",
-    location: "Gran Canaria",
-    image: "dunas.webp",
-    description: "A vast expanse of sand dunes resembling a desert by the sea."
-  },
-  {
-    id: 3,
-    name: "Timanfaya National Park",
-    location: "Lanzarote",
-    image: "timanfaya.webp",
-    description: "A unique volcanic landscape that looks like the surface of Mars."
-  },
-  {
-    id: 4,
-    name: "Corralejo Natural Park",
-    location: "Fuerteventura",
-    image: "corralejo.webp",
-    description: "Stunning white sand dunes and turquoise waters."
-  },
-  {
-    id: 5,
-    name: "Garajonay National Park",
-    location: "La Gomera",
-    image: "garajonay.webp",
-    description: "Ancient laurel forests shrouded in mist."
-  }
+  { id: 1, key: 'teide', image: 'teide.webp' },
+  { id: 2, key: 'maspalomas', image: 'dunas.webp' },
+  { id: 3, key: 'timanfaya', image: 'timanfaya.webp' },
+  { id: 4, key: 'corralejo', image: 'corralejo.webp' },
+  { id: 5, key: 'garajonay', image: 'garajonay.webp' },
 ];
 
 export default function DestinationCarousel() {
   const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(1);
+  const [itemWidth, setItemWidth] = useState(0);
+  const itemRef = useRef(null);
+  const containerRef = useRef(null);
+  const contentRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -53,6 +28,14 @@ export default function DestinationCarousel() {
       } else {
         setItemsPerPage(1);
       }
+      // Update itemWidth after resize
+      setTimeout(() => {
+        if (itemRef.current && contentRef.current && containerRef.current) {
+          // compute item width (first child) and include gap (24px = gap-6)
+          const w = itemRef.current.offsetWidth;
+          setItemWidth(w + 24);
+        }
+      }, 0);
     };
 
     handleResize();
@@ -61,15 +44,21 @@ export default function DestinationCarousel() {
   }, []);
 
   const nextSlide = () => {
-    setCurrentIndex((prevIndex) => 
-      prevIndex + itemsPerPage >= destinations.length ? 0 : prevIndex + 1
-    );
+    setCurrentIndex((prevIndex) => {
+      // compute max allowed index so we don't translate beyond content
+      if (!contentRef.current) return prevIndex;
+      const maxTranslate = Math.max(0, contentRef.current.scrollWidth - contentRef.current.clientWidth);
+      const desired = (prevIndex + 1) * itemWidth;
+      if (desired > maxTranslate) {
+        // if moving one more would overflow, go to start (wrap)
+        return 0;
+      }
+      return prevIndex + 1;
+    });
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prevIndex) => 
-      prevIndex === 0 ? Math.max(0, destinations.length - itemsPerPage) : prevIndex - 1
-    );
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? 0 : prevIndex - 1));
   };
 
   return (
@@ -78,33 +67,35 @@ export default function DestinationCarousel() {
         {t('popularDestinations') || "Popular Destinations"}
       </h2>
       
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden py-10 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" ref={containerRef}>
         <div 
+          ref={contentRef}
           className="flex transition-transform duration-500 ease-in-out gap-6"
-          style={{ transform: `translateX(-${currentIndex * (100 / itemsPerPage)}%)` }}
+          style={{ transform: `translateX(-${Math.min(currentIndex * itemWidth, Math.max(0, (contentRef.current ? contentRef.current.scrollWidth : 0) - (contentRef.current ? contentRef.current.clientWidth : 0))) }px)` }}
         >
-          {destinations.map((dest) => (
+          {destinations.map((dest, index) => (
             <div 
               key={dest.id} 
-              className="flex-shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
+              ref={index === 0 ? itemRef : null}
+              className="shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
             >
               <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden h-full transform transition-all hover:scale-105 duration-300">
                 <div className="h-48 overflow-hidden">
                   <img 
                     src={dest.image} 
-                    alt={dest.name} 
+                    alt={dest.key} 
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                   />
                 </div>
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">{dest.name}</h3>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">{t(`destinations.${dest.key}.name`)}</h3>
                     <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800">
-                      {dest.location}
+                      {t(`destinations.${dest.key}.location`)}
                     </span>
                   </div>
                   <p className="text-gray-600 dark:text-gray-300 text-sm">
-                    {dest.description}
+                    {t(`destinations.${dest.key}.description`)}
                   </p>
                 </div>
               </div>

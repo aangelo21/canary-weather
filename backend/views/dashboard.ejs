@@ -145,7 +145,7 @@
                                             <%= poi.latitude %>, <%= poi.longitude %>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <button onclick="openEditModal('<%= poi.id %>', '<%= poi.name %>', '<%= poi.latitude %>', '<%= poi.longitude %>', '<%= poi.type %>')" class="text-indigo-600 hover:text-indigo-900 mr-4">Editar</button>
+                                            <button onclick='openEditModal(<%- JSON.stringify(poi.id) %>, <%- JSON.stringify(poi.name) %>, <%- JSON.stringify(poi.latitude) %>, <%- JSON.stringify(poi.longitude) %>, <%- JSON.stringify(poi.type) %>, <%- JSON.stringify(poi.description || "") %>)' class="text-indigo-600 hover:text-indigo-900 mr-4">Editar</button>
                                             <button onclick="openDeleteModal('<%= poi.id %>')" class="text-red-600 hover:text-red-900">Eliminar</button>
                                         </td>
                                     </tr>
@@ -257,6 +257,10 @@
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="longitude">Longitud</label>
                         <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="longitude" name="longitude" type="number" step="any" required>
                     </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="description">Descripción</label>
+                        <textarea id="description" name="description" rows="3" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Descripción del POI (opcional)"></textarea>
+                    </div>
                     <div class="flex items-center justify-between mt-4">
                         <button type="button" onclick="closeCreateModal()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Cancelar</button>
                         <button type="submit" class="bg-brand-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Crear</button>
@@ -283,6 +287,10 @@
                     <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="editLongitude">Longitud</label>
                         <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="editLongitude" name="longitude" type="number" step="any" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="editDescription">Descripción</label>
+                        <textarea id="editDescription" name="description" rows="3" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Descripción del POI (opcional)"></textarea>
                     </div>
                     <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="editType">Tipo</label>
@@ -471,11 +479,12 @@
             document.getElementById('createModal').classList.add('hidden');
         }
 
-        function openEditModal(id, name, lat, lng, type) {
+        function openEditModal(id, name, lat, lng, type, description) {
             document.getElementById('editName').value = name;
             document.getElementById('editLatitude').value = lat;
             document.getElementById('editLongitude').value = lng;
             document.getElementById('editType').value = type;
+            document.getElementById('editDescription').value = description || '';
             document.getElementById('editForm').action = `/admin/poi/${id}/update`;
             document.getElementById('editModal').classList.remove('hidden');
         }

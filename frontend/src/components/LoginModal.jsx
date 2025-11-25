@@ -34,8 +34,10 @@ export default function LoginModal({
         username: "",         // For signup and account editing
         email: "",            // For signup and account editing
         confirm: "",          // Password confirmation for signup/editing
-        location_id: "",
+        location_ids: [],
     });
+    // State for currently selected location in dropdown
+    const [selectedLocationToAdd, setSelectedLocationToAdd] = useState("");
     // State for displaying error messages
     const [error, setError] = useState("");
     // State for loading indicators during API calls
@@ -59,7 +61,7 @@ export default function LoginModal({
                 password: "",
                 confirm: "",
                 emailOrUsername: "",
-                location_id: user.location_id || "",
+                location_ids: user.Locations ? user.Locations.map(l => String(l.id)) : [],
             });
         }
     }, [user, isOpen]);
@@ -323,8 +325,8 @@ export default function LoginModal({
                                     updateData.username = input.username;
                                 if (input.password)
                                     updateData.password = input.password;
-                                if (input.location_id)
-                                    updateData.location_id = input.location_id;
+                                if (input.location_ids)
+                                    updateData.location_ids = input.location_ids;
                                 // Call API to update user account
                                 const result = await createOrUpdateUser(
                                     updateData,
@@ -369,23 +371,60 @@ export default function LoginModal({
                             }
                         />
                         {/* Municipality selector */}
-                        <select
-                            className="border rounded px-3 py-2"
-                            value={input.location_id}
-                            onChange={(e) =>
-                                setInput((i) => ({
-                                    ...i,
-                                    location_id: e.target.value,
-                                }))
-                            }
-                        >
-                            <option value="">{t('selectMunicipality')}</option>
-                            {municipalities.map((municipality) => (
-                                <option key={municipality.id} value={municipality.id}>
-                                    {municipality.name}
-                                </option>
-                            ))}
-                        </select>
+                        <div className="flex gap-2 w-full min-w-0">
+                            <select
+                                className="border rounded px-3 py-2 flex-1 min-w-0"
+                                value={selectedLocationToAdd}
+                                onChange={(e) => setSelectedLocationToAdd(e.target.value)}
+                            >
+                                <option value="">{t('selectMunicipality')}</option>
+                                {municipalities.map((municipality) => (
+                                    <option key={municipality.id} value={municipality.id}>
+                                        {municipality.name}
+                                    </option>
+                                ))}
+                            </select>
+                            <button
+                                type="button"
+                                className="bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700 disabled:bg-gray-400 flex-none whitespace-nowrap"
+                                disabled={!selectedLocationToAdd}
+                                onClick={() => {
+                                    if (selectedLocationToAdd && !input.location_ids.includes(selectedLocationToAdd)) {
+                                        setInput(prev => ({
+                                            ...prev,
+                                            location_ids: [...prev.location_ids, selectedLocationToAdd]
+                                        }));
+                                        setSelectedLocationToAdd("");
+                                    }
+                                }}
+                            >
+                                {t('add')}
+                            </button>
+                        </div>
+                        
+                        {/* Selected locations list */}
+                        <div className="flex flex-wrap gap-2 mb-2">
+                            {input.location_ids && input.location_ids.map(locId => {
+                                const loc = municipalities.find(m => m.id == locId);
+                                return loc ? (
+                                    <span key={locId} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm flex items-center gap-1">
+                                        {loc.name}
+                                        <button
+                                            type="button"
+                                            className="hover:text-blue-900 font-bold"
+                                            onClick={() => {
+                                                setInput(prev => ({
+                                                    ...prev,
+                                                    location_ids: prev.location_ids.filter(id => id !== locId)
+                                                }));
+                                            }}
+                                        >
+                                            &times;
+                                        </button>
+                                    </span>
+                                ) : null;
+                            })}
+                        </div>
                         {/* New password input (optional) */}
                         <input
                             type="password"
@@ -510,8 +549,7 @@ export default function LoginModal({
                                     !input.email ||
                                     !input.username ||
                                     !input.password ||
-                                    !input.confirm ||
-                                    !input.location_id
+                                    !input.confirm
                                 ) {
                                     setError(t('allFieldsRequired'));
                                     return;
@@ -527,7 +565,7 @@ export default function LoginModal({
                                         email: input.email,
                                         username: input.username,
                                         password: input.password,
-                                        location_id: input.location_id,
+                                        location_ids: input.location_ids,
                                     });
                                     setLoading(false);
                                     if (result && result.user) {
@@ -638,23 +676,60 @@ export default function LoginModal({
                                     }
                                 />
                                 {/* Municipality selector for signup */}
-                                <select
-                                    className="border rounded px-3 py-2"
-                                    value={input.location_id}
-                                    onChange={(e) =>
-                                        setInput((i) => ({
-                                            ...i,
-                                            location_id: e.target.value,
-                                        }))
-                                    }
-                                >
-                                    <option value="">{t('selectMunicipality')}</option>
-                                    {municipalities.map((municipality) => (
-                                        <option key={municipality.id} value={municipality.id}>
-                                            {municipality.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                <div className="flex gap-2 w-full min-w-0">
+                                    <select
+                                        className="border rounded px-3 py-2 flex-1 min-w-0"
+                                        value={selectedLocationToAdd}
+                                        onChange={(e) => setSelectedLocationToAdd(e.target.value)}
+                                    >
+                                        <option value="">{t('selectMunicipality')}</option>
+                                        {municipalities.map((municipality) => (
+                                            <option key={municipality.id} value={municipality.id}>
+                                                {municipality.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <button
+                                        type="button"
+                                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400 flex-none"
+                                        disabled={!selectedLocationToAdd}
+                                        onClick={() => {
+                                            if (selectedLocationToAdd && !input.location_ids.includes(selectedLocationToAdd)) {
+                                                setInput(prev => ({
+                                                    ...prev,
+                                                    location_ids: [...prev.location_ids, selectedLocationToAdd]
+                                                }));
+                                                setSelectedLocationToAdd("");
+                                            }
+                                        }}
+                                    >
+                                        {t('add')}
+                                    </button>
+                                </div>
+                                
+                                {/* Selected locations list */}
+                                <div className="flex flex-wrap gap-2 mb-2">
+                                    {input.location_ids && input.location_ids.map(locId => {
+                                        const loc = municipalities.find(m => m.id == locId);
+                                        return loc ? (
+                                            <span key={locId} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm flex items-center gap-1">
+                                                {loc.name}
+                                                <button
+                                                    type="button"
+                                                    className="hover:text-blue-900 font-bold"
+                                                    onClick={() => {
+                                                        setInput(prev => ({
+                                                            ...prev,
+                                                            location_ids: prev.location_ids.filter(id => id !== locId)
+                                                        }));
+                                                    }}
+                                                >
+                                                    &times;
+                                                </button>
+                                            </span>
+                                        ) : null;
+                                    })}
+                                </div>
                             </>
                         ) : (
                             <>
