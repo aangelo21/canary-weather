@@ -12,7 +12,10 @@ export const loginUser = async (req, res) => {
     }
 
     // Find user by username
-    const user = await User.findOne({ where: { username } });
+    const user = await User.findOne({ 
+      where: { username },
+      include: [{ model: Location }]
+    });
     if (!user) {
       return res.status(401).json({ error: "Invalid username or password" });
     }
@@ -55,6 +58,7 @@ export const getCurrentUser = async (req, res) => {
     // Find user by ID, excluding password
     const user = await User.findByPk(userId, {
       attributes: { exclude: ["password"] },
+      include: [{ model: Location }]
     });
     if (!user) return res.status(404).json({ error: "User not found" });
     return res.json(user);
@@ -94,7 +98,7 @@ export const getUserById = async (req, res) => {
 // Controller function to create a new user
 export const createUser = async (req, res) => {
   try {
-    const { email, username, password, location_id } = req.body;
+    const { email, username, password, location_ids } = req.body;
     if (!email || !username || !password) {
       return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
@@ -106,28 +110,30 @@ export const createUser = async (req, res) => {
     const safe = user.toJSON();
     delete safe.password;
 
-    if (location_id) {
-      await UserLocation.create({
-        user_id: user.id,
-        location_id: location_id,
-        selected_at: new Date()
-      });
-
-      // Find the location and add the corresponding POI
-      const location = await Location.findByPk(location_id);
-      if (location) {
-        const poi = await PointOfInterest.findOne({
-          where: { 
-            name: `Municipio: ${location.name}`,
-            type: 'local'
-          }
+    if (location_ids && Array.isArray(location_ids)) {
+      for (const location_id of location_ids) {
+        await UserLocation.create({
+          user_id: user.id,
+          location_id: location_id,
+          selected_at: new Date()
         });
-        if (poi) {
-          await UserPointOfInterest.create({
-            user_id: user.id,
-            point_of_interest_id: poi.id,
-            favorited_at: new Date(),
+
+        // Find the location and add the corresponding POI
+        const location = await Location.findByPk(location_id);
+        if (location) {
+          const poi = await PointOfInterest.findOne({
+            where: { 
+              name: `Municipio: ${location.name}`,
+              type: 'local'
+            }
           });
+          if (poi) {
+            await UserPointOfInterest.create({
+              user_id: user.id,
+              point_of_interest_id: poi.id,
+              favorited_at: new Date(),
+            });
+          }
         }
       }
     }
@@ -154,21 +160,16 @@ export const updateUser = async (req, res) => {
     const currentUser = await User.findByPk(id);
     if (!currentUser) return res.status(404).json({ error: "User not found" });
 
-    const location_id = payload.location_id;
+    const location_ids = payload.location_ids;
+    delete payload.location_ids;
     delete payload.location_id;
 
     await User.update(payload, { where: { id }, individualHooks: true });
 
-    if (location_id) {
-      // Remove any existing location for this user to ensure only one is selected
+    if (location_ids && Array.isArray(location_ids)) {
+      // Remove any existing location for this user
       await UserLocation.destroy({
         where: { user_id: id }
-      });
-
-      await UserLocation.create({
-        user_id: id,
-        location_id: location_id,
-        selected_at: new Date()
       });
 
       // Remove existing UserPointOfInterest for local POIs
@@ -183,27 +184,36 @@ export const updateUser = async (req, res) => {
         }
       });
 
-      // Find the location and add the corresponding POI
-      const location = await Location.findByPk(location_id);
-      if (location) {
-        const poi = await PointOfInterest.findOne({
-          where: { 
-            name: `Municipio: ${location.name}`,
-            type: 'local'
-          }
+      for (const location_id of location_ids) {
+        await UserLocation.create({
+          user_id: id,
+          location_id: location_id,
+          selected_at: new Date()
         });
-        if (poi) {
-          await UserPointOfInterest.create({
-            user_id: id,
-            point_of_interest_id: poi.id,
-            favorited_at: new Date(),
+
+        // Find the location and add the corresponding POI
+        const location = await Location.findByPk(location_id);
+        if (location) {
+          const poi = await PointOfInterest.findOne({
+            where: { 
+              name: `Municipio: ${location.name}`,
+              type: 'local'
+            }
           });
+          if (poi) {
+            await UserPointOfInterest.create({
+              user_id: id,
+              point_of_interest_id: poi.id,
+              favorited_at: new Date(),
+            });
+          }
         }
       }
     }
 
     const updated = await User.findByPk(id, {
       attributes: { exclude: ["password"] },
+      include: [{ model: Location }]
     });
     if (!updated) return res.status(404).json({ error: "User not found" });
     return res.json(updated);

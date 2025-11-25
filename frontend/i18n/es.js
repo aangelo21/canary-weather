@@ -74,6 +74,7 @@ export const es = {
     errorSignIn: "Error al iniciar sesión",
     noTokenReceived: "No se recibió token",
     selectMunicipality: "Seleccionar Municipio",
+    add: "Añadir",
     // WeatherPopup
     condition: "Condición:",
     humidity: "Humedad:",
