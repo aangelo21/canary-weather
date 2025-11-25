@@ -139,7 +139,7 @@ function Header() {
           {/* Logo section */}
           <div className="shrink-0">
             <img
-              src="bannerCanaryWeather.png"
+              src="logo.webp"
               alt="Logo de Canary Weather"
               className="h-16 md:h-20 w-auto"
             />

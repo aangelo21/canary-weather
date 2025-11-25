@@ -14,7 +14,7 @@ export default function Footer() {
                     {/* Brand Section */}
                     <div className="space-y-4">
                         <div className="flex items-center gap-2">
-                            <img src="/bannerCanaryWeather.png" alt="Canary Weather Logo" className="h-12 w-auto brightness-0 invert" />
+                            <img src="/logo.webp" alt="Canary Weather Logo" className="h-12 w-auto brightness-0 invert" />
                         </div>
                         <p className="text-blue-100 dark:text-gray-400 text-sm leading-relaxed">
                             {t('aboutUsDesc')}

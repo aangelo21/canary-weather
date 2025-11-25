@@ -6,35 +6,35 @@ const destinations = [
     id: 1,
     name: "Teide National Park",
     location: "Tenerife",
-    image: "https://images.unsplash.com/photo-1546587348-d646658c363c?auto=format&fit=crop&w=800&q=80",
+    image: "teide.webp",
     description: "Spain's highest peak and a UNESCO World Heritage Site."
   },
   {
     id: 2,
     name: "Maspalomas Dunes",
     location: "Gran Canaria",
-    image: "https://images.unsplash.com/photo-1605537964076-3cb0ea235296?auto=format&fit=crop&w=800&q=80",
+    image: "dunas.webp",
     description: "A vast expanse of sand dunes resembling a desert by the sea."
   },
   {
     id: 3,
     name: "Timanfaya National Park",
     location: "Lanzarote",
-    image: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80",
+    image: "timanfaya.webp",
     description: "A unique volcanic landscape that looks like the surface of Mars."
   },
   {
     id: 4,
     name: "Corralejo Natural Park",
     location: "Fuerteventura",
-    image: "https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?auto=format&fit=crop&w=800&q=80",
+    image: "corralejo.webp",
     description: "Stunning white sand dunes and turquoise waters."
   },
   {
     id: 5,
     name: "Garajonay National Park",
     location: "La Gomera",
-    image: "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=800&q=80",
+    image: "garajonay.webp",
     description: "Ancient laurel forests shrouded in mist."
   }
 ];
