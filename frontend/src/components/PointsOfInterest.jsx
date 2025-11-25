@@ -240,17 +240,24 @@ export default function PointsOfInterest() {
     if (filter === 'all') {
       // Show all POIs (global + user's personal and local)
       const userPois = await fetchPersonalPoisData();
-      setFilteredPois([...pois, ...userPois]);
+      // Deduplicate POIs by ID
+      const allPois = [...pois, ...userPois];
+      const uniquePois = Array.from(new Map(allPois.map(item => [item.id, item])).values());
+      setFilteredPois(uniquePois);
     } else if (filter === 'global') {
       setFilteredPois(pois.filter(poi => poi.type === 'global'));
     } else if (filter === 'local') {
       // Fetch and show only user's local POIs
       const userPois = await fetchPersonalPoisData();
-      setFilteredPois(userPois.filter(poi => poi.type === 'local'));
+      // Deduplicate POIs by ID
+      const uniqueUserPois = Array.from(new Map(userPois.map(item => [item.id, item])).values());
+      setFilteredPois(uniqueUserPois.filter(poi => poi.type === 'local'));
     } else if (filter === 'personal') {
       // Fetch and show only user's personal POIs (municipalities)
       const userPois = await fetchPersonalPoisData();
-      setFilteredPois(userPois.filter(poi => poi.type === 'personal'));
+      // Deduplicate POIs by ID
+      const uniqueUserPois = Array.from(new Map(userPois.map(item => [item.id, item])).values());
+      setFilteredPois(uniqueUserPois.filter(poi => poi.type === 'personal'));
     }
   };
 
