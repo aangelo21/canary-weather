@@ -110,12 +110,13 @@ export const getDashboard = async (req, res) => {
 // Create Global POI
 export const createGlobalPOI = async (req, res) => {
   try {
-    const { name, latitude, longitude, token } = req.body;
+    const { name, latitude, longitude, description, token } = req.body;
 
     await PointOfInterest.create({
       name,
       latitude: parseFloat(latitude),
       longitude: parseFloat(longitude),
+      description: description || null,
       is_global: true,
       type: 'global'
     });
@@ -130,12 +131,13 @@ export const createGlobalPOI = async (req, res) => {
 export const updatePOI = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, latitude, longitude, type, token } = req.body;
+    const { name, latitude, longitude, type, description, token } = req.body;
 
     await PointOfInterest.update({
       name,
       latitude: parseFloat(latitude),
       longitude: parseFloat(longitude),
+      description: description || null,
       is_global: type === 'global',
       type: type
     }, {
