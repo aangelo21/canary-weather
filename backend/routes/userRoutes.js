@@ -12,6 +12,7 @@ import {
   logoutUser,
   getCurrentUser,
   getMunicipalities,
+  refreshToken,
 } from "../controllers/userController.js";
 
 // Import multer middleware for profile picture uploads
@@ -21,7 +22,7 @@ import { upload } from "../middleware/uploadMiddleware.js";
 const router = express.Router();
 
 // Import authentication middleware
-import { authenticateSession } from "../middleware/authMiddleware.js";
+import { authenticateSession, authenticateToken } from "../middleware/authMiddleware.js";
 
 // Public routes (no auth required) - must be defined first
 router.post("/login", loginUser);
@@ -29,19 +30,22 @@ router.post("/logout", logoutUser);
 router.post("/", createUser);
 router.get("/municipalities", getMunicipalities);
 
+// Refresh Token route (Uses Session Cookie)
+router.post("/refresh-token", authenticateSession, refreshToken);
+
 // Protected routes with specific paths (before /:id)
-router.get("/me", authenticateSession, getCurrentUser);
+router.get("/me", authenticateToken, getCurrentUser);
 
 // Protected routes with dynamic parameters
-router.get("/", authenticateSession, getAllUsers);
-router.get("/:id", authenticateSession, getUserById);
+router.get("/", authenticateToken, getAllUsers);
+router.get("/:id", authenticateToken, getUserById);
 router.put(
   "/:id",
-  authenticateSession,
+  authenticateToken,
   upload.single("profile_picture"),
   updateUser
 );
-router.delete("/:id", authenticateSession, deleteUser);
+router.delete("/:id", authenticateToken, deleteUser);
 
 // Export the router for use in the main app
 export default router;

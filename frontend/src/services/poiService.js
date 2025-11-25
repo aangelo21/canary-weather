@@ -2,14 +2,14 @@
 // This module provides functions to interact with the POI endpoints of the backend API.
 // It handles fetching, creating, updating, and deleting POIs, including image upload functionality.
 
+import { apiFetch } from "./api";
+
 const API_BASE = import.meta.env.VITE_API_BASE;
 
 // Function to fetch all Points of Interest from the API (global and local only)
 export async function fetchPois() {
   // Make GET request to POIs endpoint
-  const response = await fetch(`${API_BASE}/pois`, {
-    credentials: "include",
-  });
+  const response = await apiFetch(`/pois`);
   // Throw error if response is not ok
   if (!response.ok) throw new Error("Error fetching POIs");
   // Return parsed JSON data
@@ -19,9 +19,7 @@ export async function fetchPois() {
 // Function to fetch only personal and local POIs for the authenticated user
 export async function fetchPersonalPois() {
   // Make GET request to personal POIs endpoint (includes both personal and local)
-  const response = await fetch(`${API_BASE}/pois/personal`, {
-    credentials: "include",
-  });
+  const response = await apiFetch(`/pois/personal`);
   // Throw error if response is not ok
   if (!response.ok) throw new Error("Error fetching user POIs");
   // Return parsed JSON data
@@ -32,9 +30,9 @@ export async function fetchPersonalPois() {
 // Supports both JSON data and file uploads for images
 export async function createOrUpdatePoi(formData, editingId, imageFile) {
   // Determine URL and HTTP method based on whether we're editing or creating
-  const url = editingId
-    ? `${API_BASE}/pois/${editingId}` // Update existing POI
-    : `${API_BASE}/pois`; // Create new POI
+  const endpoint = editingId
+    ? `/pois/${editingId}` // Update existing POI
+    : `/pois`; // Create new POI
   const method = editingId ? "PUT" : "POST";
 
   let body;
@@ -81,11 +79,10 @@ export async function createOrUpdatePoi(formData, editingId, imageFile) {
   }
 
   // Make the API request
-  const response = await fetch(url, {
+  const response = await apiFetch(endpoint, {
     method,
     headers,
     body,
-    credentials: "include",
   });
   // Handle error responses
   if (!response.ok) {
@@ -99,9 +96,8 @@ export async function createOrUpdatePoi(formData, editingId, imageFile) {
 // Function to delete a POI by ID
 export async function deletePoi(id) {
   // Make DELETE request to specific POI endpoint
-  const response = await fetch(`${API_BASE}/pois/${id}`, {
+  const response = await apiFetch(`/pois/${id}`, {
     method: "DELETE",
-    credentials: "include",
   });
   // Throw error if response is not ok
   if (!response.ok) throw new Error("Error deleting POI");

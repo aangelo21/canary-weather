@@ -1,5 +1,7 @@
 // alertService.js - Service functions for alert management API operations
 
+import { apiFetch } from "./api";
+
 const API_BASE = import.meta.env.VITE_API_BASE;
 
 // Function to fetch all alerts
@@ -18,9 +20,8 @@ export async function fetchAlertsByLocation(locationId) {
 
 // Function to fetch warnings from AEMET (admin function)
 export async function fetchWarnings() {
-  const response = await fetch(`${API_BASE}/alerts/fetch`, {
+  const response = await apiFetch(`/alerts/fetch`, {
     method: "POST",
-    credentials: "include",
   });
   if (!response.ok) throw new Error("Error fetching warnings");
   return response.json();
