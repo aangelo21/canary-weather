@@ -1,6 +1,9 @@
 import { User, Location, UserLocation, UserPointOfInterest, PointOfInterest } from "../models/index.js";
 import bcrypt from "bcrypt";
 import { Op } from "sequelize";
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
 // Controller function to handle user login
 export const loginUser = async (req, res) => {
@@ -30,12 +33,26 @@ export const loginUser = async (req, res) => {
     delete safe.password;
     
     req.session.user = safe;
+
+    // Generate JWT
+    const token = jwt.sign({ id: user.id, username: user.username, is_admin: user.is_admin }, JWT_SECRET, { expiresIn: '15m' });
     
-    // Return user data
-    return res.json({ user: safe });
+    // Return user data and token
+    return res.json({ user: safe, token });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
+};
+
+// Controller function to refresh token
+export const refreshToken = async (req, res) => {
+  // The user is already authenticated by session middleware
+  const user = req.user;
+  
+  // Generate new JWT
+  const token = jwt.sign({ id: user.id, username: user.username, is_admin: user.is_admin }, JWT_SECRET, { expiresIn: '15m' });
+  
+  return res.json({ token });
 };
 
 // Controller function to logout user

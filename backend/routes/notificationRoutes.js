@@ -7,15 +7,15 @@ import {
   updateNotification,
   deleteNotification,
 } from "../controllers/notificationController.js";
-import { authenticateSession } from "../middleware/authMiddleware.js";
+import { authenticateToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", authenticateSession, getAllNotifications);
-router.get("/:id", authenticateSession, getNotificationById);
-router.get("/user/:userId", authenticateSession, getNotificationsByUser);
-router.post("/", authenticateSession, createNotification);
-router.put("/:id", authenticateSession, updateNotification);
-router.delete("/:id", authenticateSession, deleteNotification);
+router.get("/", authenticateToken, getAllNotifications);
+router.get("/:id", authenticateToken, getNotificationById);
+router.get("/user/:userId", authenticateToken, getNotificationsByUser);
+router.post("/", authenticateToken, createNotification);
+router.put("/:id", authenticateToken, updateNotification);
+router.delete("/:id", authenticateToken, deleteNotification);
 
 export default router;
