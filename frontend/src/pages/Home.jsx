@@ -16,7 +16,7 @@ function Home() {
             {/* Hero Section - main promotional area */}
             <div className="relative overflow-hidden">
                 
-                <div className="max-w-7xl mx-auto px-6 lg:px-8 py-20 lg:py-32 relative z-10">
+                <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-10 pb-16 lg:pt-16 lg:pb-24 relative z-10">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                         {/* Left column - Hero text content */}
                         <div className="flex flex-col justify-center text-center lg:text-left">
@@ -101,67 +101,81 @@ function Home() {
                 </div>
             </div>
 
-            {/* Feature Cards Section */}
-            <div className="py-20 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
+            {/* Quick Stats Strip */}
+            <div className="bg-brand-primary/5 dark:bg-white/5 border-y border-brand-primary/10 dark:border-white/10">
+                <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                        <div>
+                            <div className="text-3xl font-bold text-brand-primary dark:text-blue-400">22°C</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400 uppercase tracking-wider mt-1">{t('avgTemp') || "Avg. Temp"}</div>
+                        </div>
+                        <div>
+                            <div className="text-3xl font-bold text-brand-primary dark:text-blue-400">3000+</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400 uppercase tracking-wider mt-1">{t('sunHours') || "Sunshine Hours"}</div>
+                        </div>
+                        <div>
+                            <div className="text-3xl font-bold text-brand-primary dark:text-blue-400">8</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400 uppercase tracking-wider mt-1">{t('islands') || "Islands"}</div>
+                        </div>
+                         <div>
+                            <div className="text-3xl font-bold text-brand-primary dark:text-blue-400">100%</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400 uppercase tracking-wider mt-1">{t('reliable') || "Reliable"}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Activities Section */}
+            <div className="py-20">
                 <div className="max-w-7xl mx-auto px-6 lg:px-8">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">{t('whyChooseUs') || "Why Choose Canary Weather?"}</h2>
-                        <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{t('featuresDesc') || "Everything you need to plan your perfect trip to the Canary Islands."}</p>
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                            {t('forecastForYou') || "Forecasts for Your Lifestyle"}
+                        </h2>
+                        <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                            {t('lifestyleDesc') || "Whether you're catching waves or climbing peaks, get the precise data you need."}
+                        </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-                        {/* Array of feature cards with title, description, and icon */}
-                        {[
-                            {
-                                title: t('responsive'),
-                                text: t('responsiveDesc'),
-                                color: "bg-yellow-400",
-                                icon: (
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 2v2m0 16v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2m16 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                        <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
-                                    </svg>
-                                )
-                            },
-                            {
-                                title: t('windAlert'),
-                                text: t('windAlertDesc'),
-                                color: "bg-blue-400",
-                                icon: (
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M9.59 4.59A2 2 0 1111 8H2m10.59 11.41A2 2 0 0014 16H2m15.73-8.27A2.5 2.5 0 1119.5 12H2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
-                                )
-                            },
-                            {
-                                title: t('locations'),
-                                text: t('locationsDesc'),
-                                color: "bg-green-400",
-                                icon: (
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                        <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
-                                )
-                            }
-                        ].map((card, i) => (
-                            // Individual feature card
-                            <div
-                                key={i}
-                                className="group bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl hover:shadow-2xl border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2"
-                            >
-                                {/* Icon container */}
-                                <div className={`w-16 h-16 rounded-2xl ${card.color} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                                    <div className="text-white w-8 h-8">
-                                        {card.icon}
-                                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {/* Surfing Card */}
+                        <div className="group relative overflow-hidden rounded-3xl h-80 cursor-pointer shadow-xl">
+                            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=800&q=80')] bg-cover bg-center transition-transform duration-700 group-hover:scale-110"></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            <div className="absolute bottom-0 left-0 p-8">
+                                <div className="text-white mb-2">
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" /></svg>
                                 </div>
-                                {/* Card title */}
-                                <h3 className="font-bold text-xl mb-3 text-gray-900 dark:text-white">{card.title}</h3>
-                                {/* Card description */}
-                                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{card.text}</p>
+                                <h3 className="text-2xl font-bold text-white mb-2">{t('surfing') || "Surfing & Water Sports"}</h3>
+                                <p className="text-gray-200 text-sm">{t('surfingDesc') || "Swell height, wind direction, and tide charts."}</p>
                             </div>
-                        ))}
+                        </div>
+
+                        {/* Hiking Card */}
+                        <div className="group relative overflow-hidden rounded-3xl h-80 cursor-pointer shadow-xl">
+                            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80')] bg-cover bg-center transition-transform duration-700 group-hover:scale-110"></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            <div className="absolute bottom-0 left-0 p-8">
+                                <div className="text-white mb-2">
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
+                                </div>
+                                <h3 className="text-2xl font-bold text-white mb-2">{t('hiking') || "Hiking & Trekking"}</h3>
+                                <p className="text-gray-200 text-sm">{t('hikingDesc') || "Temperature at altitude and visibility forecasts."}</p>
+                            </div>
+                        </div>
+
+                        {/* Stargazing Card */}
+                        <div className="group relative overflow-hidden rounded-3xl h-80 cursor-pointer shadow-xl">
+                            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80')] bg-cover bg-center transition-transform duration-700 group-hover:scale-110"></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            <div className="absolute bottom-0 left-0 p-8">
+                                <div className="text-white mb-2">
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
+                                </div>
+                                <h3 className="text-2xl font-bold text-white mb-2">{t('stargazing') || "Stargazing"}</h3>
+                                <p className="text-gray-200 text-sm">{t('stargazingDesc') || "Cloud coverage and moon phase for clear skies."}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
