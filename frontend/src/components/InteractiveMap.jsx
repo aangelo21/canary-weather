@@ -6,11 +6,13 @@
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import { useState, useRef, useEffect } from "react";
 import WeatherPopup from "./WeatherPopup";
+import { useTheme } from "../context/ThemeContext";
 
 // InteractiveMap component - Main map interface for weather exploration
 // Allows users to click anywhere on the map to see current weather conditions
 // Restricted to Canary Islands bounds with satellite imagery
 function InteractiveMap() {
+  const { isDarkMode } = useTheme();
   // State to store the coordinates where user clicked on the map
   const [clickedPos, setClickedPos] = useState(null);
   // State to store weather data fetched from API
@@ -97,13 +99,16 @@ function InteractiveMap() {
         maxBounds={bounds} // Restrict panning to Canary Islands
         maxBoundsViscosity={1.0} // How strictly to enforce bounds (1.0 = strict)
         scrollWheelZoom={true} // Allow zoom with mouse wheel
-        className="leaflet-container" // CSS class for styling
+        className="leaflet-container shadow-xl dark:shadow-black/50 border-2 border-gray-200 dark:border-gray-700 rounded-xl" // CSS class for styling
       >
-        {/* TileLayer - Map tiles from Google Maps satellite view */}
+        {/* TileLayer - Google Terrain (Relief) */}
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+          key={isDarkMode ? "dark" : "light"}
+          className={isDarkMode ? "dark-map-tiles" : ""}
+          attribution='&copy; <a href="https://www.google.com/permissions/geoguidelines/">Google</a>'
+          url="https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}"
         />
+
         {/* Include the click handler component */}
         <MapClickHandler />
         {/* Conditionally render marker when user has clicked */}

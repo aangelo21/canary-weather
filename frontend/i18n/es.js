@@ -39,6 +39,15 @@ export const es = {
     // Footer
     copyright: "©CanaryWeather |",
     website: "canaryweather.xyz",
+    quickLinks: "Explorar",
+    followUs: "Síguenos",
+    privacyPolicy: "Política de Privacidad",
+    termsOfService: "Términos de Servicio",
+    allRightsReserved: "Todos los derechos reservados.",
+    contactInfo: "Contacto",
+    emailUs: "Envíanos un correo a",
+    location: "Ubicación",
+    canaryIslands: "Islas Canarias, España",
     // LoginModal
     deleteAccount: "Eliminar Cuenta",
     confirmDeleteAccount:
@@ -80,6 +89,7 @@ export const es = {
     // Home
     welcomeTo: "Bienvenido a",
     canaryWeather: "Canary Weather",
+    weatherApp: "Aplicación del Tiempo",
     discoverWeather:
       "Descubre el clima en tus lugares favoritos. Explora los mapas y ve pronósticos detallados, mareas y puntos de interés alrededor de las Islas Canarias.",
     maps: "mapas",
@@ -94,10 +104,19 @@ export const es = {
     locations: "Ubicaciones",
     locationsDesc:
       "Explora las diferentes ubicaciones en el mapa y verifica el pronóstico de la ubicación",
-    // Map
-    exploreMap: "Explora el Mapa",
-    clickLocation: "Haz clic en una Ubicación para ver su pronóstico",
-    language: "Idioma",
+    popularDestinations: "Destinos populares",
+    forecastForYou: "Pronóstico para ti",
+    lifestyleDesc: "Ya sea que estés cogiendo olas o escalando picos, obtén los datos precisos que necesitas.",
+    surfing: "Surf y Deportes Acuáticos",
+    surfingDesc: "Altura del oleaje, dirección del viento y tablas de mareas.",
+    hiking: "Senderismo y Trekking",
+    hikingDesc: "Temperatura en altitud y pronósticos de visibilidad.",
+    stargazing: "Observación de Estrellas",
+    stargazingDesc: "Cobertura de nubes y fase lunar para cielos despejados.",
+    avgTemp: "Temp. Media",
+    sunHours: "Horas de Sol",
+    islands: "Islas",
+    reliable: "Fiable",
     // User Profile
     userProfile: "Perfil de Usuario",
     clickToChangePhoto: "Haz clic en la foto para cambiarla",
@@ -108,10 +127,14 @@ export const es = {
     personal: "Personal",
     aboutUs: "Sobre Nosotros",
     aboutUsTitle: "Sobre Nosotros",
-    aboutUsDesc: "Canary Weather es un proyecto dedicado a proporcionar información meteorológica precisa y en tiempo real para las Islas Canarias. Nuestra misión es ayudar a los residentes y visitantes a mantenerse informados sobre las condiciones climáticas, alertas y lugares interesantes.",
+    aboutUsDesc: "Información meteorológica precisa y en tiempo real para las Islas Canarias. Mantente informado sobre condiciones, alertas y lugares.",
     ourTeam: "Nuestro Equipo",
     contact: "Contacto",
     profile: "Perfil",
     errorDeleteUser: "Error al eliminar usuario",
+    // Map
+    exploreMap: "Explora el Mapa",
+    clickLocation: "Haz clic en una Ubicación para ver su pronóstico",
+    mapDescription: "Navega por las islas y descubre las condiciones meteorológicas en tiempo real.",
   },
 };

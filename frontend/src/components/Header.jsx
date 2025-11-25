@@ -135,19 +135,19 @@ function Header() {
     <header className="bg-white shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Navigation bar */}
-        <nav className="flex items-center h-16 md:h-20">
+        <nav className="flex items-center h-16 md:h-20 relative">
           {/* Logo section */}
           <div className="shrink-0">
             <img
-              src="bannerCanaryWeather.png"
+              src="logo.webp"
               alt="Logo de Canary Weather"
               className="h-16 md:h-20 w-auto"
             />
           </div>
 
           {/* Centered desktop navigation menu */}
-          <div className="flex-1 flex justify-center">
-            <ul className="hidden lg:flex items-center space-x-4 lg:space-x-8">
+          <div className="hidden lg:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <ul className="flex items-center space-x-4 lg:space-x-8">
               <li>
                 <NavLink
                   to="/"
@@ -213,7 +213,7 @@ function Header() {
           </div>
 
           {/* Language selector and user authentication section */}
-          <div className="lg:flex hidden items-center gap-3">
+          <div className="lg:flex hidden items-center gap-3 ml-auto">
             {/* Theme switch for dark mode */}
             <ThemeSwitch />
             
@@ -239,25 +239,25 @@ function Header() {
                 <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                   <button
                     onClick={() => {
-                      i18n.changeLanguage('en');
-                      setShowLanguageDropdown(false);
-                    }}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 rounded-t-lg ${
-                      i18n.language === 'en' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
-                    }`}
-                  >
-                    🇺🇸 English
-                  </button>
-                  <button
-                    onClick={() => {
                       i18n.changeLanguage('es');
                       setShowLanguageDropdown(false);
                     }}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 rounded-b-lg ${
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 rounded-t-lg ${
                       i18n.language === 'es' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
                     }`}
                   >
                     🇪🇸 Español
+                  </button>
+                  <button
+                    onClick={() => {
+                      i18n.changeLanguage('en');
+                      setShowLanguageDropdown(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 rounded-b-lg ${
+                      i18n.language === 'en' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                    }`}
+                  >
+                    🇺🇸 English
                   </button>
                 </div>
               )}
@@ -368,7 +368,7 @@ function Header() {
           </div>
 
           {/* Mobile menu toggle button */}
-          <div className="lg:hidden flex items-center gap-2">
+          <div className="lg:hidden flex items-center gap-2 ml-auto">
             {/* Mobile Settings Button */}
             <div className="relative mobile-settings-dropdown">
               <button

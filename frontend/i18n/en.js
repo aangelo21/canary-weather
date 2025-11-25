@@ -39,6 +39,15 @@ export const en = {
     // Footer
     copyright: "©CanaryWeather |",
     website: "canaryweather.xyz",
+    quickLinks: "Explore",
+    followUs: "Follow Us",
+    privacyPolicy: "Privacy Policy",
+    termsOfService: "Terms of Service",
+    allRightsReserved: "All rights reserved.",
+    contactInfo: "Contact Info",
+    emailUs: "Email us at",
+    location: "Location",
+    canaryIslands: "Canary Islands, Spain",
     // LoginModal
     deleteAccount: "Delete Account",
     confirmDeleteAccount:
@@ -80,6 +89,7 @@ export const en = {
     // Home
     welcomeTo: "Welcome to",
     canaryWeather: "Canary Weather",
+    weatherApp: "Weather App",
     discoverWeather:
       "Discover the weather in your favorite places. Explore maps and see detailed forecasts, tides and points of interest around the Canary Islands.",
     maps: "maps",
@@ -94,10 +104,19 @@ export const en = {
     locations: "Locations",
     locationsDesc:
       "Explore different locations on the map and check the location forecast",
-    // Map
-    exploreMap: "Explore the Map",
-    clickLocation: "Click on a Location to see its forecast",
-    language: "Language",
+    popularDestinations: "Popular destinations",
+    forecastForYou: "Forecast for you",
+    lifestyleDesc: "Whether you're catching waves or climbing peaks, get the precise data you need.",
+    surfing: "Surfing & Water Sports",
+    surfingDesc: "Swell height, wind direction, and tide charts.",
+    hiking: "Hiking & Trekking",
+    hikingDesc: "Temperature at altitude and visibility forecasts.",
+    stargazing: "Stargazing",
+    stargazingDesc: "Cloud coverage and moon phase for clear skies.",
+    avgTemp: "Avg. Temp",
+    sunHours: "Sunshine Hours",
+    islands: "Islands",
+    reliable: "Reliable",
     // User Profile
     userProfile: "User Profile",
     clickToChangePhoto: "Click on the photo to change it",
@@ -108,10 +127,14 @@ export const en = {
     personal: "Personal",
     aboutUs: "About Us",
     aboutUsTitle: "About Us",
-    aboutUsDesc: "Canary Weather is a project dedicated to providing accurate and real-time weather information for the Canary Islands. Our mission is to help residents and visitors stay informed about weather conditions, alerts, and interesting locations.",
+    aboutUsDesc: "Accurate and real-time weather information for the Canary Islands. Stay informed about conditions, alerts, and locations.",
     ourTeam: "Our Team",
     contact: "Contact",
     profile: "Profile",
     errorDeleteUser: "Error deleting user",
+    // Map
+    exploreMap: "Explore the Map",
+    clickLocation: "Click on a Location to see its forecast",
+    mapDescription: "Navigate through the islands and discover real-time weather conditions.",
   },
 };
