@@ -103,6 +103,7 @@ function InteractiveMap() {
       >
         {/* TileLayer - Google Terrain (Relief) */}
         <TileLayer
+          key={isDarkMode ? "dark" : "light"}
           className={isDarkMode ? "dark-map-tiles" : ""}
           attribution='&copy; <a href="https://www.google.com/permissions/geoguidelines/">Google</a>'
           url="https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}"
