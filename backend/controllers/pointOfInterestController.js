@@ -1,13 +1,44 @@
-import { PointOfInterest, UserPointOfInterest } from "../models/index.js";
+import { PointOfInterest, UserPointOfInterest, UserLocation, Location } from "../models/index.js";
 import { Op } from "sequelize";
 import sequelize from "../controllers/dbController.js";
 
 export const getAllPointsOfInterest = async (req, res) => {
   try {
-    const items = await PointOfInterest.findAll({
-      where: { 
-        type: 'global'
+    let whereClause;
+
+    // Check if user is authenticated and is admin
+    if (req.user && req.user.is_admin) {
+      // Admins see all global and local POIs
+      whereClause = {
+        type: { [Op.in]: ['global', 'local'] }
+      };
+    } else {
+      // Regular users or guests
+      const orConditions = [
+        { type: 'global' } // Always show global POIs
+      ];
+
+      if (req.user) {
+        const userLocation = await UserLocation.findOne({
+          where: { user_id: req.user.id },
+          include: [Location]
+        });
+
+        if (userLocation && userLocation.Location) {
+          orConditions.push({
+            type: 'local',
+            name: `Municipio: ${userLocation.Location.name}`
+          });
+        }
       }
+
+      whereClause = {
+        [Op.or]: orConditions
+      };
+    }
+
+    const items = await PointOfInterest.findAll({
+      where: whereClause
     });
     return res.json(items);
   } catch (err) {
@@ -32,8 +63,11 @@ export const getPersonalPointsOfInterest = async (req, res) => {
       include: [{
         model: UserPointOfInterest,
         where: { user_id: userId },
-        required: true
-      }]
+        required: true,
+        attributes: [] // Don't include the junction table data in the result
+      }],
+      // Ensure we don't get duplicates if there are multiple associations (though there shouldn't be)
+      group: ['PointOfInterest.id']
     });
 
     return res.json(userPois);

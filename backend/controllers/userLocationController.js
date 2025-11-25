@@ -1,43 +1,4 @@
-import { UserLocation, User, Location, PointOfInterest, UserPointOfInterest } from "../models/index.js";
-
-const createLocationPOI = async (userId, locationId) => {
-  try {
-    const location = await Location.findByPk(locationId);
-    if (!location) return;
-
-    const existingUserPOI = await PointOfInterest.findOne({
-      include: [{
-        model: UserPointOfInterest,
-        where: { user_id: userId },
-        required: true
-      }],
-      where: {
-        name: `Mi municipio: ${location.name}`,
-        type: 'local',
-      },
-    });
-
-    if (!existingUserPOI) {
-      const newPOI = await PointOfInterest.create({
-        name: `Mi municipio: ${location.name}`,
-        latitude: location.latitude,
-        longitude: location.longitude,
-        is_global: false,
-        type: 'local',
-      });
-
-      await UserPointOfInterest.create({
-        user_id: userId,
-        point_of_interest_id: newPOI.id,
-        favorited_at: new Date()
-      });
-
-      console.log(`Created local POI for user ${userId} in ${location.name}`);
-    }
-  } catch (error) {
-    console.error("Error creating location POI:", error);
-  }
-};
+import { UserLocation, User, Location, UserPointOfInterest, PointOfInterest } from "../models/index.js";
 
 // Controller function to get all locations favorited by a user
 export const getUserLocations = async (req, res) => {
@@ -65,15 +26,22 @@ export const addUserLocation = async (req, res) => {
     const { userId } = req.params;
     const { location_id } = req.body;
     
-    const existingUserLocation = await UserLocation.findOne({
-      where: { user_id: userId, location_id: location_id },
+    // Remove any existing location for this user to ensure only one is selected
+    await UserLocation.destroy({
+      where: { user_id: userId }
     });
 
-    if (existingUserLocation) {
-      return res
-        .status(409)
-        .json({ error: "Esta ubicación ya está guardada" });
-    }
+    // Remove existing UserPointOfInterest for local POIs
+    const localPois = await PointOfInterest.findAll({
+      where: { type: 'local' }
+    });
+    const localPoiIds = localPois.map(poi => poi.id);
+    await UserPointOfInterest.destroy({
+      where: { 
+        user_id: userId,
+        point_of_interest_id: localPoiIds
+      }
+    });
 
     const item = await UserLocation.create({
       user_id: userId,
@@ -81,7 +49,25 @@ export const addUserLocation = async (req, res) => {
       selected_at: new Date(),
     });
     
-    await createLocationPOI(userId, location_id);
+    // Find the location to get its name
+    const location = await Location.findByPk(location_id);
+    if (location) {
+      // Find the corresponding POI
+      const poi = await PointOfInterest.findOne({
+        where: { 
+          name: `Municipio: ${location.name}`,
+          type: 'local'
+        }
+      });
+      if (poi) {
+        // Add to UserPointOfInterest
+        await UserPointOfInterest.create({
+          user_id: userId,
+          point_of_interest_id: poi.id,
+          favorited_at: new Date(),
+        });
+      }
+    }
     
     const result = await UserLocation.findByPk(item.id, {
       include: [
@@ -102,11 +88,34 @@ export const addUserLocation = async (req, res) => {
 export const removeUserLocation = async (req, res) => {
   try {
     const { userId, locationId } = req.params;
+    
+    // Find the location to get its name
+    const location = await Location.findByPk(locationId);
+    
     // Delete the UserLocation mapping
     const deleted = await UserLocation.destroy({
       where: { user_id: userId, location_id: locationId },
     });
     if (!deleted) return res.status(404).json({ error: "Mapping not found" });
+    
+    // If location found, remove the corresponding POI from UserPointOfInterest
+    if (location) {
+      const poi = await PointOfInterest.findOne({
+        where: { 
+          name: `Municipio: ${location.name}`,
+          type: 'local'
+        }
+      });
+      if (poi) {
+        await UserPointOfInterest.destroy({
+          where: { 
+            user_id: userId,
+            point_of_interest_id: poi.id
+          }
+        });
+      }
+    }
+    
     // Return 204 No Content on success
     return res.status(204).send();
   } catch (err) {

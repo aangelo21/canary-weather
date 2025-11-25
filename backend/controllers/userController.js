@@ -1,45 +1,6 @@
-import { User, Location, UserLocation, PointOfInterest, UserPointOfInterest } from "../models/index.js";
+import { User, Location, UserLocation, UserPointOfInterest, PointOfInterest } from "../models/index.js";
 import bcrypt from "bcrypt";
 import { Op } from "sequelize";
-
-const createLocationPOI = async (userId, locationId) => {
-  try {
-    const location = await Location.findByPk(locationId);
-    if (!location) return;
-
-    const existingUserPOI = await PointOfInterest.findOne({
-      include: [{
-        model: UserPointOfInterest,
-        where: { user_id: userId },
-        required: true
-      }],
-      where: {
-        name: `Mi municipio: ${location.name}`,
-        type: 'local',
-      },
-    });
-
-    if (!existingUserPOI) {
-      const newPOI = await PointOfInterest.create({
-        name: `Mi municipio: ${location.name}`,
-        latitude: location.latitude,
-        longitude: location.longitude,
-        is_global: false,
-        type: 'local',
-      });
-
-      await UserPointOfInterest.create({
-        user_id: userId,
-        point_of_interest_id: newPOI.id,
-        favorited_at: new Date()
-      });
-
-      console.log(`Created local POI for user ${userId} in ${location.name}`);
-    }
-  } catch (error) {
-    console.error("Error creating location POI:", error);
-  }
-};
 
 // Controller function to handle user login
 export const loginUser = async (req, res) => {
@@ -151,8 +112,24 @@ export const createUser = async (req, res) => {
         location_id: location_id,
         selected_at: new Date()
       });
-      
-      await createLocationPOI(user.id, location_id);
+
+      // Find the location and add the corresponding POI
+      const location = await Location.findByPk(location_id);
+      if (location) {
+        const poi = await PointOfInterest.findOne({
+          where: { 
+            name: `Municipio: ${location.name}`,
+            type: 'local'
+          }
+        });
+        if (poi) {
+          await UserPointOfInterest.create({
+            user_id: user.id,
+            point_of_interest_id: poi.id,
+            favorited_at: new Date(),
+          });
+        }
+      }
     }
 
     // Set user in session
@@ -183,18 +160,45 @@ export const updateUser = async (req, res) => {
     await User.update(payload, { where: { id }, individualHooks: true });
 
     if (location_id) {
-      const existingUserLocation = await UserLocation.findOne({
-        where: { user_id: id, location_id: location_id }
+      // Remove any existing location for this user to ensure only one is selected
+      await UserLocation.destroy({
+        where: { user_id: id }
       });
-      
-      if (!existingUserLocation) {
-        await UserLocation.create({
+
+      await UserLocation.create({
+        user_id: id,
+        location_id: location_id,
+        selected_at: new Date()
+      });
+
+      // Remove existing UserPointOfInterest for local POIs
+      const localPois = await PointOfInterest.findAll({
+        where: { type: 'local' }
+      });
+      const localPoiIds = localPois.map(poi => poi.id);
+      await UserPointOfInterest.destroy({
+        where: { 
           user_id: id,
-          location_id: location_id,
-          selected_at: new Date()
+          point_of_interest_id: localPoiIds
+        }
+      });
+
+      // Find the location and add the corresponding POI
+      const location = await Location.findByPk(location_id);
+      if (location) {
+        const poi = await PointOfInterest.findOne({
+          where: { 
+            name: `Municipio: ${location.name}`,
+            type: 'local'
+          }
         });
-        
-        await createLocationPOI(id, location_id);
+        if (poi) {
+          await UserPointOfInterest.create({
+            user_id: id,
+            point_of_interest_id: poi.id,
+            favorited_at: new Date(),
+          });
+        }
       }
     }
 

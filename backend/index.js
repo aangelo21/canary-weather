@@ -2,6 +2,7 @@
 import express from "express";
 import cors from "cors";
 import session from "express-session";
+import connectSessionSequelize from "connect-session-sequelize";
 // Import Sequelize instance for database connection
 import sequelize from "./controllers/dbController.js";
 // Import models to ensure they are registered with Sequelize
@@ -40,9 +41,17 @@ app.use(express.json());
 // Parse incoming URL-encoded payloads (for forms)
 app.use(express.urlencoded({ extended: true }));
 
+// Configure session store
+const SequelizeStore = connectSessionSequelize(session.Store);
+const sessionStore = new SequelizeStore({
+    db: sequelize,
+    tableName: 'Sessions'
+});
+
 // Configure session middleware
 app.use(session({
     secret: process.env.SESSION_SECRET || "supersecretkey",
+    store: sessionStore,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -82,6 +91,10 @@ app.get("/api/health", (req, res) => {
         // Synchronize models with database (create tables if they don't exist)
         await sequelize.sync({ alter: true });
         console.log("All models were synchronized successfully.");
+
+        // Sync session store
+        await sessionStore.sync();
+        console.log("Session store synchronized successfully.");
 
         // Start the server and listen on the specified port
         app.listen(PORT, () => {
