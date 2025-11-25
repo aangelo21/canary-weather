@@ -7,11 +7,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { Popup } from "react-leaflet";
 import { createOrUpdatePoi } from "../services/poiService";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "../context/ThemeContext";
 
 // WeatherPopup component - Displays weather info and POI creation option
 // Used by InteractiveMap component when user clicks on map locations
 function WeatherPopup({ position, weather, markerRef, onClose }) {
   const { t } = useTranslation();
+  const { isDarkMode } = useTheme();
   // Ref for the popup element
   const popupRef = useRef(null);
   // State to track if POI has been saved
@@ -76,6 +78,10 @@ function WeatherPopup({ position, weather, markerRef, onClose }) {
   const getTheme = () => {
     const main = (weather.main || "").toLowerCase();
     
+    if (isDarkMode) {
+      return "bg-gradient-to-br from-[#1e293b]/90 to-[#0f172a]/90 backdrop-blur-md text-white shadow-xl shadow-black/50 border border-white/10";
+    }
+
     if (main.includes('thunder')) {
         return "bg-gradient-to-br from-[#1e293b] to-[#334155] text-white shadow-indigo-900/50"; // Dark/Thunder
     }
@@ -87,7 +93,7 @@ function WeatherPopup({ position, weather, markerRef, onClose }) {
   };
 
   const themeClass = getTheme();
-  const isDarkTheme = isNight || (weather.main || "").toLowerCase().includes('thunder');
+  const isDarkTheme = isDarkMode || isNight || (weather.main || "").toLowerCase().includes('thunder');
 
   // Icons (Emojis)
   const getIcon = () => {

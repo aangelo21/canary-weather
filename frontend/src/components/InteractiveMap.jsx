@@ -6,11 +6,13 @@
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import { useState, useRef, useEffect } from "react";
 import WeatherPopup from "./WeatherPopup";
+import { useTheme } from "../context/ThemeContext";
 
 // InteractiveMap component - Main map interface for weather exploration
 // Allows users to click anywhere on the map to see current weather conditions
 // Restricted to Canary Islands bounds with satellite imagery
 function InteractiveMap() {
+  const { isDarkMode } = useTheme();
   // State to store the coordinates where user clicked on the map
   const [clickedPos, setClickedPos] = useState(null);
   // State to store weather data fetched from API
@@ -97,12 +99,18 @@ function InteractiveMap() {
         maxBounds={bounds} // Restrict panning to Canary Islands
         maxBoundsViscosity={1.0} // How strictly to enforce bounds (1.0 = strict)
         scrollWheelZoom={true} // Allow zoom with mouse wheel
-        className="leaflet-container" // CSS class for styling
+        className="leaflet-container shadow-2xl dark:shadow-black/80 border-4 border-white dark:border-gray-800" // CSS class for styling
       >
         {/* TileLayer - Map tiles from Google Maps satellite view */}
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+          attribution={isDarkMode 
+            ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }
+          url={isDarkMode 
+            ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            : "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+          }
         />
         {/* Include the click handler component */}
         <MapClickHandler />
