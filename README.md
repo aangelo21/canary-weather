@@ -1,6 +1,6 @@
 # CanaryWeather 🌤️
 
-![CanaryWeather Banner](frontend/public/bannerCanaryWeather.png)
+![CanaryWeather Banner](frontend/public/logo.webp)
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](license)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
