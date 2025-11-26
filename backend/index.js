@@ -38,7 +38,7 @@ const PORT = process.env.PORT || 85;
 // Enable CORS for cross-origin requests
 app.use(
   cors({
-    origin: "http://localhost:5173", // Adjust this to match your frontend URL
+    origin: ["http://localhost:5173", "http://134.209.22.118:5173/"], // Adjust this to match your frontend URL
     credentials: true,
   })
 );
