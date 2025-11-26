@@ -9,13 +9,19 @@
   "type": "module",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "connect-session-sequelize": "^8.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
+    "ejs": "^3.1.10",
     "express": "^5.1.0",
+    "express-session": "^1.18.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
     "mysql2": "^3.15.3",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "xml2js": "^0.6.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "sequelize-cli": "^6.6.0"
@@ -26,6 +32,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed:pois": "node seeders/seed_pois_canarias.js",
     "seed:users": "node seeders/seed_users.js",
+    "seed:alerts": "node seeders/20251120161943-seed-alerts.js",
+    "seed:forecasts": "node seeders/20251120162220-seed-forecasts.js",
+    "seed:user-locations": "node seeders/20251120162236-seed-user-locations.js",
+    "seed:user-pois": "node seeders/20251120162257-seed-user-point-of-interest.js",
+    "seed:all": "npm run seed:users && npm run seed:pois && npm run seed:alerts && npm run seed:forecasts && npm run seed:user-locations && npm run seed:user-pois",
     "migrate": "npx sequelize-cli db:migrate",
     "migrate:undo": "npx sequelize-cli db:migrate:undo"
   }

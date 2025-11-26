@@ -1,25 +1,255 @@
 @import "tailwindcss";
 @import "@fontsource/poppins";
 
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
-    --color-brand-primary: #0768a9;
-    --color-brand-secondary: #ffcc00;
-    --color-accent-blue-100: #027fd2;
-    --color-accent-blue-200: #0c93ed;
-    --color-accent-blue-300: #5ebeff;
-    --color-accent-yellow-100: #ffe789;
-    --color-accent-yellow-200: #feeeb1;
-    --color-accent-yellow-300: #fff5d1;
-    --color-info: #009ec1;
-    --color-error: #b50909;
-    --color-success: #00a91c;
-    --color-warning: #e5a000;
-    --color-neutral-1: #000000;
-    --color-neutral-2: #6f6d6d;
-    --color-neutral-3: #cfcccc;
-    --color-neutral-4: #ffffff;
+  --color-brand-primary: #0768a9;
+  --color-brand-secondary: #ffcc00;
+  --color-accent-blue-100: #027fd2;
+  --color-accent-blue-200: #0c93ed;
+  --color-accent-blue-300: #5ebeff;
+  --color-accent-yellow-100: #ffe789;
+  --color-accent-yellow-200: #feeeb1;
+  --color-accent-yellow-300: #fff5d1;
+  --color-info: #009ec1;
+  --color-error: #b50909;
+  --color-success: #00a91c;
+  --color-warning: #e5a000;
+  --color-neutral-1: #000000;
+  --color-neutral-2: #6f6d6d;
+  --color-neutral-3: #cfcccc;
+  --color-neutral-4: #ffffff;
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode styles */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #000000;
+  color: #e2e8f0;
+}
+
+/* Header styles */
+/* Removed to allow default dark mode styles (bg-white -> #1a1a1a) and shadow-sm to apply */
+
+/* Header navigation links */
+.dark header a {
+  color: #ffffff !important;
+}
+
+.dark header a:hover {
+  color: #e2e8f0 !important;
+}
+
+.dark header .font-semibold {
+  color: #ffffff !important;
+}
+
+/* Text colors */
+.dark .text-gray-700 {
+  color: #cbd5e1 !important;
+}
+
+.dark .text-gray-900 {
+  color: #f1f5f9 !important;
+}
+
+.dark .text-black {
+  color: #f1f5f9 !important;
+}
+
+.dark .text-neutral-1 {
+  color: #f1f5f9 !important;
+}
+
+.dark .text-neutral-2 {
+  color: #cbd5e1 !important;
+}
+
+/* Background colors */
+.dark .bg-white {
+  background-color: #1a1a1a !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: #0a0a0a !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: #2a2a2a !important;
+}
+
+.dark .bg-gray-200 {
+  background-color: #3a3a3a !important;
+}
+
+.dark .bg-gray-300 {
+  background-color: #4a4a4a !important;
+}
+
+/* Hover states */
+.dark .hover\:bg-gray-50:hover {
+  background-color: #2a2a2a !important;
+}
+
+.dark .hover\:bg-gray-100:hover {
+  background-color: #3a3a3a !important;
+}
+
+.dark .hover\:bg-gray-200:hover {
+  background-color: #3a3a3a !important;
+}
+
+.dark .hover\:bg-gray-300:hover {
+  background-color: #4a4a4a !important;
+}
+
+.dark .hover\:text-gray-900:hover {
+  color: #f1f5f9 !important;
+}
+
+/* Borders */
+.dark .border-gray-100 {
+  border-color: #2a2a2a !important;
+}
+
+.dark .border-gray-200 {
+  border-color: #3a3a3a !important;
+}
+
+.dark .border-gray-300 {
+  border-color: #4a4a4a !important;
+}
+
+.dark .border-blue-600 {
+  border-color: #3b82f6 !important;
+}
+
+/* Shadows */
+.dark .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.7), 0 4px 6px -2px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark .shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .shadow {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px 0 rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Cards and containers */
+.dark .bg-blue-50 {
+  background-color: #1a2332 !important;
+}
+
+.dark .text-blue-600 {
+  color: #60a5fa !important;
+}
+
+/* Input and form elements */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #1a1a1a !important;
+  color: #e2e8f0 !important;
+  border-color: #3a3a3a !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #6a6a6a !important;
+}
+
+/* Buttons - preserve brand colors but adjust hover states */
+.dark .bg-blue-600:not(.hover\:bg-blue-700) {
+  background-color: #2563eb !important;
+}
+
+.dark .hover\:bg-blue-700:hover {
+  background-color: #1d4ed8 !important;
+}
+
+/* Modals and dropdowns */
+.dark [role="dialog"],
+.dark .modal {
+  background-color: #1a1a1a !important;
+  border-color: #3a3a3a !important;
+}
+
+/* Tables */
+.dark table {
+  background-color: #1a1a1a !important;
+}
+
+.dark th {
+  background-color: #2a2a2a !important;
+  color: #f1f5f9 !important;
+}
+
+.dark td {
+  border-color: #3a3a3a !important;
+  color: #e2e8f0 !important;
+}
+
+/* Links - excluding header links which are handled separately */
+.dark main a:not(.bg-brand-primary):not(.bg-blue-600) {
+  color: #60a5fa !important;
+}
+
+.dark main a:hover:not(.bg-brand-primary):not(.bg-blue-600) {
+  color: #93c5fd !important;
+}
+
+/* Scrollbar */
+.dark ::-webkit-scrollbar {
+  background-color: #0a0a0a;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #3a3a3a;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: #4a4a4a;
+}
+
+/* Custom Leaflet Popup Styles */
+.custom-popup-clean .leaflet-popup-content-wrapper {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
+.custom-popup-clean .leaflet-popup-tip {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.custom-popup-clean .leaflet-popup-content {
+  margin: 0 !important;
+  width: auto !important;
+}
+
+.custom-popup-clean a.leaflet-popup-close-button {
+  color: white !important;
+  top: 10px !important;
+  right: 10px !important;
+  font-size: 20px !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  z-index: 20;
+}
+
+/* Dark mode map tiles filter - Apple Maps Dark Style approximation */
+.dark .dark-map-tiles {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }
