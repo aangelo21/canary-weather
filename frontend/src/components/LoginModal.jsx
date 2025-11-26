@@ -653,7 +653,7 @@ export default function LoginModal({
                                                 </select>
                                                 <button
                                                     type="button"
-                                                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-black text-white shadow hover:bg-black/90 h-9 px-4 py-2 dark:bg-white dark:text-black dark:hover:bg-white/90"
+                                                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-brand-primary text-white shadow hover:bg-blue-700 h-9 px-4 py-2 dark:bg-white dark:text-black dark:hover:bg-white/90"
                                                     disabled={!selectedLocationToAdd}
                                                     onClick={() => {
                                                         if (selectedLocationToAdd && !input.location_ids.includes(selectedLocationToAdd)) {
@@ -745,7 +745,7 @@ export default function LoginModal({
                             {t('cancel')}
                         </button>
                         <button 
-                            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-black text-white shadow hover:bg-black/90 h-9 px-4 py-2 dark:bg-white dark:text-black dark:hover:bg-white/90"
+                            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-brand-primary text-white shadow hover:bg-blue-700 h-9 px-4 py-2 dark:bg-white dark:text-black dark:hover:bg-white/90"
                             onClick={handleSubmit}
                             disabled={loading}
                         >
@@ -758,7 +758,7 @@ export default function LoginModal({
                                 {t('noAccount')}{" "}
                                 <button
                                     type="button"
-                                    className="text-blue-600 hover:underline dark:text-blue-400"
+                                    className="text-brand-primary hover:underline dark:text-blue-400"
                                     onClick={() => setIsSignUp(true)}
                                 >
                                     {t('signUp')}
@@ -769,7 +769,7 @@ export default function LoginModal({
                                 {t('haveAccount')}{" "}
                                 <button
                                     type="button"
-                                    className="text-blue-600 hover:underline dark:text-blue-400"
+                                    className="text-brand-primary hover:underline dark:text-blue-400"
                                     onClick={() => setIsSignUp(false)}
                                 >
                                     {t('signIn')}
