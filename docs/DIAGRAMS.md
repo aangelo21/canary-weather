@@ -211,5 +211,5 @@ style Alert fill:#00008B,stroke:#fff,color:#000000
 style Notification fill:#00008B,stroke:#fff,color:#000000
 ```
 
-**Gabriel** -> Red
-**Angelo** -> Blue
+**Gabriel** -> Dark Red
+**Angelo** -> Dark Blue

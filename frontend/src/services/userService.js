@@ -2,6 +2,8 @@
 // This module provides functions to interact with user-related endpoints of the backend API.
 // It handles login, user profile management, user creation/updating, and deletion.
 
+import { apiFetch, setAccessToken } from "./api";
+
 const API_BASE = import.meta.env.VITE_API_BASE;
 
 // Function to authenticate a user with username/email and password
@@ -20,8 +22,12 @@ export async function loginUser({ username, password }) {
     const errorData = await response.json();
     throw new Error(errorData.error || "Error logging in");
   }
-  // Return user data
-  return response.json();
+  
+  const data = await response.json();
+  if (data.token) {
+    setAccessToken(data.token);
+  }
+  return data;
 }
 
 // Function to logout the user
@@ -33,15 +39,14 @@ export async function logoutUser() {
   if (!response.ok) {
     throw new Error("Error logging out");
   }
+  setAccessToken(null);
   return response.json();
 }
 
 // Function to get the current authenticated user's profile
 export async function getCurrentUser() {
   // Make GET request to user profile endpoint with credentials
-  const response = await fetch(`${API_BASE}/users/me`, {
-    credentials: "include",
-  });
+  const response = await apiFetch(`/users/me`);
   // Handle error responses
   if (!response.ok) {
     const err = await response.json();
@@ -54,7 +59,7 @@ export async function getCurrentUser() {
 // Function to fetch all users (admin functionality)
 export async function fetchUsers() {
   // Make GET request to users endpoint
-  const response = await fetch(`${API_BASE}/users`);
+  const response = await apiFetch(`/users`);
   if (!response.ok) throw new Error("Error fetching users");
   // Return array of users
   return response.json();
@@ -64,9 +69,9 @@ export async function fetchUsers() {
 // Supports both JSON data and FormData for profile picture uploads
 export async function createOrUpdateUser(formData, editingId) {
   // Determine URL and method based on create vs update operation
-  const url = editingId
-    ? `${API_BASE}/users/${editingId}` // Update existing user
-    : `${API_BASE}/users`; // Create new user
+  const endpoint = editingId
+    ? `/users/${editingId}` // Update existing user
+    : `/users`; // Create new user
   const method = editingId ? "PUT" : "POST";
   const headers = {};
 
@@ -81,12 +86,23 @@ export async function createOrUpdateUser(formData, editingId) {
   }
 
   // Make the API request
-  const response = await fetch(url, {
-    method,
-    headers,
-    body,
-    credentials: "include",
-  });
+  let response;
+  if (editingId) {
+    // Update requires auth
+    response = await apiFetch(endpoint, {
+      method,
+      headers,
+      body,
+    });
+  } else {
+    // Create (Registration) is public
+    response = await fetch(`${API_BASE}${endpoint}`, {
+      method,
+      headers,
+      body,
+    });
+  }
+
   // Handle error responses
   if (!response.ok) {
     const errorData = await response.json();
@@ -99,9 +115,8 @@ export async function createOrUpdateUser(formData, editingId) {
 // Function to delete a user account
 export async function deleteUser(id) {
   // Make DELETE request to specific user endpoint
-  const response = await fetch(`${API_BASE}/users/${id}`, {
+  const response = await apiFetch(`/users/${id}`, {
     method: "DELETE",
-    credentials: "include",
   });
   // Handle error responses
   if (!response.ok) {
