@@ -25,6 +25,12 @@ export const en = {
     warnings: "Warnings",
     warningsTitle: "Weather Warnings",
     loading: "Loading...",
+    activeWarnings: "Active Warnings",
+    noActiveWarnings: "No active warnings at the moment.",
+    warningsHistory: "Warnings History",
+    noPastWarnings: "No past warnings recorded.",
+    phenomenon: "Phenomenon",
+    level: "Level",
     noWarnings: "No weather warnings at the moment",
     start: "Start",
     end: "End",
@@ -36,6 +42,9 @@ export const en = {
     errorUploadProfile: "Error uploading profile picture",
     global: "GLOBAL",
     local: "LOCAL",
+    moderate: "Moderate (Yellow)",
+    severe: "Severe/Extreme (Orange/Red)",
+    errorFetchingExternal: "Could not update warnings from external source. Showing cached data.",
     // Footer
     copyright: "©CanaryWeather |",
     website: "canaryweather.xyz",
@@ -48,6 +57,10 @@ export const en = {
     emailUs: "Email us at",
     location: "Location",
     canaryIslands: "Canary Islands, Spain",
+    loginTitle: "Login to your account",
+    loginDesc: "Enter your email below to login to your account",
+    createAccountTitle: "Create an account",
+    createAccountDesc: "Enter your details below to create your account",
     // LoginModal
     deleteAccount: "Delete Account",
     confirmDeleteAccount:

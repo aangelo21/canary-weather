@@ -18,11 +18,14 @@ export async function fetchAlertsByLocation(locationId) {
   return response.json();
 }
 
-// Function to fetch warnings from AEMET (admin function)
+// Function to fetch warnings from external source (admin function)
 export async function fetchWarnings() {
   const response = await apiFetch(`/alerts/fetch`, {
     method: "POST",
   });
-  if (!response.ok) throw new Error("Error fetching warnings");
+  if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || "Error fetching warnings");
+  }
   return response.json();
 }
