@@ -2,159 +2,230 @@
 
 ## Swagger UI
 
-La documentación interactiva de la API está disponible en: **http://localhost:85/api-docs**
+Interactive API documentation is available at: **http://localhost:85/api-docs**
 
-### Características
+### Features
 
-- 📚 **Documentación completa** de todos los endpoints
-- 🔐 **Autenticación JWT** integrada
-- 🧪 **Pruebas en vivo** de la API
-- 📋 **Esquemas de datos** detallados
-- ✅ **Validación de requests** y responses
+- 📚 **Complete Documentation** of all endpoints
+- 🔐 **Integrated JWT Authentication**
+- 🧪 **Live API Testing**
+- 📋 **Detailed Data Schemas**
+- ✅ **Request/Response Validation**
 
-## Cómo Usar la Autenticación en Swagger
+## How to Use Authentication in Swagger
 
-### Paso 1: Crear una Cuenta o Iniciar Sesión
+### Step 1: Create an Account or Login
 
-#### Opción A: Registrar un Nuevo Usuario
+#### Option A: Register a New User
 
-1. Ve a la sección **Authentication** en Swagger UI
-2. Expande el endpoint `POST /api/users` (Register new user)
-3. Haz clic en "Try it out"
-4. Completa el JSON con tus datos:
+1. Go to the **Authentication** section in Swagger UI
+2. Expand the `POST /api/users` endpoint (Register new user)
+3. Click "Try it out"
+4. Fill in the JSON with your data:
    ```json
    {
-     "email": "tu@email.com",
-     "username": "tunombre",
-     "password": "tucontraseña"
+     "email": "your@email.com",
+     "username": "yourname",
+     "password": "yourpassword"
    }
    ```
-5. Haz clic en "Execute"
-6. En la respuesta, **copia el valor del campo `token`**
+5. Click "Execute"
+6. In the response, **copy the `token` value**
 
-#### Opción B: Iniciar Sesión con Usuario Existente
+#### Option B: Login with Existing User
 
-1. Ve a la sección **Authentication** en Swagger UI
-2. Expande el endpoint `POST /api/users/login` (Login user)
-3. Haz clic en "Try it out"
-4. Completa el JSON:
+1. Go to the **Authentication** section in Swagger UI
+2. Expand the `POST /api/users/login` endpoint (Login user)
+3. Click "Try it out"
+4. Fill in the JSON:
    ```json
    {
-     "username": "tunombre",
-     "password": "tucontraseña"
+     "username": "yourname",
+     "password": "yourpassword"
    }
    ```
-5. Haz clic en "Execute"
-6. En la respuesta, **copia el valor del campo `token`**
+5. Click "Execute"
+6. In the response, **copy the `token` value**
 
-### Paso 2: Autorizar en Swagger
+### Step 2: Authorize in Swagger
 
-1. Haz clic en el botón **"Authorize"** 🔓 (arriba a la derecha en Swagger UI)
-2. En el campo "Value", pega tu token en el formato:
+1. Click the **"Authorize"** button 🔓 (top right in Swagger UI)
+2. In the "Value" field, paste your token in the format:
    ```
-   Bearer <tu-token-aquí>
+   Bearer <your-token-here>
    ```
-   Ejemplo:
+   Example:
    ```
    Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
    ```
-3. Haz clic en "Authorize"
-4. Cierra el modal
+3. Click "Authorize"
+4. Close the modal
 
-### Paso 3: Usar Endpoints Protegidos
+### Step 3: Use Protected Endpoints
 
-Ahora puedes usar cualquier endpoint que requiera autenticación. Los endpoints protegidos tienen un icono de candado 🔒.
+Now you can use any endpoint that requires authentication. Protected endpoints have a lock icon 🔒.
 
-**Ejemplo**: Obtener tu perfil de usuario
+**Example**: Get your user profile
 
-1. Expande `GET /api/users/me`
-2. Haz clic en "Try it out"
-3. Haz clic en "Execute"
-4. Verás tu información de usuario en la respuesta
+1. Expand `GET /api/users/me`
+2. Click "Try it out"
+3. Click "Execute"
+4. You'll see your user information in the response
 
-## Endpoints Disponibles
+## Available Endpoints
 
 ### 🔐 Authentication
 
-- `POST /api/users` - Registrar nuevo usuario (devuelve token)
-- `POST /api/users/login` - Iniciar sesión (devuelve token)
-- `POST /api/users/logout` - Cerrar sesión
-- `POST /api/users/refresh-token` - Renovar token JWT
+- `POST /api/users` - Register new user (returns token)
+- `POST /api/users/login` - Login (returns token)
+- `POST /api/users/logout` - Logout
+- `POST /api/users/refresh-token` - Refresh JWT token
 
 ### 👤 Users
 
-- `GET /api/users/me` - Obtener usuario actual 🔒
-- `GET /api/users` - Listar todos los usuarios 🔒
-- `GET /api/users/{id}` - Obtener usuario por ID 🔒
-- `PUT /api/users/{id}` - Actualizar usuario 🔒
-- `DELETE /api/users/{id}` - Eliminar usuario 🔒
-- `GET /api/users/municipalities` - Obtener municipios
+- `GET /api/users/me` - Get current user 🔒
+- `GET /api/users` - List all users 🔒
+- `GET /api/users/{id}` - Get user by ID 🔒
+- `PUT /api/users/{id}` - Update user 🔒
+- `DELETE /api/users/{id}` - Delete user 🔒
+- `GET /api/users/municipalities` - Get municipalities
 
 ### 📍 Points of Interest
 
-- `GET /api/pois` - Listar POIs
-- `GET /api/pois/personal` - POIs personales 🔒
-- `GET /api/pois/{id}` - Obtener POI por ID
-- `POST /api/pois` - Crear POI 🔒
-- `PUT /api/pois/{id}` - Actualizar POI 🔒
-- `DELETE /api/pois/{id}` - Eliminar POI 🔒
+- `GET /api/pois` - List POIs
+- `GET /api/pois/personal` - Personal POIs 🔒
+- `GET /api/pois/{id}` - Get POI by ID
+- `POST /api/pois` - Create POI 🔒
+- `PUT /api/pois/{id}` - Update POI 🔒
+- `DELETE /api/pois/{id}` - Delete POI 🔒
 
 ### ⚠️ Alerts
 
-- `GET /api/alerts` - Listar alertas
-- `GET /api/alerts/{id}` - Obtener alerta por ID
-- `POST /api/alerts` - Crear alerta
-- `PUT /api/alerts/{id}` - Actualizar alerta
-- `DELETE /api/alerts/{id}` - Eliminar alerta
-- `POST /api/alerts/fetch` - Obtener alertas externas
+- `GET /api/alerts` - List alerts
+- `GET /api/alerts/{id}` - Get alert by ID
+- `POST /api/alerts` - Create alert
+- `PUT /api/alerts/{id}` - Update alert
+- `DELETE /api/alerts/{id}` - Delete alert
+- `POST /api/alerts/fetch` - Fetch external alerts
 
 ### 🔔 Notifications
 
-- `GET /api/notifications` - Listar notificaciones 🔒
-- `GET /api/notifications/{id}` - Obtener notificación 🔒
-- `GET /api/notifications/user/{userId}` - Notificaciones por usuario 🔒
-- `POST /api/notifications` - Crear notificación 🔒
-- `PUT /api/notifications/{id}` - Actualizar notificación 🔒
-- `DELETE /api/notifications/{id}` - Eliminar notificación 🔒
+- `GET /api/notifications` - List notifications 🔒
+- `GET /api/notifications/{id}` - Get notification 🔒
+- `GET /api/notifications/user/{userId}` - Notifications by user 🔒
+- `POST /api/notifications` - Create notification 🔒
+- `PUT /api/notifications/{id}` - Update notification 🔒
+- `DELETE /api/notifications/{id}` - Delete notification 🔒
 
 ### 📍 User Locations
 
-- `GET /api/user-locations/{userId}` - Ubicaciones del usuario 🔒
-- `POST /api/user-locations/{userId}` - Añadir ubicación 🔒
-- `DELETE /api/user-locations/{userId}/{locationId}` - Eliminar ubicación 🔒
+- `GET /api/user-locations/{userId}` - User locations 🔒
+- `POST /api/user-locations/{userId}` - Add location 🔒
+- `DELETE /api/user-locations/{userId}/{locationId}` - Remove location 🔒
 
 ### 👨‍💼 Admin
 
-- `GET /admin` - Dashboard de administración (requiere sesión y admin)
-- `POST /admin/poi` - Crear POI global (admin)
-- `POST /admin/poi/{id}/update` - Actualizar POI (admin)
-- `POST /admin/poi/{id}/delete` - Eliminar POI (admin)
-- `POST /admin/users` - Crear usuario (admin)
-- `POST /admin/users/{id}/update` - Actualizar usuario (admin)
-- `POST /admin/users/{id}/delete` - Eliminar usuario (admin)
+- `GET /admin` - Admin dashboard (requires session and admin privileges)
+- `POST /admin/poi` - Create global POI (admin)
+- `POST /admin/poi/{id}/update` - Update POI (admin)
+- `POST /admin/poi/{id}/delete` - Delete POI (admin)
+- `POST /admin/users` - Create user (admin)
+- `POST /admin/users/{id}/update` - Update user (admin)
+- `POST /admin/users/{id}/delete` - Delete user (admin)
 
-## Notas Importantes
+## Quick Reference
 
-### Duración del Token
+| Method | Endpoint             | Auth | Description             |
+| ------ | -------------------- | ---- | ----------------------- |
+| POST   | `/api/users`         | ❌   | Register new user       |
+| POST   | `/api/users/login`   | ❌   | Login user              |
+| GET    | `/api/users/me`      | ✅   | Get current user        |
+| GET    | `/api/pois`          | ❌   | List all POIs           |
+| GET    | `/api/pois/personal` | ✅   | Get user's POIs         |
+| POST   | `/api/pois`          | ✅   | Create new POI          |
+| GET    | `/api/alerts`        | ❌   | List all alerts         |
+| POST   | `/api/alerts/fetch`  | ❌   | Fetch AEMET alerts      |
+| GET    | `/api/notifications` | ✅   | List user notifications |
 
-- Los tokens JWT tienen una duración de **15 minutos**
-- Usa el endpoint `/api/users/refresh-token` para obtener un nuevo token sin volver a iniciar sesión
+## Important Notes
 
-### Tipos de Autenticación
+### Token Duration
 
-- **JWT Bearer Token**: Para endpoints de la API (`/api/*`)
-- **Session Cookie**: Para endpoints de administración (`/admin/*`)
+- JWT tokens are valid for **15 minutes**
+- Use the `/api/users/refresh-token` endpoint to get a new token without logging in again
 
-### Esquemas de Datos
+### Authentication Types
 
-Todos los esquemas están documentados en Swagger UI, incluyendo:
+- **JWT Bearer Token**: For API endpoints (`/api/*`)
+- **Session Cookie**: For admin endpoints (`/admin/*`)
 
-- User
-- Location
-- PointOfInterest
-- Alert
-- Notification
+### Data Schemas
+
+All schemas are documented in Swagger UI, including:
+
+- **User** - User account information
+- **Location** - Geographic locations in the Canary Islands
+- **PointOfInterest** - Points of interest with coordinates
+- **Alert** - Weather alerts and warnings
+- **Notification** - User notifications
+
+### Response Codes
+
+- `200` - Success
+- `201` - Created
+- `204` - No Content (successful deletion)
+- `400` - Bad Request (validation error)
+- `401` - Unauthorized (authentication required)
+- `403` - Forbidden (insufficient permissions)
+- `404` - Not Found
+- `409` - Conflict (duplicate resource)
+- `500` - Internal Server Error
 
 ## OpenAPI Specification
 
-La especificación OpenAPI en formato JSON está disponible en: **http://localhost:85/api-docs.json**
+The OpenAPI specification in JSON format is available at: **http://localhost:85/api-docs.json**
+
+You can import this into tools like Postman, Insomnia, or any OpenAPI-compatible client.
+
+## Testing with cURL
+
+### Register a User
+
+```bash
+curl -X POST http://localhost:85/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@example.com",
+    "username": "testuser",
+    "password": "password123"
+  }'
+```
+
+### Login
+
+```bash
+curl -X POST http://localhost:85/api/users/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "testuser",
+    "password": "password123"
+  }'
+```
+
+### Get Current User (with token)
+
+```bash
+curl -X GET http://localhost:85/api/users/me \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+## Additional Resources
+
+- [Backend Documentation](BACKEND.md)
+- [Authentication Guide](AUTHENTICATION.md)
+- [Database Schema](DATABASE.md)
+- [Troubleshooting](TROUBLESHOOTING.md)
+
+---
+
+For more detailed information about the API architecture and design patterns, see the [Backend Documentation](BACKEND.md).
