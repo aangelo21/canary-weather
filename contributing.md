@@ -1,6 +1,6 @@
-# Contributing to Canary Weather
+# Contributing to CanaryWeather
 
-Thank you for your interest in contributing to the Canary Weather project! This document provides guidelines and steps for contributing to this weather application for the Canary Islands.
+Thank you for your interest in contributing to the CanaryWeather project! This document provides guidelines and steps for contributing to this weather application for the Canary Islands.
 
 ## Prerequisites
 
@@ -33,48 +33,63 @@ Replace `YOUR_USERNAME` with your GitHub username.
 #### Backend Setup
 
 1. Navigate to the backend directory:
+
    ```bash
    cd backend
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Create a `.env` file in the `backend` directory with the following variables:
-   ```
+
+   ```env
    DB_HOST=localhost
    DB_USER=your_mysql_username
    DB_PASSWORD=your_mysql_password
    DB_NAME=canary_weather
+   DB_DIALECT=mysql
+   DB_PORT=3306
    JWT_SECRET=your_jwt_secret_key
-   PORT=3000
+   SESSION_SECRET=your_session_secret_here
+   PORT=85
+   AEMET_API_KEY=your_aemet_api_key_here
    ```
 
 4. Create a MySQL database named `canary_weather`.
 
 5. Run database migrations:
+
    ```bash
    npm run migrate
    ```
 
 6. (Optional) Seed the database with initial data:
    ```bash
-   npm run seed:pois
-   npm run seed:users
+   npm run seed:all
    ```
 
 #### Frontend Setup
 
 1. Open a new terminal and navigate to the frontend directory:
+
    ```bash
    cd frontend
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
+   ```
+
+3. Create a `.env` file in the `frontend` directory:
+   ```env
+   VITE_API_URL=http://localhost:85
+   VITE_API_KEY=your_api_key_here
    ```
 
 ### 4. Start the Development Servers
@@ -82,15 +97,17 @@ Replace `YOUR_USERNAME` with your GitHub username.
 #### Backend Server
 
 From the `backend` directory:
+
 ```bash
-node index.js
+npm run dev    # Development mode with auto-reload
 ```
 
-The backend server will start on `http://localhost:3000`.
+The backend server will start on `http://localhost:85`
 
 #### Frontend Server
 
 From the `frontend` directory:
+
 ```bash
 npm run dev
 ```
@@ -114,8 +131,28 @@ Use descriptive branch names, e.g., `feature/add-weather-alerts` or `bugfix/fix-
 - Follow the existing code style and structure
 - Write clear, concise commit messages
 - Test your changes thoroughly
+- Add JSDoc comments for new functions
+- Update documentation if needed
 
-### 3. Run Linting (Frontend)
+### 3. Code Style Guidelines
+
+#### Backend (Node.js/Express)
+
+- Use ES6+ features (import/export, arrow functions, async/await)
+- Follow consistent naming conventions (camelCase for variables/functions)
+- Add JSDoc comments for all exported functions
+- Handle errors properly with try/catch blocks
+- Use meaningful variable and function names
+
+#### Frontend (React)
+
+- Use functional components with hooks
+- Keep components small and focused
+- Use descriptive prop names
+- Follow the existing folder structure
+- Add comments for complex logic
+
+### 4. Run Linting (Frontend)
 
 Before committing, run the linter to ensure code quality:
 
@@ -126,31 +163,50 @@ npm run lint
 
 Fix any linting errors before proceeding.
 
-### 4. Test Your Changes
+### 5. Test Your Changes
 
 - Test both backend and frontend functionality
 - Ensure the application runs without errors
 - Verify that existing features still work
+- Test API endpoints using Swagger UI (http://localhost:85/api-docs)
+- Check responsive design on different screen sizes
 
-### 5. Commit Your Changes
+### 6. Commit Your Changes
+
+Follow conventional commit messages:
 
 ```bash
 git add .
-git commit -m "Add a clear description of your changes"
+git commit -m "feat: add weather alert notifications"
 ```
 
-### 6. Push to Your Fork
+Commit message format:
+
+- `feat:` - New feature
+- `fix:` - Bug fix
+- `docs:` - Documentation changes
+- `style:` - Code style changes (formatting, etc.)
+- `refactor:` - Code refactoring
+- `test:` - Adding tests
+- `chore:` - Maintenance tasks
+
+### 7. Push to Your Fork
 
 ```bash
 git push origin feature/your-feature-name
 ```
 
-### 7. Create a Pull Request
+### 8. Create a Pull Request
 
 1. Go to the original repository on GitHub
 2. Click "New Pull Request"
 3. Select your branch and provide a clear description of your changes
-4. Submit the pull request
+4. Include:
+   - What changes were made
+   - Why the changes were necessary
+   - Any breaking changes
+   - Screenshots (if UI changes)
+5. Submit the pull request
 
 ## Reporting Issues
 
@@ -160,12 +216,29 @@ If you find a bug or have a feature request:
 2. Create a new issue with a clear title and description
 3. Include steps to reproduce for bugs
 4. Add screenshots or code examples if relevant
+5. Label the issue appropriately (bug, enhancement, question, etc.)
+
+## Pull Request Review Process
+
+1. A maintainer will review your PR
+2. Address any requested changes
+3. Once approved, your PR will be merged
+4. Your contribution will be acknowledged in the project
 
 ## Additional Notes
 
 - This project uses **Sequelize** for database management
 - The frontend is built with **React** and **Vite**
 - Maps are powered by **Leaflet**
-- Styling uses **Tailwind CSS**
+- API documentation uses **Swagger/OpenAPI**
+- Authentication uses **JWT** tokens
+- File uploads handled by **Multer**
 
-Thank you for contributing to Canary Weather!</content>
+## Need Help?
+
+- Check the [documentation](docs/)
+- Review existing code for examples
+- Ask questions in issues or pull requests
+- Refer to the [API documentation](docs/api.md)
+
+Thank you for contributing to CanaryWeather! 🌤️

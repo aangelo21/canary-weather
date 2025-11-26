@@ -94,7 +94,6 @@ DB_DIALECT=yourdialecthere
 DB_PORT=yourdbporthere
 DB_SSL=yourslshere
 JWT_SECRET=yoursecretword
-AEMET_API_KEY=your_aemet_api_key_here
 ```
 
 - **Run PM2**
