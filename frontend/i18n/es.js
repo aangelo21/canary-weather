@@ -42,6 +42,9 @@ export const es = {
     errorUploadProfile: "Error al subir la imagen de perfil",
     global: "GLOBAL",
     local: "LOCAL",
+    moderate: "Moderado (Amarillo)",
+    severe: "Grave/Extremo (Naranja/Rojo)",
+    errorFetchingExternal: "No se pudieron actualizar los avisos de la fuente externa. Mostrando datos en caché.",
     // Footer
     copyright: "©CanaryWeather |",
     website: "canaryweather.xyz",
@@ -54,6 +57,10 @@ export const es = {
     emailUs: "Envíanos un correo a",
     location: "Ubicación",
     canaryIslands: "Islas Canarias, España",
+    loginTitle: "Inicia sesión en tu cuenta",
+    loginDesc: "Introduce tu correo electrónico para iniciar sesión",
+    createAccountTitle: "Crea una cuenta",
+    createAccountDesc: "Introduce tus datos para crear tu cuenta",
     // LoginModal
     deleteAccount: "Eliminar Cuenta",
     confirmDeleteAccount:

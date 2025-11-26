@@ -118,6 +118,89 @@ export default function LoginModal({
         return null;
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
+        if (isSignUp) {
+            // Signup validation
+            if (
+                !input.email ||
+                !input.username ||
+                !input.password ||
+                !input.confirm
+            ) {
+                setError(t('allFieldsRequired'));
+                return;
+            }
+            if (input.password !== input.confirm) {
+                setError(t('passwordsDontMatch'));
+                return;
+            }
+            setLoading(true);
+            try {
+                // Call API to create new user account
+                const result = await createOrUpdateUser({
+                    email: input.email,
+                    username: input.username,
+                    password: input.password,
+                    location_ids: input.location_ids,
+                });
+                setLoading(false);
+                if (result && result.user) {
+                    // Build user object from response
+                    let loggedUser = result.user;
+                    
+                    // Store user ID in localStorage
+                    if (loggedUser.id)
+                        localStorage.setItem(
+                            "userId",
+                            loggedUser.id
+                        );
+                    // Call onLogin callback
+                    onLogin(loggedUser);
+                } else {
+                    onLogin(result);
+                }
+            } catch (err) {
+                setLoading(false);
+                setError(err.message || t('errorCreateUser'));
+            }
+        } else {
+            // Login validation
+            if (!input.emailOrUsername || !input.password) {
+                setError(t('allFieldsRequired'));
+                return;
+            }
+            setLoading(true);
+            try {
+                // Call API to authenticate user
+                const result = await loginUser({
+                    username: input.emailOrUsername,
+                    password: input.password,
+                });
+                setLoading(false);
+                if (result.user) {
+                    // Build user object from response
+                    let loggedUser = result.user;
+                    
+                    // Store user ID in localStorage
+                    if (loggedUser.id)
+                        localStorage.setItem(
+                            "userId",
+                            loggedUser.id
+                        );
+                    // Call onLogin callback
+                    onLogin(loggedUser);
+                } else {
+                    setError(t('loginFailed'));
+                }
+            } catch (err) {
+                setLoading(false);
+                setError(err.message || t('errorSignIn'));
+            }
+        }
+    };
+
     // Early return if modal is not open
     if (!isOpen) return null;
 
@@ -477,32 +560,205 @@ export default function LoginModal({
     return (
         <>
             {/* Backdrop overlay */}
-            <div className="fixed inset-0 z-9998" onClick={onClose}></div>
+            <div className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
             {/* Modal container */}
             <div
-                className="fixed inset-0 flex items-center justify-center z-9999 p-4"
+                className="fixed inset-0 flex items-center justify-center z-[9999] p-4"
                 onClick={onClose}
             >
                 <div
-                    className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative"
+                    className="w-full max-w-[350px] rounded-xl border bg-card text-card-foreground shadow bg-white dark:bg-gray-800 dark:border-gray-700"
                     onClick={(e) => e.stopPropagation()}
                 >
-                    {/* Close button */}
-                    <button
-                        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-                        onClick={onClose}
-                        type="button"
-                    >
-                        &times;
-                    </button>
-                    {/* Mode toggle text */}
-                    <div className="mb-2 text-sm text-center">
+                    <div className="flex flex-col space-y-1.5 p-6">
+                        <h3 className="font-semibold leading-none tracking-tight text-gray-900 dark:text-white">
+                            {isSignUp ? t('createAccountTitle') : t('loginTitle')}
+                        </h3>
+                        <p className="text-sm text-muted-foreground text-gray-500 dark:text-gray-400">
+                            {isSignUp ? t('createAccountDesc') : t('loginDesc')}
+                        </p>
+                    </div>
+                    <div className="p-6 pt-0">
+                        <form onSubmit={handleSubmit}>
+                            <div className="grid w-full items-center gap-4">
+                                {isSignUp ? (
+                                    <>
+                                        <div className="flex flex-col space-y-1.5">
+                                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-900 dark:text-white" htmlFor="email">
+                                                {t('email')}
+                                            </label>
+                                            <input
+                                                id="email"
+                                                type="email"
+                                                placeholder="m@example.com"
+                                                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:placeholder-gray-400"
+                                                value={input.email}
+                                                onChange={(e) => setInput(i => ({ ...i, email: e.target.value }))}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col space-y-1.5">
+                                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-900 dark:text-white" htmlFor="username">
+                                                {t('username')}
+                                            </label>
+                                            <input
+                                                id="username"
+                                                type="text"
+                                                placeholder="Username"
+                                                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:placeholder-gray-400"
+                                                value={input.username}
+                                                onChange={(e) => setInput(i => ({ ...i, username: e.target.value }))}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col space-y-1.5">
+                                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-900 dark:text-white" htmlFor="password">
+                                                {t('password')}
+                                            </label>
+                                            <input
+                                                id="password"
+                                                type="password"
+                                                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:placeholder-gray-400"
+                                                value={input.password}
+                                                onChange={(e) => setInput(i => ({ ...i, password: e.target.value }))}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col space-y-1.5">
+                                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-900 dark:text-white" htmlFor="confirm">
+                                                {t('confirmPassword')}
+                                            </label>
+                                            <input
+                                                id="confirm"
+                                                type="password"
+                                                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:placeholder-gray-400"
+                                                value={input.confirm}
+                                                onChange={(e) => setInput(i => ({ ...i, confirm: e.target.value }))}
+                                            />
+                                        </div>
+                                        {/* Municipality selector for signup */}
+                                        <div className="flex flex-col space-y-1.5">
+                                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-900 dark:text-white">
+                                                {t('selectMunicipality')}
+                                            </label>
+                                            <div className="flex gap-2 w-full min-w-0">
+                                                <select
+                                                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:bg-gray-800 flex-1 min-w-0"
+                                                    value={selectedLocationToAdd}
+                                                    onChange={(e) => setSelectedLocationToAdd(e.target.value)}
+                                                >
+                                                    <option value="">{t('selectMunicipality')}</option>
+                                                    {municipalities.map((municipality) => (
+                                                        <option key={municipality.id} value={municipality.id}>
+                                                            {municipality.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <button
+                                                    type="button"
+                                                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-black text-white shadow hover:bg-black/90 h-9 px-4 py-2 dark:bg-white dark:text-black dark:hover:bg-white/90"
+                                                    disabled={!selectedLocationToAdd}
+                                                    onClick={() => {
+                                                        if (selectedLocationToAdd && !input.location_ids.includes(selectedLocationToAdd)) {
+                                                            setInput(prev => ({
+                                                                ...prev,
+                                                                location_ids: [...prev.location_ids, selectedLocationToAdd]
+                                                            }));
+                                                            setSelectedLocationToAdd("");
+                                                        }
+                                                    }}
+                                                >
+                                                    {t('add')}
+                                                </button>
+                                            </div>
+                                            {/* Selected locations list */}
+                                            <div className="flex flex-wrap gap-2 mt-2">
+                                                {input.location_ids && input.location_ids.map(locId => {
+                                                    const loc = municipalities.find(m => m.id == locId);
+                                                    return loc ? (
+                                                        <span key={locId} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm flex items-center gap-1">
+                                                            {loc.name}
+                                                            <button
+                                                                type="button"
+                                                                className="hover:text-blue-900 font-bold"
+                                                                onClick={() => {
+                                                                    setInput(prev => ({
+                                                                        ...prev,
+                                                                        location_ids: prev.location_ids.filter(id => id !== locId)
+                                                                    }));
+                                                                }}
+                                                            >
+                                                                &times;
+                                                            </button>
+                                                        </span>
+                                                    ) : null;
+                                                })}
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="flex flex-col space-y-1.5">
+                                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-900 dark:text-white" htmlFor="emailOrUsername">
+                                                {t('emailOrUsername')}
+                                            </label>
+                                            <input
+                                                id="emailOrUsername"
+                                                type="text"
+                                                placeholder="m@example.com"
+                                                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:placeholder-gray-400"
+                                                value={input.emailOrUsername}
+                                                onChange={(e) => setInput(i => ({ ...i, emailOrUsername: e.target.value }))}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col space-y-1.5">
+                                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-900 dark:text-white" htmlFor="password">
+                                                {t('password')}
+                                            </label>
+                                            <input
+                                                id="password"
+                                                type="password"
+                                                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:placeholder-gray-400"
+                                                value={input.password}
+                                                onChange={(e) => setInput(i => ({ ...i, password: e.target.value }))}
+                                            />
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                            {/* Error message display */}
+                            {error && (
+                                <div className="text-red-500 text-sm mt-4 text-center">
+                                    {error}
+                                </div>
+                            )}
+                            {/* Loading message */}
+                            {loading && (
+                                <div className="text-blue-500 text-sm mt-4 text-center">
+                                    {t('processing')}
+                                </div>
+                            )}
+                        </form>
+                    </div>
+                    <div className="flex items-center p-6 pt-0 justify-between">
+                        <button 
+                            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 border-gray-200 dark:border-gray-700 dark:text-white dark:hover:bg-gray-800"
+                            onClick={onClose}
+                        >
+                            {t('cancel')}
+                        </button>
+                        <button 
+                            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-black text-white shadow hover:bg-black/90 h-9 px-4 py-2 dark:bg-white dark:text-black dark:hover:bg-white/90"
+                            onClick={handleSubmit}
+                            disabled={loading}
+                        >
+                            {isSignUp ? t('signUp') : t('signIn')}
+                        </button>
+                    </div>
+                    <div className="p-6 pt-0 text-center text-sm text-gray-500 dark:text-gray-400">
                         {!isSignUp ? (
                             <span>
                                 {t('noAccount')}{" "}
                                 <button
                                     type="button"
-                                    className="text-blue-600 hover:underline"
+                                    className="text-blue-600 hover:underline dark:text-blue-400"
                                     onClick={() => setIsSignUp(true)}
                                 >
                                     {t('signUp')}
@@ -513,7 +769,7 @@ export default function LoginModal({
                                 {t('haveAccount')}{" "}
                                 <button
                                     type="button"
-                                    className="text-blue-600 hover:underline"
+                                    className="text-blue-600 hover:underline dark:text-blue-400"
                                     onClick={() => setIsSignUp(false)}
                                 >
                                     {t('signIn')}
@@ -521,253 +777,6 @@ export default function LoginModal({
                             </span>
                         )}
                     </div>
-                    {/* Modal title */}
-                    <h2 className="text-xl font-semibold mb-4 text-center">
-                        {isSignUp ? t('signUp') : t('signIn')}
-                    </h2>
-                    {/* Error message display */}
-                    {error && (
-                        <div className="text-error text-sm mb-2 text-center">
-                            {error}
-                        </div>
-                    )}
-                    {/* Loading message */}
-                    {loading && (
-                        <div className="text-info text-sm mb-2 text-center">
-                            {t('processing')}
-                        </div>
-                    )}
-                    {/* Main authentication form */}
-                    <form
-                        className="flex flex-col gap-4"
-                        onSubmit={async (e) => {
-                            e.preventDefault();
-                            setError("");
-                            if (isSignUp) {
-                                // Signup validation
-                                if (
-                                    !input.email ||
-                                    !input.username ||
-                                    !input.password ||
-                                    !input.confirm
-                                ) {
-                                    setError(t('allFieldsRequired'));
-                                    return;
-                                }
-                                if (input.password !== input.confirm) {
-                                    setError(t('passwordsDontMatch'));
-                                    return;
-                                }
-                                setLoading(true);
-                                try {
-                                    // Call API to create new user account
-                                    const result = await createOrUpdateUser({
-                                        email: input.email,
-                                        username: input.username,
-                                        password: input.password,
-                                        location_ids: input.location_ids,
-                                    });
-                                    setLoading(false);
-                                    if (result && result.user) {
-                                        // Build user object from response
-                                        let loggedUser = result.user;
-                                        
-                                        // Store user ID in localStorage
-                                        if (loggedUser.id)
-                                            localStorage.setItem(
-                                                "userId",
-                                                loggedUser.id
-                                            );
-                                        // Call onLogin callback
-                                        onLogin(loggedUser);
-                                    } else {
-                                        onLogin(result);
-                                    }
-                                } catch (err) {
-                                    setLoading(false);
-                                    setError(err.message || t('errorCreateUser'));
-                                }
-                            } else {
-                                // Login validation
-                                if (!input.emailOrUsername || !input.password) {
-                                    setError(t('allFieldsRequired'));
-                                    return;
-                                }
-                                setLoading(true);
-                                try {
-                                    // Call API to authenticate user
-                                    const result = await loginUser({
-                                        username: input.emailOrUsername,
-                                        password: input.password,
-                                    });
-                                    setLoading(false);
-                                    if (result.user) {
-                                        // Build user object from response
-                                        let loggedUser = result.user;
-                                        
-                                        // Store user ID in localStorage
-                                        if (loggedUser.id)
-                                            localStorage.setItem(
-                                                "userId",
-                                                loggedUser.id
-                                            );
-                                        // Call onLogin callback
-                                        onLogin(loggedUser);
-                                    } else {
-                                        setError(t('loginFailed'));
-                                    }
-                                } catch (err) {
-                                    setLoading(false);
-                                    setError(err.message || t('errorSignIn'));
-                                }
-                            }
-                        }}
-                    >
-                        {/* Conditional form fields based on signup/login mode */}
-                        {isSignUp ? (
-                            <>
-                                {/* Signup form fields */}
-                                <input
-                                    type="email"
-                                    placeholder={t('email')}
-                                    className="border rounded px-3 py-2"
-                                    value={input.email}
-                                    onChange={(e) =>
-                                        setInput((i) => ({
-                                            ...i,
-                                            email: e.target.value,
-                                        }))
-                                    }
-                                />
-                                <input
-                                    type="text"
-                                    placeholder={t('username')}
-                                    className="border rounded px-3 py-2"
-                                    value={input.username}
-                                    onChange={(e) =>
-                                        setInput((i) => ({
-                                            ...i,
-                                            username: e.target.value,
-                                        }))
-                                    }
-                                />
-                                <input
-                                    type="password"
-                                    placeholder={t('password')}
-                                    className="border rounded px-3 py-2"
-                                    value={input.password}
-                                    onChange={(e) =>
-                                        setInput((i) => ({
-                                            ...i,
-                                            password: e.target.value,
-                                        }))
-                                    }
-                                />
-                                <input
-                                    type="password"
-                                    placeholder={t('confirmPassword')}
-                                    className="border rounded px-3 py-2"
-                                    value={input.confirm}
-                                    onChange={(e) =>
-                                        setInput((i) => ({
-                                            ...i,
-                                            confirm: e.target.value,
-                                        }))
-                                    }
-                                />
-                                {/* Municipality selector for signup */}
-                                <div className="flex gap-2 w-full min-w-0">
-                                    <select
-                                        className="border rounded px-3 py-2 flex-1 min-w-0"
-                                        value={selectedLocationToAdd}
-                                        onChange={(e) => setSelectedLocationToAdd(e.target.value)}
-                                    >
-                                        <option value="">{t('selectMunicipality')}</option>
-                                        {municipalities.map((municipality) => (
-                                            <option key={municipality.id} value={municipality.id}>
-                                                {municipality.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <button
-                                        type="button"
-                                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400 flex-none"
-                                        disabled={!selectedLocationToAdd}
-                                        onClick={() => {
-                                            if (selectedLocationToAdd && !input.location_ids.includes(selectedLocationToAdd)) {
-                                                setInput(prev => ({
-                                                    ...prev,
-                                                    location_ids: [...prev.location_ids, selectedLocationToAdd]
-                                                }));
-                                                setSelectedLocationToAdd("");
-                                            }
-                                        }}
-                                    >
-                                        {t('add')}
-                                    </button>
-                                </div>
-                                
-                                {/* Selected locations list */}
-                                <div className="flex flex-wrap gap-2 mb-2">
-                                    {input.location_ids && input.location_ids.map(locId => {
-                                        const loc = municipalities.find(m => m.id == locId);
-                                        return loc ? (
-                                            <span key={locId} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm flex items-center gap-1">
-                                                {loc.name}
-                                                <button
-                                                    type="button"
-                                                    className="hover:text-blue-900 font-bold"
-                                                    onClick={() => {
-                                                        setInput(prev => ({
-                                                            ...prev,
-                                                            location_ids: prev.location_ids.filter(id => id !== locId)
-                                                        }));
-                                                    }}
-                                                >
-                                                    &times;
-                                                </button>
-                                            </span>
-                                        ) : null;
-                                    })}
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                {/* Login form fields */}
-                                <input
-                                    type="text"
-                                    placeholder={t('emailOrUsername')}
-                                    className="border rounded px-3 py-2"
-                                    value={input.emailOrUsername}
-                                    onChange={(e) =>
-                                        setInput((i) => ({
-                                            ...i,
-                                            emailOrUsername: e.target.value,
-                                        }))
-                                    }
-                                />
-                                <input
-                                    type="password"
-                                    placeholder={t('password')}
-                                    className="border rounded px-3 py-2"
-                                    value={input.password}
-                                    onChange={(e) =>
-                                        setInput((i) => ({
-                                            ...i,
-                                            password: e.target.value,
-                                        }))
-                                    }
-                                />
-                            </>
-                        )}
-                        {/* Submit button */}
-                        <button
-                            type="submit"
-                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                        >
-                            {isSignUp ? t('signUp') : t('signIn')}
-                        </button>
-                    </form>
                 </div>
             </div>
         </>

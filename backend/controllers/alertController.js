@@ -1,5 +1,5 @@
 import { Alert } from "../models/index.js";
-import { fetchAndStoreWarnings } from "../services/aemetService.js";
+import { fetchAndStoreWarnings } from "../services/meteoalarmService.js";
 
 export const getAllAlerts = async (req, res) => {
   try {

@@ -13,13 +13,13 @@ function Warnings() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Trigger fetch from AEMET first
+        // Trigger fetch from external source first
         try {
             await fetchWarnings();
             setFetchError(null);
         } catch (e) {
-            console.error("Failed to refresh warnings from AEMET:", e);
-            setFetchError(t('errorFetchingAemet') || "Could not update warnings from AEMET. Showing cached data.");
+            console.error("Failed to refresh warnings from external source:", e);
+            setFetchError(t('errorFetchingExternal') || "Could not update warnings from external source. Showing cached data.");
         }
 
         const data = await fetchAlerts();

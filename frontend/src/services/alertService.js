@@ -16,7 +16,7 @@ export async function fetchAlertsByLocation(locationId) {
   return response.json();
 }
 
-// Function to fetch warnings from AEMET (admin function)
+// Function to fetch warnings from external source (admin function)
 export async function fetchWarnings() {
   const response = await fetch(`${API_BASE}/alerts/fetch`, {
     method: "POST",
