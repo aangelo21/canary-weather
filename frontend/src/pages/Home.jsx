@@ -19,7 +19,7 @@ function Home() {
                 <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-10 pb-16 lg:pt-16 lg:pb-24 relative z-10">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                         {/* Left column - Hero text content */}
-                        <div className="flex flex-col justify-center text-center lg:text-left">
+                        <div className="flex flex-col justify-center text-center lg:text-left lg:-mt-16">
                             <div className="space-y-6">
                                 {/* Badge */}
                                 <div className="inline-flex items-center justify-center lg:justify-start">
@@ -71,8 +71,6 @@ function Home() {
                         {/* Right column - hero image with phones */}
                         <div className="flex justify-center lg:justify-center relative">
                             <div className="relative w-full max-w-xs lg:max-w-sm transform hover:scale-105 transition-transform duration-500">
-                                {/* Abstract shapes behind image */}
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-linear-to-tr from-blue-200/30 to-cyan-200/30 dark:from-blue-500/10 dark:to-cyan-500/10 rounded-full blur-2xl -z-10"></div>
                                 
                                 {/* Placeholder for phone mockup image */}
                                 <div className="w-full aspect-square flex items-center justify-center">
