@@ -46,7 +46,7 @@ function Home() {
                                     {/* Button to navigate to the map page */}
                                     <button
                                         onClick={() => navigate("/map")}
-                                        className="group relative px-8 py-4 bg-brand-primary hover:bg-blue-700 text-white rounded-full font-bold shadow-lg hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
+                                        className="group relative px-8 py-4 bg-brand-primary hover:bg-blue-700 text-white rounded-full font-bold shadow-lg hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex justify-center items-center"
                                     >
                                         <span className="relative z-10 flex items-center gap-2">
                                             {t('maps')}
@@ -69,15 +69,15 @@ function Home() {
                         </div>
 
                         {/* Right column - hero image with phones */}
-                        <div className="flex justify-center lg:justify-end relative">
-                            <div className="relative w-full max-w-md lg:max-w-lg transform hover:scale-105 transition-transform duration-500">
+                        <div className="flex justify-center lg:justify-center relative">
+                            <div className="relative w-full max-w-xs lg:max-w-sm transform hover:scale-105 transition-transform duration-500">
                                 {/* Abstract shapes behind image */}
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-linear-to-tr from-blue-200/30 to-yellow-200/30 dark:from-blue-500/10 dark:to-yellow-500/10 rounded-full blur-2xl -z-10"></div>
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-linear-to-tr from-blue-200/30 to-cyan-200/30 dark:from-blue-500/10 dark:to-cyan-500/10 rounded-full blur-2xl -z-10"></div>
                                 
                                 {/* Placeholder for phone mockup image */}
                                 <div className="w-full aspect-square flex items-center justify-center">
                                     <img 
-                                        src="/phone-mockup.png" 
+                                        src="/canary-weather-phone.png" 
                                         alt="Mobile phones showing weather app"
                                         className="w-full h-auto object-contain drop-shadow-2xl z-10"
                                         onError={(e) => {
