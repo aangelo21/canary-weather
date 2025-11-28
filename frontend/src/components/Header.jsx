@@ -221,13 +221,18 @@ function Header() {
             <div className="relative language-dropdown">
               <button
                 onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-                className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg transition-colors border border-gray-300"
+                className="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-full transition-all border border-gray-200 shadow-sm hover:shadow-md"
               >
+                <img 
+                  src={i18n.language === 'en' ? "https://flagcdn.com/w40/gb.png" : "https://flagcdn.com/w40/es.png"} 
+                  alt={i18n.language === 'en' ? "English" : "Español"}
+                  className="w-5 h-5 rounded-full object-cover shadow-sm"
+                />
                 <span className="text-sm font-medium">
                   {i18n.language === 'en' ? 'EN' : 'ES'}
                 </span>
                 <svg
-                  className={`w-4 h-4 transition-transform ${showLanguageDropdown ? 'rotate-180' : ''}`}
+                  className={`w-4 h-4 text-gray-400 transition-transform ${showLanguageDropdown ? 'rotate-180' : ''}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -236,28 +241,30 @@ function Header() {
                 </svg>
               </button>
               {showLanguageDropdown && (
-                <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                <div className="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden">
                   <button
                     onClick={() => {
                       i18n.changeLanguage('es');
                       setShowLanguageDropdown(false);
                     }}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 rounded-t-lg ${
+                    className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 flex items-center gap-3 transition-colors ${
                       i18n.language === 'es' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
                     }`}
                   >
-                    🇪🇸 Español
+                    <img src="https://flagcdn.com/w40/es.png" alt="Español" className="w-5 h-5 rounded-full object-cover shadow-sm" />
+                    Español
                   </button>
                   <button
                     onClick={() => {
                       i18n.changeLanguage('en');
                       setShowLanguageDropdown(false);
                     }}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 rounded-b-lg ${
+                    className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 flex items-center gap-3 transition-colors ${
                       i18n.language === 'en' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
                     }`}
                   >
-                    🇺🇸 English
+                    <img src="https://flagcdn.com/w40/gb.png" alt="English" className="w-5 h-5 rounded-full object-cover shadow-sm" />
+                    English
                   </button>
                 </div>
               )}
@@ -389,32 +396,42 @@ function Header() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-700">{t('language')}:</span>
-                    <div className="flex gap-2">
+                    <div className="flex gap-3">
                       <button
                         onClick={() => {
                           i18n.changeLanguage('en');
                           setShowMobileSettings(false);
                         }}
-                        className={`px-3 py-1 text-sm rounded ${
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${
                           i18n.language === 'en'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            ? 'bg-blue-50 border-blue-200 text-blue-700 shadow-sm ring-1 ring-blue-200'
+                            : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
                         }`}
                       >
-                        🇺🇸 EN
+                        <img 
+                          src="https://flagcdn.com/w40/gb.png" 
+                          alt="English" 
+                          className="w-6 h-6 rounded-full object-cover shadow-sm"
+                        />
+                        <span className="text-sm font-medium">EN</span>
                       </button>
                       <button
                         onClick={() => {
                           i18n.changeLanguage('es');
                           setShowMobileSettings(false);
                         }}
-                        className={`px-3 py-1 text-sm rounded ${
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${
                           i18n.language === 'es'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            ? 'bg-blue-50 border-blue-200 text-blue-700 shadow-sm ring-1 ring-blue-200'
+                            : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
                         }`}
                       >
-                        🇪🇸 ES
+                        <img 
+                          src="https://flagcdn.com/w40/es.png" 
+                          alt="Español" 
+                          className="w-6 h-6 rounded-full object-cover shadow-sm"
+                        />
+                        <span className="text-sm font-medium">ES</span>
                       </button>
                     </div>
                   </div>
