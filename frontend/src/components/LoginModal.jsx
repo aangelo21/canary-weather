@@ -9,6 +9,7 @@ import {
   loginUser,
   deleteUser,
   fetchMunicipalities,
+  getCurrentUser,
 } from "../services/userService";
 import { useTranslation } from "react-i18next";
 
@@ -55,6 +56,7 @@ export default function LoginModal({
     // Runs when user data changes or modal opens
     useEffect(() => {
         if (user && isOpen) {
+            // Initialize with current user prop
             setInput({
                 email: user.email || "",
                 username: user.username || "",
@@ -63,6 +65,21 @@ export default function LoginModal({
                 emailOrUsername: "",
                 location_ids: user.Locations ? user.Locations.map(l => String(l.id)) : [],
             });
+
+            // Fetch latest user data to ensure locations are up to date
+            // This handles cases where locations were modified elsewhere (e.g. deleting a local POI)
+            getCurrentUser()
+                .then((freshUser) => {
+                    setInput((prev) => ({
+                        ...prev,
+                        location_ids: freshUser.Locations
+                            ? freshUser.Locations.map((l) => String(l.id))
+                            : [],
+                    }));
+                    // Update local storage to keep it in sync
+                    localStorage.setItem("cw_user", JSON.stringify(freshUser));
+                })
+                .catch((err) => console.error("Error refreshing user data:", err));
         }
     }, [user, isOpen]);
 

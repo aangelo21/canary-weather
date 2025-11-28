@@ -43,6 +43,27 @@ export async function logoutUser() {
   return response.json();
 }
 
+// Function to restore session by refreshing token
+export async function restoreSession() {
+  try {
+    const response = await fetch(`${API_BASE}/users/refresh-token`, {
+      method: "POST",
+      credentials: "include",
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data.token) {
+        setAccessToken(data.token);
+        return true;
+      }
+    }
+  } catch (error) {
+    console.error("Error restoring session:", error);
+  }
+  return false;
+}
+
 // Function to get the current authenticated user's profile
 export async function getCurrentUser() {
   // Make GET request to user profile endpoint with credentials
