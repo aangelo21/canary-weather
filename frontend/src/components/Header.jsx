@@ -364,14 +364,7 @@ function Header() {
                 <span>{t('login')}</span>
               </button>
             )}
-            {/* Login modal component */}
-            <LoginModal
-              isOpen={showLogin}
-              onClose={() => setShowLogin(false)}
-              onLogin={handleLogin}
-              user={user}
-              onLogout={handleLogout}
-            />
+            {/* Login modal component - Removed from here to be placed at root level */}
           </div>
 
           {/* Mobile menu toggle button */}
@@ -635,20 +628,21 @@ function Header() {
                     {t('login')}
                   </button>
                 )}
-                {/* Mobile login modal */}
-                <LoginModal
-                  isOpen={showLogin}
-                  onClose={() => setShowLogin(false)}
-                  onLogin={handleLogin}
-                  user={user}
-                  onLogout={handleLogout}
-                />
               </li>
 
             </ul>
           </div>
         )}
       </div>
+      
+      {/* Login modal component - Placed here to ensure it's always mounted and available */}
+      <LoginModal
+        isOpen={showLogin}
+        onClose={() => setShowLogin(false)}
+        onLogin={handleLogin}
+        user={user}
+        onLogout={handleLogout}
+      />
     </header>
   );
 }
