@@ -8,13 +8,19 @@ const destinations = [
   { id: 3, key: 'timanfaya', image: 'timanfaya.webp' },
   { id: 4, key: 'corralejo', image: 'corralejo.webp' },
   { id: 5, key: 'garajonay', image: 'garajonay.webp' },
+  { id: 6, key: 'roquenublo', image: 'roquenublo.webp' },
 ];
 
 export default function DestinationCarousel() {
   const { t } = useTranslation();
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // Create a tripled list to simulate infinite scrolling
+  const extendedDestinations = [...destinations, ...destinations, ...destinations];
+  // Start in the middle set
+  const [currentIndex, setCurrentIndex] = useState(destinations.length);
+  const [isTransitioning, setIsTransitioning] = useState(true);
   const [itemsPerPage, setItemsPerPage] = useState(1);
   const [itemWidth, setItemWidth] = useState(0);
+  const [containerWidth, setContainerWidth] = useState(0);
   const itemRef = useRef(null);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
@@ -34,6 +40,7 @@ export default function DestinationCarousel() {
           // compute item width (first child) and include gap (24px = gap-6)
           const w = itemRef.current.offsetWidth;
           setItemWidth(w + 24);
+          setContainerWidth(containerRef.current.offsetWidth);
         }
       }, 0);
     };
@@ -43,22 +50,41 @@ export default function DestinationCarousel() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Handle infinite scroll reset
+  useEffect(() => {
+    if (currentIndex >= destinations.length * 2) {
+      const timer = setTimeout(() => {
+        setIsTransitioning(false);
+        setCurrentIndex(destinations.length);
+      }, 500);
+      return () => clearTimeout(timer);
+    } else if (currentIndex < destinations.length) {
+      const timer = setTimeout(() => {
+        setIsTransitioning(false);
+        setCurrentIndex(destinations.length * 2 - 1);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex]);
+
+  // Re-enable transition after reset
+  useEffect(() => {
+    if (!isTransitioning) {
+      const timer = setTimeout(() => {
+        setIsTransitioning(true);
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [isTransitioning]);
+
   const nextSlide = () => {
-    setCurrentIndex((prevIndex) => {
-      // compute max allowed index so we don't translate beyond content
-      if (!contentRef.current) return prevIndex;
-      const maxTranslate = Math.max(0, contentRef.current.scrollWidth - contentRef.current.clientWidth);
-      const desired = (prevIndex + 1) * itemWidth;
-      if (desired > maxTranslate) {
-        // if moving one more would overflow, go to start (wrap)
-        return 0;
-      }
-      return prevIndex + 1;
-    });
+    if (!isTransitioning) return;
+    setCurrentIndex((prevIndex) => prevIndex + 1);
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? 0 : prevIndex - 1));
+    if (!isTransitioning) return;
+    setCurrentIndex((prevIndex) => prevIndex - 1);
   };
 
   return (
@@ -67,17 +93,17 @@ export default function DestinationCarousel() {
         {t('popularDestinations') || "Popular Destinations"}
       </h2>
       
-      <div className="relative overflow-hidden py-10 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" ref={containerRef}>
+      <div className="relative overflow-hidden py-10 -mx-4 sm:-mx-6 lg:-mx-8" ref={containerRef}>
         <div 
           ref={contentRef}
-          className="flex transition-transform duration-500 ease-in-out gap-6"
-          style={{ transform: `translateX(-${Math.min(currentIndex * itemWidth, Math.max(0, (contentRef.current ? contentRef.current.scrollWidth : 0) - (contentRef.current ? contentRef.current.clientWidth : 0))) }px)` }}
+          className={`flex gap-6 ${isTransitioning ? 'transition-transform duration-500 ease-in-out' : ''}`}
+          style={{ transform: `translateX(${ (containerWidth / 2) - ((itemWidth - 24) / 2) - (currentIndex * itemWidth) }px)` }}
         >
-          {destinations.map((dest, index) => (
+          {extendedDestinations.map((dest, index) => (
             <div 
-              key={dest.id} 
+              key={`${dest.id}-${index}`}
               ref={index === 0 ? itemRef : null}
-              className="shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
+              className="shrink-0 w-[75%] sm:w-[40%] lg:w-[30%]"
             >
               <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden h-full transform transition-all hover:scale-105 duration-300">
                 <div className="h-48 overflow-hidden">

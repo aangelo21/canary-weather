@@ -152,6 +152,39 @@ export const updatePointOfInterest = async (req, res) => {
 export const deletePointOfInterest = async (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.user.id;
+
+    const poi = await PointOfInterest.findByPk(id);
+    if (!poi)
+      return res.status(404).json({ error: "PointOfInterest not found" });
+
+    if (poi.type === 'local') {
+      // For local POIs, we only remove the user's association
+      await UserPointOfInterest.destroy({
+        where: {
+          user_id: userId,
+          point_of_interest_id: id
+        }
+      });
+
+      // Also remove the UserLocation association
+      if (poi.name.startsWith('Municipio: ')) {
+        const locationName = poi.name.replace('Municipio: ', '');
+        const location = await Location.findOne({ where: { name: locationName } });
+        
+        if (location) {
+          await UserLocation.destroy({
+            where: {
+              user_id: userId,
+              location_id: location.id
+            }
+          });
+        }
+      }
+      
+      return res.status(204).send();
+    }
+
     const deleted = await PointOfInterest.destroy({ where: { id } });
     if (!deleted)
       return res.status(404).json({ error: "PointOfInterest not found" });

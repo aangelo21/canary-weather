@@ -16,10 +16,10 @@ function Home() {
             {/* Hero Section - main promotional area */}
             <div className="relative overflow-hidden">
                 
-                <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-10 pb-16 lg:pt-16 lg:pb-24 relative z-10">
+                <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-10 pb-10 lg:pt-16 lg:pb-12 relative z-10">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                         {/* Left column - Hero text content */}
-                        <div className="flex flex-col justify-center text-center lg:text-left">
+                        <div className="flex flex-col justify-center text-center lg:text-left lg:-mt-16">
                             <div className="space-y-6">
                                 {/* Badge */}
                                 <div className="inline-flex items-center justify-center lg:justify-start">
@@ -46,7 +46,7 @@ function Home() {
                                     {/* Button to navigate to the map page */}
                                     <button
                                         onClick={() => navigate("/map")}
-                                        className="group relative px-8 py-4 bg-brand-primary hover:bg-blue-700 text-white rounded-full font-bold shadow-lg hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
+                                        className="group relative px-8 py-4 bg-brand-primary hover:bg-blue-700 text-white rounded-full font-bold shadow-lg hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex justify-center items-center"
                                     >
                                         <span className="relative z-10 flex items-center gap-2">
                                             {t('maps')}
@@ -69,15 +69,13 @@ function Home() {
                         </div>
 
                         {/* Right column - hero image with phones */}
-                        <div className="flex justify-center lg:justify-end relative">
-                            <div className="relative w-full max-w-md lg:max-w-lg transform hover:scale-105 transition-transform duration-500">
-                                {/* Abstract shapes behind image */}
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-linear-to-tr from-blue-200/30 to-yellow-200/30 dark:from-blue-500/10 dark:to-yellow-500/10 rounded-full blur-2xl -z-10"></div>
+                        <div className="flex justify-center lg:justify-center relative">
+                            <div className="relative w-full max-w-xs lg:max-w-sm transform hover:scale-105 transition-transform duration-500">
                                 
                                 {/* Placeholder for phone mockup image */}
                                 <div className="w-full aspect-square flex items-center justify-center">
                                     <img 
-                                        src="/phone-mockup.png" 
+                                        src="/canary-weather-phone.png" 
                                         alt="Mobile phones showing weather app"
                                         className="w-full h-auto object-contain drop-shadow-2xl z-10"
                                         onError={(e) => {
