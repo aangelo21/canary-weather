@@ -93,7 +93,7 @@ export default function DestinationCarousel() {
         {t('popularDestinations') || "Popular Destinations"}
       </h2>
       
-      <div className="relative overflow-hidden py-10 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" ref={containerRef}>
+      <div className="relative overflow-hidden py-10 -mx-4 sm:-mx-6 lg:-mx-8" ref={containerRef}>
         <div 
           ref={contentRef}
           className={`flex gap-6 ${isTransitioning ? 'transition-transform duration-500 ease-in-out' : ''}`}
