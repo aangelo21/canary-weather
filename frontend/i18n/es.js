@@ -147,6 +147,11 @@ export const es = {
         location: "La Gomera",
         description: "Antiguos bosques de laurisilva envueltos en niebla.",
       },
+      roquenublo: {
+        name: "Roque Nublo",
+        location: "Gran Canaria",
+        description: "Una formación rocosa volcánica icónica y antiguo lugar sagrado.",
+      },
     },
     forecastForYou: "Perfecto para actividades",
     lifestyleDesc: "Vas a hacer deporte y justo empieza a llover?, obten prediccion meteorologica a tiempo real y evita eso",

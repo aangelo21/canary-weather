@@ -147,6 +147,11 @@ export const en = {
         location: "La Gomera",
         description: "Ancient laurel forests shrouded in mist.",
       },
+      roquenublo: {
+        name: "Roque Nublo",
+        location: "Gran Canaria",
+        description: "An iconic volcanic rock formation and ancient sacred place.",
+      },
     },
     forecastForYou: "Perfect for activities",
     lifestyleDesc: "Going for sports and it starts raining? Get real-time weather forecast and avoid that.",

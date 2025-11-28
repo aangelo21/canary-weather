@@ -8,6 +8,7 @@ const destinations = [
   { id: 3, key: 'timanfaya', image: 'timanfaya.webp' },
   { id: 4, key: 'corralejo', image: 'corralejo.webp' },
   { id: 5, key: 'garajonay', image: 'garajonay.webp' },
+  { id: 6, key: 'roquenublo', image: 'roquenublo.webp' },
 ];
 
 export default function DestinationCarousel() {
