@@ -362,7 +362,7 @@ export default function LoginModal({
                             <input
                                 ref={fileInputRef}
                                 type="file"
-                                accept="image/*"
+                                accept="image/jpeg,image/png,image/webp,image/gif"
                                 onChange={handleImageChange}
                                 className="hidden"
                             />
