@@ -281,28 +281,28 @@ export default function LoginModal({
         return (
             <>
                 <div
-                    className="fixed inset-0 z-9998"
+                    className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm"
                     onClick={() => setShowDeleteConfirm(false)}
                 ></div>
                 <div
-                    className="fixed inset-0 flex items-center justify-center z-9999 p-4"
+                    className="fixed inset-0 flex items-center justify-center z-[9999] p-4"
                     onClick={() => setShowDeleteConfirm(false)}
                 >
                     <div
-                        className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative"
+                        className="bg-white dark:bg-gray-900 dark:border-gray-800 p-6 rounded-lg shadow-lg border w-full max-w-sm relative"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <button
-                            className="absolute top-2 right-2 text-neutral-2 hover:text-neutral-1"
+                            className="absolute top-2 right-2 text-neutral-2 hover:text-neutral-1 dark:text-gray-400 dark:hover:text-gray-200"
                             onClick={() => setShowDeleteConfirm(false)}
                             type="button"
                         >
                             &times;
                         </button>
-                        <h2 className="text-xl font-semibold mb-4 text-center">
+                        <h2 className="text-xl font-semibold mb-4 text-center text-gray-900 dark:text-white">
                             {t('deleteAccount')}
                         </h2>
-                        <p className="text-center mb-6">
+                        <p className="text-center mb-6 text-gray-600 dark:text-gray-300">
                             {t('confirmDeleteAccount')}
                         </p>
                         {error && (
@@ -356,23 +356,23 @@ export default function LoginModal({
     if (user) {
         return (
             <>
-                <div className="fixed inset-0 z-9998" onClick={onClose}></div>
+                <div className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
                 <div
-                    className="fixed inset-0 flex items-center justify-center z-9999 p-4"
+                    className="fixed inset-0 flex items-center justify-center z-[9999] p-4"
                     onClick={onClose}
                 >
                     <div
-                        className="bg-white p-6 rounded-lg shadow-lg border w-full max-w-sm relative"
+                        className="bg-white dark:bg-gray-900 dark:border-gray-800 p-6 rounded-lg shadow-lg border w-full max-w-sm relative"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <button
-                            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                             onClick={onClose}
                             type="button"
                         >
                             &times;
                         </button>
-                        <h2 className="text-xl font-semibold mb-4 text-center">
+                        <h2 className="text-xl font-semibold mb-4 text-center text-gray-900 dark:text-white">
                             {t('editProfile')}
                         </h2>
                         <div className="flex flex-col items-center mb-4">
@@ -658,7 +658,7 @@ export default function LoginModal({
                 onClick={onClose}
             >
                 <div
-                    className="w-full max-w-[350px] rounded-xl border bg-card text-card-foreground shadow bg-white dark:bg-gray-800 dark:border-gray-700"
+                    className="w-full max-w-[350px] rounded-xl border shadow bg-white dark:bg-gray-900 dark:border-gray-800"
                     onClick={(e) => e.stopPropagation()}
                 >
                     <div className="flex flex-col space-y-1.5 p-6">

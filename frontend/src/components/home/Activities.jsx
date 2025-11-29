@@ -28,16 +28,24 @@ export default function Activities() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {/* Surfing Card */}
+                    {/* 
+                     * Surfing Card 
+                     * Displays surfing activity with an image background, gradient overlay, and bottom-aligned text.
+                     */}
                     <div className="group relative overflow-hidden rounded-3xl h-80 cursor-pointer shadow-xl">
+                        {/* Background Image with Zoom Effect on Hover */}
                         <img
                             src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=800&q=80"
                             alt={t('surfing') || 'Surfing & Water Sports'}
                             loading="lazy"
                             className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                         />
-                        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent"></div>
-                        <div className="absolute bottom-0 left-0 p-8 relative z-10">
+                        
+                        {/* Gradient Overlay for Text Readability */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        
+                        {/* Content Container - Positioned at bottom left with z-index to sit above image/gradient */}
+                        <div className="absolute bottom-0 left-0 p-8 z-10">
                             <div className="text-white mb-2">
                                 <svg
                                     className="w-8 h-8"
@@ -63,7 +71,10 @@ export default function Activities() {
                         </div>
                     </div>
 
-                    {/* Hiking Card */}
+                    {/* 
+                     * Hiking Card 
+                     * Displays hiking activity with similar styling.
+                     */}
                     <div className="group relative overflow-hidden rounded-3xl h-80 cursor-pointer shadow-xl">
                         <img
                             src="https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80"
@@ -71,8 +82,8 @@ export default function Activities() {
                             loading="lazy"
                             className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                         />
-                        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent"></div>
-                        <div className="absolute bottom-0 left-0 p-8 relative z-10">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div className="absolute bottom-0 left-0 p-8 z-10">
                             <div className="text-white mb-2">
                                 <svg
                                     className="w-8 h-8"
@@ -98,7 +109,10 @@ export default function Activities() {
                         </div>
                     </div>
 
-                    {/* Stargazing Card */}
+                    {/* 
+                     * Stargazing Card 
+                     * Displays stargazing activity with similar styling.
+                     */}
                     <div className="group relative overflow-hidden rounded-3xl h-80 cursor-pointer shadow-xl">
                         <img
                             src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80"
@@ -106,8 +120,8 @@ export default function Activities() {
                             loading="lazy"
                             className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                         />
-                        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent"></div>
-                        <div className="absolute bottom-0 left-0 p-8 relative z-10">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div className="absolute bottom-0 left-0 p-8 z-10">
                             <div className="text-white mb-2">
                                 <svg
                                     className="w-8 h-8"

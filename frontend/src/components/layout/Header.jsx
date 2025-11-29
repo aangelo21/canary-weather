@@ -9,15 +9,21 @@ import ThemeSwitch from '../common/ThemeSwitch';
 /**
  * Header Component.
  *
- * The main navigation bar of the application. It persists across all pages and provides:
- * - **Navigation**: Links to Home, Map, POIs, Warnings, and About Us.
- * - **Authentication**: Login/Signup modal trigger and User Profile dropdown (when logged in).
- * - **Settings**: Language selector (English/Spanish) and Theme Switcher (Light/Dark).
- * - **Alerts**: Displays a notification badge if there are active weather alerts.
- * - **Responsive Design**: Adapts to mobile screens with a hamburger menu and collapsible sections.
+ * A sleek, minimalist, and highly responsive navigation header.
+ * This design focuses on clarity, typography, and subtle interactions.
+ * It uses a full-width sticky layout with a refined backdrop blur.
  *
- * The component manages local state for UI toggles (dropdowns, modals) and user session data.
- * It also listens for global events and updates user state accordingly.
+ * Key Design Features:
+ * - **Minimalist Aesthetic**: Clean lines, ample whitespace, and a focus on content.
+ * - **Interactive Navigation**: Animated underlines for links and smooth hover states.
+ * - **Sticky Positioning**: Stays at the top of the viewport for easy access.
+ * - **Refined Dropdowns**: clean, shadow-based dropdown menus for settings and user profile.
+ * - **Accessibility**: High contrast text and clear focus states.
+ *
+ * Functionality:
+ * - Manages user authentication state (login/logout).
+ * - Displays real-time weather alerts with visual indicators.
+ * - Provides internationalization (i18n) and theme switching.
  *
  * @component
  * @returns {JSX.Element} The rendered Header component.
@@ -192,626 +198,332 @@ function Header() {
     };
 
     return (
-        <header className="bg-white shadow-sm">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <nav className="flex items-center justify-between h-16 md:h-20 relative">
-                    <div className="shrink-0">
-                        <img
-                            src="logo.webp"
-                            alt="Logo de Canary Weather"
-                            className="h-16 md:h-20 w-auto"
-                        />
-                    </div>
+        <>
+            {/* 
+             * Main Header Container
+             * Sticky positioning ensures the header is always accessible.
+             * Uses a high-contrast background with a subtle border for separation.
+             */}
+            <header className="sticky top-0 z-50 w-full bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm border-b border-neutral-200 dark:border-neutral-800 transition-colors duration-300">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-between h-16 md:h-20">
+                        
+                        {/* 
+                         * Logo Section 
+                         * Clean and simple branding.
+                         * Updated text color to match the brand blue from the design reference.
+                         */}
+                        <div className="shrink-0 flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/')}>
+                            <img
+                                src="logo.webp"
+                                alt="Canary Weather Logo"
+                                className="h-10 md:h-12 w-auto transition-transform duration-300 group-hover:scale-105"
+                            />
+                            <span className="hidden md:block text-xl font-bold text-[#3b82f6] dark:text-[#60a5fa] tracking-tight transition-colors">
+                                Canary Weather
+                            </span>
+                        </div>
 
-                    <div className="hidden lg:flex items-center justify-center flex-1 px-4">
-                        <ul className="flex items-center space-x-4 lg:space-x-8">
-                            <li>
+                        {/* 
+                         * Desktop Navigation 
+                         * Uses an animated underline effect for a modern, interactive feel.
+                         * Reordered links: Warnings is now the last item.
+                         */}
+                        <nav className="hidden lg:flex items-center gap-8">
+                            {[
+                                { to: '/', label: t('home') },
+                                { to: '/map', label: t('map') },
+                                { to: '/pois', label: t('pointsOfInterest') },
+                                { to: '/aboutus', label: t('aboutUs') },
+                                { 
+                                    to: '/warnings', 
+                                    label: t('warnings'), 
+                                    icon: <span className={`w-2 h-2 rounded-full mr-2 ${getAlertColor()} ${['bg-[#b50909]', 'bg-orange-500'].includes(getAlertColor()) ? 'animate-pulse' : ''}`}></span> 
+                                }
+                            ].map((link) => (
                                 <NavLink
-                                    to="/"
+                                    key={link.to}
+                                    to={link.to}
                                     className={({ isActive }) =>
-                                        isActive
-                                            ? 'text-gray-900 font-semibold'
-                                            : 'text-gray-700 hover:text-gray-900 transition-colors'
-                                    }
-                                >
-                                    {t('home')}
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="/map"
-                                    className={({ isActive }) =>
-                                        isActive
-                                            ? 'text-gray-900 font-semibold'
-                                            : 'text-gray-700 hover:text-gray-900 transition-colors'
-                                    }
-                                >
-                                    {t('map')}
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="/pois"
-                                    className={({ isActive }) =>
-                                        isActive
-                                            ? 'text-gray-900 font-semibold'
-                                            : 'text-gray-700 hover:text-gray-900 transition-colors'
-                                    }
-                                >
-                                    {t('pointsOfInterest')}
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="/aboutus"
-                                    className={({ isActive }) =>
-                                        isActive
-                                            ? 'text-gray-900 font-semibold'
-                                            : 'text-gray-700 hover:text-gray-900 transition-colors'
-                                    }
-                                >
-                                    {t('aboutUs')}
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="/warnings"
-                                    className={({ isActive }) =>
-                                        `flex items-center gap-2 ${
+                                        `relative group flex items-center text-sm font-semibold tracking-wide transition-colors duration-300 ${
                                             isActive
-                                                ? 'text-gray-900 font-semibold'
-                                                : 'text-gray-700 hover:text-gray-900 transition-colors'
+                                                ? 'text-blue-600 dark:text-blue-400'
+                                                : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
                                         }`
                                     }
                                 >
-                                    <span
-                                        className={`w-3 h-3 rounded-full ${getAlertColor()}`}
-                                    ></span>
-                                    {t('warnings')}
+                                    {link.icon}
+                                    {link.label}
+                                    {/* Animated Underline */}
+                                    <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 transform scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100"></span>
                                 </NavLink>
-                            </li>
-                        </ul>
-                    </div>
+                            ))}
+                        </nav>
 
-                    <div className="lg:flex hidden items-center gap-3 shrink-0">
-                        <ThemeSwitch />
+                        {/* 
+                         * Right Side Actions (Desktop) 
+                         * Minimalist controls for settings and user profile.
+                         */}
+                        <div className="hidden lg:flex items-center gap-4">
+                            
+                            {/* Theme Switcher */}
+                            <div className="text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors">
+                                <ThemeSwitch />
+                            </div>
 
-                        <div className="relative language-dropdown">
-                            <button
-                                onClick={() =>
-                                    setShowLanguageDropdown(
-                                        !showLanguageDropdown
-                                    )
-                                }
-                                className="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-full transition-all border border-gray-200 shadow-sm hover:shadow-md"
-                            >
-                                <img
-                                    src={
-                                        i18n.language === 'en'
-                                            ? 'https://flagcdn.com/w40/gb.png'
-                                            : 'https://flagcdn.com/w40/es.png'
-                                    }
-                                    alt={
-                                        i18n.language === 'en'
-                                            ? 'English'
-                                            : 'Español'
-                                    }
-                                    className="w-5 h-5 rounded-full object-cover shadow-sm"
-                                />
-                                <span className="text-sm font-medium">
-                                    {i18n.language === 'en' ? 'EN' : 'ES'}
-                                </span>
-                                <svg
-                                    className={`w-4 h-4 text-gray-400 transition-transform ${
-                                        showLanguageDropdown ? 'rotate-180' : ''
-                                    }`}
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M19 9l-7 7-7-7"
-                                    />
-                                </svg>
-                            </button>
-                            {showLanguageDropdown && (
-                                <div className="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden">
-                                    <button
-                                        onClick={() => {
-                                            i18n.changeLanguage('es');
-                                            setShowLanguageDropdown(false);
-                                        }}
-                                        className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 flex items-center gap-3 transition-colors ${
-                                            i18n.language === 'es'
-                                                ? 'bg-blue-50 text-blue-600 font-medium'
-                                                : 'text-gray-700'
-                                        }`}
-                                    >
-                                        <img
-                                            src="https://flagcdn.com/w40/es.png"
-                                            alt="Español"
-                                            className="w-5 h-5 rounded-full object-cover shadow-sm"
-                                        />
-                                        Español
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            i18n.changeLanguage('en');
-                                            setShowLanguageDropdown(false);
-                                        }}
-                                        className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 flex items-center gap-3 transition-colors ${
-                                            i18n.language === 'en'
-                                                ? 'bg-blue-50 text-blue-600 font-medium'
-                                                : 'text-gray-700'
-                                        }`}
-                                    >
-                                        <img
-                                            src="https://flagcdn.com/w40/gb.png"
-                                            alt="English"
-                                            className="w-5 h-5 rounded-full object-cover shadow-sm"
-                                        />
-                                        English
-                                    </button>
-                                </div>
-                            )}
-                        </div>
+                            {/* Divider */}
+                            <div className="h-6 w-px bg-neutral-200 dark:bg-neutral-700"></div>
 
-                        {user ? (
-                            <div className="relative" ref={userDropdownRef}>
+                            {/* Language Selector */}
+                            <div className="relative language-dropdown">
                                 <button
-                                    onClick={() =>
-                                        setShowUserDropdown(!showUserDropdown)
-                                    }
-                                    className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-blue-600 hover:border-blue-700 transition-all cursor-pointer"
-                                    title={user.username || t('userProfile')}
+                                    onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+                                    className="flex items-center gap-2 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                                 >
-                                    {getProfileImageUrl() ? (
-                                        <img
-                                            src={getProfileImageUrl()}
-                                            alt={t('profile')}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full bg-blue-600 flex items-center justify-center">
-                                            <svg
-                                                className="w-6 h-6 text-white"
-                                                fill="currentColor"
-                                                viewBox="0 0 20 20"
-                                            >
-                                                <path
-                                                    fillRule="evenodd"
-                                                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                                                    clipRule="evenodd"
-                                                />
-                                            </svg>
-                                        </div>
-                                    )}
+                                    <img 
+                                        src={i18n.language === 'en' ? 'https://flagcdn.com/w40/gb.png' : 'https://flagcdn.com/w40/es.png'} 
+                                        alt={i18n.language === 'en' ? 'English' : 'Español'}
+                                        className="w-5 h-5 rounded-full object-cover shadow-sm"
+                                    />
+                                    <span>{i18n.language === 'en' ? 'EN' : 'ES'}</span>
                                 </button>
-                                {showUserDropdown && (
-                                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-                                        <button
-                                            onClick={() => {
-                                                setShowLogin(true);
-                                                setShowUserDropdown(false);
-                                            }}
-                                            className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 rounded-t-lg text-gray-700 flex items-center gap-2"
-                                        >
-                                            <svg
-                                                className="w-4 h-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                                />
-                                            </svg>
-                                            {t('editProfile')}
-                                        </button>
-                                        {user.is_admin && (
+                                
+                                {showLanguageDropdown && (
+                                    <div className="absolute right-0 mt-4 w-32 bg-white dark:bg-neutral-800 rounded-lg shadow-lg border border-neutral-100 dark:border-neutral-700 py-1 z-50 animate-in fade-in slide-in-from-top-1">
+                                        {[
+                                            { code: 'es', label: 'Español', flag: 'https://flagcdn.com/w40/es.png' },
+                                            { code: 'en', label: 'English', flag: 'https://flagcdn.com/w40/gb.png' }
+                                        ].map((lang) => (
                                             <button
+                                                key={lang.code}
                                                 onClick={() => {
-                                                    navigate('/admin');
-                                                    setShowUserDropdown(false);
+                                                    i18n.changeLanguage(lang.code);
+                                                    setShowLanguageDropdown(false);
                                                 }}
-                                                className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 text-gray-700 flex items-center gap-2 border-t border-gray-100"
+                                                className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center gap-2 ${
+                                                    i18n.language === lang.code
+                                                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium'
+                                                        : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700'
+                                                }`}
                                             >
-                                                <svg
-                                                    className="w-4 h-4"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth={2}
-                                                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                                                    />
-                                                </svg>
-                                                {t('dashboard')}
+                                                <img src={lang.flag} alt={lang.label} className="w-4 h-4 rounded-full object-cover" />
+                                                {lang.label}
                                             </button>
-                                        )}
-                                        <button
-                                            onClick={handleLogout}
-                                            className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 rounded-b-lg text-red-600 flex items-center gap-2 border-t border-gray-100"
-                                        >
-                                            <svg
-                                                className="w-4 h-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                                                />
-                                            </svg>
-                                            {t('logout')}
-                                        </button>
+                                        ))}
                                     </div>
                                 )}
                             </div>
-                        ) : (
-                            <button
-                                className="bg-brand-primary text-white px-4 py-2 rounded-full hover:bg-accent-blue-200 transition-colors flex items-center gap-2"
-                                onClick={() => setShowLogin(true)}
-                            >
-                                <svg
-                                    className="w-4 h-4 shrink-0"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fillRule="evenodd"
-                                        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                                        clipRule="evenodd"
-                                    />
-                                </svg>
-                                <span>{t('login')}</span>
-                            </button>
-                        )}
-                    </div>
 
-                    <div className="lg:hidden flex items-center gap-2 ml-auto">
-                        <div className="relative mobile-settings-dropdown">
-                            <button
-                                onClick={() =>
-                                    setShowMobileSettings(!showMobileSettings)
-                                }
-                                className="text-neutral-2 text-2xl p-2"
-                                aria-label="Ajustes"
-                            >
-                                <svg
-                                    className="w-6 h-6"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                                    />
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                    />
-                                </svg>
-                            </button>
-                            {showMobileSettings && (
-                                <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-50 p-4">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <span className="text-sm font-medium text-gray-700">
-                                            {t('theme')}:
-                                        </span>
-                                        <ThemeSwitch />
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm font-medium text-gray-700">
-                                            {t('language')}:
-                                        </span>
-                                        <div className="flex gap-3">
-                                            <button
-                                                onClick={() => {
-                                                    i18n.changeLanguage('en');
-                                                    setShowMobileSettings(
-                                                        false
-                                                    );
-                                                }}
-                                                className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${
-                                                    i18n.language === 'en'
-                                                        ? 'bg-blue-50 border-blue-200 text-blue-700 shadow-sm ring-1 ring-blue-200'
-                                                        : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
-                                                }`}
-                                            >
-                                                <img
-                                                    src="https://flagcdn.com/w40/gb.png"
-                                                    alt="English"
-                                                    className="w-6 h-6 rounded-full object-cover shadow-sm"
-                                                />
-                                                <span className="text-sm font-medium">
-                                                    EN
-                                                </span>
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    i18n.changeLanguage('es');
-                                                    setShowMobileSettings(
-                                                        false
-                                                    );
-                                                }}
-                                                className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${
-                                                    i18n.language === 'es'
-                                                        ? 'bg-blue-50 border-blue-200 text-blue-700 shadow-sm ring-1 ring-blue-200'
-                                                        : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
-                                                }`}
-                                            >
-                                                <img
-                                                    src="https://flagcdn.com/w40/es.png"
-                                                    alt="Español"
-                                                    className="w-6 h-6 rounded-full object-cover shadow-sm"
-                                                />
-                                                <span className="text-sm font-medium">
-                                                    ES
-                                                </span>
-                                            </button>
+                            {/* User Profile / Login Button */}
+                            {user ? (
+                                <div className="relative ml-2" ref={userDropdownRef}>
+                                    <button
+                                        onClick={() => setShowUserDropdown(!showUserDropdown)}
+                                        className="flex items-center gap-3 focus:outline-none group"
+                                    >
+                                        <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-transparent group-hover:ring-blue-500 transition-all">
+                                            {getProfileImageUrl() ? (
+                                                <img src={getProfileImageUrl()} alt={t('profile')} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center text-neutral-600 dark:text-neutral-300 font-bold text-sm">
+                                                    {user.username?.charAt(0).toUpperCase()}
+                                                </div>
+                                            )}
                                         </div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        <button
-                            className="text-neutral-2 text-2xl p-2"
-                            onClick={toggleMenu}
-                            aria-label="Alternar menú"
-                        >
-                            {isOpen ? (
-                                <svg
-                                    className="w-6 h-6"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            ) : (
-                                <svg
-                                    className="w-6 h-6"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                </svg>
-                            )}
-                        </button>
-                    </div>
-                </nav>
-
-                {isOpen && (
-                    <div className="lg:hidden pb-4">
-                        <ul className="flex flex-col space-y-3">
-                            <li>
-                                <NavLink
-                                    to="/"
-                                    className={({ isActive }) =>
-                                        isActive
-                                            ? 'block text-gray-900 font-semibold py-2'
-                                            : 'block text-gray-700 hover:text-gray-900 py-2'
-                                    }
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    {t('home')}
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="/map"
-                                    className={({ isActive }) =>
-                                        isActive
-                                            ? 'block text-gray-900 font-semibold py-2'
-                                            : 'block text-gray-700 hover:text-gray-900 py-2'
-                                    }
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    {t('map')}
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="/pois"
-                                    className={({ isActive }) =>
-                                        isActive
-                                            ? 'block text-gray-900 font-semibold py-2'
-                                            : 'block text-gray-700 hover:text-gray-900 py-2'
-                                    }
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    {t('pointsOfInterest')}
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="/aboutus"
-                                    className={({ isActive }) =>
-                                        isActive
-                                            ? 'block text-gray-900 font-semibold py-2'
-                                            : 'block text-gray-700 hover:text-gray-900 py-2'
-                                    }
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    {t('aboutUs')}
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="/warnings"
-                                    className={({ isActive }) =>
-                                        `flex items-center gap-2 ${
-                                            isActive
-                                                ? 'block text-gray-900 font-semibold py-2'
-                                                : 'block text-gray-700 hover:text-gray-900 py-2'
-                                        }`
-                                    }
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    <span
-                                        className={`w-3 h-3 rounded-full ${getAlertColor()}`}
-                                    ></span>
-                                    {t('warnings')}
-                                </NavLink>
-                            </li>
-                            <li>
-                                {user ? (
-                                    <div className="flex flex-col gap-2">
-                                        <button
-                                            onClick={() =>
-                                                setShowMobileUserDropdown(
-                                                    !showMobileUserDropdown
-                                                )
-                                            }
-                                            className="flex items-center gap-2 py-2 w-full text-left"
-                                        >
-                                            <div className="w-8 h-8 rounded-full overflow-hidden border border-blue-600">
-                                                {getProfileImageUrl() ? (
-                                                    <img
-                                                        src={getProfileImageUrl()}
-                                                        alt={t('profile')}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                ) : (
-                                                    <div className="w-full h-full bg-blue-600 flex items-center justify-center">
-                                                        <svg
-                                                            className="w-5 h-5 text-white"
-                                                            fill="currentColor"
-                                                            viewBox="0 0 20 20"
-                                                        >
-                                                            <path
-                                                                fillRule="evenodd"
-                                                                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                                                                clipRule="evenodd"
-                                                            />
-                                                        </svg>
-                                                    </div>
-                                                )}
+                                    </button>
+                                    
+                                    {showUserDropdown && (
+                                        <div className="absolute right-0 mt-4 w-56 bg-white dark:bg-neutral-800 rounded-lg shadow-xl border border-neutral-100 dark:border-neutral-700 z-50 overflow-hidden animate-in fade-in slide-in-from-top-1">
+                                            <div className="px-4 py-3 border-b border-neutral-100 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50">
+                                                <p className="text-sm font-semibold text-neutral-900 dark:text-white truncate">{user.username}</p>
+                                                <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate">{user.email}</p>
                                             </div>
-                                            <span className="font-medium text-gray-900">
-                                                {user.username ||
-                                                    t('userProfile')}
-                                            </span>
-                                            <svg
-                                                className={`w-4 h-4 ml-auto transition-transform ${
-                                                    showMobileUserDropdown
-                                                        ? 'rotate-180'
-                                                        : ''
-                                                }`}
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M19 9l-7 7-7-7"
-                                                />
-                                            </svg>
-                                        </button>
-
-                                        {showMobileUserDropdown && (
-                                            <div className="pl-4 flex flex-col gap-2">
+                                            <div className="py-1">
                                                 <button
-                                                    onClick={() => {
-                                                        setShowLogin(true);
-                                                        setIsOpen(false);
-                                                    }}
-                                                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg flex items-center gap-2"
+                                                    onClick={() => { setShowLogin(true); setShowUserDropdown(false); }}
+                                                    className="w-full text-left px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors flex items-center gap-2"
                                                 >
-                                                    <svg
-                                                        className="w-4 h-4"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        viewBox="0 0 24 24"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            strokeWidth={2}
-                                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                                        />
-                                                    </svg>
                                                     {t('editProfile')}
                                                 </button>
+                                                {user.is_admin && (
+                                                    <button
+                                                        onClick={() => { navigate('/admin'); setShowUserDropdown(false); }}
+                                                        className="w-full text-left px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors flex items-center gap-2"
+                                                    >
+                                                        {t('dashboard')}
+                                                    </button>
+                                                )}
+                                                <div className="h-px bg-neutral-100 dark:bg-neutral-700 my-1"></div>
                                                 <button
                                                     onClick={handleLogout}
-                                                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2"
+                                                    className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex items-center gap-2"
                                                 >
-                                                    <svg
-                                                        className="w-4 h-4"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        viewBox="0 0 24 24"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            strokeWidth={2}
-                                                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                                                        />
-                                                    </svg>
                                                     {t('logout')}
                                                 </button>
                                             </div>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <button
-                                        className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors"
-                                        onClick={() => setShowLogin(true)}
-                                    >
-                                        <svg
-                                            className="w-4 h-4"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path
-                                                fillRule="evenodd"
-                                                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                                                clipRule="evenodd"
-                                            />
-                                        </svg>
-                                        {t('login')}
-                                    </button>
-                                )}
-                            </li>
-                        </ul>
-                    </div>
-                )}
-            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <button
+                                    className="ml-2 bg-[#1d4ed8] hover:bg-[#1e40af] text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+                                    onClick={() => setShowLogin(true)}
+                                >
+                                    {t('login')}
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                </button>
+                            )}
+                        </div>
 
+                        {/* 
+                         * Mobile Controls 
+                         * Simplified controls for smaller screens.
+                         */}
+                        <div className="lg:hidden flex items-center gap-4">
+                            
+                            {/* Mobile Settings Toggle */}
+                            <div className="relative mobile-settings-dropdown">
+                                <button
+                                    onClick={() => setShowMobileSettings(!showMobileSettings)}
+                                    className="p-2 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+                                >
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </button>
+                                {showMobileSettings && (
+                                    <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-neutral-800 rounded-lg shadow-xl border border-neutral-100 dark:border-neutral-700 z-50 p-4 animate-in fade-in slide-in-from-top-2">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('theme')}:</span>
+                                            <ThemeSwitch />
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('language')}:</span>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => { i18n.changeLanguage('en'); setShowMobileSettings(false); }}
+                                                    className={`px-3 py-1 text-xs font-medium rounded border transition-colors ${i18n.language === 'en' ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 border-transparent' : 'bg-transparent border-neutral-300 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400'}`}
+                                                >
+                                                    EN
+                                                </button>
+                                                <button
+                                                    onClick={() => { i18n.changeLanguage('es'); setShowMobileSettings(false); }}
+                                                    className={`px-3 py-1 text-xs font-medium rounded border transition-colors ${i18n.language === 'es' ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 border-transparent' : 'bg-transparent border-neutral-300 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400'}`}
+                                                >
+                                                    ES
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Mobile Menu Toggle */}
+                            <button
+                                className="p-2 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+                                onClick={toggleMenu}
+                            >
+                                {isOpen ? (
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                ) : (
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* 
+                     * Mobile Menu Content 
+                     * A clean, slide-down menu for mobile devices.
+                     */}
+                    {isOpen && (
+                        <div className="lg:hidden py-4 border-t border-neutral-100 dark:border-neutral-800 animate-in slide-in-from-top-2 fade-in duration-200">
+                            <ul className="flex flex-col space-y-1">
+                                {[
+                                    { to: '/', label: t('home') },
+                                    { to: '/map', label: t('map') },
+                                    { to: '/pois', label: t('pointsOfInterest') },
+                                    { to: '/warnings', label: t('warnings'), icon: <span className={`w-2 h-2 rounded-full mr-2 ${getAlertColor()}`}></span> },
+                                    { to: '/aboutus', label: t('aboutUs') }
+                                ].map((link) => (
+                                    <li key={link.to}>
+                                        <NavLink
+                                            to={link.to}
+                                            className={({ isActive }) =>
+                                                `flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                                                    isActive
+                                                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                                                        : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-white'
+                                                }`
+                                            }
+                                            onClick={() => setIsOpen(false)}
+                                        >
+                                            {link.icon}
+                                            {link.label}
+                                        </NavLink>
+                                    </li>
+                                ))}
+                                
+                                {/* Mobile User Section */}
+                                <li className="pt-4 mt-2 border-t border-neutral-100 dark:border-neutral-800">
+                                    {user ? (
+                                        <div className="space-y-2">
+                                            <button
+                                                onClick={() => setShowMobileUserDropdown(!showMobileUserDropdown)}
+                                                className="flex items-center gap-3 w-full px-4 py-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+                                            >
+                                                <div className="w-8 h-8 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center">
+                                                    {getProfileImageUrl() ? (
+                                                        <img src={getProfileImageUrl()} alt={t('profile')} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <span className="text-xs font-bold text-neutral-600 dark:text-neutral-300">{user.username?.charAt(0).toUpperCase()}</span>
+                                                    )}
+                                                </div>
+                                                <div className="flex-1 text-left">
+                                                    <p className="text-sm font-semibold text-neutral-900 dark:text-white">{user.username}</p>
+                                                    <p className="text-xs text-neutral-500 dark:text-neutral-400">Logged in</p>
+                                                </div>
+                                                <svg className={`w-4 h-4 text-neutral-400 transition-transform ${showMobileUserDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                            </button>
+
+                                            {showMobileUserDropdown && (
+                                                <div className="pl-4 space-y-1">
+                                                    <button
+                                                        onClick={() => { setShowLogin(true); setIsOpen(false); }}
+                                                        className="w-full text-left px-4 py-2 text-sm text-neutral-600 dark:text-neutral-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg"
+                                                    >
+                                                        {t('editProfile')}
+                                                    </button>
+                                                    <button
+                                                        onClick={handleLogout}
+                                                        className="w-full text-left px-4 py-2 text-sm text-red-500 hover:text-red-700 dark:hover:text-red-400 rounded-lg"
+                                                    >
+                                                        {t('logout')}
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <div className="px-4">
+                                            <button
+                                                className="w-full flex items-center justify-center gap-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 px-4 py-3 rounded-lg font-semibold shadow-sm hover:opacity-90 transition-opacity"
+                                                onClick={() => setShowLogin(true)}
+                                            >
+                                                {t('login')}
+                                            </button>
+                                        </div>
+                                    )}
+                                </li>
+                            </ul>
+                        </div>
+                    )}
+                </div>
+            </header>
+
+            {/* Login Modal */}
             <LoginModal
                 isOpen={showLogin}
                 onClose={() => setShowLogin(false)}
@@ -819,8 +531,9 @@ function Header() {
                 user={user}
                 onLogout={handleLogout}
             />
-        </header>
+        </>
     );
 }
 
 export default Header;
+

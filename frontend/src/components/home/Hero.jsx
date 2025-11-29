@@ -21,8 +21,12 @@ export default function Hero() {
 
     return (
         <div className="relative overflow-hidden">
-            {/* Main Container: Centers content and handles padding for different screen sizes */}
-            <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-10 pb-10 lg:pt-12 xl:pt-16 lg:pb-12 relative z-10">
+            {/* 
+             * Main Container
+             * Centers content and handles padding for different screen sizes.
+             * Reduced top padding (pt-4, lg:pt-6) to bring content closer to the sticky header.
+             */}
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-4 pb-10 lg:pt-6 xl:pt-8 lg:pb-12 relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center">
                     {/* Left Column: Text Content and CTAs */}
                     <div className="flex flex-col justify-center text-center lg:text-left lg:-mt-8 xl:-mt-16">
