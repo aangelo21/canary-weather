@@ -306,13 +306,17 @@ function Header({ isTransparent = false }) {
                          */}
                         <div className="hidden lg:flex items-center gap-4">
                             
-                            {/* Theme Switcher */}
-                            <div className={`${isTransparent ? 'text-slate-300 hover:text-white' : 'text-neutral-700 hover:text-black dark:text-neutral-300 dark:hover:text-white'} transition-colors`}>
-                                <ThemeSwitch />
-                            </div>
+                            {/* Theme Switcher - Hidden on transparent pages (About Us) */}
+                            {!isTransparent && (
+                                <>
+                                    <div className="text-neutral-700 hover:text-black dark:text-neutral-300 dark:hover:text-white transition-colors">
+                                        <ThemeSwitch />
+                                    </div>
 
-                            {/* Divider */}
-                            <div className={`h-6 w-px ${isTransparent ? 'bg-white/20' : 'bg-neutral-200 dark:bg-neutral-700'}`}></div>
+                                    {/* Divider */}
+                                    <div className="h-6 w-px bg-neutral-200 dark:bg-neutral-700"></div>
+                                </>
+                            )}
 
                             {/* Language Selector */}
                             <div className="relative language-dropdown">
@@ -435,10 +439,12 @@ function Header({ isTransparent = false }) {
                                 </button>
                                 {showMobileSettings && (
                                     <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-neutral-800 rounded-lg shadow-xl border border-neutral-100 dark:border-neutral-700 z-50 p-4 animate-in fade-in slide-in-from-top-2">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('theme')}:</span>
-                                            <ThemeSwitch />
-                                        </div>
+                                        {!isTransparent && (
+                                            <div className="flex items-center justify-between mb-4">
+                                                <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('theme')}:</span>
+                                                <ThemeSwitch />
+                                            </div>
+                                        )}
                                         <div className="flex items-center justify-between">
                                             <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('language')}:</span>
                                             <div className="flex gap-2">
