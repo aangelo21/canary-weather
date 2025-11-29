@@ -299,12 +299,13 @@ function Header() {
                                                 key={lang.code}
                                                 onClick={() => {
                                                     i18n.changeLanguage(lang.code);
+                                                    localStorage.setItem('i18nextLng', lang.code);
                                                     setShowLanguageDropdown(false);
                                                 }}
-                                                className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center gap-2 ${
+                                                className={`w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors ${
                                                     i18n.language === lang.code
-                                                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium'
-                                                        : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700'
+                                                        ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                                                        : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700'
                                                 }`}
                                             >
                                                 <img src={lang.flag} alt={lang.label} className="w-4 h-4 rounded-full object-cover" />
