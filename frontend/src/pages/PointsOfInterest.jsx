@@ -1,9 +1,11 @@
-// Import the PointsOfInterest component that handles POI management
-import PointsOfInterest from "../components/PointsOfInterest";
+import PointsOfInterestList from '../components/poi/PointsOfInterestList';
 
-// PointsOfInterest page component - wrapper for the POI management component
-// This page serves as a route container for the PointsOfInterest component
+/**
+ * PointsOfInterestPage component.
+ * Acts as a wrapper for the PointsOfInterestList component.
+ *
+ * @returns {JSX.Element} The rendered PointsOfInterestPage.
+ */
 export default function PointsOfInterestPage() {
-  // Render the PointsOfInterest component directly
-  return <PointsOfInterest />;
+    return <PointsOfInterestList />;
 }

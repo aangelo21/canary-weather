@@ -1,26 +1,33 @@
-// POIForm.jsx - Point of Interest form component
-// This component provides a form for creating or editing Points of Interest (POIs).
-// It includes fields for name, description, and image upload with preview functionality.
-// Used in the Points of Interest page for POI management.
+import { useTranslation } from 'react-i18next';
 
-import { useTranslation } from "react-i18next";
-
+/**
+ * POIForm component.
+ * Provides a form for creating or editing Points of Interest (POIs).
+ * It includes fields for name, description, and image upload with preview functionality.
+ *
+ * @param {Object} props - The component props.
+ * @param {Object} props.formData - The current form data object.
+ * @param {Function} props.onChange - Function to handle input changes.
+ * @param {Function} props.onSubmit - Function to handle form submission.
+ * @param {boolean} props.loading - Loading state for the submit button.
+ * @param {Function} props.onCancel - Function to cancel editing.
+ * @param {Function} props.onImageChange - Function to handle image file selection.
+ * @param {string} props.imagePreview - URL for the image preview.
+ * @returns {JSX.Element} The rendered POIForm component.
+ */
 export default function POIForm({
-  formData, // Current form data object
-  onChange, // Function to handle input changes
-  onSubmit, // Function to handle form submission
-  loading, // Loading state for submit button
-  onCancel, // Function to cancel editing
-  onImageChange, // Function to handle image file selection
-  imagePreview, // URL for image preview
+    formData,
+    onChange,
+    onSubmit,
+    loading,
+    onCancel,
+    onImageChange,
+    imagePreview,
 }) {
     const { t } = useTranslation();
     return (
-        // Form container
         <div>
-            {/* Main form element */}
             <form onSubmit={onSubmit}>
-                {/* Name input field */}
                 <div className="mb-2">
                     <label className="block text-sm font-medium mb-1">
                         {t('name')}
@@ -35,9 +42,10 @@ export default function POIForm({
                     />
                 </div>
 
-                {/* Description textarea */}
                 <div className="mb-2">
-                    <label className="block text-sm font-medium mb-1">{t('description')}</label>
+                    <label className="block text-sm font-medium mb-1">
+                        {t('description')}
+                    </label>
                     <textarea
                         name="description"
                         value={formData.description}
@@ -48,9 +56,6 @@ export default function POIForm({
                     />
                 </div>
 
-
-
-                {/* Image upload field with preview */}
                 <div className="mb-2">
                     <label className="block text-sm font-medium mb-1">
                         {t('poiImage')}
@@ -58,11 +63,10 @@ export default function POIForm({
                     <input
                         type="file"
                         name="poi_image"
-                        accept="image/*"  // Only accept image files
+                        accept="image/*"
                         onChange={onImageChange}
                         className="border rounded px-3 py-2 w-full"
                     />
-                    {/* Image preview section - only shown when image is selected */}
                     {imagePreview && (
                         <div className="mt-2">
                             <img
@@ -74,9 +78,7 @@ export default function POIForm({
                     )}
                 </div>
 
-                {/* Action buttons */}
                 <div className="flex gap-2 mt-4">
-                    {/* Submit button with loading state */}
                     <button
                         type="submit"
                         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
@@ -84,7 +86,6 @@ export default function POIForm({
                     >
                         {loading ? t('saving') : t('save')}
                     </button>
-                    {/* Cancel button */}
                     <button
                         type="button"
                         className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
