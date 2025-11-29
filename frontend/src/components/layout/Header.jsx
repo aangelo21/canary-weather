@@ -333,31 +333,29 @@ function Header() {
                                     </button>
                                     
                                     {showUserDropdown && (
-                                        <div className="absolute right-0 mt-4 w-56 bg-white dark:bg-neutral-800 rounded-lg shadow-xl border border-neutral-100 dark:border-neutral-700 z-50 overflow-hidden animate-in fade-in slide-in-from-top-1">
-                                            <div className="px-4 py-3 border-b border-neutral-100 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50">
-                                                <p className="text-sm font-semibold text-neutral-900 dark:text-white truncate">{user.username}</p>
-                                                <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate">{user.email}</p>
-                                            </div>
-                                            <div className="py-1">
+                                        <div className="absolute right-0 mt-4 w-64 bg-white dark:bg-neutral-800 rounded-xl shadow-xl border border-neutral-100 dark:border-neutral-700 z-50 overflow-hidden animate-in fade-in slide-in-from-top-1">
+                                            <div className="flex flex-col">
                                                 <button
                                                     onClick={() => { setShowLogin(true); setShowUserDropdown(false); }}
-                                                    className="w-full text-left px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors flex items-center gap-2"
+                                                    className="w-full text-left px-5 py-4 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors flex items-center gap-3 border-b border-neutral-100 dark:border-neutral-700"
                                                 >
+                                                    <svg className="w-5 h-5 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                                     {t('editProfile')}
                                                 </button>
                                                 {user.is_admin && (
                                                     <button
                                                         onClick={() => { navigate('/admin'); setShowUserDropdown(false); }}
-                                                        className="w-full text-left px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors flex items-center gap-2"
+                                                        className="w-full text-left px-5 py-4 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors flex items-center gap-3 border-b border-neutral-100 dark:border-neutral-700"
                                                     >
+                                                        <svg className="w-5 h-5 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
                                                         {t('dashboard')}
                                                     </button>
                                                 )}
-                                                <div className="h-px bg-neutral-100 dark:bg-neutral-700 my-1"></div>
                                                 <button
                                                     onClick={handleLogout}
-                                                    className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex items-center gap-2"
+                                                    className="w-full text-left px-5 py-4 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors flex items-center gap-3"
                                                 >
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                                                     {t('logout')}
                                                 </button>
                                             </div>
@@ -405,14 +403,16 @@ function Header() {
                                             <div className="flex gap-2">
                                                 <button
                                                     onClick={() => { i18n.changeLanguage('en'); setShowMobileSettings(false); }}
-                                                    className={`px-3 py-1 text-xs font-medium rounded border transition-colors ${i18n.language === 'en' ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 border-transparent' : 'bg-transparent border-neutral-300 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400'}`}
+                                                    className={`flex items-center gap-1 px-3 py-1 text-xs font-medium rounded border transition-colors ${i18n.language === 'en' ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 border-transparent' : 'bg-transparent border-neutral-300 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400'}`}
                                                 >
+                                                    <img src="https://flagcdn.com/w40/gb.png" alt="EN" className="w-3 h-3 rounded-full" />
                                                     EN
                                                 </button>
                                                 <button
                                                     onClick={() => { i18n.changeLanguage('es'); setShowMobileSettings(false); }}
-                                                    className={`px-3 py-1 text-xs font-medium rounded border transition-colors ${i18n.language === 'es' ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 border-transparent' : 'bg-transparent border-neutral-300 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400'}`}
+                                                    className={`flex items-center gap-1 px-3 py-1 text-xs font-medium rounded border transition-colors ${i18n.language === 'es' ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 border-transparent' : 'bg-transparent border-neutral-300 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400'}`}
                                                 >
+                                                    <img src="https://flagcdn.com/w40/es.png" alt="ES" className="w-3 h-3 rounded-full" />
                                                     ES
                                                 </button>
                                             </div>
@@ -490,17 +490,28 @@ function Header() {
                                             </button>
 
                                             {showMobileUserDropdown && (
-                                                <div className="pl-4 space-y-1">
+                                                <div className="mx-4 mt-2 bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700 overflow-hidden">
                                                     <button
                                                         onClick={() => { setShowLogin(true); setIsOpen(false); }}
-                                                        className="w-full text-left px-4 py-2 text-sm text-neutral-600 dark:text-neutral-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg"
+                                                        className="w-full text-left px-5 py-4 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors flex items-center gap-3 border-b border-neutral-100 dark:border-neutral-700"
                                                     >
+                                                        <svg className="w-5 h-5 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                                         {t('editProfile')}
                                                     </button>
+                                                    {user.is_admin && (
+                                                        <button
+                                                            onClick={() => { navigate('/admin'); setIsOpen(false); }}
+                                                            className="w-full text-left px-5 py-4 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors flex items-center gap-3 border-b border-neutral-100 dark:border-neutral-700"
+                                                        >
+                                                            <svg className="w-5 h-5 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                                                            {t('dashboard')}
+                                                        </button>
+                                                    )}
                                                     <button
                                                         onClick={handleLogout}
-                                                        className="w-full text-left px-4 py-2 text-sm text-red-500 hover:text-red-700 dark:hover:text-red-400 rounded-lg"
+                                                        className="w-full text-left px-5 py-4 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors flex items-center gap-3"
                                                     >
+                                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                                                         {t('logout')}
                                                     </button>
                                                 </div>
