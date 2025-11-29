@@ -447,8 +447,8 @@ function Header() {
                                     { to: '/', label: t('home') },
                                     { to: '/map', label: t('map') },
                                     { to: '/pois', label: t('pointsOfInterest') },
-                                    { to: '/warnings', label: t('warnings'), icon: <span className={`w-2 h-2 rounded-full mr-2 ${getAlertColor()}`}></span> },
-                                    { to: '/aboutus', label: t('aboutUs') }
+                                    { to: '/aboutus', label: t('aboutUs') },
+                                    { to: '/warnings', label: t('warnings'), icon: <span className={`w-2 h-2 rounded-full mr-2 ${getAlertColor()}`}></span> }
                                 ].map((link) => (
                                     <li key={link.to}>
                                         <NavLink
@@ -520,7 +520,7 @@ function Header() {
                                     ) : (
                                         <div className="px-4">
                                             <button
-                                                className="w-full flex items-center justify-center gap-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 px-4 py-3 rounded-lg font-semibold shadow-sm hover:opacity-90 transition-opacity"
+                                                className="w-full flex items-center justify-center gap-2 bg-[#1d4ed8] hover:bg-[#1e40af] text-white px-4 py-3 rounded-lg font-semibold shadow-sm hover:shadow-lg transition-all"
                                                 onClick={() => setShowLogin(true)}
                                             >
                                                 {t('login')}
