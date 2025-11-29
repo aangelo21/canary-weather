@@ -202,5 +202,6 @@ export const en = {
     exploreMap: "Explore the Map",
     clickLocation: "Click on a Location to see its forecast",
     mapDescription: "Navigate through the islands and discover real-time weather conditions.",
+    ourHQ: "Our Basement",
   },
 };
