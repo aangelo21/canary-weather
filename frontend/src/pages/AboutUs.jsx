@@ -172,11 +172,19 @@ const RoadmapSection = ({ t }) => (
 
 /**
  * @component ContactSection
- * @description A fully functional-looking contact form section.
- * Provides a direct channel for user feedback.
+ * @description A premium, glassmorphic contact interface.
+ * Replaces the standard two-column layout with a unified, atmospheric design
+ * that blends seamlessly into the "Deep Ocean" theme.
+ *
+ * Design Features:
+ * - **Glassmorphism**: Heavy backdrop blur and semi-transparent layers.
+ * - **Mesh Gradient**: A subtle, animated gradient on the info side.
+ * - **Floating Inputs**: Modern form fields with smooth focus transitions.
+ * - **Neon Accents**: Cyan glows to guide user attention.
  */
 const ContactSection = ({ t }) => {
     const [formState, setFormState] = useState({ name: '', email: '', message: '' });
+    const [focusedField, setFocusedField] = useState(null);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -184,69 +192,148 @@ const ContactSection = ({ t }) => {
         window.location.href = `mailto:info@canaryweather.xyz?subject=Contact from ${formState.name}&body=${formState.message}`;
     };
 
+    /**
+     * Generates dynamic classes for input fields based on focus state.
+     * @param {string} fieldName - The name of the field (name, email, message).
+     */
+    const inputClasses = (fieldName) => `
+        w-full bg-slate-900/50 border rounded-xl px-4 py-4 text-white placeholder-transparent
+        transition-all duration-300 outline-none
+        ${focusedField === fieldName ? 'border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.15)] bg-slate-900/80' : 'border-white/10 hover:border-white/20'}
+    `;
+
+    /**
+     * Generates dynamic classes for floating labels.
+     * @param {string} fieldName - The name of the field.
+     */
+    const labelClasses = (fieldName) => `
+        absolute left-4 transition-all duration-300 pointer-events-none
+        ${focusedField === fieldName || formState[fieldName] 
+            ? '-top-2.5 text-xs bg-[#0B1120] px-2 text-cyan-400 font-medium' 
+            : 'top-4 text-slate-400'}
+    `;
+
     return (
-        <div className="max-w-5xl mx-auto bg-gradient-to-br from-slate-900 to-slate-800 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-black/50">
-            <div className="grid grid-cols-1 lg:grid-cols-2">
-                <div className="p-12 bg-blue-600 text-white flex flex-col justify-between relative overflow-hidden">
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
-                    <div className="relative z-10">
-                        <h2 className="text-3xl font-bold mb-6">{t('getInTouch') || 'Get in Touch'}</h2>
-                        <p className="text-blue-100 mb-12 leading-relaxed">
-                            {t('contactDesc') || 'Have questions about the data? Found a bug? Or just want to say hello? We are always listening to our community.'}
-                        </p>
-                        <div className="space-y-6">
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+        <div className="max-w-6xl mx-auto relative group mb-24">
+            {/* Ambient Glow Effect behind the card */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-[2.5rem] blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+            
+            <div className="relative bg-[#0B1120] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                <div className="grid grid-cols-1 lg:grid-cols-5 min-h-[600px]">
+                    
+                    {/* 
+                     * Left Column: Contact Info & Atmosphere 
+                     * Uses a rich gradient overlay to create visual weight.
+                     */}
+                    <div className="lg:col-span-2 relative p-12 flex flex-col justify-between overflow-hidden">
+                        {/* Background Gradients */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/90 via-slate-900/90 to-slate-900/90 z-0"></div>
+                        <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 z-0"></div>
+                        
+                        {/* Decorative Circle */}
+                        <div className="absolute -top-24 -left-24 w-64 h-64 bg-cyan-500/20 rounded-full blur-3xl"></div>
+                        <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl"></div>
+
+                        <div className="relative z-10">
+                            <h2 className="text-4xl font-bold text-white mb-6 tracking-tight">
+                                {t('getInTouch') || 'Let\'s Connect'}
+                            </h2>
+                            <p className="text-slate-300 text-lg leading-relaxed mb-12">
+                                {t('contactDesc') || 'Building the future of weather forecasting requires community. Whether you have a feature request, a bug report, or just want to talk meteorology, we are all ears.'}
+                            </p>
+                        </div>
+
+                        <div className="relative z-10 space-y-8">
+                            <div className="flex items-start gap-5 group/item">
+                                <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover/item:bg-cyan-500/10 group-hover/item:border-cyan-500/30 transition-all duration-300">
+                                    <svg className="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                                 </div>
-                                <span>info@canaryweather.xyz</span>
+                                <div>
+                                    <h3 className="text-white font-semibold mb-1">Email Us</h3>
+                                    <p className="text-slate-400 text-sm">info@canaryweather.xyz</p>
+                                    <p className="text-slate-500 text-xs mt-1">Response within 24h</p>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+
+                            <div className="flex items-start gap-5 group/item">
+                                <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover/item:bg-blue-500/10 group-hover/item:border-blue-500/30 transition-all duration-300">
+                                    <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                                 </div>
-                                <span>Canary Islands, Spain</span>
+                                <div>
+                                    <h3 className="text-white font-semibold mb-1">HQ</h3>
+                                    <p className="text-slate-400 text-sm">Las Palmas de Gran Canaria</p>
+                                    <p className="text-slate-500 text-xs mt-1">Canary Islands, Spain</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <div className="p-12 bg-slate-900">
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-400 mb-2">Name</label>
-                            <input 
-                                type="text" 
-                                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
-                                placeholder="Your name"
-                                value={formState.name}
-                                onChange={(e) => setFormState({...formState, name: e.target.value})}
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-400 mb-2">Email</label>
-                            <input 
-                                type="email" 
-                                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
-                                placeholder="your@email.com"
-                                value={formState.email}
-                                onChange={(e) => setFormState({...formState, email: e.target.value})}
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-400 mb-2">Message</label>
-                            <textarea 
-                                rows="4"
-                                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors resize-none"
-                                placeholder="How can we help?"
-                                value={formState.message}
-                                onChange={(e) => setFormState({...formState, message: e.target.value})}
-                            ></textarea>
-                        </div>
-                        <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold py-4 rounded-xl hover:shadow-lg hover:shadow-blue-600/30 transition-all transform hover:-translate-y-1">
-                            Send Message
-                        </button>
-                    </form>
+                    
+                    {/* 
+                     * Right Column: Interactive Form 
+                     * Clean, spacious, and focused.
+                     */}
+                    <div className="lg:col-span-3 p-12 bg-slate-900/30 backdrop-blur-sm">
+                        <form onSubmit={handleSubmit} className="space-y-8 h-full flex flex-col justify-center">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="relative">
+                                    <input 
+                                        type="text" 
+                                        id="name"
+                                        className={inputClasses('name')}
+                                        value={formState.name}
+                                        onChange={(e) => setFormState({...formState, name: e.target.value})}
+                                        onFocus={() => setFocusedField('name')}
+                                        onBlur={() => setFocusedField(null)}
+                                    />
+                                    <label htmlFor="name" className={labelClasses('name')}>
+                                        Your Name
+                                    </label>
+                                </div>
+                                <div className="relative">
+                                    <input 
+                                        type="email" 
+                                        id="email"
+                                        className={inputClasses('email')}
+                                        value={formState.email}
+                                        onChange={(e) => setFormState({...formState, email: e.target.value})}
+                                        onFocus={() => setFocusedField('email')}
+                                        onBlur={() => setFocusedField(null)}
+                                    />
+                                    <label htmlFor="email" className={labelClasses('email')}>
+                                        Email Address
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div className="relative">
+                                <textarea 
+                                    id="message"
+                                    rows="6"
+                                    className={`${inputClasses('message')} resize-none`}
+                                    value={formState.message}
+                                    onChange={(e) => setFormState({...formState, message: e.target.value})}
+                                    onFocus={() => setFocusedField('message')}
+                                    onBlur={() => setFocusedField(null)}
+                                ></textarea>
+                                <label htmlFor="message" className={labelClasses('message')}>
+                                    How can we help you?
+                                </label>
+                            </div>
+
+                            <div className="flex justify-end">
+                                <button 
+                                    type="submit" 
+                                    className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl font-bold text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
+                                >
+                                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                                    <span className="relative flex items-center gap-2">
+                                        Send Message
+                                        <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
