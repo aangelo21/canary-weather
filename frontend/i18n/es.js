@@ -203,5 +203,14 @@ export const es = {
     clickLocation: "Haz clic en una Ubicación para ver su pronóstico",
     mapDescription: "Navega por las islas y descubre las condiciones meteorológicas en tiempo real.",
     ourHQ: "Nuestra Sede",
+    // Testimonials
+    testimonialsTitle: "Amado por Locales y Viajeros",
+    testimonialsSubtitle: "Descubre cómo Canary Weather ayuda a miles de personas a planificar sus días perfectos en el archipiélago.",
+    testimonial1: "Solía consultar tres aplicaciones diferentes antes de salir a surfear. Ahora, Canary Weather es la única que necesito. La precisión del viento y las mareas es inigualable, y las alertas en tiempo real me han ahorrado viajes en balde más de una vez.",
+    testimonial1Highlight: "La precisión del viento y las mareas es inigualable",
+    testimonial2: "Como nómada digital que trabaja desde diferentes islas, los datos meteorológicos fiables son cruciales para mis caminatas de fin de semana. Esta aplicación no solo te da números; te da contexto. Las advertencias de microclimas cambian las reglas del juego para planificar rutas.",
+    testimonial2Highlight: "Las advertencias de microclimas cambian las reglas del juego",
+    testimonial3: "Planificar un viaje familiar a Tenerife era estresante hasta que encontré esto. Podíamos encontrar los lugares soleados fácilmente incluso cuando el norte estaba nublado. La interfaz es hermosa y tan fácil de usar que incluso a mis hijos les encanta consultar el mapa.",
+    testimonial3Highlight: "Podíamos encontrar los lugares soleados fácilmente",
   },
 };
