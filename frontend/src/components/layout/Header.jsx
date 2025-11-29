@@ -204,7 +204,7 @@ function Header() {
              * Sticky positioning ensures the header is always accessible.
              * Uses a high-contrast background with a subtle border for separation.
              */}
-            <header className="sticky top-0 z-50 w-full bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm border-b border-neutral-200 dark:border-neutral-800 transition-colors duration-300">
+            <header className="relative z-50 w-full bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm border-b border-neutral-200 dark:border-neutral-800 transition-colors duration-300">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16 md:h-20">
                         
@@ -212,6 +212,7 @@ function Header() {
                          * Logo Section 
                          * Clean and simple branding.
                          * Updated text color to match the brand blue from the design reference.
+                         * Added gradient text effect as requested.
                          */}
                         <div className="shrink-0 flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/')}>
                             <img
@@ -219,7 +220,7 @@ function Header() {
                                 alt="Canary Weather Logo"
                                 className="h-10 md:h-12 w-auto transition-transform duration-300 group-hover:scale-105"
                             />
-                            <span className="hidden md:block text-xl font-bold text-[#3b82f6] dark:text-[#60a5fa] tracking-tight transition-colors">
+                            <span className="hidden md:block text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent tracking-tight transition-all">
                                 Canary Weather
                             </span>
                         </div>
@@ -248,7 +249,7 @@ function Header() {
                                         `relative group flex items-center text-sm font-semibold tracking-wide transition-colors duration-300 ${
                                             isActive
                                                 ? 'text-blue-600 dark:text-blue-400'
-                                                : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
+                                                : 'text-neutral-800 dark:text-neutral-300 hover:text-black dark:hover:text-white'
                                         }`
                                     }
                                 >
@@ -267,7 +268,7 @@ function Header() {
                         <div className="hidden lg:flex items-center gap-4">
                             
                             {/* Theme Switcher */}
-                            <div className="text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors">
+                            <div className="text-neutral-700 hover:text-black dark:text-neutral-300 dark:hover:text-white transition-colors">
                                 <ThemeSwitch />
                             </div>
 
@@ -278,7 +279,7 @@ function Header() {
                             <div className="relative language-dropdown">
                                 <button
                                     onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-                                    className="flex items-center gap-2 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    className="flex items-center gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                                 >
                                     <img 
                                         src={i18n.language === 'en' ? 'https://flagcdn.com/w40/gb.png' : 'https://flagcdn.com/w40/es.png'} 
@@ -403,14 +404,14 @@ function Header() {
                                             <div className="flex gap-2">
                                                 <button
                                                     onClick={() => { i18n.changeLanguage('en'); setShowMobileSettings(false); }}
-                                                    className={`flex items-center gap-1 px-3 py-1 text-xs font-medium rounded border transition-colors ${i18n.language === 'en' ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 border-transparent' : 'bg-transparent border-neutral-300 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400'}`}
+                                                    className={`flex items-center gap-1 px-3 py-1 text-xs font-medium rounded border transition-colors ${i18n.language === 'en' ? 'bg-blue-600 text-white border-transparent shadow-sm' : 'bg-transparent border-neutral-300 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400'}`}
                                                 >
                                                     <img src="https://flagcdn.com/w40/gb.png" alt="EN" className="w-3 h-3 rounded-full" />
                                                     EN
                                                 </button>
                                                 <button
                                                     onClick={() => { i18n.changeLanguage('es'); setShowMobileSettings(false); }}
-                                                    className={`flex items-center gap-1 px-3 py-1 text-xs font-medium rounded border transition-colors ${i18n.language === 'es' ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 border-transparent' : 'bg-transparent border-neutral-300 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400'}`}
+                                                    className={`flex items-center gap-1 px-3 py-1 text-xs font-medium rounded border transition-colors ${i18n.language === 'es' ? 'bg-blue-600 text-white border-transparent shadow-sm' : 'bg-transparent border-neutral-300 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400'}`}
                                                 >
                                                     <img src="https://flagcdn.com/w40/es.png" alt="ES" className="w-3 h-3 rounded-full" />
                                                     ES
@@ -484,7 +485,6 @@ function Header() {
                                                 </div>
                                                 <div className="flex-1 text-left">
                                                     <p className="text-sm font-semibold text-neutral-900 dark:text-white">{user.username}</p>
-                                                    <p className="text-xs text-neutral-500 dark:text-neutral-400">Logged in</p>
                                                 </div>
                                                 <svg className={`w-4 h-4 text-neutral-400 transition-transform ${showMobileUserDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                                             </button>
