@@ -3,8 +3,18 @@ import sequelize from "../controllers/dbController.js";
 // Import DataTypes for defining column types
 import { DataTypes } from "sequelize";
 
-// Define the UserLocation junction table for many-to-many relationship between User and Location
-// This table tracks which locations are favorited or selected by users
+/**
+ * UserLocation Model
+ * 
+ * Represents the association between a User and a Location.
+ * Used to track which location a user has currently selected or favorited.
+ * 
+ * @typedef {Object} UserLocation
+ * @property {string} id - Unique identifier (UUID).
+ * @property {string} user_id - Foreign key referencing the User.
+ * @property {string} location_id - Foreign key referencing the Location.
+ * @property {Date} selected_at - Timestamp when the location was selected.
+ */
 const UserLocation = sequelize.define(
   "UserLocation",
   {

@@ -1,24 +1,21 @@
-// Import Outlet from React Router to render child routes
-import { Outlet } from "react-router-dom";
-// Import Header and Footer components for consistent layout
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import { Outlet } from 'react-router-dom';
+import Header from '../components/layout/Header';
+import Footer from '../components/layout/Footer';
 
-// Layout component that provides the overall page structure
-// This component wraps all pages with a header, main content area, and footer
+/**
+ * Layout component that provides the main structure of the application.
+ * It wraps the content with a Header and a Footer, and uses Outlet to render child routes.
+ *
+ * @returns {JSX.Element} The rendered Layout component.
+ */
 export default function Layout() {
-  return (
-    // Flexbox container with full height and column direction
-    <div className="flex flex-col min-h-screen bg-white">
-      {/* Header component at the top */}
-      <Header />
-      {/* Main content area that grows to fill available space */}
-      <main className="grow mt-6">
-        {/* Outlet renders the current route's component */}
-        <Outlet />
-      </main>
-      {/* Footer component at the bottom */}
-      <Footer />
-    </div>
-  );
+    return (
+        <div className="flex flex-col min-h-screen bg-white">
+            <Header />
+            <main className="grow mt-6">
+                <Outlet />
+            </main>
+            <Footer />
+        </div>
+    );
 }

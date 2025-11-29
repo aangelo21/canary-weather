@@ -28,6 +28,16 @@ import {
 } from "../middleware/authMiddleware.js";
 
 /**
+ * User Routes
+ * 
+ * Defines routes for user authentication and management.
+ * Includes login, logout, registration, profile updates, and retrieval.
+ * Also handles token refreshing and fetching available municipalities.
+ * 
+ * Base Path: /api/users
+ */
+
+/**
  * @swagger
  * /api/users/login:
  *   post:

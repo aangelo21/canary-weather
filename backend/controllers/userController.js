@@ -5,7 +5,19 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
-// Controller function to handle user login
+/**
+ * Authenticates a user and returns a JWT token.
+ * 
+ * Verifies the username and password. If successful, creates a session
+ * and generates a JSON Web Token (JWT) for client-side authentication.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.body - The request body.
+ * @param {string} req.body.username - The username to authenticate.
+ * @param {string} req.body.password - The password to authenticate.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response with user data and token.
+ */
 export const loginUser = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -44,7 +56,17 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// Controller function to refresh token
+/**
+ * Refreshes the JWT token for an authenticated user.
+ * 
+ * Uses the user information attached to the request (from middleware)
+ * to generate a new JWT with a fresh expiration time.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.user - The authenticated user object.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response with the new token.
+ */
 export const refreshToken = async (req, res) => {
   // The user is already authenticated by session middleware
   const user = req.user;
@@ -55,7 +77,15 @@ export const refreshToken = async (req, res) => {
   return res.json({ token });
 };
 
-// Controller function to logout user
+/**
+ * Logs out the current user.
+ * 
+ * Destroys the server-side session and clears the session cookie.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response confirming logout.
+ */
 export const logoutUser = async (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -66,7 +96,17 @@ export const logoutUser = async (req, res) => {
   });
 };
 
-// Controller function to get the current authenticated user
+/**
+ * Retrieves the currently authenticated user's profile.
+ * 
+ * Fetches user details based on the session ID, excluding the password.
+ * Includes the user's associated Location.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.session - The session object.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response with the user profile.
+ */
 export const getCurrentUser = async (req, res) => {
   try {
     // Extract user ID from session
@@ -84,7 +124,15 @@ export const getCurrentUser = async (req, res) => {
   }
 };
 
-// Controller function to get all users
+/**
+ * Retrieves all users in the system.
+ * 
+ * Returns a list of all users, excluding their passwords.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response with the list of users.
+ */
 export const getAllUsers = async (req, res) => {
   try {
     // Fetch all users, excluding passwords
@@ -98,6 +146,17 @@ export const getAllUsers = async (req, res) => {
 };
 
 // Controller function to get a user by ID
+/**
+ * Retrieves a specific user by ID.
+ * 
+ * Returns the user details, excluding the password.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.params - URL parameters.
+ * @param {string} req.params.id - The ID of the user to retrieve.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response with the user details.
+ */
 export const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -112,7 +171,23 @@ export const getUserById = async (req, res) => {
   }
 };
 
-// Controller function to create a new user
+/**
+ * Creates a new user account.
+ * 
+ * Validates required fields and checks for existing email.
+ * Hashes the password before saving.
+ * Optionally associates the user with selected locations and their corresponding local POIs.
+ * Automatically logs the user in by setting the session.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.body - The request body.
+ * @param {string} req.body.email - The user's email.
+ * @param {string} req.body.username - The user's username.
+ * @param {string} req.body.password - The user's password.
+ * @param {Array<number>} [req.body.location_ids] - Optional list of location IDs to associate.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response with the created user data.
+ */
 export const createUser = async (req, res) => {
   try {
     const { email, username, password, location_ids } = req.body;
@@ -164,7 +239,21 @@ export const createUser = async (req, res) => {
   }
 };
 
-// Controller function to update an existing user
+/**
+ * Updates an existing user's profile.
+ * 
+ * Handles updates to user details, profile picture uploads, and location associations.
+ * If locations are updated, it resets and re-establishes UserLocation and local UserPointOfInterest associations.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.params - URL parameters.
+ * @param {string} req.params.id - The ID of the user to update.
+ * @param {Object} req.body - The updated data.
+ * @param {Array<number>} [req.body.location_ids] - Optional list of new location IDs.
+ * @param {Object} [req.file] - The uploaded profile picture (optional).
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response with the updated user data.
+ */
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -239,7 +328,17 @@ export const updateUser = async (req, res) => {
   }
 };
 
-// Controller function to delete a user
+/**
+ * Deletes a user account.
+ * 
+ * Permanently removes the user from the database.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.params - URL parameters.
+ * @param {string} req.params.id - The ID of the user to delete.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} 204 No Content response on success.
+ */
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -253,7 +352,16 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-// Controller function to get all available municipalities
+/**
+ * Retrieves all available municipalities.
+ * 
+ * Filters locations to find those that are municipalities (having valid coordinates).
+ * Used for populating location selection lists.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response with the list of municipalities.
+ */
 export const getMunicipalities = async (req, res) => {
   try {
     // Get all locations that are municipalities (not just islands)

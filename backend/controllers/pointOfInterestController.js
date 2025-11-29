@@ -2,6 +2,26 @@ import { PointOfInterest, UserPointOfInterest, UserLocation, Location } from "..
 import { Op } from "sequelize";
 import sequelize from "../controllers/dbController.js";
 
+/**
+ * Point of Interest (POI) Controller
+ * 
+ * Manages the retrieval, creation, and modification of Points of Interest.
+ * Handles complex logic for filtering POIs based on user roles (Admin vs User)
+ * and types (Global, Local, Personal).
+ */
+
+/**
+ * Retrieves all visible Points of Interest for the current user context.
+ * 
+ * - **Admins**: Can see all 'global' and 'local' POIs.
+ * - **Authenticated Users**: See 'global' POIs + 'local' POIs relevant to their selected location (municipality).
+ * - **Guests**: See only 'global' POIs.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.user - The authenticated user object (if any).
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response containing the filtered list of POIs.
+ */
 export const getAllPointsOfInterest = async (req, res) => {
   try {
     let whereClause;
@@ -46,6 +66,17 @@ export const getAllPointsOfInterest = async (req, res) => {
   }
 };
 
+/**
+ * Retrieves "Personal" Points of Interest for the authenticated user.
+ * 
+ * Fetches POIs that the user has explicitly saved or created as 'personal'.
+ * Also includes 'local' POIs that are associated with the user.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.user - The authenticated user.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response containing the user's personal POIs.
+ */
 export const getPersonalPointsOfInterest = async (req, res) => {
   try {
     const userId = req.user ? req.user.id : null;
@@ -76,6 +107,15 @@ export const getPersonalPointsOfInterest = async (req, res) => {
   }
 };
 
+/**
+ * Retrieves a specific POI by ID.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.params - URL parameters.
+ * @param {string} req.params.id - The ID of the POI.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response containing the POI details or a 404 error.
+ */
 export const getPointOfInterestById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -88,6 +128,18 @@ export const getPointOfInterestById = async (req, res) => {
   }
 };
 
+/**
+ * Creates a new Point of Interest.
+ * 
+ * Automatically assigns the type ('global' or 'personal') if not provided.
+ * If the user is authenticated, it also creates an association in `UserPointOfInterest`.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.body - The POI data.
+ * @param {Object} req.user - The authenticated user.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response containing the created POI.
+ */
 export const createPointOfInterest = async (req, res) => {
   try {
     const payload = req.body;
@@ -97,6 +149,7 @@ export const createPointOfInterest = async (req, res) => {
     }
     
     const item = await PointOfInterest.create(payload);
+
 
     const userId = req.user.id;
     await UserPointOfInterest.create({
@@ -111,6 +164,20 @@ export const createPointOfInterest = async (req, res) => {
   }
 };
 
+/**
+ * Updates an existing Point of Interest.
+ * 
+ * Handles updates to POI details, including file uploads for images.
+ * Parses latitude/longitude and boolean flags correctly.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.params - URL parameters.
+ * @param {string} req.params.id - The ID of the POI to update.
+ * @param {Object} req.body - The updated data.
+ * @param {Object} [req.file] - The uploaded image file (optional).
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response containing the updated POI.
+ */
 export const updatePointOfInterest = async (req, res) => {
   try {
     const { id } = req.params;
@@ -149,6 +216,20 @@ export const updatePointOfInterest = async (req, res) => {
   }
 };
 
+/**
+ * Deletes a Point of Interest.
+ * 
+ * - If the POI is 'local', it only removes the user's association (unfavorites it)
+ *   and potentially the associated UserLocation, but keeps the POI itself.
+ * - If the POI is 'personal' or 'global' (and user has permission), it deletes the POI record.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.params - URL parameters.
+ * @param {string} req.params.id - The ID of the POI to delete.
+ * @param {Object} req.user - The authenticated user.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} 204 No Content response on success.
+ */
 export const deletePointOfInterest = async (req, res) => {
   try {
     const { id } = req.params;

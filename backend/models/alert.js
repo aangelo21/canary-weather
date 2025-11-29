@@ -3,7 +3,23 @@ import sequelize from "../controllers/dbController.js";
 // Import DataTypes for defining column types
 import { DataTypes } from "sequelize";
 
-// Define the Alert model for storing weather alert information
+/**
+ * Alert Model
+ * 
+ * Represents a weather alert or warning.
+ * Stores information about the severity, phenomenon type, and duration of the alert.
+ * Linked to a specific Location.
+ * 
+ * @typedef {Object} Alert
+ * @property {string} id - Unique identifier (UUID).
+ * @property {string} level - Severity level (e.g., 'Yellow', 'Orange', 'Red').
+ * @property {string} phenomenon - Type of weather event (e.g., 'Wind', 'Rain').
+ * @property {Date} start_date - Start time of the alert.
+ * @property {Date} end_date - End time of the alert.
+ * @property {string} location_id - Foreign key referencing the Location.
+ * @property {Date} createdAt - Timestamp of creation.
+ * @property {Date} updatedAt - Timestamp of last update.
+ */
 const Alert = sequelize.define(
   "Alert",
   {
