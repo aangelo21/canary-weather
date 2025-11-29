@@ -14,7 +14,7 @@ export default function Layout() {
 
     return (
         <div className={`flex flex-col min-h-screen ${isAboutPage ? 'bg-[#0B1120]' : 'bg-white'}`}>
-            <Header />
+            <Header isTransparent={isAboutPage} />
             <main className={`grow ${isAboutPage ? '' : 'mt-6'}`}>
                 <Outlet />
             </main>

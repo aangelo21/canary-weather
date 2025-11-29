@@ -24,11 +24,14 @@ import ThemeSwitch from '../common/ThemeSwitch';
  * - Manages user authentication state (login/logout).
  * - Displays real-time weather alerts with visual indicators.
  * - Provides internationalization (i18n) and theme switching.
+ * - **Transparent Mode**: Supports a transparent overlay mode for immersive pages like "About Us".
  *
  * @component
+ * @param {Object} props - Component props.
+ * @param {boolean} [props.isTransparent=false] - Whether the header should start as transparent (overlay).
  * @returns {JSX.Element} The rendered Header component.
  */
-function Header() {
+function Header({ isTransparent = false }) {
     /**
      * @type {[boolean, Function]} isOpen - State for mobile menu visibility.
      */
@@ -69,10 +72,28 @@ function Header() {
      */
     const [alerts, setAlerts] = useState([]);
 
+    /**
+     * @type {[boolean, Function]} isScrolled - State to track if the page has been scrolled.
+     * Used to toggle the background of the transparent header.
+     */
+    const [isScrolled, setIsScrolled] = useState(false);
+
     const userDropdownRef = useRef(null);
     const API_BASE = import.meta.env.VITE_API_BASE;
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
+
+    /**
+     * Effect hook to handle scroll events.
+     * Toggles the `isScrolled` state based on the scroll position.
+     */
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 20);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     /**
      * Effect hook to initialize user state from local storage on mount.
@@ -197,6 +218,30 @@ function Header() {
         setIsOpen(!isOpen);
     };
 
+    /**
+     * Determines the header classes based on transparency mode and scroll state.
+     */
+    const headerClasses = isTransparent
+        ? isScrolled
+            ? 'fixed top-0 left-0 w-full z-50 bg-[#0B1120]/80 backdrop-blur-md border-b border-white/10 transition-all duration-300 shadow-lg shadow-black/20'
+            : 'absolute top-0 left-0 w-full z-50 bg-transparent border-b border-transparent transition-all duration-300'
+        : 'sticky top-0 z-50 w-full bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm border-b border-neutral-200 dark:border-neutral-800 transition-colors duration-300';
+
+    /**
+     * Determines text colors based on transparency mode.
+     * In transparent mode, text is always white/light unless scrolled (though we keep it light for the dark theme).
+     */
+    const navLinkClasses = (isActive) =>
+        `relative group flex items-center text-sm font-semibold tracking-wide transition-colors duration-300 ${
+            isActive
+                ? isTransparent
+                    ? 'text-cyan-400'
+                    : 'text-blue-600 dark:text-blue-400'
+                : isTransparent
+                ? 'text-slate-300 hover:text-white'
+                : 'text-neutral-800 dark:text-neutral-300 hover:text-black dark:hover:text-white'
+        }`;
+
     return (
         <>
             {/* 
@@ -204,7 +249,7 @@ function Header() {
              * Sticky positioning ensures the header is always accessible.
              * Uses a high-contrast background with a subtle border for separation.
              */}
-            <header className="relative z-50 w-full bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm border-b border-neutral-200 dark:border-neutral-800 transition-colors duration-300">
+            <header className={headerClasses}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16 md:h-20">
                         
@@ -220,7 +265,7 @@ function Header() {
                                 alt="Canary Weather Logo"
                                 className="h-10 md:h-12 w-auto transition-transform duration-300 group-hover:scale-105"
                             />
-                            <span className="hidden md:block text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent tracking-tight transition-all">
+                            <span className={`hidden md:block text-xl font-bold tracking-tight transition-all ${isTransparent ? 'text-white' : 'bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent'}`}>
                                 Canary Weather
                             </span>
                         </div>
@@ -245,18 +290,12 @@ function Header() {
                                 <NavLink
                                     key={link.to}
                                     to={link.to}
-                                    className={({ isActive }) =>
-                                        `relative group flex items-center text-sm font-semibold tracking-wide transition-colors duration-300 ${
-                                            isActive
-                                                ? 'text-blue-600 dark:text-blue-400'
-                                                : 'text-neutral-800 dark:text-neutral-300 hover:text-black dark:hover:text-white'
-                                        }`
-                                    }
+                                    className={({ isActive }) => navLinkClasses(isActive)}
                                 >
                                     {link.icon}
                                     {link.label}
                                     {/* Animated Underline */}
-                                    <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 transform scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100"></span>
+                                    <span className={`absolute -bottom-1 left-0 w-full h-0.5 transform scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100 ${isTransparent ? 'bg-cyan-400' : 'bg-blue-600 dark:bg-blue-400'}`}></span>
                                 </NavLink>
                             ))}
                         </nav>
@@ -268,18 +307,18 @@ function Header() {
                         <div className="hidden lg:flex items-center gap-4">
                             
                             {/* Theme Switcher */}
-                            <div className="text-neutral-700 hover:text-black dark:text-neutral-300 dark:hover:text-white transition-colors">
+                            <div className={`${isTransparent ? 'text-slate-300 hover:text-white' : 'text-neutral-700 hover:text-black dark:text-neutral-300 dark:hover:text-white'} transition-colors`}>
                                 <ThemeSwitch />
                             </div>
 
                             {/* Divider */}
-                            <div className="h-6 w-px bg-neutral-200 dark:bg-neutral-700"></div>
+                            <div className={`h-6 w-px ${isTransparent ? 'bg-white/20' : 'bg-neutral-200 dark:bg-neutral-700'}`}></div>
 
                             {/* Language Selector */}
                             <div className="relative language-dropdown">
                                 <button
                                     onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-                                    className="flex items-center gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    className={`flex items-center gap-2 text-sm font-medium transition-colors ${isTransparent ? 'text-slate-300 hover:text-white' : 'text-neutral-800 dark:text-neutral-200 hover:text-blue-600 dark:hover:text-blue-400'}`}
                                 >
                                     <img 
                                         src={i18n.language === 'en' ? 'https://flagcdn.com/w40/gb.png' : 'https://flagcdn.com/w40/es.png'} 
@@ -387,7 +426,7 @@ function Header() {
                             <div className="relative mobile-settings-dropdown">
                                 <button
                                     onClick={() => setShowMobileSettings(!showMobileSettings)}
-                                    className="p-2 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+                                    className={`p-2 rounded-lg transition-colors ${isTransparent ? 'text-slate-300 hover:bg-white/10 hover:text-white' : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'}`}
                                 >
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -425,7 +464,7 @@ function Header() {
 
                             {/* Mobile Menu Toggle */}
                             <button
-                                className="p-2 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+                                className={`p-2 rounded-lg transition-colors ${isTransparent ? 'text-slate-300 hover:bg-white/10 hover:text-white' : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'}`}
                                 onClick={toggleMenu}
                             >
                                 {isOpen ? (
