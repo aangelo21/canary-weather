@@ -5,7 +5,22 @@ import { DataTypes } from "sequelize";
 // Import bcrypt for password hashing
 import bcrypt from "bcrypt";
 
-// Define the User model using Sequelize
+/**
+ * User Model
+ * 
+ * Represents a registered user of the application.
+ * Handles authentication (password hashing) and profile information.
+ * 
+ * @typedef {Object} User
+ * @property {string} id - Unique identifier (UUID).
+ * @property {string} email - User's email address (unique).
+ * @property {string} username - User's display name.
+ * @property {string} password - Hashed password.
+ * @property {string} profile_picture_url - URL to profile image.
+ * @property {boolean} is_admin - Flag indicating administrative privileges.
+ * @property {Date} createdAt - Timestamp of creation.
+ * @property {Date} updatedAt - Timestamp of last update.
+ */
 const User = sequelize.define(
   "User",
   {

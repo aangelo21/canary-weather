@@ -22,10 +22,10 @@ export default function Hero() {
     return (
         <div className="relative overflow-hidden">
             {/* Main Container: Centers content and handles padding for different screen sizes */}
-            <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-10 pb-10 lg:pt-16 lg:pb-12 relative z-10">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-10 pb-10 lg:pt-12 xl:pt-16 lg:pb-12 relative z-10">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center">
                     {/* Left Column: Text Content and CTAs */}
-                    <div className="flex flex-col justify-center text-center lg:text-left lg:-mt-16">
+                    <div className="flex flex-col justify-center text-center lg:text-left lg:-mt-8 xl:-mt-16">
                         <div className="space-y-6">
                             {/* Badge: Small highlight text */}
                             <div className="inline-flex items-center justify-center lg:justify-start">
@@ -35,7 +35,7 @@ export default function Hero() {
                             </div>
 
                             {/* Main Heading: Large, bold text with gradient effect */}
-                            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 dark:text-white leading-tight tracking-tight">
+                            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-gray-900 dark:text-white leading-tight tracking-tight">
                                 {t('welcomeTo')} <br />
                                 <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-primary to-accent-blue-300 dark:from-blue-400 dark:to-teal-300">
                                     {t('canaryWeather')}
@@ -100,6 +100,7 @@ export default function Hero() {
                                 <img
                                     src="/canary-weather-phone.png"
                                     alt="Mobile phones showing weather app"
+                                    fetchPriority="high"
                                     className="w-full h-auto object-contain drop-shadow-2xl z-10"
                                     onError={(e) => {
                                         // Fallback if image fails to load

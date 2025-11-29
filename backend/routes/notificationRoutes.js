@@ -12,6 +12,15 @@ import { authenticateToken } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 /**
+ * Notification Routes
+ * 
+ * Defines routes for managing user notifications.
+ * All routes require authentication via JWT token.
+ * 
+ * Base Path: /api/notifications
+ */
+
+/**
  * @swagger
  * /api/notifications:
  *   get:

@@ -3,8 +3,18 @@ import sequelize from "../controllers/dbController.js";
 // Import DataTypes for defining column types
 import { DataTypes } from "sequelize";
 
-// Define the UserPointOfInterest junction table for many-to-many relationship between User and PointOfInterest
-// This table tracks which points of interest are favorited by users
+/**
+ * UserPointOfInterest Model
+ * 
+ * Represents the association between a User and a PointOfInterest.
+ * Used to track which POIs a user has favorited.
+ * 
+ * @typedef {Object} UserPointOfInterest
+ * @property {string} id - Unique identifier (UUID).
+ * @property {string} user_id - Foreign key referencing the User.
+ * @property {string} point_of_interest_id - Foreign key referencing the PointOfInterest.
+ * @property {Date} favorited_at - Timestamp when the POI was favorited.
+ */
 const UserPointOfInterest = sequelize.define(
   "UserPointOfInterest",
   {

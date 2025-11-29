@@ -12,30 +12,66 @@ const destinations = [
 ];
 
 /**
- * DestinationCarousel component.
- * Displays a carousel of popular destinations in the Canary Islands.
- * Supports infinite scrolling and responsive layout.
+ * DestinationCarousel Component.
  *
+ * Displays an interactive carousel of popular tourist destinations in the Canary Islands.
+ * Features:
+ * - Infinite Scrolling: The carousel loops seamlessly in both directions.
+ * - Responsive Design: Adjusts the number of visible items based on screen width (1, 2, or 3 items).
+ * - Touch/Click Navigation: Users can navigate using previous/next buttons.
+ * - Localization: Destination names and descriptions are internationalized.
+ *
+ * The component uses a "tripled list" technique to achieve the infinite scroll effect,
+ * resetting the index silently when the user reaches the duplicate sets at the ends.
+ *
+ * @component
  * @returns {JSX.Element} The rendered DestinationCarousel component.
  */
 export default function DestinationCarousel() {
     const { t } = useTranslation();
-    // Create a tripled list to simulate infinite scrolling
+    
+    /**
+     * @type {Array<Object>} extendedDestinations - Tripled list of destinations to simulate infinite scrolling.
+     */
     const extendedDestinations = [
         ...destinations,
         ...destinations,
         ...destinations,
     ];
-    // Start in the middle set
+
+    /**
+     * @type {[number, Function]} currentIndex - Current index of the carousel. Starts in the middle set.
+     */
     const [currentIndex, setCurrentIndex] = useState(destinations.length);
+
+    /**
+     * @type {[boolean, Function]} isTransitioning - Controls whether the transition animation is active. Used for silent resets.
+     */
     const [isTransitioning, setIsTransitioning] = useState(true);
+
+    /**
+     * @type {[number, Function]} itemsPerPage - Number of items visible at once based on screen width.
+     */
     const [itemsPerPage, setItemsPerPage] = useState(1);
+
+    /**
+     * @type {[number, Function]} itemWidth - Width of a single carousel item including gap.
+     */
     const [itemWidth, setItemWidth] = useState(0);
+
+    /**
+     * @type {[number, Function]} containerWidth - Width of the carousel container.
+     */
     const [containerWidth, setContainerWidth] = useState(0);
+
     const itemRef = useRef(null);
     const containerRef = useRef(null);
     const contentRef = useRef(null);
 
+    /**
+     * Effect hook to handle window resize events.
+     * Updates `itemsPerPage` and `itemWidth` to ensure correct layout and scrolling behavior.
+     */
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth >= 1024) {
@@ -65,7 +101,10 @@ export default function DestinationCarousel() {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // Handle infinite scroll reset
+    /**
+     * Effect hook to handle infinite scroll logic.
+     * Checks if the carousel has reached the end of the extended list and silently resets the index to the middle set.
+     */
     useEffect(() => {
         if (currentIndex >= destinations.length * 2) {
             const timer = setTimeout(() => {
@@ -82,7 +121,9 @@ export default function DestinationCarousel() {
         }
     }, [currentIndex]);
 
-    // Re-enable transition after reset
+    /**
+     * Effect hook to re-enable transitions after a silent reset.
+     */
     useEffect(() => {
         if (!isTransitioning) {
             const timer = setTimeout(() => {
@@ -92,11 +133,17 @@ export default function DestinationCarousel() {
         }
     }, [isTransitioning]);
 
+    /**
+     * Advances the carousel to the next slide.
+     */
     const nextSlide = () => {
         if (!isTransitioning) return;
         setCurrentIndex((prevIndex) => prevIndex + 1);
     };
 
+    /**
+     * Moves the carousel to the previous slide.
+     */
     const prevSlide = () => {
         if (!isTransitioning) return;
         setCurrentIndex((prevIndex) => prevIndex - 1);
@@ -130,6 +177,7 @@ export default function DestinationCarousel() {
                                     <img
                                         src={dest.image}
                                         alt={dest.key}
+                                        loading="lazy"
                                         className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                                     />
                                 </div>

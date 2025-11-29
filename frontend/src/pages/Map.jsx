@@ -2,9 +2,17 @@ import InteractiveMap from '../components/map/InteractiveMap';
 import { useTranslation } from 'react-i18next';
 
 /**
- * Map page component.
- * Displays the interactive map for exploring weather.
+ * Map Page Component.
  *
+ * Renders the dedicated Map page, which features the `InteractiveMap` component.
+ * This page allows users to explore weather conditions across the Canary Islands visually.
+ *
+ * Features:
+ * - **Header**: Displays a localized title and description.
+ * - **Interactive Map**: Embeds the main map component for user interaction.
+ * - **Responsive Layout**: Adjusts padding and spacing for different screen sizes.
+ *
+ * @component
  * @returns {JSX.Element} The rendered Map page.
  */
 function Map() {

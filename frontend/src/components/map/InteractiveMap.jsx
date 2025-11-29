@@ -4,26 +4,42 @@ import WeatherPopup from './WeatherPopup';
 import { useTheme } from '../../context/ThemeContext';
 
 /**
- * InteractiveMap component.
- * Renders an interactive map of the Canary Islands where users can click
- * to get weather information for any location. It integrates with OpenWeatherMap API
- * to fetch real-time weather data and displays it in a popup on the map.
+ * InteractiveMap Component.
  *
+ * Renders a Leaflet map centered on the Canary Islands.
+ * Allows users to click anywhere on the map to retrieve real-time weather data for that specific coordinate.
+ *
+ * Features:
+ * - **Interactive Clicking**: Captures click events to fetch weather data from OpenWeatherMap API.
+ * - **Dynamic Popup**: Displays a custom `WeatherPopup` with the fetched data at the clicked location.
+ * - **Theme Support**: Adapts the map tiles (via CSS filters) based on the application's light/dark mode.
+ * - **Bounds Restriction**: Restricts panning to the Canary Islands region.
+ *
+ * @component
  * @returns {JSX.Element} The rendered InteractiveMap component.
  */
 function InteractiveMap() {
     const { isDarkMode } = useTheme();
+    
+    /**
+     * @type {[Array<number>|null, Function]} clickedPos - State for the [latitude, longitude] of the last click.
+     */
     const [clickedPos, setClickedPos] = useState(null);
+
+    /**
+     * @type {[Object|null, Function]} weather - State for the fetched weather data.
+     */
     const [weather, setWeather] = useState(null);
+
     const markerRef = useRef(null);
 
     /**
-     * MapClickHandler component.
-     * Handles map click events.
-     * This is a custom component that uses Leaflet's useMapEvents hook
-     * to listen for click events and fetch weather data asynchronously.
+     * MapClickHandler Component (Internal).
      *
-     * @returns {null} This component does not render anything.
+     * A headless component that hooks into Leaflet's map events.
+     * It listens for 'click' events, updates the `clickedPos` state, and triggers the weather data fetch.
+     *
+     * @returns {null} This component does not render any visible elements.
      */
     function MapClickHandler() {
         useMapEvents({
@@ -59,13 +75,17 @@ function InteractiveMap() {
     }
 
     /**
-     * Handles the popup close event.
+     * Handles the closing of the weather popup.
+     * Resets the clicked position and weather data states.
      */
     const handlePopupClose = () => {
         setClickedPos(null);
         setWeather(null);
     };
 
+    /**
+     * Effect hook to automatically open the popup when weather data is ready.
+     */
     useEffect(() => {
         if (markerRef.current && clickedPos && weather != null) {
             markerRef.current.openPopup();

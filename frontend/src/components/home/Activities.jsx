@@ -1,10 +1,15 @@
 import { useTranslation } from 'react-i18next';
 
 /**
- * Activities component for the Home page.
- * Displays cards for different activities like Surfing, Hiking, and Stargazing.
+ * Activities Component.
  *
- * @returns {JSX.Element} The rendered Activities component.
+ * This component displays a grid of activity cards on the Home page.
+ * Each card represents a specific activity (Surfing, Hiking, Stargazing) relevant to the Canary Islands.
+ * It uses images and icons to visually represent each activity and provides a brief description.
+ * The content is internationalized using `react-i18next`.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered Activities component containing a grid of activity cards.
  */
 export default function Activities() {
     const { t } = useTranslation();
@@ -25,9 +30,14 @@ export default function Activities() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Surfing Card */}
                     <div className="group relative overflow-hidden rounded-3xl h-80 cursor-pointer shadow-xl">
-                        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=800&q=80')] bg-cover bg-center transition-transform duration-700 group-hover:scale-110"></div>
+                        <img
+                            src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=800&q=80"
+                            alt={t('surfing') || 'Surfing & Water Sports'}
+                            loading="lazy"
+                            className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
+                        />
                         <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent"></div>
-                        <div className="absolute bottom-0 left-0 p-8">
+                        <div className="absolute bottom-0 left-0 p-8 relative z-10">
                             <div className="text-white mb-2">
                                 <svg
                                     className="w-8 h-8"
@@ -55,9 +65,14 @@ export default function Activities() {
 
                     {/* Hiking Card */}
                     <div className="group relative overflow-hidden rounded-3xl h-80 cursor-pointer shadow-xl">
-                        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80')] bg-cover bg-center transition-transform duration-700 group-hover:scale-110"></div>
+                        <img
+                            src="https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80"
+                            alt={t('hiking') || 'Hiking & Trekking'}
+                            loading="lazy"
+                            className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
+                        />
                         <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent"></div>
-                        <div className="absolute bottom-0 left-0 p-8">
+                        <div className="absolute bottom-0 left-0 p-8 relative z-10">
                             <div className="text-white mb-2">
                                 <svg
                                     className="w-8 h-8"
@@ -85,9 +100,14 @@ export default function Activities() {
 
                     {/* Stargazing Card */}
                     <div className="group relative overflow-hidden rounded-3xl h-80 cursor-pointer shadow-xl">
-                        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80')] bg-cover bg-center transition-transform duration-700 group-hover:scale-110"></div>
+                        <img
+                            src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80"
+                            alt={t('stargazing') || 'Stargazing'}
+                            loading="lazy"
+                            className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
+                        />
                         <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent"></div>
-                        <div className="absolute bottom-0 left-0 p-8">
+                        <div className="absolute bottom-0 left-0 p-8 relative z-10">
                             <div className="text-white mb-2">
                                 <svg
                                     className="w-8 h-8"

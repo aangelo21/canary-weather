@@ -1,10 +1,11 @@
+import { useState, useEffect, useRef, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 /**
- * Returns the appropriate weather emoji based on the condition.
+ * Helper function to determine the appropriate weather emoji based on the condition string.
  *
- * @param {string} condition - The weather condition string.
- * @returns {string} The emoji representing the weather.
+ * @param {string} condition - The weather condition description (e.g., "clear sky", "rain").
+ * @returns {string} An emoji character representing the weather.
  */
 function getWeatherEmoji(condition) {
     const c = (condition || '').toLowerCase();
@@ -25,30 +26,108 @@ function getWeatherEmoji(condition) {
 }
 
 /**
- * POICard component.
- * Displays a single Point of Interest (POI) in a card format,
- * showing its image, name, description, weather data, location info, and action buttons.
+ * POICard Component.
  *
+ * Displays a summary card for a specific Point of Interest (POI).
+ *
+ * Features:
+ * - **Lazy Loading**: Uses `IntersectionObserver` to fetch weather data only when the card scrolls into view, optimizing performance for long lists.
+ * - **Weather Integration**: Fetches and displays real-time weather data (temperature, condition, humidity, wind) for the POI's location.
+ * - **Image Handling**: Displays the POI's image if available, falling back to a placeholder.
+ * - **Actions**: Provides Edit and Delete buttons if the corresponding handlers are passed (typically for the owner of the POI).
+ * - **Memoization**: Wrapped in `React.memo` to prevent unnecessary re-renders.
+ *
+ * @component
  * @param {Object} props - The component props.
- * @param {Object} props.poi - The POI data object.
- * @param {Object} props.weather - The weather data object for the POI.
- * @param {Function} [props.onEdit] - Callback function for the edit action.
- * @param {Function} [props.onDelete] - Callback function for the delete action.
+ * @param {Object} props.poi - The POI data object containing name, description, coordinates, image URL, etc.
+ * @param {Function} [props.onEdit] - Callback function triggered when the Edit button is clicked.
+ * @param {Function} [props.onDelete] - Callback function triggered when the Delete button is clicked.
  * @returns {JSX.Element} The rendered POICard component.
  */
-export default function POICard({ poi, weather, onEdit, onDelete }) {
+const POICard = memo(function POICard({ poi, onEdit, onDelete }) {
     const { t } = useTranslation();
+    
+    /**
+     * @type {[Object|null, Function]} weather - State for the fetched weather data.
+     */
+    const [weather, setWeather] = useState(null);
+
+    /**
+     * @type {[boolean, Function]} isVisible - State to track if the card is currently visible in the viewport.
+     */
+    const [isVisible, setIsVisible] = useState(false);
+
+    const cardRef = useRef(null);
+
     const API_BASE = import.meta.env.VITE_API_BASE;
     const baseUrl = API_BASE?.replace('/api', '') || '';
     const imageUrl = poi.image_url ? `${baseUrl}${poi.image_url}` : null;
 
+    /**
+     * Effect hook to set up the IntersectionObserver.
+     * Sets `isVisible` to true when the card enters the viewport.
+     */
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.disconnect();
+                }
+            },
+            { rootMargin: '50px' }
+        );
+
+        if (cardRef.current) {
+            observer.observe(cardRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+
+    /**
+     * Effect hook to fetch weather data when the card becomes visible.
+     */
+    useEffect(() => {
+        if (isVisible && poi.latitude && poi.longitude && !weather) {
+            const fetchWeather = async () => {
+                try {
+                    const OPENWEATHER_API_KEY =
+                        import.meta.env.VITE_OPENWEATHER_API_KEY;
+                    const res = await fetch(
+                        `https://api.openweathermap.org/data/2.5/weather?lat=${poi.latitude}&lon=${poi.longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`
+                    );
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    setWeather({
+                        temp: data.main?.temp ?? null,
+                        description: data.weather?.[0]?.description ?? '',
+                        condition: data.weather?.[0]?.main ?? '',
+                        humidity: data.main?.humidity ?? null,
+                        pressure: data.main?.pressure ?? null,
+                        wind: data.wind?.speed ?? null,
+                        clouds: data.clouds?.all ?? null,
+                    });
+                } catch (err) {
+                    console.error('Failed to fetch weather', err);
+                }
+            };
+            fetchWeather();
+        }
+    }, [isVisible, poi.latitude, poi.longitude, weather]);
+
     return (
-        <article className="group bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col h-full transform hover:-translate-y-1">
+        <article
+            ref={cardRef}
+            className="group bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col h-full transform hover:-translate-y-1"
+        >
             <div className="relative h-48 overflow-hidden">
                 {imageUrl ? (
                     <img
                         src={imageUrl}
                         alt={poi.name}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         onError={(e) => {
                             e.target.style.display = 'none';
@@ -256,4 +335,6 @@ export default function POICard({ poi, weather, onEdit, onDelete }) {
             </div>
         </article>
     );
-}
+});
+
+export default POICard;

@@ -7,25 +7,70 @@ import { useTranslation } from 'react-i18next';
 import ThemeSwitch from '../common/ThemeSwitch';
 
 /**
- * Header component.
- * Displays the main navigation, user authentication status, language selector, and theme switch.
+ * Header Component.
  *
+ * The main navigation bar of the application. It persists across all pages and provides:
+ * - **Navigation**: Links to Home, Map, POIs, Warnings, and About Us.
+ * - **Authentication**: Login/Signup modal trigger and User Profile dropdown (when logged in).
+ * - **Settings**: Language selector (English/Spanish) and Theme Switcher (Light/Dark).
+ * - **Alerts**: Displays a notification badge if there are active weather alerts.
+ * - **Responsive Design**: Adapts to mobile screens with a hamburger menu and collapsible sections.
+ *
+ * The component manages local state for UI toggles (dropdowns, modals) and user session data.
+ * It also listens for global events and updates user state accordingly.
+ *
+ * @component
  * @returns {JSX.Element} The rendered Header component.
  */
 function Header() {
+    /**
+     * @type {[boolean, Function]} isOpen - State for mobile menu visibility.
+     */
     const [isOpen, setIsOpen] = useState(false);
+
+    /**
+     * @type {[boolean, Function]} showMobileSettings - State for mobile settings dropdown visibility.
+     */
     const [showMobileSettings, setShowMobileSettings] = useState(false);
+
+    /**
+     * @type {[boolean, Function]} showMobileUserDropdown - State for mobile user menu visibility.
+     */
     const [showMobileUserDropdown, setShowMobileUserDropdown] = useState(false);
+
+    /**
+     * @type {[boolean, Function]} showLogin - State for LoginModal visibility.
+     */
     const [showLogin, setShowLogin] = useState(false);
+
+    /**
+     * @type {[Object|null, Function]} user - State for the currently logged-in user.
+     */
     const [user, setUser] = useState(null);
+
+    /**
+     * @type {[boolean, Function]} showLanguageDropdown - State for desktop language dropdown visibility.
+     */
     const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+
+    /**
+     * @type {[boolean, Function]} showUserDropdown - State for desktop user profile dropdown visibility.
+     */
     const [showUserDropdown, setShowUserDropdown] = useState(false);
+
+    /**
+     * @type {[Array<Object>, Function]} alerts - State for active weather alerts.
+     */
     const [alerts, setAlerts] = useState([]);
+
     const userDropdownRef = useRef(null);
     const API_BASE = import.meta.env.VITE_API_BASE;
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
 
+    /**
+     * Effect hook to initialize user state from local storage on mount.
+     */
     useEffect(() => {
         const storedUser = localStorage.getItem('cw_user');
         if (storedUser) {
@@ -38,6 +83,9 @@ function Header() {
         }
     }, []);
 
+    /**
+     * Effect hook to handle clicks outside of dropdowns to close them.
+     */
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (
@@ -65,6 +113,9 @@ function Header() {
             document.removeEventListener('mousedown', handleClickOutside);
     }, [showLanguageDropdown, showUserDropdown, showMobileSettings]);
 
+    /**
+     * Effect hook to fetch active alerts on mount.
+     */
     useEffect(() => {
         const loadAlerts = async () => {
             try {
@@ -79,6 +130,8 @@ function Header() {
 
     /**
      * Handles successful user login.
+     * Updates local storage, component state, and dispatches a global event.
+     *
      * @param {Object} userObj - The logged-in user object.
      */
     const handleLogin = (userObj) => {
@@ -90,6 +143,7 @@ function Header() {
 
     /**
      * Handles user logout.
+     * Calls the logout service, clears local storage, and updates component state.
      */
     const handleLogout = async () => {
         try {
@@ -140,7 +194,7 @@ function Header() {
     return (
         <header className="bg-white shadow-sm">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <nav className="flex items-center h-16 md:h-20 relative">
+                <nav className="flex items-center justify-between h-16 md:h-20 relative">
                     <div className="shrink-0">
                         <img
                             src="logo.webp"
@@ -149,7 +203,7 @@ function Header() {
                         />
                     </div>
 
-                    <div className="hidden lg:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <div className="hidden lg:flex items-center justify-center flex-1 px-4">
                         <ul className="flex items-center space-x-4 lg:space-x-8">
                             <li>
                                 <NavLink
@@ -219,7 +273,7 @@ function Header() {
                         </ul>
                     </div>
 
-                    <div className="lg:flex hidden items-center gap-3 ml-auto">
+                    <div className="lg:flex hidden items-center gap-3 shrink-0">
                         <ThemeSwitch />
 
                         <div className="relative language-dropdown">

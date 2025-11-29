@@ -9,18 +9,26 @@ import {
 import { useTranslation } from 'react-i18next';
 
 /**
- * LoginModal component.
- * Handles user authentication including login, signup, account editing,
- * and account deletion. It provides a modal interface with form validation and
- * integrates with the user service for API calls.
+ * LoginModal Component.
  *
+ * This component provides a modal interface for user authentication and profile management.
+ * It handles:
+ * - User Login: Allows users to sign in with email/username and password.
+ * - User Registration: Allows new users to create an account with email, username, password, and preferred locations.
+ * - Profile Editing: Allows logged-in users to update their username, email, password, and profile picture.
+ * - Account Deletion: Provides a confirmation flow for users to permanently delete their account.
+ *
+ * The component manages its own state for form inputs, loading status, errors, and visibility of sub-modals (like delete confirmation).
+ * It interacts with the `userService` to perform API operations.
+ *
+ * @component
  * @param {Object} props - The component props.
- * @param {boolean} props.isOpen - Boolean to control modal visibility.
- * @param {Function} props.onClose - Function to close the modal.
- * @param {Function} props.onLogin - Function called when user successfully logs in.
- * @param {Object} props.user - Current user object (if logged in).
- * @param {Function} props.onLogout - Function called when user logs out.
- * @returns {JSX.Element|null} The rendered LoginModal component or null if not open.
+ * @param {boolean} props.isOpen - Controls the visibility of the modal. If false, the component returns null.
+ * @param {Function} props.onClose - Callback function to close the modal.
+ * @param {Function} props.onLogin - Callback function executed upon successful login or profile update. Receives the user object.
+ * @param {Object} [props.user] - The currently logged-in user object. If present, the modal shows the "Edit Profile" view.
+ * @param {Function} props.onLogout - Callback function executed when the user logs out or deletes their account.
+ * @returns {JSX.Element|null} The rendered LoginModal component or null if `isOpen` is false.
  */
 export default function LoginModal({
     isOpen,
@@ -30,8 +38,26 @@ export default function LoginModal({
     onLogout,
 }) {
     const { t } = useTranslation();
+    
+    /**
+     * @type {[boolean, Function]} isSignUp - State to toggle between Login and Sign Up forms.
+     */
     const [isSignUp, setIsSignUp] = useState(false);
+
+    /**
+     * @type {[boolean, Function]} showDeleteConfirm - State to control the visibility of the delete account confirmation dialog.
+     */
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+    /**
+     * @type {[Object, Function]} input - State to hold form input values.
+     * @property {string} emailOrUsername - Input for login (email or username).
+     * @property {string} password - Input for password.
+     * @property {string} username - Input for new username (signup/edit).
+     * @property {string} email - Input for new email (signup/edit).
+     * @property {string} confirm - Input for password confirmation (signup/edit).
+     * @property {Array<number>} location_ids - Array of selected location IDs (signup/edit).
+     */
     const [input, setInput] = useState({
         emailOrUsername: '',
         password: '',
@@ -40,14 +66,44 @@ export default function LoginModal({
         confirm: '',
         location_ids: [],
     });
+
+    /**
+     * @type {[string, Function]} selectedLocationToAdd - State for the currently selected location in the dropdown to be added.
+     */
     const [selectedLocationToAdd, setSelectedLocationToAdd] = useState('');
+
+    /**
+     * @type {[string, Function]} error - State to hold error messages to display to the user.
+     */
     const [error, setError] = useState('');
+
+    /**
+     * @type {[boolean, Function]} loading - State to indicate if an API request is in progress.
+     */
     const [loading, setLoading] = useState(false);
+
+    /**
+     * @type {[Array<Object>, Function]} municipalities - State to store the list of available municipalities for location selection.
+     */
     const [municipalities, setMunicipalities] = useState([]);
+
+    /**
+     * @type {[boolean, Function]} uploading - State to indicate if a profile picture upload is in progress.
+     */
     const [uploading, setUploading] = useState(false);
+
+    /**
+     * @type {React.RefObject<HTMLInputElement>} fileInputRef - Reference to the hidden file input element for image upload.
+     */
     const fileInputRef = useRef(null);
+    
     const API_BASE = import.meta.env.VITE_API_BASE;
 
+    /**
+     * Effect hook to initialize form state when the modal opens or the user prop changes.
+     * If a user is logged in, it pre-fills the form with user data for editing.
+     * It also fetches the latest user data to ensure location preferences are up-to-date.
+     */
     useEffect(() => {
         if (user && isOpen) {
             setInput({
@@ -77,6 +133,10 @@ export default function LoginModal({
         }
     }, [user, isOpen]);
 
+    /**
+     * Effect hook to fetch the list of municipalities when the modal is opened.
+     * This data is used for the location selection dropdown.
+     */
     useEffect(() => {
         if (isOpen) {
             fetchMunicipalities()
@@ -88,7 +148,8 @@ export default function LoginModal({
     }, [isOpen]);
 
     /**
-     * Triggers the file input click event.
+     * Triggers the hidden file input click event to open the file selection dialog.
+     * This allows the user to select a new profile picture.
      */
     const handleImageClick = () => {
         if (user && fileInputRef.current) {
@@ -97,10 +158,11 @@ export default function LoginModal({
     };
 
     /**
-     * Handles the profile image file change event.
-     * Uploads the new profile picture.
+     * Handles the selection of a new profile picture.
+     * Uploads the selected file to the server and updates the user's profile.
      *
-     * @param {Event} e - The change event.
+     * @param {Event} e - The change event from the file input.
+     * @returns {Promise<void>}
      */
     const handleImageChange = async (e) => {
         const file = e.target.files?.[0];
@@ -127,9 +189,9 @@ export default function LoginModal({
     };
 
     /**
-     * Constructs the full profile image URL.
+     * Constructs the full URL for the user's profile picture.
      *
-     * @returns {string|null} The full URL or null if not available.
+     * @returns {string|null} The full URL of the profile picture, or null if the user has no profile picture.
      */
     const getProfileImageUrl = () => {
         if (user?.profile_picture_url) {
@@ -140,9 +202,11 @@ export default function LoginModal({
     };
 
     /**
-     * Handles the form submission for login or signup.
+     * Handles the form submission for login, signup, or profile update.
+     * Validates input fields and calls the appropriate service function.
      *
-     * @param {Event} e - The submit event.
+     * @param {Event} e - The form submission event.
+     * @returns {Promise<void>}
      */
     const handleSubmit = async (e) => {
         e.preventDefault();

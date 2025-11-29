@@ -4,9 +4,21 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 /**
- * Footer component.
- * Renders the footer of the application with brand info, quick links, contact info, and social links.
+ * Footer Component.
  *
+ * Renders the application footer, which serves as a global navigation and information hub.
+ *
+ * Sections:
+ * - **Brand Info**: Displays the logo and a brief description of the application.
+ * - **Quick Links**: Provides navigation links to key pages (Home, Map, POIs, Warnings, About Us).
+ * - **Contact Info**: Displays contact details (email, phone, address).
+ * - **Social Links**: Links to social media profiles.
+ * - **Copyright**: Displays the copyright notice with the current year.
+ *
+ * The footer is responsive and adapts its layout for mobile and desktop screens.
+ * It also supports dark mode styling.
+ *
+ * @component
  * @returns {JSX.Element} The rendered Footer component.
  */
 export default function Footer() {

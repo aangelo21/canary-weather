@@ -5,32 +5,56 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 
 /**
- * WeatherPopup component.
- * Displays weather data in a popup when a user clicks on the map.
- * It shows temperature, humidity, pressure, wind, and provides a button to save
- * the clicked location as a Point of Interest (POI).
+ * WeatherPopup Component.
  *
+ * Displays detailed weather information in a popup on the map.
+ *
+ * Features:
+ * - **Weather Data**: Shows temperature, humidity, pressure, wind speed, and cloud cover.
+ * - **Dynamic Styling**: Changes appearance based on weather conditions (e.g., thunderstorm) and time of day (day/night), as well as the global theme.
+ * - **POI Saving**: Allows authenticated users to save the current location as a personal Point of Interest (POI).
+ * - **Authentication Check**: Disables the save functionality for guest users.
+ *
+ * @component
  * @param {Object} props - The component props.
- * @param {Array} props.position - The [lat, lng] coordinates of the popup.
- * @param {Object} props.weather - The weather data object.
- * @param {Object} props.markerRef - Reference to the marker element.
- * @param {Function} props.onClose - Callback function when the popup is closed.
- * @returns {JSX.Element|null} The rendered WeatherPopup component or null if props are missing.
+ * @param {Array<number>} props.position - The [latitude, longitude] coordinates where the popup is anchored.
+ * @param {Object} props.weather - The weather data object fetched from the API.
+ * @param {Object} props.markerRef - Reference to the Leaflet marker associated with this popup.
+ * @param {Function} props.onClose - Callback function executed when the popup is closed.
+ * @returns {JSX.Element|null} The rendered WeatherPopup component or null if position or weather data is missing.
  */
 function WeatherPopup({ position, weather, markerRef, onClose }) {
     const { t } = useTranslation();
     const { isDarkMode } = useTheme();
     const popupRef = useRef(null);
+    
+    /**
+     * @type {[boolean, Function]} saved - State to indicate if the POI has been successfully saved.
+     */
     const [saved, setSaved] = useState(false);
+
+    /**
+     * @type {[boolean, Function]} saving - State to indicate if the save operation is in progress.
+     */
     const [saving, setSaving] = useState(false);
+
+    /**
+     * @type {[boolean, Function]} isAuthenticated - State to check if the current user is logged in.
+     */
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+    /**
+     * Effect hook to open the popup when the marker reference is available.
+     */
     useEffect(() => {
         if (popupRef.current && markerRef?.current) {
             markerRef.current.openPopup();
         }
     }, [position, weather, markerRef]);
 
+    /**
+     * Effect hook to check authentication status on mount.
+     */
     useEffect(() => {
         const user = localStorage.getItem('cw_user');
         setIsAuthenticated(!!user);
@@ -39,7 +63,9 @@ function WeatherPopup({ position, weather, markerRef, onClose }) {
     if (!position || !weather) return null;
 
     /**
-     * Handles saving the current location as a POI.
+     * Handles the action of saving the current location as a Point of Interest.
+     * Checks for authentication, calls the API, and updates the UI state.
+     * Dispatches a 'poiCreated' event upon success to notify other components.
      */
     const handleSavePoi = async () => {
         if (!isAuthenticated) {
@@ -72,9 +98,9 @@ function WeatherPopup({ position, weather, markerRef, onClose }) {
             : false;
 
     /**
-     * Determines the theme class based on weather conditions and time.
+     * Determines the CSS classes for the popup's theme based on weather conditions, time of day, and global theme.
      *
-     * @returns {string} The CSS class string for the theme.
+     * @returns {string} A string of Tailwind CSS classes.
      */
     const getTheme = () => {
         const main = (weather.main || '').toLowerCase();

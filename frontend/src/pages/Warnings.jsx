@@ -3,20 +3,52 @@ import { useState, useEffect } from 'react';
 import { fetchAlerts, fetchWarnings } from '../services/alertService';
 
 /**
- * Warnings page component.
- * Displays active and past weather warnings.
- * Fetches data from the backend and filters based on severity and date.
+ * Warnings Page Component.
  *
+ * Displays a list of weather warnings and alerts for the Canary Islands.
+ *
+ * Features:
+ * - **Data Fetching**: Retrieves alerts from the backend (which syncs with MeteoAlarm).
+ * - **Filtering**: Filters alerts to show only significant levels (Yellow, Orange, Red) and categorizes them into "Active" and "Past".
+ * - **Visual Indicators**: Uses color coding (Red/Orange/Yellow) to indicate the severity of each alert.
+ * - **Error Handling**: Displays messages if data fetching fails, with a fallback to cached data.
+ *
+ * @component
  * @returns {JSX.Element} The rendered Warnings page.
  */
 function Warnings() {
     const { t } = useTranslation();
+    
+    /**
+     * @type {[Array<Object>, Function]} activeAlerts - State for currently active alerts.
+     */
     const [activeAlerts, setActiveAlerts] = useState([]);
+
+    /**
+     * @type {[Array<Object>, Function]} pastAlerts - State for historical alerts.
+     */
     const [pastAlerts, setPastAlerts] = useState([]);
+
+    /**
+     * @type {[boolean, Function]} loading - State to indicate if data is being loaded.
+     */
     const [loading, setLoading] = useState(true);
+
+    /**
+     * @type {[string|null, Function]} error - State for general errors.
+     */
     const [error, setError] = useState(null);
+
+    /**
+     * @type {[string|null, Function]} fetchError - State for errors specific to the external data refresh.
+     */
     const [fetchError, setFetchError] = useState(null);
 
+    /**
+     * Effect hook to fetch and process alert data on mount.
+     * It first attempts to trigger a refresh from the external source, then fetches the local database records.
+     * Alerts are filtered by severity and categorized by date.
+     */
     useEffect(() => {
         const loadData = async () => {
             try {
@@ -87,6 +119,12 @@ function Warnings() {
         loadData();
     }, []);
 
+    /**
+     * Helper function to determine the color code based on the alert severity level.
+     *
+     * @param {string} level - The severity level string (e.g., "Red", "Orange").
+     * @returns {string} The corresponding color name ('red', 'orange', 'yellow', or 'gray').
+     */
     const getSeverityColor = (level) => {
         if (!level) return 'gray';
         const l = level.toLowerCase();

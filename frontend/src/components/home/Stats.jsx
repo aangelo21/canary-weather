@@ -1,9 +1,18 @@
 import { useTranslation } from 'react-i18next';
 
 /**
- * Stats component for the Home page.
- * Displays quick statistics about the weather and location.
+ * Stats Component.
  *
+ * Displays a horizontal bar of key statistics about the Canary Islands weather and geography.
+ * This component is intended to build trust and interest by highlighting favorable conditions.
+ *
+ * Statistics displayed:
+ * - Average Temperature
+ * - Annual Sunshine Hours
+ * - Number of Islands
+ * - Reliability Metric
+ *
+ * @component
  * @returns {JSX.Element} The rendered Stats component.
  */
 export default function Stats() {

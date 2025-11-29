@@ -5,9 +5,13 @@ import './leaflet.css';
 import App from './App.jsx';
 
 /**
- * Entry point of the application.
- * Renders the App component into the root element.
- * Uses StrictMode for highlighting potential problems in an application.
+ * Application Entry Point.
+ *
+ * This file initializes the React application.
+ * It mounts the root `App` component into the DOM element with id 'root'.
+ *
+ * - **StrictMode**: Wraps the app to activate additional checks and warnings for its descendants.
+ * - **Styles**: Imports global CSS (`index.css`) and Leaflet map styles (`leaflet.css`).
  */
 createRoot(document.getElementById('root')).render(
     <StrictMode>

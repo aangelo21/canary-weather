@@ -16,6 +16,16 @@ import {
 const router = express.Router();
 
 /**
+ * Point of Interest Routes
+ * 
+ * Defines routes for managing Points of Interest (POIs).
+ * Supports retrieving global, local, and personal POIs.
+ * Includes routes for creating, updating, and deleting POIs, with image upload support.
+ * 
+ * Base Path: /api/pois
+ */
+
+/**
  * @swagger
  * /api/pois:
  *   get:

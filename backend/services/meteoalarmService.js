@@ -25,6 +25,19 @@ const EXCLUDE_KEYWORDS = [
     'Baleares'
 ];
 
+/**
+ * Fetches and parses weather warnings from the Meteoalarm Atom feed.
+ * 
+ * Retrieves the XML feed, parses it, and filters entries to find relevant warnings
+ * for the Canary Islands.
+ * 
+ * Filtering criteria:
+ * 1. Geographic: Must match Canary Islands keywords and not match exclusion keywords.
+ * 2. Severity: Must be 'Severe' (Orange) or 'Extreme' (Red).
+ * 
+ * @returns {Promise<Array<Object>>} A list of parsed alert objects containing phenomenon, level, timing, and area.
+ * @throws {Error} If the fetch fails or parsing errors occur.
+ */
 export const fetchWarnings = async () => {
     console.log("Fetching warnings from Meteoalarm...");
     try {
@@ -92,6 +105,15 @@ export const fetchWarnings = async () => {
     }
 };
 
+/**
+ * Stores parsed warnings in the database.
+ * 
+ * Checks for existing alerts to avoid duplicates based on phenomenon, timing, and area.
+ * Associates alerts with a default location (e.g., 'Canary Islands') or a fallback.
+ * 
+ * @param {Array<Object>} warnings - The list of warning objects to store.
+ * @returns {Promise<void>}
+ */
 export const storeWarnings = async (warnings) => {
     try {
         // Find a default location to link alerts to (e.g., "Canary Islands")
@@ -135,6 +157,14 @@ export const storeWarnings = async (warnings) => {
     }
 };
 
+/**
+ * Orchestrates the fetching and storing of weather warnings.
+ * 
+ * Calls `fetchWarnings` to get data from the external API and then `storeWarnings`
+ * to save it to the database.
+ * 
+ * @returns {Promise<void>}
+ */
 export const fetchAndStoreWarnings = async () => {
     const warnings = await fetchWarnings();
     await storeWarnings(warnings);

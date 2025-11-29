@@ -1,9 +1,18 @@
 import { useTranslation } from 'react-i18next';
 
 /**
- * AboutUs page component.
- * Displays information about the application and the team.
+ * AboutUs Page Component.
  *
+ * Renders the "About Us" page, providing information about the Canary Weather application,
+ * its mission, the development team, and contact details.
+ *
+ * Features:
+ * - **Static Content**: Displays informational text.
+ * - **Internationalization**: All text content is localized using `useTranslation`.
+ * - **Responsive Design**: Centered layout with appropriate padding for different screen sizes.
+ * - **Dark Mode Support**: Adapts colors for light and dark themes.
+ *
+ * @component
  * @returns {JSX.Element} The rendered AboutUs page.
  */
 function AboutUs() {
