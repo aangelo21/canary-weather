@@ -1,7 +1,8 @@
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import { useState, useRef, useEffect } from 'react';
 import WeatherPopup from './WeatherPopup';
 import { useTheme } from '../../context/ThemeContext';
+import L from 'leaflet';
 
 /**
  * InteractiveMap Component.
@@ -33,6 +34,32 @@ function InteractiveMap() {
 
     const markerRef = useRef(null);
 
+    const fetchWeather = async (lat, lng) => {
+        setWeather(null);
+        try {
+            const OPENWEATHER_API_KEY =
+                import.meta.env.VITE_OPENWEATHER_API_KEY;
+            const res = await fetch(
+                `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${OPENWEATHER_API_KEY}&units=metric`
+            );
+            const data = await res.json();
+            setWeather({
+                temp: data.main?.temp ?? null,
+                humidity: data.main?.humidity ?? null,
+                pressure: data.main?.pressure ?? null,
+                wind: data.wind?.speed ?? null,
+                description: data.weather?.[0]?.description ?? '',
+                main: data.weather?.[0]?.main ?? '',
+                dt: data.dt,
+                sunrise: data.sys?.sunrise,
+                sunset: data.sys?.sunset,
+                clouds: data.clouds?.all ?? 0,
+            });
+        } catch {
+            setWeather(null);
+        }
+    };
+
     /**
      * MapClickHandler Component (Internal).
      *
@@ -43,35 +70,103 @@ function InteractiveMap() {
      */
     function MapClickHandler() {
         useMapEvents({
-            click: async (e) => {
+            click: (e) => {
                 const { lat, lng } = e.latlng;
                 setClickedPos([lat, lng]);
-                setWeather(null);
-                try {
-                    const OPENWEATHER_API_KEY =
-                        import.meta.env.VITE_OPENWEATHER_API_KEY;
-                    const res = await fetch(
-                        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${OPENWEATHER_API_KEY}&units=metric`
-                    );
-                    const data = await res.json();
-                    setWeather({
-                        temp: data.main?.temp ?? null,
-                        humidity: data.main?.humidity ?? null,
-                        pressure: data.main?.pressure ?? null,
-                        wind: data.wind?.speed ?? null,
-                        description: data.weather?.[0]?.description ?? '',
-                        main: data.weather?.[0]?.main ?? '',
-                        dt: data.dt,
-                        sunrise: data.sys?.sunrise,
-                        sunset: data.sys?.sunset,
-                        clouds: data.clouds?.all ?? 0,
-                    });
-                } catch {
-                    setWeather(null);
-                }
+                fetchWeather(lat, lng);
             },
         });
         return null;
+    }
+
+    function MapControls() {
+        const map = useMap();
+
+        useEffect(() => {
+            const controls = document.getElementById('map-controls');
+            if (controls) {
+                L.DomEvent.disableClickPropagation(controls);
+            }
+        }, []);
+
+        const handleReset = () => {
+            map.flyTo([28.5, -16], 8);
+        };
+
+        const handleLocate = () => {
+            if (!navigator.geolocation) {
+                alert('Geolocation is not supported by your browser');
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    map.flyTo([latitude, longitude], 13);
+                    setClickedPos([latitude, longitude]);
+                    fetchWeather(latitude, longitude);
+                },
+                () => {
+                    alert('Unable to retrieve your location');
+                },
+                { enableHighAccuracy: false, timeout: 5000, maximumAge: 30000 }
+            );
+        };
+
+        return (
+            <div
+                id="map-controls"
+                className="absolute top-4 right-4 z-[1000] flex flex-col gap-2"
+            >
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleReset();
+                    }}
+                    className="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    title="Reset View"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-blue-600 dark:text-blue-400"
+                    >
+                        <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                </button>
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleLocate();
+                    }}
+                    className="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    title="My Location"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-blue-600 dark:text-blue-400"
+                    >
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                    </svg>
+                </button>
+            </div>
+        );
     }
 
     /**
@@ -116,6 +211,7 @@ function InteractiveMap() {
                 />
 
                 <MapClickHandler />
+                <MapControls />
                 {clickedPos && (
                     <Marker position={clickedPos} ref={markerRef}>
                         {weather != null && (
