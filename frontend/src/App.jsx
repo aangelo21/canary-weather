@@ -7,6 +7,7 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from '../i18n/index.js';
 import { ThemeProvider } from './context/ThemeContext';
 import { restoreSession } from './services/userService';
+import ScrollToTop from './components/ScrollToTop';
 
 // Lazy load pages for better performance
 const Home = lazy(() => import('./pages/Home'));
@@ -72,6 +73,7 @@ function App() {
         <ThemeProvider>
             <I18nextProvider i18n={i18n}>
                 <BrowserRouter>
+                    <ScrollToTop />
                     <Suspense fallback={<PageLoader />}>
                         <Routes>
                             <Route element={<Layout />}>
