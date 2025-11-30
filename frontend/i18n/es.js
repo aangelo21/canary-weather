@@ -172,7 +172,7 @@ export const es = {
       },
     },
     forecastForYou: "Perfecto para actividades",
-    lifestyleDesc: "Vas a hacer deporte y justo empieza a llover?, obten prediccion meteorologica a tiempo real y evita eso",
+    lifestyleDesc: "¿Vas a hacer deporte y justo empieza a llover?, obten prediccion meteorologica a tiempo real y evita eso",
     surfing: "Surf y Deportes Acuáticos",
     surfingDesc: "Altura del oleaje, dirección del viento y tablas de mareas.",
     hiking: "Senderismo y Trekking",
