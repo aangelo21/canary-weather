@@ -1,4 +1,5 @@
 import InteractiveMap from '../components/map/InteractiveMap';
+import MapLegend from '../components/map/MapLegend';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -10,6 +11,7 @@ import { useTranslation } from 'react-i18next';
  * Features:
  * - **Header**: Displays a localized title and description.
  * - **Interactive Map**: Embeds the main map component for user interaction.
+ * - **Map Guide**: Provides a legend and guide for using the map features.
  * - **Responsive Layout**: Adjusts padding and spacing for different screen sizes.
  *
  * @component
@@ -26,6 +28,7 @@ function Map() {
                 {t('mapDescription')}
             </h3>
             <InteractiveMap />
+            <MapLegend />
         </div>
     );
 }

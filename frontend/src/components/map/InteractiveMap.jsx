@@ -1,19 +1,31 @@
-import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
+import {
+    MapContainer,
+    TileLayer,
+    Marker,
+    Popup,
+    useMapEvents,
+    useMap,
+    LayersControl,
+    LayerGroup,
+} from 'react-leaflet';
 import { useState, useRef, useEffect } from 'react';
 import WeatherPopup from './WeatherPopup';
 import { useTheme } from '../../context/ThemeContext';
 import L from 'leaflet';
+import { fetchPois } from '../../services/poiService';
 
 /**
  * InteractiveMap Component.
  *
- * Renders a Leaflet map centered on the Canary Islands.
- * Allows users to click anywhere on the map to retrieve real-time weather data for that specific coordinate.
+ * Renders a highly interactive Leaflet map centered on the Canary Islands.
  *
  * Features:
- * - **Interactive Clicking**: Captures click events to fetch weather data from OpenWeatherMap API.
- * - **Dynamic Popup**: Displays a custom `WeatherPopup` with the fetched data at the clicked location.
- * - **Theme Support**: Adapts the map tiles (via CSS filters) based on the application's light/dark mode.
+ * - **Multi-Layer Support**: Switch between different base maps (Terrain, OSM) and weather overlays (Clouds, Rain, Temp, etc.).
+ * - **Points of Interest**: Displays markers for key locations fetched from the backend.
+ * - **Interactive Clicking**: Captures click events to fetch real-time weather data for any coordinate.
+ * - **Search Functionality**: Allows users to search for specific locations within the Canary Islands.
+ * - **Dynamic Popup**: Displays custom weather data or POI details.
+ * - **Theme Support**: Adapts the map tiles based on light/dark mode.
  * - **Bounds Restriction**: Restricts panning to the Canary Islands region.
  *
  * @component
@@ -21,7 +33,8 @@ import L from 'leaflet';
  */
 function InteractiveMap() {
     const { isDarkMode } = useTheme();
-    
+    const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
+
     /**
      * @type {[Array<number>|null, Function]} clickedPos - State for the [latitude, longitude] of the last click.
      */
@@ -32,13 +45,29 @@ function InteractiveMap() {
      */
     const [weather, setWeather] = useState(null);
 
+    /**
+     * @type {[Array<Object>, Function]} pois - State for the fetched Points of Interest.
+     */
+    const [pois, setPois] = useState([]);
+
     const markerRef = useRef(null);
+
+    // Fetch POIs on mount
+    useEffect(() => {
+        const loadPois = async () => {
+            try {
+                const data = await fetchPois();
+                setPois(data);
+            } catch (error) {
+                console.error('Failed to fetch POIs:', error);
+            }
+        };
+        loadPois();
+    }, []);
 
     const fetchWeather = async (lat, lng) => {
         setWeather(null);
         try {
-            const OPENWEATHER_API_KEY =
-                import.meta.env.VITE_OPENWEATHER_API_KEY;
             const res = await fetch(
                 `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${OPENWEATHER_API_KEY}&units=metric`
             );
@@ -63,10 +92,7 @@ function InteractiveMap() {
     /**
      * MapClickHandler Component (Internal).
      *
-     * A headless component that hooks into Leaflet's map events.
-     * It listens for 'click' events, updates the `clickedPos` state, and triggers the weather data fetch.
-     *
-     * @returns {null} This component does not render any visible elements.
+     * Hooks into Leaflet's map events to handle clicks.
      */
     function MapClickHandler() {
         useMapEvents({
@@ -79,8 +105,15 @@ function InteractiveMap() {
         return null;
     }
 
+    /**
+     * MapControls Component (Internal).
+     *
+     * Renders custom map controls for reset, locate, and search.
+     */
     function MapControls() {
         const map = useMap();
+        const [searchQuery, setSearchQuery] = useState('');
+        const [isSearching, setIsSearching] = useState(false);
 
         useEffect(() => {
             const controls = document.getElementById('map-controls');
@@ -113,58 +146,149 @@ function InteractiveMap() {
             );
         };
 
+        const handleSearch = async (e) => {
+            e.preventDefault();
+            if (!searchQuery.trim()) return;
+
+            setIsSearching(true);
+            try {
+                // Use Nominatim for search, bounded to Canary Islands
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+                        searchQuery
+                    )}&viewbox=-19.5,26.5,-12.5,30.5&bounded=1`
+                );
+                const results = await response.json();
+
+                if (results && results.length > 0) {
+                    const { lat, lon } = results[0];
+                    const latitude = parseFloat(lat);
+                    const longitude = parseFloat(lon);
+                    map.flyTo([latitude, longitude], 13);
+                    setClickedPos([latitude, longitude]);
+                    fetchWeather(latitude, longitude);
+                } else {
+                    alert('Location not found in Canary Islands');
+                }
+            } catch (error) {
+                console.error('Search failed:', error);
+                alert('Search failed. Please try again.');
+            } finally {
+                setIsSearching(false);
+            }
+        };
+
         return (
             <div
                 id="map-controls"
-                className="absolute top-4 right-4 z-[1000] flex flex-col gap-2"
+                className="absolute top-4 right-4 z-[1000] flex flex-col gap-2 items-end"
             >
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleReset();
-                    }}
-                    className="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                    title="Reset View"
+                {/* Search Bar */}
+                <form
+                    onSubmit={handleSearch}
+                    className="flex items-center bg-white dark:bg-gray-800 rounded-lg shadow-md p-1 mb-2"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-blue-600 dark:text-blue-400"
+                    <input
+                        type="text"
+                        placeholder="Search location..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="px-2 py-1 bg-transparent border-none focus:outline-none text-gray-800 dark:text-white w-40 sm:w-60"
+                    />
+                    <button
+                        type="submit"
+                        disabled={isSearching}
+                        className="p-2 text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
                     >
-                        <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                </button>
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleLocate();
-                    }}
-                    className="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                    title="My Location"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-blue-600 dark:text-blue-400"
+                        {isSearching ? (
+                            <svg
+                                className="animate-spin h-5 w-5"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                            >
+                                <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                ></circle>
+                                <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                ></path>
+                            </svg>
+                        ) : (
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        )}
+                    </button>
+                </form>
+
+                <div className="flex gap-2">
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleReset();
+                        }}
+                        className="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                        title="Reset View"
                     >
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                        <circle cx="12" cy="10" r="3" />
-                    </svg>
-                </button>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="text-blue-600 dark:text-blue-400"
+                        >
+                            <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                    </button>
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleLocate();
+                        }}
+                        className="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                        title="My Location"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="text-blue-600 dark:text-blue-400"
+                        >
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                            <circle cx="12" cy="10" r="3" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         );
     }
@@ -201,14 +325,97 @@ function InteractiveMap() {
                 maxBounds={bounds}
                 maxBoundsViscosity={1.0}
                 scrollWheelZoom={true}
-                className="leaflet-container shadow-xl dark:shadow-black/50 border-2 border-gray-200 dark:border-gray-700 rounded-xl"
+                className="leaflet-container shadow-xl dark:shadow-black/50 border-2 border-gray-200 dark:border-gray-700 rounded-xl h-[600px] w-full"
             >
-                <TileLayer
-                    key={isDarkMode ? 'dark' : 'light'}
-                    className={isDarkMode ? 'dark-map-tiles' : ''}
-                    attribution='&copy; <a href="https://www.google.com/permissions/geoguidelines/">Google</a>'
-                    url="https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}"
-                />
+                <LayersControl position="topleft">
+                    {/* Base Layers */}
+                    <LayersControl.BaseLayer checked name="Terrain (Google)">
+                        <TileLayer
+                            key={isDarkMode ? 'dark-terrain' : 'light-terrain'}
+                            className={isDarkMode ? 'dark-map-tiles' : ''}
+                            attribution='&copy; <a href="https://www.google.com/permissions/geoguidelines/">Google</a>'
+                            url="https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}"
+                        />
+                    </LayersControl.BaseLayer>
+                    <LayersControl.BaseLayer name="OpenStreetMap">
+                        <TileLayer
+                            key={isDarkMode ? 'dark-osm' : 'light-osm'}
+                            className={isDarkMode ? 'dark-map-tiles' : ''}
+                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        />
+                    </LayersControl.BaseLayer>
+                    <LayersControl.BaseLayer name="Satellite (Esri)">
+                        <TileLayer
+                            key={isDarkMode ? 'dark-sat' : 'light-sat'}
+                            className={isDarkMode ? 'dark-map-tiles' : ''}
+                            attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                        />
+                    </LayersControl.BaseLayer>
+
+                    {/* Weather Overlays */}
+                    <LayersControl.Overlay name="Clouds">
+                        <TileLayer
+                            url={`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${OPENWEATHER_API_KEY}`}
+                            attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
+                        />
+                    </LayersControl.Overlay>
+                    <LayersControl.Overlay name="Precipitation">
+                        <TileLayer
+                            url={`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${OPENWEATHER_API_KEY}`}
+                            attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
+                        />
+                    </LayersControl.Overlay>
+                    <LayersControl.Overlay name="Temperature">
+                        <TileLayer
+                            url={`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${OPENWEATHER_API_KEY}`}
+                            attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
+                        />
+                    </LayersControl.Overlay>
+                    <LayersControl.Overlay name="Wind Speed">
+                        <TileLayer
+                            url={`https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=${OPENWEATHER_API_KEY}`}
+                            attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
+                        />
+                    </LayersControl.Overlay>
+                    <LayersControl.Overlay name="Pressure">
+                        <TileLayer
+                            url={`https://tile.openweathermap.org/map/pressure_new/{z}/{x}/{y}.png?appid=${OPENWEATHER_API_KEY}`}
+                            attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
+                        />
+                    </LayersControl.Overlay>
+
+                    {/* Points of Interest Overlay */}
+                    <LayersControl.Overlay name="Points of Interest">
+                        <LayerGroup>
+                            {pois.map((poi) => (
+                                <Marker
+                                    key={poi.id}
+                                    position={[poi.latitude, poi.longitude]}
+                                >
+                                    <Popup>
+                                        <div className="p-2">
+                                            <h3 className="font-bold text-lg">
+                                                {poi.name}
+                                            </h3>
+                                            <p className="text-sm text-gray-600 dark:text-gray-300">
+                                                {poi.description}
+                                            </p>
+                                            {poi.image_url && (
+                                                <img
+                                                    src={poi.image_url}
+                                                    alt={poi.name}
+                                                    className="mt-2 rounded-md w-full h-32 object-cover"
+                                                />
+                                            )}
+                                        </div>
+                                    </Popup>
+                                </Marker>
+                            ))}
+                        </LayerGroup>
+                    </LayersControl.Overlay>
+                </LayersControl>
 
                 <MapClickHandler />
                 <MapControls />
