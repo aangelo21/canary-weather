@@ -275,20 +275,23 @@ function Header({ isTransparent = false }) {
                          * Updated text color to match the brand blue from the design reference.
                          * Added gradient text effect as requested.
                          */}
-                        <div className="shrink-0 flex items-center gap-3 cursor-pointer group" onClick={(e) => {
-                            if (location.pathname === '/') {
-                                e.preventDefault();
-                                window.scrollTo({ top: 0, behavior: 'smooth' });
-                            } else {
-                                navigate('/');
-                            }
-                        }}>
+                        <div className="shrink-0 flex items-center gap-3">
                             <img
                                 src="logo.webp"
                                 alt="Canary Weather Logo"
-                                className="h-10 md:h-12 w-auto transition-transform duration-300 group-hover:scale-105"
+                                className="h-10 md:h-12 w-auto"
                             />
-                            <span className={`hidden md:block text-xl font-bold tracking-tight transition-all ${isTransparent ? 'text-white' : 'bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent'}`}>
+                            <span 
+                                onClick={(e) => {
+                                    if (location.pathname === '/') {
+                                        e.preventDefault();
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    } else {
+                                        navigate('/');
+                                    }
+                                }}
+                                className={`hidden md:block text-xl font-bold tracking-tight transition-all cursor-pointer hover:opacity-80 ${isTransparent ? 'text-white' : 'bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent'}`}
+                            >
                                 Canary Weather
                             </span>
                         </div>
