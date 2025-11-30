@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import LoginModal from '../common/LoginModal';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { fetchAlerts } from '../../services/alertService';
 import { logoutUser } from '../../services/userService';
 import { useTranslation } from 'react-i18next';
@@ -82,6 +82,22 @@ function Header({ isTransparent = false }) {
     const API_BASE = import.meta.env.VITE_API_BASE;
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    /**
+     * Handles navigation clicks.
+     * If the user is already on the target page, scrolls to the top.
+     * Otherwise, allows normal navigation.
+     *
+     * @param {Event} e - The click event.
+     * @param {string} path - The target path.
+     */
+    const handleNavigationClick = (e, path) => {
+        if (location.pathname === path) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
 
     /**
      * Effect hook to handle scroll events.
@@ -259,7 +275,14 @@ function Header({ isTransparent = false }) {
                          * Updated text color to match the brand blue from the design reference.
                          * Added gradient text effect as requested.
                          */}
-                        <div className="shrink-0 flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/')}>
+                        <div className="shrink-0 flex items-center gap-3 cursor-pointer group" onClick={(e) => {
+                            if (location.pathname === '/') {
+                                e.preventDefault();
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            } else {
+                                navigate('/');
+                            }
+                        }}>
                             <img
                                 src="logo.webp"
                                 alt="Canary Weather Logo"
@@ -290,6 +313,7 @@ function Header({ isTransparent = false }) {
                                 <NavLink
                                     key={link.to}
                                     to={link.to}
+                                    onClick={(e) => handleNavigationClick(e, link.to)}
                                     className={({ isActive }) => navLinkClasses(isActive)}
                                 >
                                     {link.icon}
@@ -506,7 +530,10 @@ function Header({ isTransparent = false }) {
                                                         : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-white'
                                                 }`
                                             }
-                                            onClick={() => setIsOpen(false)}
+                                            onClick={(e) => {
+                                                setIsOpen(false);
+                                                handleNavigationClick(e, link.to);
+                                            }}
                                         >
                                             {link.icon}
                                             {link.label}
