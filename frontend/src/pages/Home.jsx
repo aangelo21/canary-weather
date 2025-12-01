@@ -2,7 +2,6 @@ import Hero from '../components/home/Hero';
 import Stats from '../components/home/Stats';
 import Activities from '../components/home/Activities';
 import DestinationCarousel from '../components/home/DestinationCarousel';
-import Testimonials from '../components/home/Testimonials';
 
 /**
  * Home Page Component.
@@ -15,7 +14,6 @@ import Testimonials from '../components/home/Testimonials';
  * - **Stats Section**: Displays key weather statistics or app usage metrics.
  * - **Activities Section**: Suggests activities based on current weather conditions.
  * - **DestinationCarousel**: Showcases popular locations in the Canary Islands.
- * - **Testimonials**: Displays user reviews and social proof.
  *
  * Responsiveness:
  * The component uses a flex column layout (`flex-col`) to stack sections vertically.
@@ -39,9 +37,6 @@ function Home() {
             <div className="pt-10 bg-white dark:bg-gray-900">
                 <DestinationCarousel />
             </div>
-
-            {/* Testimonials Section: User reviews */}
-            <Testimonials />
         </div>
     );
 }
