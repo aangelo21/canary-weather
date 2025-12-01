@@ -1,30 +1,229 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useState, useEffect, useCallback } from 'react';
 
 /**
  * Hero Component.
  *
- * This component renders the "Hero" section of the Home page, which is the first thing users see.
- * It is designed to be visually striking and informative, guiding users to key parts of the application.
+ * This component renders the "Hero" section of the Home page.
+ * It now includes a real-time weather card that fetches data based on the user's location.
  *
  * Features:
- * - **Responsive Layout**: Uses a grid system that stacks vertically on mobile (`grid-cols-1`) and side-by-side on large screens (`lg:grid-cols-2`).
- * - **Internationalization**: Uses `useTranslation` hook for multi-language support.
- * - **Navigation**: Provides buttons to navigate to the Map and About Us pages.
- * - **Visuals**: Includes a dynamic text gradient and a responsive image section.
- *
- * @returns {JSX.Element} The rendered Hero component.
+ * - **Real-time Weather**: Fetches weather data from OpenWeatherMap API.
+ * - **Auto-Refresh**: Updates weather data every 5 minutes to keep it current.
+ * - **Geolocation**: Uses the browser's Geolocation API to get the user's position.
+ * - **Dynamic Icons**: Displays different animated icons based on weather conditions.
+ * - **Responsive Design**: Maintains the original responsive layout.
  */
 export default function Hero() {
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
+
+    // State for weather data, location name, loading status, and errors
+    const [weather, setWeather] = useState(null);
+    const [locationName, setLocationName] = useState({ city: 'Locating...', region: '' });
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    // Store coordinates to enable auto-refresh
+    const [coords, setCoords] = useState(null);
+
+    /**
+     * Fetches weather data from OpenWeatherMap API.
+     * Switched from OpenMeteo to OpenWeatherMap to ensure data consistency with other app components.
+     * @param {number} lat - Latitude
+     * @param {number} lon - Longitude
+     */
+    const fetchWeatherData = useCallback(async (lat, lon) => {
+        try {
+            const response = await fetch(
+                `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric`
+            );
+            const data = await response.json();
+            
+            // Map OpenWeatherMap response to our internal structure
+            setWeather({
+                temp: data.main.temp,
+                humidity: data.main.humidity,
+                wind_speed: data.wind.speed, // Note: OWM returns m/s by default with metric units
+                weather_id: data.weather[0].id,
+                is_day: data.dt > data.sys.sunrise && data.dt < data.sys.sunset ? 1 : 0,
+                description: data.weather[0].main
+            });
+            setLoading(false);
+        } catch (err) {
+            console.error("Failed to fetch weather data:", err);
+            setError("Failed to load weather data.");
+            setLoading(false);
+        }
+    }, [OPENWEATHER_API_KEY]);
+
+    /**
+     * Fetches location name using a reverse geocoding API.
+     * @param {number} lat - Latitude
+     * @param {number} lon - Longitude
+     */
+    const fetchLocationName = useCallback(async (lat, lon) => {
+        try {
+            const response = await fetch(
+                `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`
+            );
+            const data = await response.json();
+            setLocationName({
+                city: data.city || data.locality || 'Unknown Location',
+                region: data.principalSubdivision || data.countryName || ''
+            });
+        } catch (err) {
+            console.error("Failed to fetch location name:", err);
+            setLocationName({ city: 'Unknown', region: '' });
+        }
+    }, []);
+
+    /**
+     * Effect to fetch user's location on component mount.
+     * If successful, it triggers weather and location name fetching.
+     * If it fails, it falls back to a default location (Tenerife).
+     */
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    setCoords({ lat: latitude, lon: longitude });
+                    fetchWeatherData(latitude, longitude);
+                    fetchLocationName(latitude, longitude);
+                },
+                (err) => {
+                    console.warn("Geolocation access denied or failed:", err);
+                    setError("Location access denied. Showing default.");
+                    // Fallback to Tenerife coordinates
+                    const fallback = { lat: 28.4636, lon: -16.2518 };
+                    setCoords(fallback);
+                    fetchWeatherData(fallback.lat, fallback.lon);
+                    setLocationName({ city: 'Tenerife', region: 'Canary Islands' });
+                }
+            );
+        } else {
+            setError("Geolocation not supported.");
+            // Fallback to Tenerife coordinates
+            const fallback = { lat: 28.4636, lon: -16.2518 };
+            setCoords(fallback);
+            fetchWeatherData(fallback.lat, fallback.lon);
+            setLocationName({ city: 'Tenerife', region: 'Canary Islands' });
+        }
+    }, [fetchWeatherData, fetchLocationName]);
+
+    /**
+     * Effect to auto-refresh weather data every 5 minutes.
+     * This ensures the wind speed and other metrics stay up-to-date.
+     */
+    useEffect(() => {
+        if (!coords) return;
+
+        const intervalId = setInterval(() => {
+            fetchWeatherData(coords.lat, coords.lon);
+        }, 300000); // 300,000 ms = 5 minutes
+
+        return () => clearInterval(intervalId);
+    }, [coords, fetchWeatherData]);
+
+    /**
+     * Helper function to get the weather description and icon based on OWM weather ID.
+     * @param {number} id - OpenWeatherMap weather condition ID
+     * @param {number} isDay - 1 for day, 0 for night
+     * @returns {Object} - Contains label (description) and icon (JSX)
+     */
+    const getWeatherDetails = (id, isDay) => {
+        // Default to Sunny/Clear
+        let label = 'Sunny & Clear';
+        let icon = (
+            <div className="relative w-32 h-32 mb-4">
+                <div className="absolute inset-0 bg-orange-400 rounded-full blur-xl opacity-20 animate-pulse"></div>
+                <svg className="w-full h-full text-orange-500 animate-[spin_10s_linear_infinite]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </div>
+        );
+
+        // Map OWM IDs to descriptions and icons
+        // Group 2xx: Thunderstorm
+        if (id >= 200 && id < 300) {
+            label = 'Thunderstorm';
+            icon = (
+                <div className="relative w-32 h-32 mb-4">
+                    <div className="absolute inset-0 bg-purple-500 rounded-full blur-xl opacity-20 animate-pulse"></div>
+                    <svg className="w-full h-full text-purple-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+            );
+        } 
+        // Group 3xx: Drizzle & Group 5xx: Rain
+        else if ((id >= 300 && id < 400) || (id >= 500 && id < 600)) {
+            label = 'Rainy';
+            icon = (
+                <div className="relative w-32 h-32 mb-4">
+                    <div className="absolute inset-0 bg-blue-400 rounded-full blur-xl opacity-20 animate-pulse"></div>
+                    <svg className="w-full h-full text-blue-500 animate-bounce" style={{ animationDuration: '2s' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 16.2A4.5 4.5 0 0017.5 8h-1.832A4.5 4.5 0 009.355 8H7.5a4.5 4.5 0 00-1.3 8.8" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 22v-2m-4 2v-4m-4 4v-2" className="animate-ping" />
+                    </svg>
+                </div>
+            );
+        } 
+        // Group 6xx: Snow
+        else if (id >= 600 && id < 700) {
+            label = 'Snowy';
+            icon = (
+                <div className="relative w-32 h-32 mb-4">
+                    <div className="absolute inset-0 bg-cyan-200 rounded-full blur-xl opacity-20 animate-pulse"></div>
+                    <svg className="w-full h-full text-cyan-400 animate-spin" style={{ animationDuration: '15s' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v18m9-9H3m15.364-6.364l-12.728 12.728m12.728 0L6.343 6.343" />
+                    </svg>
+                </div>
+            );
+        } 
+        // Group 7xx: Atmosphere (Fog, Mist, etc.)
+        else if (id >= 700 && id < 800) {
+            label = 'Foggy';
+            icon = (
+                <div className="relative w-32 h-32 mb-4">
+                    <div className="absolute inset-0 bg-gray-300 rounded-full blur-xl opacity-20 animate-pulse"></div>
+                    <svg className="w-full h-full text-gray-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 15h18M3 10h18M3 20h18" />
+                    </svg>
+                </div>
+            );
+        } 
+        // Group 800: Clear
+        else if (id === 800) {
+            label = 'Sunny & Clear';
+            // Icon is already default
+        } 
+        // Group 80x: Clouds
+        else if (id > 800) {
+            label = 'Partly Cloudy';
+            icon = (
+                <div className="relative w-32 h-32 mb-4">
+                    <div className="absolute inset-0 bg-gray-400 rounded-full blur-xl opacity-20 animate-pulse"></div>
+                    <svg className="w-full h-full text-blue-400 animate-bounce" style={{ animationDuration: '3s' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                        {isDay === 1 && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" className="text-orange-400 origin-center scale-75 -translate-y-2 translate-x-2" />}
+                    </svg>
+                </div>
+            );
+        }
+
+        return { label, icon };
+    };
+
+    const weatherDetails = weather ? getWeatherDetails(weather.weather_id, weather.is_day) : getWeatherDetails(800, 1);
 
     return (
         <div className="relative overflow-hidden">
             {/* 
              * Main Container
              * Centers content and handles padding for different screen sizes.
-             * Adjusted top padding (pt-8, lg:pt-10) to balance the removal of global layout margin.
              */}
             <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-8 pb-10 lg:pt-10 xl:pt-12 lg:pb-12 relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center">
@@ -104,7 +303,7 @@ export default function Hero() {
                         {/* 
                          * Main Weather Card 
                          * A glassmorphism-style card representing a live weather dashboard.
-                         * Replaces the static phone image for a more dynamic and reliable visual.
+                         * Now displays real-time data.
                          */}
                         <div className="relative w-full max-w-sm bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-white/50 dark:border-gray-700/50 rounded-3xl shadow-2xl p-8 transform lg:rotate-y-12 hover:rotate-0 transition-all duration-700 ease-out group">
                             
@@ -116,9 +315,9 @@ export default function Hero() {
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                         </svg>
-                                        Tenerife
+                                        {locationName.city}
                                     </h3>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400 ml-7">Canary Islands</p>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400 ml-7">{locationName.region}</p>
                                 </div>
                                 <span className="px-3 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-xs font-bold rounded-full uppercase tracking-wide">
                                     Live
@@ -127,18 +326,20 @@ export default function Hero() {
 
                             {/* Card Body: Main Weather Icon & Temp */}
                             <div className="flex flex-col items-center justify-center py-4">
-                                {/* Animated Sun Icon */}
-                                <div className="relative w-32 h-32 mb-4">
-                                    <div className="absolute inset-0 bg-orange-400 rounded-full blur-xl opacity-20 animate-pulse"></div>
-                                    <svg className="w-full h-full text-orange-500 animate-[spin_10s_linear_infinite]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                                    </svg>
-                                </div>
+                                {/* Animated Weather Icon */}
+                                {loading ? (
+                                    <div className="w-32 h-32 flex items-center justify-center">
+                                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
+                                    </div>
+                                ) : (
+                                    weatherDetails.icon
+                                )}
+                                
                                 <div className="text-6xl font-bold text-gray-900 dark:text-white tracking-tighter">
-                                    24<span className="text-4xl align-top text-brand-primary">°C</span>
+                                    {loading ? '--' : Math.round(weather?.temp)}<span className="text-4xl align-top text-brand-primary">°C</span>
                                 </div>
-                                <p className="text-xl font-medium text-gray-600 dark:text-gray-300 mt-2">
-                                    Sunny & Clear
+                                <p className="text-xl font-medium text-gray-600 dark:text-gray-300 mt-2 capitalize">
+                                    {loading ? 'Loading...' : weather?.description || weatherDetails.label}
                                 </p>
                             </div>
 
@@ -146,11 +347,12 @@ export default function Hero() {
                             <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
                                 <div className="text-center">
                                     <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Wind</p>
-                                    <p className="font-bold text-gray-900 dark:text-white">12 km/h</p>
+                                    {/* Round wind speed to nearest integer for cleaner display (e.g., 6.63 km/h -> 7 km/h) */}
+                                    <p className="font-bold text-gray-900 dark:text-white">{loading ? '--' : Math.round(weather?.wind_speed)} km/h</p>
                                 </div>
                                 <div className="text-center border-l border-gray-100 dark:border-gray-700">
                                     <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Humidity</p>
-                                    <p className="font-bold text-gray-900 dark:text-white">45%</p>
+                                    <p className="font-bold text-gray-900 dark:text-white">{loading ? '--' : Math.round(weather?.humidity)}%</p>
                                 </div>
                                 <div className="text-center border-l border-gray-100 dark:border-gray-700">
                                     <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">UV</p>
