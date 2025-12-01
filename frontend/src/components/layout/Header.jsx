@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import LoginModal from '../common/LoginModal';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { fetchAlerts } from '../../services/alertService';
 import { logoutUser } from '../../services/userService';
 import { useTranslation } from 'react-i18next';
@@ -24,11 +24,14 @@ import ThemeSwitch from '../common/ThemeSwitch';
  * - Manages user authentication state (login/logout).
  * - Displays real-time weather alerts with visual indicators.
  * - Provides internationalization (i18n) and theme switching.
+ * - **Transparent Mode**: Supports a transparent overlay mode for immersive pages like "About Us".
  *
  * @component
+ * @param {Object} props - Component props.
+ * @param {boolean} [props.isTransparent=false] - Whether the header should start as transparent (overlay).
  * @returns {JSX.Element} The rendered Header component.
  */
-function Header() {
+function Header({ isTransparent = false }) {
     /**
      * @type {[boolean, Function]} isOpen - State for mobile menu visibility.
      */
@@ -69,10 +72,44 @@ function Header() {
      */
     const [alerts, setAlerts] = useState([]);
 
+    /**
+     * @type {[boolean, Function]} isScrolled - State to track if the page has been scrolled.
+     * Used to toggle the background of the transparent header.
+     */
+    const [isScrolled, setIsScrolled] = useState(false);
+
     const userDropdownRef = useRef(null);
     const API_BASE = import.meta.env.VITE_API_BASE;
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    /**
+     * Handles navigation clicks.
+     * If the user is already on the target page, scrolls to the top.
+     * Otherwise, allows normal navigation.
+     *
+     * @param {Event} e - The click event.
+     * @param {string} path - The target path.
+     */
+    const handleNavigationClick = (e, path) => {
+        if (location.pathname === path) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
+    /**
+     * Effect hook to handle scroll events.
+     * Toggles the `isScrolled` state based on the scroll position.
+     */
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 20);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     /**
      * Effect hook to initialize user state from local storage on mount.
@@ -197,6 +234,30 @@ function Header() {
         setIsOpen(!isOpen);
     };
 
+    /**
+     * Determines the header classes based on transparency mode and scroll state.
+     */
+    const headerClasses = isTransparent
+        ? isScrolled
+            ? 'fixed top-0 left-0 w-full z-50 bg-[#0B1120]/80 backdrop-blur-md border-b border-white/10 transition-all duration-300 shadow-lg shadow-black/20'
+            : 'absolute top-0 left-0 w-full z-50 bg-transparent border-b border-transparent transition-all duration-300'
+        : 'sticky top-0 z-50 w-full bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm border-b border-neutral-200 dark:border-neutral-800 transition-colors duration-300';
+
+    /**
+     * Determines text colors based on transparency mode.
+     * In transparent mode, text is always white/light unless scrolled (though we keep it light for the dark theme).
+     */
+    const navLinkClasses = (isActive) =>
+        `relative group flex items-center text-sm font-semibold tracking-wide transition-colors duration-300 ${
+            isActive
+                ? isTransparent
+                    ? 'text-cyan-400'
+                    : 'text-blue-600 dark:text-blue-400'
+                : isTransparent
+                ? 'text-slate-300 hover:text-white'
+                : 'text-neutral-800 dark:text-neutral-300 hover:text-black dark:hover:text-white'
+        }`;
+
     return (
         <>
             {/* 
@@ -204,7 +265,7 @@ function Header() {
              * Sticky positioning ensures the header is always accessible.
              * Uses a high-contrast background with a subtle border for separation.
              */}
-            <header className="relative z-50 w-full bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm border-b border-neutral-200 dark:border-neutral-800 transition-colors duration-300">
+            <header className={headerClasses}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16 md:h-20">
                         
@@ -214,13 +275,23 @@ function Header() {
                          * Updated text color to match the brand blue from the design reference.
                          * Added gradient text effect as requested.
                          */}
-                        <div className="shrink-0 flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/')}>
+                        <div className="shrink-0 flex items-center gap-3">
                             <img
                                 src="logo.webp"
                                 alt="Canary Weather Logo"
-                                className="h-10 md:h-12 w-auto transition-transform duration-300 group-hover:scale-105"
+                                className="h-10 md:h-12 w-auto"
                             />
-                            <span className="hidden md:block text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent tracking-tight transition-all">
+                            <span 
+                                onClick={(e) => {
+                                    if (location.pathname === '/') {
+                                        e.preventDefault();
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    } else {
+                                        navigate('/');
+                                    }
+                                }}
+                                className={`hidden md:block text-xl font-bold tracking-tight transition-all cursor-pointer hover:opacity-80 ${isTransparent ? 'text-white' : 'bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent'}`}
+                            >
                                 Canary Weather
                             </span>
                         </div>
@@ -245,18 +316,13 @@ function Header() {
                                 <NavLink
                                     key={link.to}
                                     to={link.to}
-                                    className={({ isActive }) =>
-                                        `relative group flex items-center text-sm font-semibold tracking-wide transition-colors duration-300 ${
-                                            isActive
-                                                ? 'text-blue-600 dark:text-blue-400'
-                                                : 'text-neutral-800 dark:text-neutral-300 hover:text-black dark:hover:text-white'
-                                        }`
-                                    }
+                                    onClick={(e) => handleNavigationClick(e, link.to)}
+                                    className={({ isActive }) => navLinkClasses(isActive)}
                                 >
                                     {link.icon}
                                     {link.label}
                                     {/* Animated Underline */}
-                                    <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 transform scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100"></span>
+                                    <span className={`absolute -bottom-1 left-0 w-full h-0.5 transform scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100 ${isTransparent ? 'bg-cyan-400' : 'bg-blue-600 dark:bg-blue-400'}`}></span>
                                 </NavLink>
                             ))}
                         </nav>
@@ -267,19 +333,23 @@ function Header() {
                          */}
                         <div className="hidden lg:flex items-center gap-4">
                             
-                            {/* Theme Switcher */}
-                            <div className="text-neutral-700 hover:text-black dark:text-neutral-300 dark:hover:text-white transition-colors">
-                                <ThemeSwitch />
-                            </div>
+                            {/* Theme Switcher - Hidden on transparent pages (About Us) */}
+                            {!isTransparent && (
+                                <>
+                                    <div className="text-neutral-700 hover:text-black dark:text-neutral-300 dark:hover:text-white transition-colors">
+                                        <ThemeSwitch />
+                                    </div>
 
-                            {/* Divider */}
-                            <div className="h-6 w-px bg-neutral-200 dark:bg-neutral-700"></div>
+                                    {/* Divider */}
+                                    <div className="h-6 w-px bg-neutral-200 dark:bg-neutral-700"></div>
+                                </>
+                            )}
 
                             {/* Language Selector */}
                             <div className="relative language-dropdown">
                                 <button
                                     onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-                                    className="flex items-center gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    className={`flex items-center gap-2 text-sm font-medium transition-colors ${isTransparent ? 'text-slate-300 hover:text-white' : 'text-neutral-800 dark:text-neutral-200 hover:text-blue-600 dark:hover:text-blue-400'}`}
                                 >
                                     <img 
                                         src={i18n.language === 'en' ? 'https://flagcdn.com/w40/gb.png' : 'https://flagcdn.com/w40/es.png'} 
@@ -299,12 +369,13 @@ function Header() {
                                                 key={lang.code}
                                                 onClick={() => {
                                                     i18n.changeLanguage(lang.code);
+                                                    localStorage.setItem('i18nextLng', lang.code);
                                                     setShowLanguageDropdown(false);
                                                 }}
-                                                className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center gap-2 ${
+                                                className={`w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors ${
                                                     i18n.language === lang.code
-                                                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium'
-                                                        : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700'
+                                                        ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                                                        : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700'
                                                 }`}
                                             >
                                                 <img src={lang.flag} alt={lang.label} className="w-4 h-4 rounded-full object-cover" />
@@ -386,7 +457,7 @@ function Header() {
                             <div className="relative mobile-settings-dropdown">
                                 <button
                                     onClick={() => setShowMobileSettings(!showMobileSettings)}
-                                    className="p-2 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+                                    className={`p-2 rounded-lg transition-colors ${isTransparent ? 'text-slate-300 hover:bg-white/10 hover:text-white' : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'}`}
                                 >
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -395,10 +466,12 @@ function Header() {
                                 </button>
                                 {showMobileSettings && (
                                     <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-neutral-800 rounded-lg shadow-xl border border-neutral-100 dark:border-neutral-700 z-50 p-4 animate-in fade-in slide-in-from-top-2">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('theme')}:</span>
-                                            <ThemeSwitch />
-                                        </div>
+                                        {!isTransparent && (
+                                            <div className="flex items-center justify-between mb-4">
+                                                <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('theme')}:</span>
+                                                <ThemeSwitch />
+                                            </div>
+                                        )}
                                         <div className="flex items-center justify-between">
                                             <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('language')}:</span>
                                             <div className="flex gap-2">
@@ -424,7 +497,7 @@ function Header() {
 
                             {/* Mobile Menu Toggle */}
                             <button
-                                className="p-2 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+                                className={`p-2 rounded-lg transition-colors ${isTransparent ? 'text-slate-300 hover:bg-white/10 hover:text-white' : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'}`}
                                 onClick={toggleMenu}
                             >
                                 {isOpen ? (
@@ -447,8 +520,8 @@ function Header() {
                                     { to: '/', label: t('home') },
                                     { to: '/map', label: t('map') },
                                     { to: '/pois', label: t('pointsOfInterest') },
-                                    { to: '/warnings', label: t('warnings'), icon: <span className={`w-2 h-2 rounded-full mr-2 ${getAlertColor()}`}></span> },
-                                    { to: '/aboutus', label: t('aboutUs') }
+                                    { to: '/aboutus', label: t('aboutUs') },
+                                    { to: '/warnings', label: t('warnings'), icon: <span className={`w-2 h-2 rounded-full mr-2 ${getAlertColor()}`}></span> }
                                 ].map((link) => (
                                     <li key={link.to}>
                                         <NavLink
@@ -460,7 +533,10 @@ function Header() {
                                                         : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-white'
                                                 }`
                                             }
-                                            onClick={() => setIsOpen(false)}
+                                            onClick={(e) => {
+                                                setIsOpen(false);
+                                                handleNavigationClick(e, link.to);
+                                            }}
                                         >
                                             {link.icon}
                                             {link.label}
@@ -520,7 +596,7 @@ function Header() {
                                     ) : (
                                         <div className="px-4">
                                             <button
-                                                className="w-full flex items-center justify-center gap-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 px-4 py-3 rounded-lg font-semibold shadow-sm hover:opacity-90 transition-opacity"
+                                                className="w-full flex items-center justify-center gap-2 bg-[#1d4ed8] hover:bg-[#1e40af] text-white px-4 py-3 rounded-lg font-semibold shadow-sm hover:shadow-lg transition-all"
                                                 onClick={() => setShowLogin(true)}
                                             >
                                                 {t('login')}

@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 
@@ -9,13 +9,16 @@ import Footer from '../components/layout/Footer';
  * @returns {JSX.Element} The rendered Layout component.
  */
 export default function Layout() {
+    const location = useLocation();
+    const isAboutPage = location.pathname === '/aboutus';
+
     return (
-        <div className="flex flex-col min-h-screen bg-white">
-            <Header />
-            <main className="grow mt-6">
+        <div className={`flex flex-col min-h-screen ${isAboutPage ? 'bg-[#0B1120]' : 'bg-white'}`}>
+            <Header isTransparent={isAboutPage} />
+            <main className="grow">
                 <Outlet />
             </main>
-            <Footer />
+            {!isAboutPage && <Footer />}
         </div>
     );
 }
