@@ -96,47 +96,76 @@ export default function Hero() {
                         </div>
                     </div>
 
-                    {/* Right Column: Hero Image */}
-                    <div className="flex justify-center lg:justify-center relative">
-                        <div className="relative w-full max-w-xs lg:max-w-sm transform hover:scale-105 transition-transform duration-500">
-                            {/* Image Container: Maintains aspect ratio */}
-                            <div className="w-full aspect-square flex items-center justify-center">
-                                <img
-                                    src="/canary-weather-phone.png"
-                                    alt="Mobile phones showing weather app"
-                                    fetchPriority="high"
-                                    className="w-full h-auto object-contain drop-shadow-2xl z-10"
-                                    onError={(e) => {
-                                        // Fallback if image fails to load
-                                        e.target.style.display = 'none';
-                                        if (e.target.nextSibling) {
-                                            e.target.nextSibling.classList.remove('hidden');
-                                            e.target.nextSibling.classList.add('flex');
-                                        }
-                                    }}
-                                />
-                                {/* Fallback if image fails */}
-                                <div className="w-full h-96 bg-linear-to-br from-blue-500 to-cyan-400 rounded-3xl shadow-2xl hidden flex-col items-center justify-center p-8 text-white transform rotate-3 hover:rotate-0 transition-transform duration-500">
-                                    <svg
-                                        className="w-24 h-24 mb-4 opacity-80"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={1.5}
-                                            d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
-                                        />
-                                    </svg>
-                                    <span className="text-2xl font-bold text-center">
-                                        {t('canaryWeather')}
-                                    </span>
-                                    <span className="text-blue-100 mt-2">
-                                        {t('heroImage')}
-                                    </span>
+                    {/* Right Column: Dynamic Weather Composition */}
+                    <div className="flex justify-center lg:justify-end relative perspective-1000">
+                        {/* Decorative Background Blob */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-blue-200/40 to-cyan-200/40 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
+
+                        {/* 
+                         * Main Weather Card 
+                         * A glassmorphism-style card representing a live weather dashboard.
+                         * Replaces the static phone image for a more dynamic and reliable visual.
+                         */}
+                        <div className="relative w-full max-w-sm bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-white/50 dark:border-gray-700/50 rounded-3xl shadow-2xl p-8 transform lg:rotate-y-12 hover:rotate-0 transition-all duration-700 ease-out group">
+                            
+                            {/* Card Header: Location & Time */}
+                            <div className="flex justify-between items-start mb-8">
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                        <svg className="w-5 h-5 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                        Tenerife
+                                    </h3>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400 ml-7">Canary Islands</p>
                                 </div>
+                                <span className="px-3 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-xs font-bold rounded-full uppercase tracking-wide">
+                                    Live
+                                </span>
+                            </div>
+
+                            {/* Card Body: Main Weather Icon & Temp */}
+                            <div className="flex flex-col items-center justify-center py-4">
+                                {/* Animated Sun Icon */}
+                                <div className="relative w-32 h-32 mb-4">
+                                    <div className="absolute inset-0 bg-orange-400 rounded-full blur-xl opacity-20 animate-pulse"></div>
+                                    <svg className="w-full h-full text-orange-500 animate-[spin_10s_linear_infinite]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    </svg>
+                                </div>
+                                <div className="text-6xl font-bold text-gray-900 dark:text-white tracking-tighter">
+                                    24<span className="text-4xl align-top text-brand-primary">°C</span>
+                                </div>
+                                <p className="text-xl font-medium text-gray-600 dark:text-gray-300 mt-2">
+                                    Sunny & Clear
+                                </p>
+                            </div>
+
+                            {/* Card Footer: Mini Stats */}
+                            <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
+                                <div className="text-center">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Wind</p>
+                                    <p className="font-bold text-gray-900 dark:text-white">12 km/h</p>
+                                </div>
+                                <div className="text-center border-l border-gray-100 dark:border-gray-700">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Humidity</p>
+                                    <p className="font-bold text-gray-900 dark:text-white">45%</p>
+                                </div>
+                                <div className="text-center border-l border-gray-100 dark:border-gray-700">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">UV</p>
+                                    <p className="font-bold text-gray-900 dark:text-white">High</p>
+                                </div>
+                            </div>
+
+                            {/* Floating Elements (Decorations) */}
+                            <div className="absolute -right-12 top-1/4 bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-xl animate-bounce hidden lg:block" style={{ animationDuration: '3s' }}>
+                                <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                                </svg>
+                            </div>
+                            <div className="absolute -left-8 bottom-1/4 bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-xl animate-bounce hidden lg:block" style={{ animationDuration: '4s', animationDelay: '1s' }}>
+                                <span className="text-2xl" role="img" aria-label="wave">🌊</span>
                             </div>
                         </div>
                     </div>
