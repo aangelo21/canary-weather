@@ -207,18 +207,18 @@ export default function Footer() {
                         {t('allRightsReserved')}
                     </p>
                     <div className="flex gap-6 text-sm">
-                        <a
-                            href="#"
+                        <Link
+                            to="/privacy-policy"
                             className="text-blue-100 dark:text-gray-500 hover:text-white transition-colors"
                         >
                             {t('privacyPolicy')}
-                        </a>
-                        <a
-                            href="#"
+                        </Link>
+                        <Link
+                            to="/terms-and-conditions"
                             className="text-blue-100 dark:text-gray-500 hover:text-white transition-colors"
                         >
                             {t('termsOfService')}
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>

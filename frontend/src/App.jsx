@@ -16,6 +16,8 @@ const Map = lazy(() => import('./pages/Map'));
 const Warnings = lazy(() => import('./pages/Warnings'));
 const AboutUs = lazy(() => import('./pages/AboutUs'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsAndConditions = lazy(() => import('./pages/TermsAndConditions'));
 
 /**
  * Loading fallback component.
@@ -83,6 +85,8 @@ function App() {
                                 <Route path="/warnings" element={<Warnings />} />
                                 <Route path="/aboutus" element={<AboutUs />} />
                                 <Route path="/admin" element={<AdminDashboard />} />
+                                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                                <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
                             </Route>
                         </Routes>
                     </Suspense>
