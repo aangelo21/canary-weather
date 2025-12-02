@@ -26,8 +26,8 @@ export const LdapService = {
       const client = createClient();
       
       // Admin credentials to search for the user DN
-      const ADMIN_DN = 'cn=admin,dc=canaryweather,dc=xyz';
-      const ADMIN_PASSWORD = 'xsbn$B3P9R34aysk0E6!';
+      const ADMIN_DN = process.env.LDAP_ADMIN_DN;
+      const ADMIN_PASSWORD = process.env.LDAP_ADMIN_PASSWORD;
 
       client.on('error', (err) => {
         console.error('LDAP Client Error:', err);
@@ -151,8 +151,8 @@ export const LdapService = {
     return new Promise((resolve, reject) => {
       const client = createClient();
       
-      const ADMIN_DN = 'cn=admin,dc=canaryweather,dc=xyz';
-      const ADMIN_PASSWORD = 'xsbn$B3P9R34aysk0E6!'; 
+      const ADMIN_DN = process.env.LDAP_ADMIN_DN;
+      const ADMIN_PASSWORD = process.env.LDAP_ADMIN_PASSWORD; 
 
       client.bind(ADMIN_DN, ADMIN_PASSWORD, (err) => {
         if (err) {
