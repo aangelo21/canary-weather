@@ -24,7 +24,7 @@ const UserLocation = sequelize.define(
       primaryKey: true,
     },
     user_id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     location_id: {

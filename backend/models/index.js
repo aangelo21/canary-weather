@@ -14,41 +14,16 @@ import sequelize from "../controllers/dbController.js";
  * Defines the relationships between the Sequelize models.
  */
 
-// User <-> Location (Many-to-Many via UserLocation)
-// Users can select multiple locations (though logic might limit this).
-User.belongsToMany(Location, {
-  through: UserLocation,
-  foreignKey: "user_id",
-  otherKey: "location_id",
-});
-Location.belongsToMany(User, {
-  through: UserLocation,
-  foreignKey: "location_id",
-  otherKey: "user_id",
-});
+// Note: User associations have been removed as Users are now managed via LDAP.
+// UserLocation and UserPointOfInterest now store user_id as a string (username).
 
 // Explicit associations for the junction table UserLocation
-User.hasMany(UserLocation, { foreignKey: "user_id" });
-UserLocation.belongsTo(User, { foreignKey: "user_id" });
+// UserLocation.belongsTo(User) is removed.
 Location.hasMany(UserLocation, { foreignKey: "location_id" });
 UserLocation.belongsTo(Location, { foreignKey: "location_id" });
 
-// User <-> PointOfInterest (Many-to-Many via UserPointOfInterest)
-// Users can favorite multiple Points of Interest.
-User.belongsToMany(PointOfInterest, {
-  through: UserPointOfInterest,
-  foreignKey: "user_id",
-  otherKey: "point_of_interest_id",
-});
-PointOfInterest.belongsToMany(User, {
-  through: UserPointOfInterest,
-  foreignKey: "point_of_interest_id",
-  otherKey: "user_id",
-});
-
 // Explicit associations for the junction table UserPointOfInterest
-User.hasMany(UserPointOfInterest, { foreignKey: "user_id" });
-UserPointOfInterest.belongsTo(User, { foreignKey: "user_id" });
+// UserPointOfInterest.belongsTo(User) is removed.
 PointOfInterest.hasMany(UserPointOfInterest, {
   foreignKey: "point_of_interest_id",
 });
@@ -72,9 +47,7 @@ Alert.hasMany(Notification, { foreignKey: "alert_id" });
 Notification.belongsTo(Alert, { foreignKey: "alert_id" });
 
 // User <-> Notification (One-to-Many)
-// A User can receive multiple notifications.
-User.hasMany(Notification, { foreignKey: "user_id" });
-Notification.belongsTo(User, { foreignKey: "user_id" });
+// User association removed.
 
 export {
   sequelize,
