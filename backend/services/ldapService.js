@@ -21,10 +21,13 @@ export const LdapService = {
    * Authenticate a user against the LDAP server.
    * Returns user info including isAdmin status if successful, null otherwise.
    */
-  authenticate: (username, password) => {
+  authenticate: (identifier, password) => {
     return new Promise((resolve, reject) => {
       const client = createClient();
-      const userDN = `cn=${username},${USERS_DN}`;
+      
+      // Admin credentials to search for the user DN
+      const ADMIN_DN = 'cn=admin,dc=canaryweather,dc=xyz';
+      const ADMIN_PASSWORD = 'xsbn$B3P9R34aysk0E6!';
 
       client.on('error', (err) => {
         console.error('LDAP Client Error:', err);
@@ -32,48 +35,102 @@ export const LdapService = {
         resolve(null);
       });
 
-      client.bind(userDN, password, (err) => {
+      // 1. Bind as Admin to search for the user
+      client.bind(ADMIN_DN, ADMIN_PASSWORD, (err) => {
         if (err) {
-          console.error('LDAP Bind Error:', err.message);
+          console.error('LDAP Admin Bind Error (Auth):', err.message);
           client.unbind();
-          return resolve(null); // Auth failed
+          return resolve(null);
         }
 
-        // Auth successful, check if user is admin
-        // We check if the userDN is a uniqueMember of the admins group
-        const opts = {
-          filter: `(uniqueMember=${userDN})`,
+        // 2. Search for user by cn (username) or mail (email)
+        const searchOpts = {
+          filter: `(|(cn=${identifier})(mail=${identifier}))`,
           scope: 'sub',
-          attributes: ['cn']
+          attributes: ['dn', 'cn']
         };
 
-        client.search(GROUPS_DN, opts, (err, res) => {
+        client.search(USERS_DN, searchOpts, (err, res) => {
           if (err) {
-            console.error('LDAP Search Error:', err);
+            console.error('LDAP User Search Error:', err);
             client.unbind();
-            return reject(err);
+            return resolve(null);
           }
 
-          const groups = [];
-          
+          let userEntry = null;
+
           res.on('searchEntry', (entry) => {
-            if (entry.object) {
-              groups.push(entry.object.cn);
-            } else if (entry.attributes) {
-              const cn = entry.attributes.find(a => a.type === 'cn');
-              if (cn && cn.values && cn.values.length) {
-                groups.push(cn.values[0]);
-              }
-            } else {
-              console.warn('LDAP Entry missing object and attributes:', entry);
-            }
+            userEntry = entry;
           });
 
           res.on('end', (result) => {
-            client.unbind();
-            resolve({
-              username,
-              isAdmin: groups.includes('admins')
+            if (!userEntry) {
+              // User not found
+              client.unbind();
+              return resolve(null);
+            }
+
+            const userDN = userEntry.objectName.toString();
+            
+            // Get username from the entry if possible
+            let username = identifier;
+            if (userEntry.object && userEntry.object.cn) {
+                username = userEntry.object.cn;
+            } else if (userEntry.attributes) {
+                 const cnAttr = userEntry.attributes.find(a => a.type === 'cn');
+                 if (cnAttr && cnAttr.values && cnAttr.values.length) {
+                     username = cnAttr.values[0];
+                 }
+            }
+
+            // 3. Bind as the User to verify password
+            client.bind(userDN, password, (err) => {
+                if (err) {
+                    console.error('LDAP User Bind Error:', err.message);
+                    client.unbind();
+                    return resolve(null);
+                }
+
+                // 4. Check groups
+                const groupOpts = {
+                    filter: `(uniqueMember=${userDN})`,
+                    scope: 'sub',
+                    attributes: ['cn']
+                };
+
+                client.search(GROUPS_DN, groupOpts, (err, res) => {
+                    if (err) {
+                        console.error('LDAP Group Search Error:', err);
+                        client.unbind();
+                        return reject(err);
+                    }
+
+                    const groups = [];
+                    res.on('searchEntry', (entry) => {
+                        if (entry.object) {
+                            groups.push(entry.object.cn);
+                        } else if (entry.attributes) {
+                            const cn = entry.attributes.find(a => a.type === 'cn');
+                            if (cn && cn.values && cn.values.length) {
+                                groups.push(cn.values[0]);
+                            }
+                        }
+                    });
+
+                    res.on('end', () => {
+                        client.unbind();
+                        resolve({
+                            username: username,
+                            isAdmin: groups.includes('admins')
+                        });
+                    });
+
+                    res.on('error', (err) => {
+                        console.error('LDAP Group Search Event Error:', err);
+                        client.unbind();
+                        reject(err);
+                    });
+                });
             });
           });
           
