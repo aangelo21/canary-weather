@@ -41,7 +41,7 @@ const Notification = sequelize.define(
       defaultValue: DataTypes.NOW,
     },
     user_id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     alert_id: {
