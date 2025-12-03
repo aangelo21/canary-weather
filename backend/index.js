@@ -9,6 +9,7 @@ import sequelize from "./controllers/dbController.js";
 import "./models/index.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import http from "http";
 
 import pointOfInterestRoutes from "./routes/pointOfInterestRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -20,6 +21,8 @@ import adminRoutes from "./routes/adminRoutes.js";
 // Import Swagger for API documentation
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swagger.config.js";
+// Import websocket initializer. This module will encapsulate all Socket.IO logic.
+import initWebsocket from "./services/websocketService.js";
 
 // Define __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -35,11 +38,19 @@ app.set("views", path.join(__dirname, "views"));
 // Set the port from environment variable or default to 85
 const PORT = process.env.PORT || 85;
 
+// Define allowed origins for CORS (Cross-Origin Resource Sharing)
+// This list should match the one used in the WebSocket service.
+const ALLOWED_ORIGINS = [
+  "http://localhost:5173",
+  "http://134.209.22.118:5173",
+  "https://canaryweather.xyz",
+];
+
 // Enable CORS for cross-origin requests
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://134.209.22.118:5173", "https://canaryweather.xyz"],
-    credentials: true,
+    origin: ALLOWED_ORIGINS,
+    credentials: true, // Allow cookies/headers to be sent
   })
 );
 // Parse incoming JSON payloads
@@ -120,8 +131,15 @@ app.get("/api/health", (req, res) => {
     await sessionStore.sync();
     console.log("Session store synchronized successfully.");
 
-    // Start the server and listen on the specified port
-    app.listen(PORT, () => {
+    // Create an HTTP server from the Express app so we can attach Socket.IO
+    const server = http.createServer(app);
+
+    // Initialize the websocket layer (Socket.IO) with the HTTP server
+    // The `initWebsocket` function encapsulates all websocket event wiring
+    initWebsocket(server);
+
+    // Start listening on the specified port
+    server.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
   } catch (error) {
