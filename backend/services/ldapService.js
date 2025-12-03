@@ -146,8 +146,9 @@ export const LdapService = {
 
   /**
    * Create a new user in LDAP and add them to the 'normals' group.
+   * Optionally add to 'admins' group.
    */
-  createUser: (username, email, password) => {
+  createUser: (username, email, password, isAdmin = false) => {
     return new Promise((resolve, reject) => {
       const client = createClient();
       
@@ -179,23 +180,46 @@ export const LdapService = {
           }
 
           // Add to normals group
-          const change = new ldap.Change({
-            operation: 'add',
-            modification: {
-              type: 'uniqueMember',
-              values: [userDN]
-            }
+          const addToNormals = new Promise((resolve, reject) => {
+            const change = new ldap.Change({
+              operation: 'add',
+              modification: {
+                type: 'uniqueMember',
+                values: [userDN]
+              }
+            });
+            client.modify(NORMALS_GROUP_DN, change, (err) => {
+              if (err) reject(err);
+              else resolve();
+            });
           });
 
-          client.modify(NORMALS_GROUP_DN, change, (err) => {
-            client.unbind();
-            if (err) {
-              console.error('LDAP Add to Group Error:', err);
+          // Add to admins group if requested
+          const addToAdmins = isAdmin ? new Promise((resolve, reject) => {
+            const change = new ldap.Change({
+              operation: 'add',
+              modification: {
+                type: 'uniqueMember',
+                values: [userDN]
+              }
+            });
+            client.modify(ADMINS_GROUP_DN, change, (err) => {
+              if (err) reject(err);
+              else resolve();
+            });
+          }) : Promise.resolve();
+
+          Promise.all([addToNormals, addToAdmins])
+            .then(() => {
+              client.unbind();
+              resolve({ username, email });
+            })
+            .catch((err) => {
+              client.unbind();
+              console.error('LDAP Group Add Error:', err);
               // User created but group add failed
-              return resolve({ username, email, warning: 'User created but failed to add to group' });
-            }
-            resolve({ username, email });
-          });
+              resolve({ username, email, warning: 'User created but failed to add to groups' });
+            });
         });
       });
     });
@@ -232,6 +256,302 @@ export const LdapService = {
         res.on('error', (err) => {
            client.unbind();
            reject(err);
+        });
+      });
+    });
+  },
+
+  /**
+   * Get all users from LDAP
+   */
+  getAllUsers: () => {
+    return new Promise((resolve, reject) => {
+      const client = createClient();
+      
+      const ADMIN_DN = process.env.LDAP_ADMIN_DN;
+      const ADMIN_PASSWORD = process.env.LDAP_ADMIN_PASSWORD;
+
+      client.bind(ADMIN_DN, ADMIN_PASSWORD, (err) => {
+        if (err) {
+          console.error('LDAP Admin Bind Error:', err);
+          client.unbind();
+          return reject(err);
+        }
+
+        const searchOpts = {
+          filter: '(objectClass=inetOrgPerson)',
+          scope: 'sub',
+          attributes: ['cn', 'mail']
+        };
+
+        client.search(USERS_DN, searchOpts, (err, res) => {
+          if (err) {
+            client.unbind();
+            return reject(err);
+          }
+
+          const users = [];
+          res.on('searchEntry', (entry) => {
+            const cnAttr = entry.attributes.find(a => a.type === 'cn');
+            const mailAttr = entry.attributes.find(a => a.type === 'mail');
+            const cn = cnAttr?.values[0];
+            const mail = mailAttr?.values[0];
+            if (cn && mail) {
+              users.push({ username: cn, email: mail, id: cn, createdAt: null });
+            }
+          });
+
+          res.on('end', () => {
+            // Check admin status for each user
+            const promises = users.map(user => {
+              return new Promise((resolve) => {
+                const groupOpts = {
+                  filter: `(uniqueMember=cn=${user.username},${USERS_DN})`,
+                  scope: 'sub',
+                  attributes: ['cn']
+                };
+
+                client.search(GROUPS_DN, groupOpts, (err, res) => {
+                  if (err) {
+                    resolve({ ...user, isAdmin: false });
+                    return;
+                  }
+
+                  let isAdmin = false;
+                  res.on('searchEntry', (entry) => {
+                    const cnAttr = entry.attributes.find(a => a.type === 'cn');
+                    const cn = cnAttr?.values[0];
+                    if (cn === 'admins') isAdmin = true;
+                  });
+
+                  res.on('end', () => {
+                    resolve({ ...user, is_admin: isAdmin });
+                  });
+
+                  res.on('error', () => {
+                    resolve({ ...user, is_admin: false });
+                  });
+                });
+              });
+            });
+
+            Promise.all(promises).then((usersWithAdmin) => {
+              client.unbind();
+              resolve(usersWithAdmin);
+            });
+          });
+
+          res.on('error', (err) => {
+            client.unbind();
+            reject(err);
+          });
+        });
+      });
+    });
+  },
+
+  /**
+   * Update a user in LDAP (email, password, admin status)
+   */
+  updateUser: (username, { email, password, is_admin }) => {
+    return new Promise((resolve, reject) => {
+      const client = createClient();
+      
+      const ADMIN_DN = process.env.LDAP_ADMIN_DN;
+      const ADMIN_PASSWORD = process.env.LDAP_ADMIN_PASSWORD;
+
+      client.bind(ADMIN_DN, ADMIN_PASSWORD, (err) => {
+        if (err) {
+          console.error('LDAP Admin Bind Error:', err);
+          client.unbind();
+          return reject(err);
+        }
+
+        const userDN = `cn=${username},${USERS_DN}`;
+        const modifications = [];
+
+        // Update email if provided
+        if (email) {
+          modifications.push(new ldap.Change({
+            operation: 'replace',
+            modification: {
+              type: 'mail',
+              values: [email]
+            }
+          }));
+        }
+
+        // Update password if provided
+        if (password) {
+          modifications.push(new ldap.Change({
+            operation: 'replace',
+            modification: {
+              type: 'userPassword',
+              values: [password]
+            }
+          }));
+        }
+
+        // Function to apply user attribute changes
+        const applyUserChanges = () => {
+          if (modifications.length === 0) return Promise.resolve();
+          
+          // Apply modifications sequentially or all at once? 
+          // ldapjs client.modify takes one Change or array of Changes? 
+          // Usually it takes one Change object or an array of Change objects.
+          // Let's try passing the array if supported, or loop.
+          // Documentation says: client.modify(dn, change, callback) where change can be an array.
+          
+          return new Promise((resolve, reject) => {
+            client.modify(userDN, modifications, (err) => {
+              if (err) reject(err);
+              else resolve();
+            });
+          });
+        };
+
+        // Function to update admin group membership
+        const updateAdminGroup = () => {
+          if (is_admin === undefined) return Promise.resolve();
+
+          return new Promise((resolve, reject) => {
+            // Check if user is currently in admin group
+            const groupOpts = {
+              filter: `(uniqueMember=${userDN})`,
+              scope: 'sub',
+              attributes: ['cn']
+            };
+
+            client.search(ADMINS_GROUP_DN, groupOpts, (err, res) => {
+              if (err) return reject(err);
+
+              let isCurrentlyAdmin = false;
+              res.on('searchEntry', (entry) => {
+                isCurrentlyAdmin = true;
+              });
+
+              res.on('end', () => {
+                if (is_admin && !isCurrentlyAdmin) {
+                  // Add to admins
+                  const change = new ldap.Change({
+                    operation: 'add',
+                    modification: {
+                      type: 'uniqueMember',
+                      values: [userDN]
+                    }
+                  });
+                  client.modify(ADMINS_GROUP_DN, change, (err) => {
+                    if (err) reject(err);
+                    else resolve();
+                  });
+                } else if (!is_admin && isCurrentlyAdmin) {
+                  // Remove from admins
+                  const change = new ldap.Change({
+                    operation: 'delete',
+                    modification: {
+                      type: 'uniqueMember',
+                      values: [userDN]
+                    }
+                  });
+                  client.modify(ADMINS_GROUP_DN, change, (err) => {
+                    if (err) reject(err);
+                    else resolve();
+                  });
+                } else {
+                  resolve();
+                }
+              });
+
+              res.on('error', (err) => reject(err));
+            });
+          });
+        };
+
+        Promise.all([applyUserChanges(), updateAdminGroup()])
+          .then(() => {
+            client.unbind();
+            resolve({ username });
+          })
+          .catch((err) => {
+            client.unbind();
+            reject(err);
+          });
+      });
+    });
+  },
+
+  /**
+   * Delete a user from LDAP
+   */
+  deleteUser: (username) => {
+    return new Promise((resolve, reject) => {
+      const client = createClient();
+      
+      const ADMIN_DN = process.env.LDAP_ADMIN_DN;
+      const ADMIN_PASSWORD = process.env.LDAP_ADMIN_PASSWORD;
+
+      client.bind(ADMIN_DN, ADMIN_PASSWORD, (err) => {
+        if (err) {
+          console.error('LDAP Admin Bind Error:', err);
+          client.unbind();
+          return reject(err);
+        }
+
+        const userDN = `cn=${username},${USERS_DN}`;
+
+        // First, remove from groups
+        const groupOpts = {
+          filter: `(uniqueMember=${userDN})`,
+          scope: 'sub',
+          attributes: ['dn']
+        };
+
+        client.search(GROUPS_DN, groupOpts, (err, res) => {
+          if (err) {
+            client.unbind();
+            return reject(err);
+          }
+
+          const changes = [];
+          res.on('searchEntry', (entry) => {
+            const groupDN = entry.objectName.toString();
+            changes.push({
+              dn: groupDN,
+              change: new ldap.Change({
+                operation: 'delete',
+                modification: {
+                  type: 'uniqueMember',
+                  values: [userDN]
+                }
+              })
+            });
+          });
+
+          res.on('end', () => {
+            // Apply changes to remove from groups
+            const promises = changes.map(({ dn, change }) => {
+              return new Promise((resolve, reject) => {
+                client.modify(dn, change, (err) => {
+                  if (err) reject(err);
+                  else resolve();
+                });
+              });
+            });
+
+            Promise.all(promises).then(() => {
+              // Now delete the user
+              client.del(userDN, (err) => {
+                client.unbind();
+                if (err) reject(err);
+                else resolve();
+              });
+            }).catch(reject);
+          });
+
+          res.on('error', (err) => {
+            client.unbind();
+            reject(err);
+          });
         });
       });
     });

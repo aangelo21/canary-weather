@@ -217,7 +217,7 @@
                                             <% } %>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            <%= new Date(user.createdAt).toLocaleDateString() %>
+                                            <%= user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-' %>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <button onclick="openEditUserModal('<%= user.id %>', '<%= user.username %>', '<%= user.email %>', '<%= user.is_admin %>')" class="text-indigo-600 hover:text-indigo-900 mr-4">Editar</button>
