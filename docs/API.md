@@ -29,6 +29,7 @@ Interactive API documentation is available at: **http://localhost:85/api-docs**
      "password": "yourpassword"
    }
    ```
+   *Note: This creates a user in the LDAP directory.*
 5. Click "Execute"
 6. In the response, **copy the `token` value**
 

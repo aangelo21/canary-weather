@@ -59,33 +59,39 @@ The application integrates with AEMET (Spanish Meteorological Agency) API to pro
 
 ## 🛠️ Technology Stack
 
+For a detailed list of all packages and dependencies, please refer to [docs/PACKAGES.md](docs/PACKAGES.md).
+
 ### Backend
 
 - **Runtime**: Node.js (v18+)
-- **Framework**: Express.js v5
-- **ORM**: Sequelize v6
-- **Authentication**: JWT (JSON Web Tokens) + Express Session
-- **File Upload**: Multer v2
-- **Password Hashing**: bcrypt
-- **API Documentation**: Swagger/OpenAPI 3.0
-- **Database**: MySQL 8.0+
+- **Framework**: Express.js
+- **Database**: MySQL 8.0+ (Managed via DigitalOcean)
+- **ORM**: Sequelize v6 (with `mysql2`)
+- **Authentication**: 
+  - JWT (`jsonwebtoken`) for REST API
+  - Sessions (`express-session`) for Admin Panel
+- **Security**: `bcrypt` for hashing, `cors`
+- **Files**: `multer` for upload management
+- **Documentation**: Swagger/OpenAPI (`swagger-ui-express`)
+- **Admin Views**: EJS (Embedded JavaScript templates)
+- **XML Processing**: `xml2js` (for AEMET/Meteoalarm integration)
 
 ### Frontend
 
 - **Framework**: React 18
 - **Build Tool**: Vite
-- **Mapping**: Leaflet
+- **Styling**: Tailwind CSS (with PostCSS)
+- **Mapping**: Leaflet & React-Leaflet
 - **HTTP Client**: Axios
-- **Routing**: React Router
-- **Styling**: CSS3
-- **Internationalization**: i18next
+- **Routing**: React Router DOM
+- **Internationalization**: i18next & react-i18next
 
 ### DevOps & Deployment
 
 - **Process Manager**: PM2
 - **Version Control**: Git
-- **Hosting**: DigitalOcean
-- **Database Hosting**: DigitalOcean Managed MySQL
+- **Hosting**: DigitalOcean Droplets
+- **CI/CD**: Manual deployment scripts (see `docs/DEPLOYMENT.md`)
 
 ## 🚀 Quick Start
 
