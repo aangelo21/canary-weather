@@ -15,6 +15,8 @@ import {
   refreshToken,
 } from "../controllers/userController.js";
 
+import { forgotPassword, resetPassword } from "../controllers/authController.js";
+
 // Import multer middleware for profile picture uploads
 import { upload } from "../middleware/uploadMiddleware.js";
 
@@ -122,6 +124,63 @@ router.post("/login", loginUser);
  *               $ref: '#/components/schemas/Error'
  */
 router.post("/logout", logoutUser);
+
+/**
+ * @swagger
+ * /api/users/forgot-password:
+ *   post:
+ *     summary: Request password reset
+ *     description: Send a password reset link to the user's email
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *     responses:
+ *       200:
+ *         description: Email sent
+ *       400:
+ *         description: Missing email
+ */
+router.post("/forgot-password", forgotPassword);
+
+/**
+ * @swagger
+ * /api/users/reset-password:
+ *   post:
+ *     summary: Reset password
+ *     description: Reset user password using a valid token
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *               - newPassword
+ *             properties:
+ *               token:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       200:
+ *         description: Password reset successful
+ *       400:
+ *         description: Invalid token or missing fields
+ */
+router.post("/reset-password", resetPassword);
 
 /**
  * @swagger

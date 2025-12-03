@@ -7,6 +7,7 @@ import {
     getCurrentUser,
 } from '../../services/userService';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 /**
  * LoginModal Component.
@@ -686,7 +687,7 @@ export default function LoginModal({
                                             <input
                                                 id="email"
                                                 type="email"
-                                                placeholder="m@example.com"
+                                                placeholder={t('emailPlaceholder')}
                                                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:placeholder-gray-400"
                                                 value={input.email}
                                                 onChange={(e) =>
@@ -707,7 +708,7 @@ export default function LoginModal({
                                             <input
                                                 id="username"
                                                 type="text"
-                                                placeholder="Username"
+                                                placeholder={t('usernamePlaceholder')}
                                                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:placeholder-gray-400"
                                                 value={input.username}
                                                 onChange={(e) =>
@@ -882,7 +883,7 @@ export default function LoginModal({
                                             <input
                                                 id="emailOrUsername"
                                                 type="text"
-                                                placeholder="m@example.com"
+                                                placeholder={t('emailOrUsernamePlaceholder')}
                                                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:placeholder-gray-400"
                                                 value={input.emailOrUsername}
                                                 onChange={(e) =>
@@ -914,6 +915,15 @@ export default function LoginModal({
                                                 }
                                             />
                                         </div>
+                                        <div className="text-right">
+                                            <Link 
+                                                to="/forgot-password" 
+                                                className="text-xs text-brand-primary hover:underline dark:text-blue-400"
+                                                onClick={onClose}
+                                            >
+                                                {t('forgotPassword')}
+                                            </Link>
+                                        </div>
                                     </>
                                 )}
                             </div>
@@ -927,22 +937,23 @@ export default function LoginModal({
                                     {t('processing')}
                                 </div>
                             )}
+                            <div className="flex items-center pt-4 justify-between">
+                                <button
+                                    type="button"
+                                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 border-gray-200 dark:border-gray-700 dark:text-white dark:hover:bg-gray-800"
+                                    onClick={onClose}
+                                >
+                                    {t('cancel')}
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-brand-primary text-white shadow hover:bg-blue-700 h-9 px-4 py-2 dark:bg-white dark:text-black dark:hover:bg-white/90"
+                                    disabled={loading}
+                                >
+                                    {isSignUp ? t('signUp') : t('signIn')}
+                                </button>
+                            </div>
                         </form>
-                    </div>
-                    <div className="flex items-center p-6 pt-0 justify-between">
-                        <button
-                            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 border-gray-200 dark:border-gray-700 dark:text-white dark:hover:bg-gray-800"
-                            onClick={onClose}
-                        >
-                            {t('cancel')}
-                        </button>
-                        <button
-                            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-brand-primary text-white shadow hover:bg-blue-700 h-9 px-4 py-2 dark:bg-white dark:text-black dark:hover:bg-white/90"
-                            onClick={handleSubmit}
-                            disabled={loading}
-                        >
-                            {isSignUp ? t('signUp') : t('signIn')}
-                        </button>
                     </div>
                     <div className="p-6 pt-0 text-center text-sm text-gray-500 dark:text-gray-400">
                         {!isSignUp ? (
