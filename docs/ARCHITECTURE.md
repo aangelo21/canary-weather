@@ -48,7 +48,7 @@ CanaryWeather follows a **client-server architecture** with a clear separation b
                           │
                   ┌───────┴───────┐
                   │               │
-              AEMET API      OpenStreetMap
+              Meteoalarm      OpenStreetMap
 ```
 
 ## Technology Stack
@@ -63,16 +63,18 @@ CanaryWeather follows a **client-server architecture** with a clear separation b
 - **File Upload**: Multer
 - **API Documentation**: Swagger/OpenAPI 3.0
 - **Password Hashing**: bcrypt
+- **External Data Parsing**: xml2js (Meteoalarm feeds)
+- **Templating**: EJS (Admin Dashboard)
 
 ### Frontend
 
 - **Framework**: React 18
 - **Build Tool**: Vite
 - **HTTP Client**: Axios
-- **Mapping**: Leaflet
+- **Mapping**: Leaflet (via react-leaflet)
 - **Routing**: React Router
 - **Internationalization**: i18next
-- **Styling**: CSS3
+- **Styling**: Tailwind CSS
 
 ### DevOps
 

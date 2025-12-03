@@ -15,47 +15,21 @@ This document describes the database schema, relationships, and management for t
 
 | Table                | Description                           | Key Relationships                               |
 | -------------------- | ------------------------------------- | ----------------------------------------------- |
-| Users                | User accounts and authentication      | Has many UserLocations, UserPOIs, Notifications |
+| Users (Deprecated)   | *Replaced by LDAP*                    | -                                               |
 | Locations            | Geographic locations (municipalities) | Has many UserLocations                          |
 | PointsOfInterest     | Points of interest with coordinates   | Has many UserPOIs, Forecasts                    |
 | Alerts               | Weather alerts and warnings           | Has many Notifications                          |
-| Notifications        | User notifications                    | Belongs to User and Alert                       |
+| Notifications        | User notifications                    | Belongs to Alert (User link via LDAP username)  |
 | Forecasts            | Weather forecast data                 | Belongs to PointOfInterest                      |
-| UserLocations        | User-location associations            | Belongs to User and Location                    |
-| UserPointsOfInterest | User-POI associations                 | Belongs to User and POI                         |
+| UserLocations        | User-location associations            | Belongs to Location (User link via LDAP username)|
+| UserPointsOfInterest | User-POI associations                 | Belongs to POI (User link via LDAP username)    |
 | Sessions             | Express session storage               | -                                               |
 
 ## Table Schemas
 
-### Users
+### Users (Deprecated)
 
-```sql
-CREATE TABLE Users (
-  id VARCHAR(36) PRIMARY KEY,
-  email VARCHAR(255) NOT NULL UNIQUE,
-  username VARCHAR(255),
-  password VARCHAR(255) NOT NULL,
-  profile_picture_url VARCHAR(255),
-  is_admin BOOLEAN DEFAULT FALSE,
-  createdAt DATETIME NOT NULL,
-  updatedAt DATETIME NOT NULL
-);
-```
-
-**Fields**:
-
-- `id`: UUID primary key
-- `email`: User email (unique, required)
-- `username`: Display name
-- `password`: Hashed password (bcrypt)
-- `profile_picture_url`: Path to profile picture
-- `is_admin`: Admin privileges flag
-- `createdAt`, `updatedAt`: Timestamps
-
-**Indexes**:
-
-- PRIMARY KEY on `id`
-- UNIQUE INDEX on `email`
+*Note: User authentication and management is now handled via LDAP. This table is no longer the source of truth for active users.*
 
 ### Locations
 
@@ -134,19 +108,19 @@ CREATE TABLE Alerts (
 ```sql
 CREATE TABLE Notifications (
   id VARCHAR(36) PRIMARY KEY,
-  user_id VARCHAR(36) NOT NULL,
+  user_id VARCHAR(255) NOT NULL, -- LDAP Username
   message TEXT NOT NULL,
   is_read BOOLEAN DEFAULT FALSE,
   createdAt DATETIME NOT NULL,
-  updatedAt DATETIME NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
+  updatedAt DATETIME NOT NULL
+  -- No Foreign Key to Users table
 );
 ```
 
 **Fields**:
 
 - `id`: UUID primary key
-- `user_id`: Associated user
+- `user_id`: Associated user (LDAP Username)
 - `message`: Notification message
 - `is_read`: Read status flag
 
@@ -155,20 +129,20 @@ CREATE TABLE Notifications (
 ```sql
 CREATE TABLE UserLocations (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id VARCHAR(36) NOT NULL,
+  user_id VARCHAR(255) NOT NULL, -- LDAP Username
   location_id INT NOT NULL,
   selected_at DATETIME NOT NULL,
   createdAt DATETIME NOT NULL,
   updatedAt DATETIME NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
   FOREIGN KEY (location_id) REFERENCES Locations(id) ON DELETE CASCADE
+  -- No Foreign Key to Users table
 );
 ```
 
 **Fields**:
 
 - `id`: Auto-increment primary key
-- `user_id`: Associated user
+- `user_id`: Associated user (LDAP Username)
 - `location_id`: Associated location
 - `selected_at`: When location was added
 
@@ -177,33 +151,33 @@ CREATE TABLE UserLocations (
 ```sql
 CREATE TABLE UserPointsOfInterest (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id VARCHAR(36) NOT NULL,
+  user_id VARCHAR(255) NOT NULL, -- LDAP Username
   point_of_interest_id VARCHAR(36) NOT NULL,
   favorited_at DATETIME NOT NULL,
   createdAt DATETIME NOT NULL,
   updatedAt DATETIME NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
   FOREIGN KEY (point_of_interest_id) REFERENCES PointsOfInterest(id) ON DELETE CASCADE
+  -- No Foreign Key to Users table
 );
 ```
 
 **Fields**:
 
 - `id`: Auto-increment primary key
-- `user_id`: Associated user
+- `user_id`: Associated user (LDAP Username)
 - `point_of_interest_id`: Associated POI
 - `favorited_at`: When POI was favorited
 
 ## Entity Relationships
 
 ```
-User (1) ──────< (N) UserLocation (N) ──────> (1) Location
-  │
-  └──────< (N) UserPointOfInterest (N) ──────> (1) PointOfInterest
-  │                                                      │
-  └──────< (N) Notification (N) ──────> (1) Alert      │
-                                                         │
-                                              └──────< (N) Forecast
+User (LDAP) ── (Logical Link) ──< (N) UserLocation (N) ──────> (1) Location
+     │
+     └──────── (Logical Link) ──< (N) UserPointOfInterest (N) ──────> (1) PointOfInterest
+     │                                                                  │
+     └──────── (Logical Link) ──< (N) Notification (N) ──────> (1) Alert      │
+                                                                      │
+                                                         └──────< (N) Forecast
 ```
 
 ## Database Migrations

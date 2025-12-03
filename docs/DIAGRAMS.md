@@ -35,14 +35,12 @@ graph LR
 
 ```mermaid
 classDiagram
-    class User {
-        +int id
-        +String email
+    class LdapUser {
         +String username
-        +String password
-        +bool is_admin
-        +String profile_picture_url
+        +String email
+        +bool isAdmin
     }
+    <<External>> LdapUser
     
     class POI {
         +int id
@@ -83,13 +81,13 @@ classDiagram
 
     class UserLocation {
         +int id
-        +int user_id
+        +String user_id
         +int location_id
     }
     
     class UserPOI {
         +int id
-        +int user_id
+        +String user_id
         +int poi_id
     }
     
@@ -98,50 +96,43 @@ classDiagram
         +String message
         +enum type
         +datetime sent_at
-        +int user_id
+        +String user_id
         +int alert_id
     }
     
-    User "1" *-- "0..*" UserLocation : has_saved
-    User "1" *-- "0..*" UserPOI : saves_poi
+    LdapUser "1" .. "0..*" UserLocation : logical_link
+    LdapUser "1" .. "0..*" UserPOI : logical_link
     
     POI "1" *-- "0..*" Forecast : has_weather_data 
     
-    UserLocation "0..*" --* "1" User : belongs_to
     UserLocation "0..*" --* "1" Location : points_to
 
-    UserPOI "0..*" --* "1" User : belongs_to
     UserPOI "0..*" --* "1" POI : points_to
     
     Alert "1" *-- "0..*" Notification : generates
-    User "1" *-- "0..*" Notification : receives_via
+    LdapUser "1" .. "0..*" Notification : receives_via
 ```
 
 ## Entity relationship diagram
 
 ```mermaid
 erDiagram
-    User ||--o{ UserLocation : has_saved
-    User ||--o{ UserPOI : saves_poi
+    LDAP_User ||..o{ UserLocation : has_saved
+    LDAP_User ||..o{ UserPOI : saves_poi
     
     POI ||--o{ Forecast : has_weather_data 
     
-    UserLocation ||--|{ User : belongs_to
-    UserLocation ||--|{ Location : points_to
+    UserLocation }|--|| Location : points_to
 
-    UserPOI ||--|{ User : belongs_to
-    UserPOI ||--|{ POI : points_to
+    UserPOI }|--|| POI : points_to
     
     Alert ||--o{ Notification : generates
-    User ||--o{ Notification : receives_via
+    LDAP_User ||..o{ Notification : receives_via
     
-    User {
-        int id PK
+    LDAP_User {
+        String username PK
         String email
-        String username
-        String password
-        bool is_admin
-        String profile_picture_url
+        bool isAdmin
     }
     
     POI {
@@ -182,13 +173,13 @@ erDiagram
 
     UserLocation {
         int id PK
-        int user_id FK
+        String user_id "LDAP Username"
         int location_id FK
     }
     
     UserPOI {
         int id PK
-        int user_id FK
+        String user_id "LDAP Username"
         int poi_id FK
     }
     
@@ -197,11 +188,11 @@ erDiagram
         String message
         enum type
         datetime sent_at
-        int user_id FK
+        String user_id "LDAP Username"
         int alert_id FK
     }
 
-style User fill:#00008B,stroke:#fff,color:#000000
+style LDAP_User fill:#eeeeee,stroke:#333,stroke-dasharray: 5 5
 style UserPOI fill:#FF0000,stroke:#fff,color:#000000
 style UserLocation fill:#FF0000,stroke:#fff,color:#000000
 style POI fill:#FF0000,stroke:#fff,color:#000000
