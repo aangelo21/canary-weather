@@ -6,6 +6,7 @@ import Alert from "./alert.js";
 import Notification from "./notification.js";
 import UserPointOfInterest from "./userPointOfInterest.js";
 import UserLocation from "./userLocation.js";
+import UserProfile from "./userProfile.js";
 import sequelize from "../controllers/dbController.js";
 
 /**
@@ -59,4 +60,5 @@ export {
   Notification,
   UserPointOfInterest,
   UserLocation,
+  UserProfile,
 };

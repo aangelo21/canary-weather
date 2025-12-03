@@ -1,4 +1,4 @@
-import { Location, UserLocation, UserPointOfInterest, PointOfInterest } from "../models/index.js";
+import { Location, UserLocation, UserPointOfInterest, PointOfInterest, UserProfile } from "../models/index.js";
 import { LdapService } from "../services/ldapService.js";
 import { sendWelcomeEmail, sendLoginNotification } from "../services/emailService.js";
 import { Op } from "sequelize";
@@ -95,10 +95,15 @@ export const getCurrentUser = async (req, res) => {
 
     const locations = userLocations.map(ul => ul.Location);
 
+    // Fetch user profile (for profile picture)
+    const userProfileData = await UserProfile.findByPk(userId);
+
     const userProfile = {
       id: userId,
       username: userId,
       is_admin: req.session.user.is_admin,
+      profile_picture_url: userProfileData ? userProfileData.profile_picture_url : null,
+      bio: userProfileData ? userProfileData.bio : null,
       Locations: locations
     };
 
@@ -192,12 +197,28 @@ export const createUser = async (req, res) => {
 };
 
 /**
- * Updates an existing user's profile (Locations only).
+ * Updates an existing user's profile (Locations and Profile Picture).
  */
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params; // This is the username
     const payload = { ...req.body };
+
+    // Handle Profile Picture Upload
+    if (req.file) {
+      const profilePictureUrl = `/uploads/profile-pictures/${req.file.filename}`;
+      
+      // Find or create the user profile
+      const [profile, created] = await UserProfile.findOrCreate({
+        where: { username: id },
+        defaults: { profile_picture_url: profilePictureUrl }
+      });
+
+      if (!created) {
+        profile.profile_picture_url = profilePictureUrl;
+        await profile.save();
+      }
+    }
 
     // We only support updating locations for now
     const location_ids = payload.location_ids;
@@ -256,9 +277,13 @@ export const updateUser = async (req, res) => {
 
     const locations = userLocations.map(ul => ul.Location);
 
+    // Fetch updated profile data
+    const userProfileData = await UserProfile.findByPk(id);
+
     const updated = {
       id: id,
       username: id,
+      profile_picture_url: userProfileData ? userProfileData.profile_picture_url : null,
       Locations: locations
     };
 
