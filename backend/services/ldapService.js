@@ -47,7 +47,7 @@ export const LdapService = {
         const searchOpts = {
           filter: `(|(cn=${identifier})(mail=${identifier}))`,
           scope: 'sub',
-          attributes: ['dn', 'cn']
+          attributes: ['dn', 'cn', 'mail']
         };
 
         client.search(USERS_DN, searchOpts, (err, res) => {
@@ -72,14 +72,23 @@ export const LdapService = {
 
             const userDN = userEntry.objectName.toString();
             
-            // Get username from the entry if possible
+            // Get username and email from the entry if possible
             let username = identifier;
-            if (userEntry.object && userEntry.object.cn) {
-                username = userEntry.object.cn;
-            } else if (userEntry.attributes) {
+            let email = null;
+
+            if (userEntry.object) {
+                if (userEntry.object.cn) username = userEntry.object.cn;
+                if (userEntry.object.mail) email = userEntry.object.mail;
+            } 
+            
+            if (userEntry.attributes) {
                  const cnAttr = userEntry.attributes.find(a => a.type === 'cn');
                  if (cnAttr && cnAttr.values && cnAttr.values.length) {
                      username = cnAttr.values[0];
+                 }
+                 const mailAttr = userEntry.attributes.find(a => a.type === 'mail');
+                 if (mailAttr && mailAttr.values && mailAttr.values.length) {
+                     email = mailAttr.values[0];
                  }
             }
 
@@ -121,6 +130,7 @@ export const LdapService = {
                         client.unbind();
                         resolve({
                             username: username,
+                            email: email,
                             isAdmin: groups.includes('admins')
                         });
                     });
