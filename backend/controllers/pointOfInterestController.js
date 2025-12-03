@@ -1,4 +1,6 @@
 import { PointOfInterest, UserPointOfInterest, UserLocation, Location } from "../models/index.js";
+import { sendPoiCreatedEmail, sendPoiUpdatedEmail, sendPoiDeletedEmail } from "../services/emailService.js";
+import { LdapService } from "../services/ldapService.js";
 import { Op } from "sequelize";
 import sequelize from "../controllers/dbController.js";
 
@@ -158,6 +160,23 @@ export const createPointOfInterest = async (req, res) => {
       favorited_at: new Date()
     });
 
+    // Send email notification
+    // We need the user's email. Since req.user might not have it (depending on how it was populated),
+    // we might need to fetch it or assume it's in req.user if we updated the auth middleware.
+    // Assuming req.user has email or we can fetch it.
+    // Let's try to get it from LDAP if not present.
+    let userEmail = req.user.email;
+    if (!userEmail) {
+        // Try to fetch from LDAP
+        const users = await LdapService.getAllUsers(); // This is inefficient but works for now
+        const user = users.find(u => u.username === userId);
+        if (user) userEmail = user.email;
+    }
+
+    if (userEmail) {
+        sendPoiCreatedEmail(userEmail, userId, item.name);
+    }
+
     return res.status(201).json(item);
   } catch (err) {
     return res.status(400).json({ error: err.message });
@@ -210,6 +229,21 @@ export const updatePointOfInterest = async (req, res) => {
     if (!updated)
       return res.status(404).json({ error: "PointOfInterest not found" });
     const updatedItem = await PointOfInterest.findByPk(id);
+
+    // Send email notification
+    if (req.user) {
+        let userEmail = req.user.email;
+        if (!userEmail) {
+            const users = await LdapService.getAllUsers();
+            const user = users.find(u => u.username === req.user.id);
+            if (user) userEmail = user.email;
+        }
+
+        if (userEmail) {
+            sendPoiUpdatedEmail(userEmail, req.user.id, updatedItem.name);
+        }
+    }
+
     return res.json(updatedItem);
   } catch (err) {
     return res.status(400).json({ error: err.message });
@@ -269,6 +303,21 @@ export const deletePointOfInterest = async (req, res) => {
     const deleted = await PointOfInterest.destroy({ where: { id } });
     if (!deleted)
       return res.status(404).json({ error: "PointOfInterest not found" });
+
+    // Send email notification
+    if (req.user) {
+        let userEmail = req.user.email;
+        if (!userEmail) {
+            const users = await LdapService.getAllUsers();
+            const user = users.find(u => u.username === req.user.id);
+            if (user) userEmail = user.email;
+        }
+
+        if (userEmail) {
+            sendPoiDeletedEmail(userEmail, req.user.id, poi.name);
+        }
+    }
+
     return res.status(204).send();
   } catch (err) {
     return res.status(500).json({ error: err.message });

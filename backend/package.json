@@ -19,6 +19,7 @@
     "ldapjs": "^3.0.7",
     "multer": "^2.0.2",
     "mysql2": "^3.15.3",
+    "resend": "^6.5.2",
     "sequelize": "^6.37.7",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",

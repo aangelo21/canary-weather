@@ -1,5 +1,6 @@
 import { Location, UserLocation, UserPointOfInterest, PointOfInterest } from "../models/index.js";
 import { LdapService } from "../services/ldapService.js";
+import { sendWelcomeEmail, sendLoginNotification } from "../services/emailService.js";
 import { Op } from "sequelize";
 import jwt from 'jsonwebtoken';
 
@@ -21,6 +22,11 @@ export const loginUser = async (req, res) => {
     
     if (!user) {
       return res.status(401).json({ error: "Invalid username or password" });
+    }
+
+    // Send login notification
+    if (user.email) {
+        sendLoginNotification(user.email, user.username);
     }
     
     // Set user in session
@@ -136,6 +142,9 @@ export const createUser = async (req, res) => {
 
     // Create in LDAP
     await LdapService.createUser(username, email, password);
+
+    // Send welcome email
+    sendWelcomeEmail(email, username);
 
     const safeUser = {
       id: username,

@@ -18,6 +18,8 @@ const AboutUs = lazy(() => import('./pages/AboutUs'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsAndConditions = lazy(() => import('./pages/TermsAndConditions'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 
 /**
  * Loading fallback component.
@@ -87,6 +89,8 @@ function App() {
                                 <Route path="/admin" element={<AdminDashboard />} />
                                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                                 <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+                                <Route path="/forgot-password" element={<ForgotPassword />} />
+                                <Route path="/reset-password" element={<ResetPassword />} />
                             </Route>
                         </Routes>
                     </Suspense>
