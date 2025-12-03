@@ -281,11 +281,11 @@ export default function LoginModal({
         return (
             <>
                 <div
-                    className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm"
+                    className="fixed inset-0 z-9998 bg-black/50 backdrop-blur-sm"
                     onClick={() => setShowDeleteConfirm(false)}
                 ></div>
                 <div
-                    className="fixed inset-0 flex items-center justify-center z-[9999] p-4"
+                    className="fixed inset-0 flex items-center justify-center z-9999 p-4"
                     onClick={() => setShowDeleteConfirm(false)}
                 >
                     <div
@@ -356,9 +356,9 @@ export default function LoginModal({
     if (user) {
         return (
             <>
-                <div className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
+                <div className="fixed inset-0 z-9998 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
                 <div
-                    className="fixed inset-0 flex items-center justify-center z-[9999] p-4"
+                    className="fixed inset-0 flex items-center justify-center z-9999 p-4"
                     onClick={onClose}
                 >
                     <div
@@ -650,11 +650,11 @@ export default function LoginModal({
     return (
         <>
             <div
-                className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm"
+                className="fixed inset-0 z-9998 bg-black/50 backdrop-blur-sm"
                 onClick={onClose}
             ></div>
             <div
-                className="fixed inset-0 flex items-center justify-center z-[9999] p-4"
+                className="fixed inset-0 flex items-center justify-center z-9999 p-4"
                 onClick={onClose}
             >
                 <div

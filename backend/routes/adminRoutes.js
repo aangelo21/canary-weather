@@ -1,6 +1,7 @@
 import express from "express";
 import { authenticateSession } from "../middleware/authMiddleware.js";
 import { checkAdmin } from "../middleware/checkAdmin.js";
+import { ensureAdminAuthenticated } from "../middleware/adminAuthMiddleware.js";
 import {
   getDashboard,
   createGlobalPOI,
@@ -41,7 +42,7 @@ const router = express.Router();
  *       403:
  *         description: Admin privileges required
  */
-router.get("/", authenticateSession, checkAdmin, getDashboard);
+router.get("/", ensureAdminAuthenticated, getDashboard);
 
 /**
  * @swagger
