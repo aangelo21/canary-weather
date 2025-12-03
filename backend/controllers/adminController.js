@@ -3,9 +3,6 @@ import { LdapService } from "../services/ldapService.js";
 import { Op } from "sequelize";
 import sequelize from "./dbController.js";
 
-// Note: User model usage is removed/minimized as users are now in LDAP.
-// Dashboard stats for users will be unavailable or require LDAP search implementation.
-
 export const getDashboard = async (req, res) => {
   try {
     const { search, type, userSearch } = req.query;
@@ -22,7 +19,6 @@ export const getDashboard = async (req, res) => {
     }
 
     // Fetch basic counts
-    const usersCount = 0; // LDAP count not implemented
     const poisCount = await PointOfInterest.count();
     const alertsCount = await Alert.count();
 
@@ -32,8 +28,15 @@ export const getDashboard = async (req, res) => {
       order: [["createdAt", "DESC"]],
     });
 
-    // Fetch filtered Users - Not implemented for LDAP in dashboard yet
-    const users = []; 
+    // Fetch filtered Users from LDAP
+    let users = await LdapService.getAllUsers();
+    if (userSearch) {
+      users = users.filter(u => 
+        u.username.toLowerCase().includes(userSearch.toLowerCase()) || 
+        u.email.toLowerCase().includes(userSearch.toLowerCase())
+      );
+    }
+    const usersCount = users.length; 
 
     // --- Dashboard Statistics ---
     
@@ -150,11 +153,8 @@ export const createUser = async (req, res) => {
   try {
     const { username, email, password, is_admin } = req.body;
     
-    // Create in LDAP
-    await LdapService.createUser(username, email, password);
-    
-    // Note: is_admin handling in LDAP (adding to admins group) is not implemented in createUser yet.
-    // It defaults to 'normals' group.
+    // Create in LDAP with admin flag
+    await LdapService.createUser(username, email, password, is_admin === 'on');
     
     return res.redirect('/admin');
   } catch (err) {
@@ -163,11 +163,28 @@ export const createUser = async (req, res) => {
 };
 
 export const updateUser = async (req, res) => {
-  // Not implemented for LDAP
-  return res.status(501).send("Not implemented for LDAP");
+  try {
+    const { id } = req.params; // username
+    const { email, is_admin } = req.body;
+    
+    // Update in LDAP
+    await LdapService.updateUser(id, { 
+      email, 
+      is_admin: is_admin === 'on' 
+    });
+
+    return res.redirect('/admin');
+  } catch (err) {
+    return res.status(500).send("Error updating user: " + err.message);
+  }
 };
 
 export const deleteUser = async (req, res) => {
-  // Not implemented for LDAP
-  return res.status(501).send("Not implemented for LDAP");
+  try {
+    const { id } = req.params; // username
+    await LdapService.deleteUser(id);
+    return res.redirect('/admin');
+  } catch (err) {
+    return res.status(500).send("Error deleting user: " + err.message);
+  }
 };

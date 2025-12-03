@@ -290,7 +290,7 @@ function Header({ isTransparent = false }) {
                                         navigate('/');
                                     }
                                 }}
-                                className={`hidden md:block text-xl font-bold tracking-tight transition-all cursor-pointer hover:opacity-80 ${isTransparent ? 'text-white' : 'bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent'}`}
+                                className={`hidden md:block text-xl font-bold tracking-tight transition-all cursor-pointer hover:opacity-80 ${isTransparent ? 'text-white' : 'bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent'}`}
                             >
                                 Canary Weather
                             </span>
@@ -310,7 +310,7 @@ function Header({ isTransparent = false }) {
                                 { 
                                     to: '/warnings', 
                                     label: t('warnings'), 
-                                    icon: <span className={`w-2 h-2 rounded-full mr-2 ${getAlertColor()} ${['bg-[#b50909]', 'bg-orange-500'].includes(getAlertColor()) ? 'animate-pulse' : ''}`}></span> 
+                                    icon: <span className={`w-2 h-2 rounded-full mr-2 ${getAlertColor()} ${['bg-#b50909', 'bg-orange-500'].includes(getAlertColor()) ? 'animate-pulse' : ''}`}></span> 
                                 }
                             ].map((link) => (
                                 <NavLink
