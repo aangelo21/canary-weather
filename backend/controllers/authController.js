@@ -77,7 +77,40 @@ export const resetPassword = async (req, res) => {
     // Update password in LDAP
     await LdapService.updateUser(decoded.id, { password: newPassword });
 
-    return res.json({ message: "Password has been reset successfully." });
+    // Auto-login: Generate new token and return user data
+    // We need to fetch the user again to get the full object (including DB data if any)
+    // But for now, we can just return the token and basic info, similar to login.
+    // Ideally, we should reuse the login logic or call a service that does it.
+    // Since we don't have easy access to the full user object from DB here without importing models,
+    // let's try to get it via LdapService or just return the token.
+    
+    // Re-fetch user from LDAP to ensure we have current data
+    const users = await LdapService.getAllUsers();
+    const user = users.find(u => u.username === decoded.id);
+
+    if (!user) {
+        return res.json({ message: "Password has been reset successfully, but could not auto-login." });
+    }
+
+    // Generate login token (same as in userController login)
+    const loginToken = jwt.sign(
+        { id: user.id, username: user.username, isAdmin: user.isAdmin },
+        JWT_SECRET,
+        { expiresIn: '24h' }
+    );
+
+    // Set cookie if your app uses cookies for session
+    res.cookie('token', loginToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
+
+    return res.json({ 
+        message: "Password has been reset successfully.",
+        token: loginToken,
+        user: user
+    });
   } catch (err) {
     console.error('Reset password error:', err);
     return res.status(500).json({ error: "Failed to reset password" });
