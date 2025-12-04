@@ -7,6 +7,7 @@ import Notification from "./notification.js";
 import UserPointOfInterest from "./userPointOfInterest.js";
 import UserLocation from "./userLocation.js";
 import UserProfile from "./userProfile.js";
+import PushSubscription from "./pushSubscription.js";
 import sequelize from "../controllers/dbController.js";
 
 /**
@@ -17,6 +18,12 @@ import sequelize from "../controllers/dbController.js";
 
 // Note: User associations have been removed as Users are now managed via LDAP.
 // UserLocation and UserPointOfInterest now store user_id as a string (username).
+
+// Push Subscriptions
+// A user can have multiple subscriptions (phone, laptop, tablet)
+// We don't have a User model to associate with directly in Sequelize (LDAP), 
+// but we store the user_id.
+
 
 // Explicit associations for the junction table UserLocation
 // UserLocation.belongsTo(User) is removed.
@@ -61,4 +68,6 @@ export {
   UserPointOfInterest,
   UserLocation,
   UserProfile,
+  PushSubscription,
 };
+
