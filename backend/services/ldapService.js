@@ -1,4 +1,5 @@
 import ldap from 'ldapjs';
+import bcrypt from 'bcrypt';
 
 const LDAP_URL = 'ldap://134.209.22.118';
 const BASE_DN = 'dc=canaryweather,dc=xyz';
@@ -6,6 +7,49 @@ const USERS_DN = `ou=users,${BASE_DN}`;
 const GROUPS_DN = `ou=groups,${BASE_DN}`;
 const ADMINS_GROUP_DN = `cn=admins,${GROUPS_DN}`;
 const NORMALS_GROUP_DN = `cn=normals,${GROUPS_DN}`;
+
+const checkGroups = (client, userDN, username, email, resolve, reject) => {
+    const groupOpts = {
+        filter: `(uniqueMember=${userDN})`,
+        scope: 'sub',
+        attributes: ['cn']
+    };
+
+    client.search(GROUPS_DN, groupOpts, (err, res) => {
+        if (err) {
+            console.error('LDAP Group Search Error:', err);
+            client.unbind();
+            return reject(err);
+        }
+
+        const groups = [];
+        res.on('searchEntry', (entry) => {
+            if (entry.object) {
+                groups.push(entry.object.cn);
+            } else if (entry.attributes) {
+                const cn = entry.attributes.find(a => a.type === 'cn');
+                if (cn && cn.values && cn.values.length) {
+                    groups.push(cn.values[0]);
+                }
+            }
+        });
+
+        res.on('end', () => {
+            client.unbind();
+            resolve({
+                username: username,
+                email: email,
+                isAdmin: groups.includes('admins')
+            });
+        });
+
+        res.on('error', (err) => {
+            console.error('LDAP Group Search Event Error:', err);
+            client.unbind();
+            reject(err);
+        });
+    });
+};
 
 // Helper to create a client
 const createClient = () => {
@@ -47,7 +91,7 @@ export const LdapService = {
         const searchOpts = {
           filter: `(|(cn=${identifier})(mail=${identifier}))`,
           scope: 'sub',
-          attributes: ['dn', 'cn', 'mail']
+          attributes: ['dn', 'cn', 'mail', 'userPassword']
         };
 
         client.search(USERS_DN, searchOpts, (err, res) => {
@@ -63,7 +107,7 @@ export const LdapService = {
             userEntry = entry;
           });
 
-          res.on('end', (result) => {
+          res.on('end', async (result) => {
             if (!userEntry) {
               // User not found
               client.unbind();
@@ -75,10 +119,12 @@ export const LdapService = {
             // Get username and email from the entry if possible
             let username = identifier;
             let email = null;
+            let storedPassword = null;
 
             if (userEntry.object) {
                 if (userEntry.object.cn) username = userEntry.object.cn;
                 if (userEntry.object.mail) email = userEntry.object.mail;
+                if (userEntry.object.userPassword) storedPassword = userEntry.object.userPassword;
             } 
             
             if (userEntry.attributes) {
@@ -90,58 +136,49 @@ export const LdapService = {
                  if (mailAttr && mailAttr.values && mailAttr.values.length) {
                      email = mailAttr.values[0];
                  }
+                 const pwdAttr = userEntry.attributes.find(a => a.type === 'userPassword');
+                 if (pwdAttr && pwdAttr.values && pwdAttr.values.length) {
+                     storedPassword = pwdAttr.values[0];
+                 }
             }
 
-            // 3. Bind as the User to verify password
-            client.bind(userDN, password, (err) => {
-                if (err) {
-                    console.error('LDAP User Bind Error:', err.message);
+            // 3. Verify password using bcrypt
+            if (!storedPassword) {
+                console.error('LDAP Auth Error: No password stored for user');
+                client.unbind();
+                return resolve(null);
+            }
+
+            // storedPassword might be a Buffer
+            const hash = Buffer.isBuffer(storedPassword) ? storedPassword.toString('utf8') : storedPassword;
+            
+            try {
+                const match = await bcrypt.compare(password, hash);
+                if (!match) {
+                    console.error('LDAP Auth Error: Password mismatch');
                     client.unbind();
                     return resolve(null);
                 }
-
-                // 4. Check groups
-                const groupOpts = {
-                    filter: `(uniqueMember=${userDN})`,
-                    scope: 'sub',
-                    attributes: ['cn']
-                };
-
-                client.search(GROUPS_DN, groupOpts, (err, res) => {
-                    if (err) {
-                        console.error('LDAP Group Search Error:', err);
-                        client.unbind();
-                        return reject(err);
-                    }
-
-                    const groups = [];
-                    res.on('searchEntry', (entry) => {
-                        if (entry.object) {
-                            groups.push(entry.object.cn);
-                        } else if (entry.attributes) {
-                            const cn = entry.attributes.find(a => a.type === 'cn');
-                            if (cn && cn.values && cn.values.length) {
-                                groups.push(cn.values[0]);
-                            }
+            } catch (bcryptErr) {
+                // Fallback: Try simple bind if bcrypt fails (legacy users or plain text)
+                // Or if the stored password is not a bcrypt hash
+                console.warn('LDAP Auth Warning: Bcrypt compare failed, trying simple bind...', bcryptErr.message);
+                
+                return new Promise((resolveBind, rejectBind) => {
+                    client.bind(userDN, password, (err) => {
+                        if (err) {
+                            console.error('LDAP User Bind Error:', err.message);
+                            client.unbind();
+                            return resolve(null);
                         }
-                    });
-
-                    res.on('end', () => {
-                        client.unbind();
-                        resolve({
-                            username: username,
-                            email: email,
-                            isAdmin: groups.includes('admins')
-                        });
-                    });
-
-                    res.on('error', (err) => {
-                        console.error('LDAP Group Search Event Error:', err);
-                        client.unbind();
-                        reject(err);
+                        // Bind success, continue to groups
+                        checkGroups(client, userDN, username, email, resolve, reject);
                     });
                 });
-            });
+            }
+
+            // 4. Check groups
+            checkGroups(client, userDN, username, email, resolve, reject);
           });
           
           res.on('error', (err) => {
@@ -159,11 +196,15 @@ export const LdapService = {
    * Optionally add to 'admins' group.
    */
   createUser: (username, email, password, isAdmin = false) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const client = createClient();
       
       const ADMIN_DN = process.env.LDAP_ADMIN_DN;
       const ADMIN_PASSWORD = process.env.LDAP_ADMIN_PASSWORD; 
+
+      // Hash password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
       client.bind(ADMIN_DN, ADMIN_PASSWORD, (err) => {
         if (err) {
@@ -179,7 +220,7 @@ export const LdapService = {
           sn: username, // Surname is mandatory in inetOrgPerson
           mail: email,
           objectClass: ['inetOrgPerson', 'top'],
-          userPassword: password
+          userPassword: hashedPassword
         };
 
         client.add(userDN, entry, (err) => {
@@ -364,11 +405,18 @@ export const LdapService = {
    * Update a user in LDAP (email, password, admin status)
    */
   updateUser: (username, { email, password, is_admin }) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const client = createClient();
       
       const ADMIN_DN = process.env.LDAP_ADMIN_DN;
       const ADMIN_PASSWORD = process.env.LDAP_ADMIN_PASSWORD;
+
+      // Hash password if provided
+      let hashedPassword = null;
+      if (password) {
+          const salt = await bcrypt.genSalt(10);
+          hashedPassword = await bcrypt.hash(password, salt);
+      }
 
       client.bind(ADMIN_DN, ADMIN_PASSWORD, (err) => {
         if (err) {
@@ -392,12 +440,12 @@ export const LdapService = {
         }
 
         // Update password if provided
-        if (password) {
+        if (hashedPassword) {
           modifications.push(new ldap.Change({
             operation: 'replace',
             modification: {
               type: 'userPassword',
-              values: [password]
+              values: [hashedPassword]
             }
           }));
         }

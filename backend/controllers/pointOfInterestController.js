@@ -1,4 +1,4 @@
-import { PointOfInterest, UserPointOfInterest, UserLocation, Location } from "../models/index.js";
+import { PointOfInterest, UserPointOfInterest, UserLocation, Location, User } from "../models/index.js";
 import { sendPoiCreatedEmail, sendPoiUpdatedEmail, sendPoiDeletedEmail } from "../services/emailService.js";
 import { LdapService } from "../services/ldapService.js";
 import { Op } from "sequelize";
@@ -164,17 +164,15 @@ export const createPointOfInterest = async (req, res) => {
     // We need the user's email. Since req.user might not have it (depending on how it was populated),
     // we might need to fetch it or assume it's in req.user if we updated the auth middleware.
     // Assuming req.user has email or we can fetch it.
-    // Let's try to get it from LDAP if not present.
     let userEmail = req.user.email;
     if (!userEmail) {
-        // Try to fetch from LDAP
-        const users = await LdapService.getAllUsers(); // This is inefficient but works for now
-        const user = users.find(u => u.username === userId);
+        // Try to fetch from DB
+        const user = await User.findByPk(userId);
         if (user) userEmail = user.email;
     }
 
     if (userEmail) {
-        sendPoiCreatedEmail(userEmail, userId, item.name);
+        sendPoiCreatedEmail(userEmail, req.user.username, item.name);
     }
 
     return res.status(201).json(item);
@@ -234,13 +232,12 @@ export const updatePointOfInterest = async (req, res) => {
     if (req.user) {
         let userEmail = req.user.email;
         if (!userEmail) {
-            const users = await LdapService.getAllUsers();
-            const user = users.find(u => u.username === req.user.id);
+            const user = await User.findByPk(req.user.id);
             if (user) userEmail = user.email;
         }
 
         if (userEmail) {
-            sendPoiUpdatedEmail(userEmail, req.user.id, updatedItem.name);
+            sendPoiUpdatedEmail(userEmail, req.user.username, updatedItem.name);
         }
     }
 
@@ -305,19 +302,18 @@ export const deletePointOfInterest = async (req, res) => {
       return res.status(404).json({ error: "PointOfInterest not found" });
 
     // Send email notification
+    // Send email notification
     if (req.user) {
         let userEmail = req.user.email;
         if (!userEmail) {
-            const users = await LdapService.getAllUsers();
-            const user = users.find(u => u.username === req.user.id);
+            const user = await User.findByPk(req.user.id);
             if (user) userEmail = user.email;
         }
 
         if (userEmail) {
-            sendPoiDeletedEmail(userEmail, req.user.id, poi.name);
+            sendPoiDeletedEmail(userEmail, req.user.username, poi.name);
         }
     }
-
     return res.status(204).send();
   } catch (err) {
     return res.status(500).json({ error: err.message });

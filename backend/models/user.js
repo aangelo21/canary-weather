@@ -2,8 +2,6 @@
 import sequelize from "../controllers/dbController.js";
 // Import DataTypes for defining column types
 import { DataTypes } from "sequelize";
-// Import bcrypt for password hashing
-import bcrypt from "bcrypt";
 
 /**
  * User Model
@@ -40,11 +38,6 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    // Hashed password for secure authentication
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     // URL to the user's profile picture, optional
     profile_picture_url: {
       type: DataTypes.STRING,
@@ -60,27 +53,6 @@ const User = sequelize.define(
   {
     // Enable automatic timestamps (createdAt, updatedAt)
     timestamps: true,
-    // Define hooks to hash passwords before saving
-    hooks: {
-      // Hash password before creating a new user
-      beforeCreate: async (user) => {
-        if (user.password) {
-          // Generate salt for hashing
-          const salt = await bcrypt.genSalt(10);
-          // Hash the password with the salt
-          user.password = await bcrypt.hash(user.password, salt);
-        }
-      },
-      // Hash password before updating if it has changed
-      beforeUpdate: async (user) => {
-        if (user.changed("password")) {
-          // Generate salt for hashing
-          const salt = await bcrypt.genSalt(10);
-          // Hash the password with the salt
-          user.password = await bcrypt.hash(user.password, salt);
-        }
-      },
-    },
   }
 );
 

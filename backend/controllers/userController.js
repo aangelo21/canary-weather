@@ -1,4 +1,4 @@
-import { Location, UserLocation, UserPointOfInterest, PointOfInterest, UserProfile } from "../models/index.js";
+import { Location, UserLocation, UserPointOfInterest, PointOfInterest, User } from "../models/index.js";
 import { LdapService } from "../services/ldapService.js";
 import { sendWelcomeEmail, sendLoginNotification } from "../services/emailService.js";
 import { Op } from "sequelize";
@@ -18,10 +18,21 @@ export const loginUser = async (req, res) => {
     }
 
     // Authenticate against LDAP
-    const user = await LdapService.authenticate(username, password);
+    const ldapUser = await LdapService.authenticate(username, password);
     
-    if (!user) {
+    if (!ldapUser) {
       return res.status(401).json({ error: "Invalid username or password" });
+    }
+
+    // Find or Create User in DB
+    let user = await User.findOne({ where: { username: username } });
+    if (!user) {
+        // If user exists in LDAP but not in DB, create them in DB
+        user = await User.create({
+            username: username,
+            email: ldapUser.email || `${username}@example.com`, // Fallback if email missing
+            is_admin: false // Default to false, admin management is now DB based
+        });
     }
 
     // Send login notification
@@ -31,16 +42,18 @@ export const loginUser = async (req, res) => {
     
     // Set user in session
     req.session.user = {
-      id: user.username, // Use username as ID
+      id: user.id,
       username: user.username,
-      is_admin: user.isAdmin
+      email: user.email,
+      is_admin: user.is_admin
     };
 
     // Generate JWT
     const token = jwt.sign({ 
-      id: user.username, 
+      id: user.id, 
       username: user.username, 
-      is_admin: user.isAdmin 
+      email: user.email,
+      is_admin: user.is_admin 
     }, JWT_SECRET, { expiresIn: '15m' });
     
     // Return user data and token
@@ -56,9 +69,11 @@ export const loginUser = async (req, res) => {
  */
 export const refreshToken = async (req, res) => {
   const user = req.user;
+  // Ensure we are using the DB user ID
   const token = jwt.sign({ 
     id: user.id, 
     username: user.username, 
+    email: user.email,
     is_admin: user.is_admin 
   }, JWT_SECRET, { expiresIn: '15m' });
   
@@ -83,27 +98,28 @@ export const logoutUser = async (req, res) => {
  */
 export const getCurrentUser = async (req, res) => {
   try {
-    const userId = req.session.user && req.session.user.id; // This is the username now
+    const userId = req.session.user && req.session.user.id;
     if (!userId) return res.status(401).json({ error: "Not authenticated" });
 
-    // Fetch associated locations
-    // We need to manually fetch locations because we removed the Sequelize association
-    const userLocations = await UserLocation.findAll({
-      where: { user_id: userId },
-      include: [{ model: Location }]
+    const user = await User.findByPk(userId, {
+        include: [
+            { model: UserLocation, include: [Location] }
+        ]
     });
 
-    const locations = userLocations.map(ul => ul.Location);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    const locations = user.UserLocations ? user.UserLocations.map(ul => ul.Location) : [];
 
     // Fetch user profile (for profile picture)
     const userProfileData = await UserProfile.findByPk(userId);
 
     const userProfile = {
-      id: userId,
-      username: userId,
-      is_admin: req.session.user.is_admin,
-      profile_picture_url: userProfileData ? userProfileData.profile_picture_url : null,
-      bio: userProfileData ? userProfileData.bio : null,
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      profile_picture_url: user.profile_picture_url,
+      is_admin: user.is_admin,
       Locations: locations
     };
 
@@ -139,29 +155,59 @@ export const createUser = async (req, res) => {
       return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
 
-    // Check if user exists in LDAP (optional, createUser might fail if exists)
+    // Check if user exists in LDAP
     const exists = await LdapService.userExists(username);
     if (exists) {
-      return res.status(409).json({ error: "El usuario ya existe" });
+      // If user exists in LDAP, check if they exist in DB
+      const dbUser = await User.findOne({ where: { username } });
+      if (!dbUser) {
+          // Inconsistent state: User in LDAP but not DB.
+          // We can allow "registration" to proceed to fix the DB entry, 
+          // but we should probably verify the password if we were doing a login.
+          // Since this is registration, we can't verify the old password easily without asking for it.
+          // However, if the user is trying to register, they are providing a password.
+          // We could try to authenticate with the provided password to verify ownership.
+          
+          const authenticated = await LdapService.authenticate(username, password);
+          if (authenticated) {
+              // User owns the LDAP account, so we create the DB entry
+              const user = await User.create({
+                  username,
+                  email,
+                  is_admin: false
+              });
+              
+              // Continue with post-creation logic (emails, locations, etc.)
+              // ... duplicate logic below, let's refactor or just fall through
+          } else {
+              return res.status(409).json({ error: "El usuario ya existe en LDAP (contraseña incorrecta)" });
+          }
+      } else {
+          return res.status(409).json({ error: "El usuario ya existe" });
+      }
+    } else {
+        // Create in LDAP
+        await LdapService.createUser(username, email, password);
     }
-
-    // Create in LDAP
-    await LdapService.createUser(username, email, password);
+    
+    // Check if user exists in DB (if we didn't just create them above)
+    let user = await User.findOne({ where: { username } });
+    if (!user) {
+        // Create in DB
+        user = await User.create({
+            username,
+            email,
+            is_admin: false
+        });
+    }
 
     // Send welcome email
     sendWelcomeEmail(email, username);
 
-    const safeUser = {
-      id: username,
-      username: username,
-      email: email,
-      is_admin: false // Default for new users
-    };
-
     if (location_ids && Array.isArray(location_ids)) {
       for (const location_id of location_ids) {
         await UserLocation.create({
-          user_id: username,
+          user_id: user.id,
           location_id: location_id,
           selected_at: new Date()
         });
@@ -177,7 +223,7 @@ export const createUser = async (req, res) => {
           });
           if (poi) {
             await UserPointOfInterest.create({
-              user_id: username,
+              user_id: user.id,
               point_of_interest_id: poi.id,
               favorited_at: new Date(),
             });
@@ -185,6 +231,13 @@ export const createUser = async (req, res) => {
         }
       }
     }
+
+    const safeUser = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      is_admin: user.is_admin
+    };
 
     // Set user in session
     req.session.user = safeUser;
@@ -208,26 +261,25 @@ export const createUser = async (req, res) => {
  */
 export const updateUser = async (req, res) => {
   try {
-    const { id } = req.params; // This is the username
+    const { id } = req.params; // This is the UUID now
     const payload = { ...req.body };
 
-    // Handle Profile Picture Upload
+    const user = await User.findByPk(id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Update profile fields
     if (req.file) {
-      const profilePictureUrl = `/uploads/profile-pictures/${req.file.filename}`;
-      
-      // Find or create the user profile
-      const [profile, created] = await UserProfile.findOrCreate({
-        where: { username: id },
-        defaults: { profile_picture_url: profilePictureUrl }
-      });
-
-      if (!created) {
-        profile.profile_picture_url = profilePictureUrl;
-        await profile.save();
-      }
+      // Construct the URL for the uploaded file
+      // Assuming the server serves uploads from /uploads/profile-pictures
+      // You might need to adjust the path based on your static file serving configuration
+      user.profile_picture_url = `/uploads/profile-pictures/${req.file.filename}`;
+    } else if (payload.profile_picture_url) {
+        user.profile_picture_url = payload.profile_picture_url;
     }
+    // Only admin can update is_admin, but let's assume this endpoint is protected or logic is elsewhere
+    // For now, let's just save the user if changed
+    await user.save();
 
-    // We only support updating locations for now
     const location_ids = payload.location_ids;
 
     if (location_ids && Array.isArray(location_ids)) {
@@ -276,21 +328,21 @@ export const updateUser = async (req, res) => {
     }
 
     // Return updated profile
-    // Fetch associated locations
-    const userLocations = await UserLocation.findAll({
-      where: { user_id: id },
-      include: [{ model: Location }]
+    const updatedUser = await User.findByPk(id, {
+        include: [{ model: UserLocation, include: [Location] }]
     });
-
-    const locations = userLocations.map(ul => ul.Location);
+    
+    const locations = updatedUser.UserLocations ? updatedUser.UserLocations.map(ul => ul.Location) : [];
 
     // Fetch updated profile data
     const userProfileData = await UserProfile.findByPk(id);
 
     const updated = {
-      id: id,
-      username: id,
-      profile_picture_url: userProfileData ? userProfileData.profile_picture_url : null,
+      id: updatedUser.id,
+      username: updatedUser.username,
+      email: updatedUser.email,
+      profile_picture_url: updatedUser.profile_picture_url,
+      is_admin: updatedUser.is_admin,
       Locations: locations
     };
 

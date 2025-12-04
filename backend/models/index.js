@@ -16,8 +16,12 @@ import sequelize from "../controllers/dbController.js";
  * Defines the relationships between the Sequelize models.
  */
 
-// Note: User associations have been removed as Users are now managed via LDAP.
-// UserLocation and UserPointOfInterest now store user_id as a string (username).
+// Note: User associations have been restored.
+// UserLocation and UserPointOfInterest now store user_id as UUID referencing User table.
+
+// User <-> UserLocation (One-to-Many)
+User.hasMany(UserLocation, { foreignKey: "user_id" });
+UserLocation.belongsTo(User, { foreignKey: "user_id" });
 
 // Push Subscriptions
 // A user can have multiple subscriptions (phone, laptop, tablet)
@@ -26,12 +30,14 @@ import sequelize from "../controllers/dbController.js";
 
 
 // Explicit associations for the junction table UserLocation
-// UserLocation.belongsTo(User) is removed.
 Location.hasMany(UserLocation, { foreignKey: "location_id" });
 UserLocation.belongsTo(Location, { foreignKey: "location_id" });
 
+// User <-> UserPointOfInterest (One-to-Many)
+User.hasMany(UserPointOfInterest, { foreignKey: "user_id" });
+UserPointOfInterest.belongsTo(User, { foreignKey: "user_id" });
+
 // Explicit associations for the junction table UserPointOfInterest
-// UserPointOfInterest.belongsTo(User) is removed.
 PointOfInterest.hasMany(UserPointOfInterest, {
   foreignKey: "point_of_interest_id",
 });
@@ -55,7 +61,8 @@ Alert.hasMany(Notification, { foreignKey: "alert_id" });
 Notification.belongsTo(Alert, { foreignKey: "alert_id" });
 
 // User <-> Notification (One-to-Many)
-// User association removed.
+User.hasMany(Notification, { foreignKey: "user_id" });
+Notification.belongsTo(User, { foreignKey: "user_id" });
 
 export {
   sequelize,

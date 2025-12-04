@@ -1,3 +1,11 @@
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const _filename = fileURLToPath(import.meta.url);
+const _dirname = path.dirname(_filename);
+dotenv.config({ path: path.join(_dirname, '.env') });
+
 // Import necessary modules for the Express server
 import express from "express";
 import cors from "cors";
@@ -7,8 +15,6 @@ import connectSessionSequelize from "connect-session-sequelize";
 import sequelize from "./controllers/dbController.js";
 // Import models to ensure they are registered with Sequelize
 import "./models/index.js";
-import path from "path";
-import { fileURLToPath } from "url";
 import http from "http";
 
 import pointOfInterestRoutes from "./routes/pointOfInterestRoutes.js";
@@ -118,6 +124,9 @@ app.get("/api-docs-prod.json", (req, res) => {
   res.send(swaggerSpecProd);
 });
 
+// Serve static files from the uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.use("/api/pois", pointOfInterestRoutes);
 
 app.use("/api/users", userRoutes);
@@ -144,10 +153,16 @@ app.get("/api/health", (req, res) => {
     await sequelize.authenticate();
     console.log("Connection has been established successfully.");
 
+    // Disable foreign key checks to prevent deadlocks during sync
+    await sequelize.query('SET FOREIGN_KEY_CHECKS = 0');
+
     // Synchronize models with database (create tables if they don't exist)
     // We use migrations for schema changes, so we don't need alter: true
     await sequelize.sync();
     console.log("All models were synchronized successfully.");
+
+    // Re-enable foreign key checks
+    await sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
 
     // Sync session store
     await sessionStore.sync();

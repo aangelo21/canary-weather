@@ -1,5 +1,6 @@
 import { LdapService } from "../services/ldapService.js";
 import { sendPasswordResetEmail } from "../services/emailService.js";
+import { User } from "../models/index.js";
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
@@ -78,23 +79,16 @@ export const resetPassword = async (req, res) => {
     await LdapService.updateUser(decoded.id, { password: newPassword });
 
     // Auto-login: Generate new token and return user data
-    // We need to fetch the user again to get the full object (including DB data if any)
-    // But for now, we can just return the token and basic info, similar to login.
-    // Ideally, we should reuse the login logic or call a service that does it.
-    // Since we don't have easy access to the full user object from DB here without importing models,
-    // let's try to get it via LdapService or just return the token.
-    
-    // Re-fetch user from LDAP to ensure we have current data
-    const users = await LdapService.getAllUsers();
-    const user = users.find(u => u.username === decoded.id);
+    // Fetch DB user
+    const dbUser = await User.findOne({ where: { username: decoded.id } });
 
-    if (!user) {
+    if (!dbUser) {
         return res.json({ message: "Password has been reset successfully, but could not auto-login." });
     }
 
     // Generate login token (same as in userController login)
     const loginToken = jwt.sign(
-        { id: user.id, username: user.username, isAdmin: user.isAdmin },
+        { id: dbUser.id, username: dbUser.username, is_admin: dbUser.is_admin },
         JWT_SECRET,
         { expiresIn: '24h' }
     );
@@ -109,7 +103,11 @@ export const resetPassword = async (req, res) => {
     return res.json({ 
         message: "Password has been reset successfully.",
         token: loginToken,
-        user: user
+        user: {
+            id: dbUser.id,
+            username: dbUser.username,
+            is_admin: dbUser.is_admin
+        }
     });
   } catch (err) {
     console.error('Reset password error:', err);

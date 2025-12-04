@@ -41,7 +41,7 @@ const Notification = sequelize.define(
       defaultValue: DataTypes.NOW,
     },
     user_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: false,
     },
     alert_id: {
@@ -49,7 +49,10 @@ const Notification = sequelize.define(
       allowNull: true,
     },
   },
-  { timestamps: true }
+  {
+    tableName: 'Notifications',
+    timestamps: true,
+  }
 );
 
 export default Notification;
