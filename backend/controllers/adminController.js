@@ -1,4 +1,4 @@
-import { PointOfInterest, Alert, Location, UserLocation } from "../models/index.js";
+import { PointOfInterest, Alert, Location, UserLocation, User } from "../models/index.js";
 import { LdapService } from "../services/ldapService.js";
 import { Op } from "sequelize";
 import sequelize from "./dbController.js";
@@ -28,15 +28,19 @@ export const getDashboard = async (req, res) => {
       order: [["createdAt", "DESC"]],
     });
 
-    // Fetch filtered Users from LDAP
-    let users = await LdapService.getAllUsers();
+    // Fetch filtered Users from DB
+    const userWhere = {};
     if (userSearch) {
-      users = users.filter(u => 
-        u.username.toLowerCase().includes(userSearch.toLowerCase()) || 
-        u.email.toLowerCase().includes(userSearch.toLowerCase())
-      );
+      userWhere[Op.or] = [
+        { username: { [Op.like]: `%${userSearch}%` } },
+        { email: { [Op.like]: `%${userSearch}%` } }
+      ];
     }
-    const usersCount = users.length; 
+    const users = await User.findAll({
+        where: userWhere,
+        order: [['createdAt', 'DESC']]
+    });
+    const usersCount = await User.count();
 
     // --- Dashboard Statistics ---
     
@@ -58,8 +62,15 @@ export const getDashboard = async (req, res) => {
       group: ['location_id', 'Location.id', 'Location.name']
     });
 
-    // 3. Users created per day - Not available
-    const usersPerDay = [];
+    // 3. Users created per day
+    const usersPerDay = await User.findAll({
+      attributes: [
+        [sequelize.fn('DATE', sequelize.col('createdAt')), 'date'],
+        [sequelize.fn('COUNT', sequelize.col('id')), 'count']
+      ],
+      group: [sequelize.fn('DATE', sequelize.col('createdAt'))],
+      order: [[sequelize.fn('DATE', sequelize.col('createdAt')), 'ASC']]
+    });
 
     // 4. POIs created per day
     const poisPerDay = await PointOfInterest.findAll({
@@ -153,8 +164,15 @@ export const createUser = async (req, res) => {
   try {
     const { username, email, password, is_admin } = req.body;
     
-    // Create in LDAP with admin flag
-    await LdapService.createUser(username, email, password, is_admin === 'on');
+    // Create in LDAP (credentials)
+    await LdapService.createUser(username, email, password);
+    
+    // Create in DB (profile + admin role)
+    await User.create({
+        username,
+        email,
+        is_admin: is_admin === 'on'
+    });
     
     return res.redirect('/admin');
   } catch (err) {
@@ -164,14 +182,18 @@ export const createUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const { id } = req.params; // username
+    const { id } = req.params; // UUID
     const { email, is_admin } = req.body;
     
-    // Update in LDAP
-    await LdapService.updateUser(id, { 
-      email, 
-      is_admin: is_admin === 'on' 
-    });
+    const user = await User.findByPk(id);
+    if (user) {
+        user.email = email;
+        user.is_admin = is_admin === 'on';
+        await user.save();
+        
+        // Optionally update email in LDAP if needed
+        // await LdapService.updateUser(user.username, { email });
+    }
 
     return res.redirect('/admin');
   } catch (err) {
@@ -181,8 +203,16 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   try {
-    const { id } = req.params; // username
-    await LdapService.deleteUser(id);
+    const { id } = req.params; // UUID
+    const user = await User.findByPk(id);
+    
+    if (user) {
+        // Delete from LDAP
+        await LdapService.deleteUser(user.username);
+        // Delete from DB
+        await user.destroy();
+    }
+    
     return res.redirect('/admin');
   } catch (err) {
     return res.status(500).send("Error deleting user: " + err.message);

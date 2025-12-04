@@ -24,7 +24,7 @@ const UserPointOfInterest = sequelize.define(
       primaryKey: true,
     },
     user_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: false,
     },
     point_of_interest_id: {
