@@ -44,6 +44,7 @@ export const loginUser = async (req, res) => {
     req.session.user = {
       id: user.id,
       username: user.username,
+      email: user.email,
       is_admin: user.is_admin
     };
 
@@ -51,6 +52,7 @@ export const loginUser = async (req, res) => {
     const token = jwt.sign({ 
       id: user.id, 
       username: user.username, 
+      email: user.email,
       is_admin: user.is_admin 
     }, JWT_SECRET, { expiresIn: '15m' });
     
@@ -71,6 +73,7 @@ export const refreshToken = async (req, res) => {
   const token = jwt.sign({ 
     id: user.id, 
     username: user.username, 
+    email: user.email,
     is_admin: user.is_admin 
   }, JWT_SECRET, { expiresIn: '15m' });
   
@@ -255,7 +258,12 @@ export const updateUser = async (req, res) => {
     if (!user) return res.status(404).json({ error: "User not found" });
 
     // Update profile fields
-    if (payload.profile_picture_url) {
+    if (req.file) {
+      // Construct the URL for the uploaded file
+      // Assuming the server serves uploads from /uploads/profile-pictures
+      // You might need to adjust the path based on your static file serving configuration
+      user.profile_picture_url = `/uploads/profile-pictures/${req.file.filename}`;
+    } else if (payload.profile_picture_url) {
         user.profile_picture_url = payload.profile_picture_url;
     }
     // Only admin can update is_admin, but let's assume this endpoint is protected or logic is elsewhere

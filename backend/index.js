@@ -122,6 +122,9 @@ app.get("/api-docs-prod.json", (req, res) => {
   res.send(swaggerSpecProd);
 });
 
+// Serve static files from the uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.use("/api/pois", pointOfInterestRoutes);
 
 app.use("/api/users", userRoutes);
