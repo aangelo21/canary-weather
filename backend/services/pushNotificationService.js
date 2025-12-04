@@ -29,6 +29,48 @@ export const saveSubscription = async (userId, subscription) => {
 };
 
 /**
+ * Deletes a push subscription for a user.
+ * 
+ * @param {string} userId - The username/ID of the user.
+ * @param {string} endpoint - The subscription endpoint to remove.
+ */
+export const deleteSubscription = async (userId, endpoint) => {
+  try {
+    await PushSubscription.destroy({
+      where: {
+        user_id: userId,
+        endpoint: endpoint,
+      },
+    });
+  } catch (error) {
+    console.error("Error deleting subscription:", error);
+    throw error;
+  }
+};
+
+/**
+ * Checks if a subscription exists for a user.
+ * 
+ * @param {string} userId - The username/ID of the user.
+ * @param {string} endpoint - The subscription endpoint to check.
+ * @returns {Promise<boolean>} True if subscription exists.
+ */
+export const checkSubscription = async (userId, endpoint) => {
+  try {
+    const count = await PushSubscription.count({
+      where: {
+        user_id: userId,
+        endpoint: endpoint,
+      },
+    });
+    return count > 0;
+  } catch (error) {
+    console.error("Error checking subscription:", error);
+    throw error;
+  }
+};
+
+/**
  * Sends a push notification to a specific user.
  * 
  * @param {string} userId - The username/ID of the user.

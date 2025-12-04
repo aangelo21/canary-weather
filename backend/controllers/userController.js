@@ -189,7 +189,14 @@ export const createUser = async (req, res) => {
     // Set user in session
     req.session.user = safeUser;
 
-    return res.status(201).json({ user: safeUser });
+    // Generate JWT for the new user
+    const token = jwt.sign({ 
+      id: safeUser.username, 
+      username: safeUser.username, 
+      is_admin: safeUser.is_admin 
+    }, JWT_SECRET, { expiresIn: '15m' });
+
+    return res.status(201).json({ user: safeUser, token });
   } catch (err) {
     console.error(err);
     return res.status(400).json({ error: "Error creating user: " + err.message });
