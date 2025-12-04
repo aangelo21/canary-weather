@@ -5,6 +5,8 @@ import { fetchAlerts } from '../../services/alertService';
 import { logoutUser } from '../../services/userService';
 import { useTranslation } from 'react-i18next';
 import ThemeSwitch from '../common/ThemeSwitch';
+import NotificationToggle from '../NotificationToggle';
+
 
 /**
  * Header Component.
@@ -414,7 +416,9 @@ function Header({ isTransparent = false }) {
                                                     <svg className="w-5 h-5 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                                     {t('editProfile')}
                                                 </button>
+                                                <NotificationToggle />
                                                 {user.is_admin && (
+
                                                     <button
                                                         onClick={() => { navigate('/admin'); setShowUserDropdown(false); }}
                                                         className="w-full text-left px-5 py-4 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors flex items-center gap-3 border-b border-neutral-100 dark:border-neutral-700"
@@ -574,7 +578,9 @@ function Header({ isTransparent = false }) {
                                                         <svg className="w-5 h-5 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                                         {t('editProfile')}
                                                     </button>
+                                                    <NotificationToggle />
                                                     {user.is_admin && (
+
                                                         <button
                                                             onClick={() => { navigate('/admin'); setIsOpen(false); }}
                                                             className="w-full text-left px-5 py-4 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors flex items-center gap-3 border-b border-neutral-100 dark:border-neutral-700"

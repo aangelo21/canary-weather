@@ -17,9 +17,11 @@ import alertRoutes from "./routes/alertRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import userLocationRoutes from "./routes/userLocationRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import pushRoutes from "./routes/pushRoutes.js";
 
 // Import Swagger for API documentation
 import swaggerUi from "swagger-ui-express";
+
 import swaggerSpec from "./config/swagger.config.js";
 import swaggerSpecProd from "./config/swagger.config.prod.js";
 // Import websocket initializer. This module will encapsulate all Socket.IO logic.
@@ -127,9 +129,11 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/user-locations", userLocationRoutes);
 
 app.use("/admin", adminRoutes);
+app.use("/api/push", pushRoutes);
 
 // Health check endpoint to verify server status
 app.get("/api/health", (req, res) => {
+
   res.json({ status: "OK", message: "CanaryWeather API is running" });
 });
 
@@ -141,7 +145,8 @@ app.get("/api/health", (req, res) => {
     console.log("Connection has been established successfully.");
 
     // Synchronize models with database (create tables if they don't exist)
-    await sequelize.sync({ alter: true });
+    // We use migrations for schema changes, so we don't need alter: true
+    await sequelize.sync();
     console.log("All models were synchronized successfully.");
 
     // Sync session store
