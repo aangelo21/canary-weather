@@ -4,7 +4,7 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "CanaryWeather API",
+      title: "CanaryWeather API - Production",
       version: "1.0.0",
       description:
         "API documentation for CanaryWeather - Weather alerts and points of interest for the Canary Islands",
@@ -19,8 +19,8 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:85",
-        description: "Development server",
+        url: "https://canaryweather.xyz",
+        description: "Production server",
       },
     ],
     components: {
@@ -209,33 +209,29 @@ const options = {
       },
       {
         name: "Users",
-        description: "User management endpoints",
+        description: "User management endpoints (Read-only in production)",
       },
       {
         name: "Points of Interest",
-        description: "POI management endpoints",
+        description: "POI management endpoints (GET only)",
       },
       {
         name: "Alerts",
-        description: "Weather alert endpoints",
+        description: "Weather alert endpoints (GET only)",
       },
       {
         name: "Notifications",
-        description: "User notification endpoints",
+        description: "User notification endpoints (GET only)",
       },
       {
         name: "User Locations",
-        description: "User location preferences",
-      },
-      {
-        name: "Admin",
-        description: "Administrative endpoints (requires admin privileges)",
+        description: "User location preferences (GET only)",
       },
     ],
   },
-  apis: ["./routes/*.js"], // Path to the API routes
+  apis: ["./routes/*.js"],
 };
 
-const swaggerSpec = swaggerJsdoc(options);
+const swaggerSpecProd = swaggerJsdoc(options);
 
-export default swaggerSpec;
+export default swaggerSpecProd;
