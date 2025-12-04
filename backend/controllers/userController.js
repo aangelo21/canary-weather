@@ -111,6 +111,9 @@ export const getCurrentUser = async (req, res) => {
 
     const locations = user.UserLocations ? user.UserLocations.map(ul => ul.Location) : [];
 
+    // Fetch user profile (for profile picture)
+    const userProfileData = await UserProfile.findByPk(userId);
+
     const userProfile = {
       id: user.id,
       username: user.username,
@@ -239,7 +242,14 @@ export const createUser = async (req, res) => {
     // Set user in session
     req.session.user = safeUser;
 
-    return res.status(201).json({ user: safeUser });
+    // Generate JWT for the new user
+    const token = jwt.sign({ 
+      id: safeUser.username, 
+      username: safeUser.username, 
+      is_admin: safeUser.is_admin 
+    }, JWT_SECRET, { expiresIn: '15m' });
+
+    return res.status(201).json({ user: safeUser, token });
   } catch (err) {
     console.error(err);
     return res.status(400).json({ error: "Error creating user: " + err.message });
@@ -247,7 +257,7 @@ export const createUser = async (req, res) => {
 };
 
 /**
- * Updates an existing user's profile (Locations only).
+ * Updates an existing user's profile (Locations and Profile Picture).
  */
 export const updateUser = async (req, res) => {
   try {
@@ -323,6 +333,9 @@ export const updateUser = async (req, res) => {
     });
     
     const locations = updatedUser.UserLocations ? updatedUser.UserLocations.map(ul => ul.Location) : [];
+
+    // Fetch updated profile data
+    const userProfileData = await UserProfile.findByPk(id);
 
     const updated = {
       id: updatedUser.id,

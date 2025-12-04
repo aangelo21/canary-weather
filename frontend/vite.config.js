@@ -30,10 +30,10 @@ export default defineConfig({
     },
     server: {
         allowedHosts: ['canaryweather.xyz'],
-        hmr: {
-            host: 'canaryweather.xyz',
-            clientPort: 443,
-        },
+        // hmr: {
+        //     host: 'canaryweather.xyz',
+        //     clientPort: 443,
+        // },
         proxy: {
             '/api': {
                 target: 'http://localhost:85',

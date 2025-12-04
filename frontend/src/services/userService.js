@@ -165,8 +165,14 @@ export async function createOrUpdateUser(formData, editingId) {
     const errorData = await response.json();
     throw new Error(errorData.error || "Error saving user");
   }
+  
+  const data = await response.json();
+  if (data.token) {
+    setAccessToken(data.token);
+  }
+  
   // Return success response
-  return response.json();
+  return data;
 }
 
 /**

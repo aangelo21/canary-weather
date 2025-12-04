@@ -6,6 +6,8 @@ import Alert from "./alert.js";
 import Notification from "./notification.js";
 import UserPointOfInterest from "./userPointOfInterest.js";
 import UserLocation from "./userLocation.js";
+import UserProfile from "./userProfile.js";
+import PushSubscription from "./pushSubscription.js";
 import sequelize from "../controllers/dbController.js";
 
 /**
@@ -20,6 +22,12 @@ import sequelize from "../controllers/dbController.js";
 // User <-> UserLocation (One-to-Many)
 User.hasMany(UserLocation, { foreignKey: "user_id" });
 UserLocation.belongsTo(User, { foreignKey: "user_id" });
+
+// Push Subscriptions
+// A user can have multiple subscriptions (phone, laptop, tablet)
+// We don't have a User model to associate with directly in Sequelize (LDAP), 
+// but we store the user_id.
+
 
 // Explicit associations for the junction table UserLocation
 Location.hasMany(UserLocation, { foreignKey: "location_id" });
@@ -66,4 +74,7 @@ export {
   Notification,
   UserPointOfInterest,
   UserLocation,
+  UserProfile,
+  PushSubscription,
 };
+
