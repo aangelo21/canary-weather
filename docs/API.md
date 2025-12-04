@@ -2,12 +2,17 @@
 
 ## Swagger UI
 
-Interactive API documentation is available at: **http://localhost:85/api-docs**
+Interactive API documentation is available in two environments:
+
+> **Note**: To access the development Swagger, you must have cloned the repository and followed all the necessary steps to run the project locally.
+
+- **Development**: http://localhost:85/api-docs
+- **Production**: https://canaryweather.xyz/api-docs-prod
 
 ### Features
 
 - 📚 **Complete Documentation** of all endpoints
-- 🔐 **Integrated JWT Authentication**
+- 🔐 **Integrated JWT Authentication** (LDAP-based)
 - 🧪 **Live API Testing**
 - 📋 **Detailed Data Schemas**
 - ✅ **Request/Response Validation**
@@ -29,9 +34,9 @@ Interactive API documentation is available at: **http://localhost:85/api-docs**
      "password": "yourpassword"
    }
    ```
-   *Note: This creates a user in the LDAP directory.*
+   *Note: This creates a user in the LDAP directory. The username will be used as the unique identifier.*
 5. Click "Execute"
-6. In the response, **copy the `token` value**
+6. In the response, **copy the `token` value** (valid for 15 minutes)
 
 #### Option B: Login with Existing User
 
@@ -155,6 +160,13 @@ Now you can use any endpoint that requires authentication. Protected endpoints h
 - JWT tokens are valid for **15 minutes**
 - Use the `/api/users/refresh-token` endpoint to get a new token without logging in again
 
+### LDAP Authentication
+
+- All user authentication is handled through LDAP
+- Users are identified by **username** (not UUID)
+- Passwords are securely stored in the LDAP directory
+- Admin privileges are determined by LDAP group membership
+
 ### Authentication Types
 
 - **JWT Bearer Token**: For API endpoints (`/api/*`)
@@ -184,7 +196,10 @@ All schemas are documented in Swagger UI, including:
 
 ## OpenAPI Specification
 
-The OpenAPI specification in JSON format is available at: **http://localhost:85/api-docs.json**
+The OpenAPI specification in JSON format is available at:
+
+- **Development**: http://localhost:85/api-docs.json
+- **Production**: https://canaryweather.xyz/api-docs-prod.json
 
 You can import this into tools like Postman, Insomnia, or any OpenAPI-compatible client.
 
@@ -192,6 +207,7 @@ You can import this into tools like Postman, Insomnia, or any OpenAPI-compatible
 
 ### Register a User
 
+**Development:**
 ```bash
 curl -X POST http://localhost:85/api/users \
   -H "Content-Type: application/json" \
@@ -202,8 +218,20 @@ curl -X POST http://localhost:85/api/users \
   }'
 ```
 
+**Production:**
+```bash
+curl -X POST https://canaryweather.xyz/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@example.com",
+    "username": "testuser",
+    "password": "password123"
+  }'
+```
+
 ### Login
 
+**Development:**
 ```bash
 curl -X POST http://localhost:85/api/users/login \
   -H "Content-Type: application/json" \
@@ -213,10 +241,27 @@ curl -X POST http://localhost:85/api/users/login \
   }'
 ```
 
+**Production:**
+```bash
+curl -X POST https://canaryweather.xyz/api/users/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "testuser",
+    "password": "password123"
+  }'
+```
+
 ### Get Current User (with token)
 
+**Development:**
 ```bash
 curl -X GET http://localhost:85/api/users/me \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+**Production:**
+```bash
+curl -X GET https://canaryweather.xyz/api/users/me \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 

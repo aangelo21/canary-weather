@@ -21,6 +21,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 // Import Swagger for API documentation
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swagger.config.js";
+import swaggerSpecProd from "./config/swagger.config.prod.js";
 // Import websocket initializer. This module will encapsulate all Socket.IO logic.
 import initWebsocket from "./services/websocketService.js";
 
@@ -83,13 +84,23 @@ app.use(
 // Serve static files from the uploads directory for profile pictures and POI images
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Swagger API Documentation
+// Swagger API Documentation - Development
 app.use(
   "/api-docs",
-  swaggerUi.serve,
+  swaggerUi.serveFiles(swaggerSpec, {}),
   swaggerUi.setup(swaggerSpec, {
     customCss: ".swagger-ui .topbar { display: none }",
-    customSiteTitle: "CanaryWeather API Docs",
+    customSiteTitle: "CanaryWeather API Docs - Development",
+  })
+);
+
+// Swagger API Documentation - Production (read-only)
+app.use(
+  "/api-docs-prod",
+  swaggerUi.serveFiles(swaggerSpecProd, {}),
+  swaggerUi.setup(swaggerSpecProd, {
+    customCss: ".swagger-ui .topbar { display: none }",
+    customSiteTitle: "CanaryWeather API Docs - Production",
   })
 );
 
@@ -97,6 +108,12 @@ app.use(
 app.get("/api-docs.json", (req, res) => {
   res.setHeader("Content-Type", "application/json");
   res.send(swaggerSpec);
+});
+
+// Serve OpenAPI JSON spec for production
+app.get("/api-docs-prod.json", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.send(swaggerSpecProd);
 });
 
 app.use("/api/pois", pointOfInterestRoutes);
