@@ -128,8 +128,8 @@ router.post("/send-test", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.username;
     const payload = {
-      title: "Test Notification",
-      body: "This is a test notification from Canary Weather!",
+      title: "Canary Weather",
+      body: "¡Gracias por activar las notificaciones! Te avisaremos de las alertas meteorológicas importantes en Canarias.",
       icon: "/logo.webp",
     };
 
