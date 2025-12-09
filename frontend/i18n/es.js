@@ -237,5 +237,157 @@ export const es = {
     emailPlaceholder: "ejemplo@correo.com",
     usernamePlaceholder: "Nombre de usuario",
     emailOrUsernamePlaceholder: "ejemplo@correo.com o usuario",
+
+    // Admin Dashboard
+    adminDashboard: "Panel de Administración",
+    redirectingToServer: "Redirigiendo al panel del servidor...",
+
+    // Leyenda del Mapa
+    mapLegend: {
+      title: "Guía del Mapa Interactivo",
+      description: "Domina las funciones del mapa para obtener la información meteorológica más precisa de las Islas Canarias. Cambia de pestaña a continuación para explorar diferentes funcionalidades.",
+      tabs: {
+        layers: "Capas Meteorológicas",
+        controls: "Controles del Mapa",
+        interaction: "Interacciones"
+      },
+      layers: {
+        temp: {
+          title: "Mapa de Calor de Temperatura",
+          desc: "Visualiza la temperatura del aire a 2 metros sobre el suelo. Los colores más cálidos indican temperaturas más altas.",
+          scale: {
+            light: "0°C",
+            moderate: "15°C",
+            heavy: "30°C+"
+          }
+        },
+        precip: {
+          title: "Intensidad de Precipitación",
+          desc: "Muestra la intensidad de la lluvia. Las áreas azul oscuro/púrpura indican lluvias más intensas.",
+          scale: {
+            light: "Ligera",
+            moderate: "Moderada",
+            heavy: "Intensa"
+          }
+        },
+        clouds: {
+          title: "Cobertura de Nubes",
+          desc: "Muestra el porcentaje total de cobertura nubosa. Las áreas blancas opacas representan el 100% de cobertura (nublado), mientras que las áreas transparentes son cielos despejados."
+        },
+        wind: {
+          title: "Velocidad del Viento",
+          desc: "Visualización dinámica del flujo del viento. Partículas en movimiento más rápido y colores más cálidos indican velocidades de viento más altas (km/h)."
+        }
+      },
+      controls: {
+        search: {
+          title: "Barra de Búsqueda",
+          desc: "Encuentra rápidamente cualquier ciudad, pueblo o municipio en las Islas Canarias. Simplemente escribe el nombre y presiona enter."
+        },
+        location: {
+          title: "Mi Ubicación",
+          desc: "Haz clic en el icono de objetivo para centrar instantáneamente el mapa en tu posición GPS actual."
+        },
+        reset: {
+          title: "Restablecer Vista",
+          desc: "¿Perdido? Usa el botón de restablecimiento para alejarte a la vista completa del archipiélago de las Islas Canarias."
+        }
+      },
+      interaction: {
+        click: {
+          title: "Clic en Cualquier Lugar",
+          desc: "Hacer clic en cualquier punto del mapa (tierra o mar) colocará un marcador y mostrará una <strong>Ventana Emergente del Tiempo</strong> con datos en tiempo real para esa coordenada exacta."
+        },
+        save: {
+          title: "Guardar Puntos de Interés",
+          desc: "Los usuarios registrados pueden guardar cualquier ubicación como un \"POI Personal\" directamente desde la ventana emergente del tiempo. Estos aparecerán en tu lista de \"Puntos de Interés\"."
+        },
+        layers: {
+          title: "Cambio de Capas",
+          desc: "Usa el icono de control de capas (arriba a la derecha del mapa) para alternar entre <strong>Satélite</strong>, <strong>Terreno</strong> y varias superposiciones meteorológicas como Nubes o Lluvia."
+        }
+      }
+    },
+
+    // Política de Privacidad
+    privacyPolicy: {
+      title: "Política de Privacidad",
+      lastUpdated: "Última actualización: 1 de diciembre de 2025",
+      intro: {
+        title: "1. Introducción",
+        content: "Bienvenido a Canary Weather (\"nosotros\", \"nuestro\" o \"nos\"). Estamos comprometidos a proteger su privacidad y asegurar que tenga una experiencia positiva en nuestro sitio web y con nuestros servicios. Esta Política de Privacidad explica cómo recopilamos, usamos, divulgamos y protegemos su información cuando visita nuestra aplicación."
+      },
+      infoCollect: {
+        title: "2. Información que Recopilamos",
+        content: "Podemos recopilar información sobre usted de varias maneras. La información que podemos recopilar a través de la Aplicación incluye:",
+        geo: "Datos de Geolocalización: Podemos solicitar acceso o permiso para rastrear información basada en la ubicación desde su dispositivo móvil o navegador, ya sea continuamente o mientras usa la Aplicación, para proporcionar servicios basados en la ubicación (como pronósticos meteorológicos locales).",
+        personal: "Datos Personales: Información de identificación personal, como su nombre, dirección de correo electrónico y foto de perfil, que usted nos proporciona voluntariamente cuando se registra en la Aplicación o cuando elige participar en diversas actividades relacionadas con la Aplicación."
+      },
+      useInfo: {
+        title: "3. Uso de su Información",
+        content: "Tener información precisa sobre usted nos permite brindarle una experiencia fluida, eficiente y personalizada. Específicamente, podemos usar la información recopilada sobre usted a través de la Aplicación para:",
+        items: [
+          "Crear y administrar su cuenta.",
+          "Compilar datos estadísticos anónimos y análisis para uso interno.",
+          "Enviarle correos electrónicos sobre su cuenta o pedido.",
+          "Habilitar comunicaciones de usuario a usuario.",
+          "Generar un perfil personal sobre usted para hacer que las futuras visitas a la Aplicación sean más personalizadas.",
+          "Proporcionar pronósticos meteorológicos precisos basados en su ubicación."
+        ]
+      },
+      disclosure: {
+        title: "4. Divulgación de su Información",
+        content: "Podemos compartir información que hemos recopilado sobre usted en ciertas situaciones. Su información puede ser divulgada de la siguiente manera:",
+        law: "Por Ley o para Proteger Derechos: Si creemos que la divulgación de información sobre usted es necesaria para responder a un proceso legal, investigar o remediar posibles violaciones de nuestras políticas, o proteger los derechos, propiedad y seguridad de otros, podemos compartir su información según lo permitido o requerido por cualquier ley, regla o regulación aplicable."
+      },
+      security: {
+        title: "5. Seguridad de su Información",
+        content: "Utilizamos medidas de seguridad administrativas, técnicas y físicas para ayudar a proteger su información personal. Si bien hemos tomado medidas razonables para asegurar la información personal que nos proporciona, tenga en cuenta que a pesar de nuestros esfuerzos, ninguna medida de seguridad es perfecta o impenetrable, y ningún método de transmisión de datos puede garantizarse contra cualquier intercepción u otro tipo de mal uso."
+      },
+      contact: {
+        title: "6. Contáctenos",
+        content: "Si tiene preguntas o comentarios sobre esta Política de Privacidad, contáctenos en:"
+      }
+    },
+
+    // Términos y Condiciones
+    terms: {
+      title: "Términos y Condiciones",
+      lastUpdated: "Última actualización: 1 de diciembre de 2025",
+      agreement: {
+        title: "1. Acuerdo de Términos",
+        content: "Estos Términos y Condiciones constituyen un acuerdo legalmente vinculante realizado entre usted, ya sea personalmente o en nombre de una entidad (\"usted\") y Canary Weather (\"nosotros\", \"nos\" o \"nuestro\"), con respecto a su acceso y uso del sitio web de Canary Weather, así como cualquier otro medio, canal de medios, sitio web móvil o aplicación móvil relacionada, vinculada o conectada de otra manera (colectivamente, el \"Sitio\")."
+      },
+      ip: {
+        title: "2. Derechos de Propiedad Intelectual",
+        content: "A menos que se indique lo contrario, el Sitio es nuestra propiedad exclusiva y todo el código fuente, bases de datos, funcionalidad, software, diseños de sitios web, audio, video, texto, fotografías y gráficos en el Sitio (colectivamente, el \"Contenido\") y las marcas comerciales, marcas de servicio y logotipos contenidos en el mismo (las \"Marcas\") son propiedad o están controlados por nosotros o licenciados a nosotros, y están protegidos por leyes de derechos de autor y marcas comerciales."
+      },
+      userRep: {
+        title: "3. Representaciones del Usuario",
+        content: "Al usar el Sitio, usted declara y garantiza que:",
+        items: [
+          "Toda la información de registro que envíe será verdadera, precisa, actual y completa.",
+          "Mantendrá la precisión de dicha información y actualizará rápidamente dicha información de registro según sea necesario.",
+          "Tiene la capacidad legal y acepta cumplir con estos Términos y Condiciones.",
+          "No accederá al Sitio a través de medios automatizados o no humanos, ya sea a través de un bot, script o de otra manera."
+        ]
+      },
+      prohibited: {
+        title: "4. Actividades Prohibidas",
+        content: "No puede acceder ni utilizar el Sitio para ningún otro propósito que no sea para el cual ponemos el Sitio a disposición. El Sitio no puede utilizarse en relación con ningún esfuerzo comercial, excepto aquellos que estén específicamente respaldados o aprobados por nosotros."
+      },
+      management: {
+        title: "5. Gestión del Sitio",
+        content: "Nos reservamos el derecho, pero no la obligación, de: (1) monitorear el Sitio en busca de violaciones de estos Términos y Condiciones; (2) tomar las acciones legales apropiadas contra cualquier persona que, a nuestra entera discreción, viole la ley o estos Términos y Condiciones; y (3) administrar el Sitio de una manera diseñada para proteger nuestros derechos y propiedad y facilitar el funcionamiento adecuado del Sitio."
+      },
+      modifications: {
+        title: "6. Modificaciones e Interrupciones",
+        content: "Nos reservamos el derecho de cambiar, modificar o eliminar el contenido del Sitio en cualquier momento o por cualquier motivo a nuestra entera discreción sin previo aviso. Sin embargo, no tenemos la obligación de actualizar ninguna información en nuestro Sitio. También nos reservamos el derecho de modificar o descontinuar todo o parte del Sitio sin previo aviso en cualquier momento."
+      },
+      contact: {
+        title: "7. Contáctenos",
+        content: "Para resolver una queja relacionada con el Sitio o para recibir más información sobre el uso del Sitio, contáctenos en:"
+      }
+    },
   },
 };

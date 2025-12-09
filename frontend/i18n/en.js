@@ -237,5 +237,157 @@ export const en = {
     emailPlaceholder: "m@example.com",
     usernamePlaceholder: "Username",
     emailOrUsernamePlaceholder: "m@example.com or username",
+    
+    // Admin Dashboard
+    adminDashboard: "Admin Dashboard",
+    redirectingToServer: "Redirecting to server-side dashboard...",
+
+    // Map Legend
+    mapLegend: {
+      title: "Interactive Map Guide",
+      description: "Master the map features to get the most precise weather insights for the Canary Islands. Switch tabs below to explore different functionalities.",
+      tabs: {
+        layers: "Weather Layers",
+        controls: "Map Controls",
+        interaction: "Interactions"
+      },
+      layers: {
+        temp: {
+          title: "Temperature Heatmap",
+          desc: "Visualizes air temperature at 2 meters above ground. Warmer colors indicate higher temperatures.",
+          scale: {
+            light: "0°C",
+            moderate: "15°C",
+            heavy: "30°C+"
+          }
+        },
+        precip: {
+          title: "Precipitation Intensity",
+          desc: "Shows rain intensity. Darker blue/purple areas indicate heavier rainfall.",
+          scale: {
+            light: "Light",
+            moderate: "Moderate",
+            heavy: "Heavy"
+          }
+        },
+        clouds: {
+          title: "Cloud Cover",
+          desc: "Displays total cloud coverage percentage. Opaque white areas represent 100% cloud cover (overcast), while transparent areas are clear skies."
+        },
+        wind: {
+          title: "Wind Speed",
+          desc: "Dynamic visualization of wind flow. Faster moving particles and warmer colors indicate higher wind speeds (km/h)."
+        }
+      },
+      controls: {
+        search: {
+          title: "Search Bar",
+          desc: "Quickly find any city, town, or municipality in the Canary Islands. Just type the name and hit enter."
+        },
+        location: {
+          title: "My Location",
+          desc: "Click the target icon to instantly center the map on your current GPS position."
+        },
+        reset: {
+          title: "Reset View",
+          desc: "Lost? Use the reset button to zoom back out to the full view of the Canary Islands archipelago."
+        }
+      },
+      interaction: {
+        click: {
+          title: "Click Anywhere",
+          desc: "Clicking on any point on the map (land or sea) will drop a pin and show a <strong>Weather Popup</strong> with real-time data for that exact coordinate."
+        },
+        save: {
+          title: "Save Points of Interest",
+          desc: "Logged-in users can save any location as a \"Personal POI\" directly from the weather popup. These will appear in your \"Points of Interest\" list."
+        },
+        layers: {
+          title: "Layer Switching",
+          desc: "Use the layer control icon (top-right of the map) to toggle between <strong>Satellite</strong>, <strong>Terrain</strong>, and various weather overlays like Clouds or Rain."
+        }
+      }
+    },
+
+    // Privacy Policy
+    privacyPolicy: {
+      title: "Privacy Policy",
+      lastUpdated: "Last updated: December 1, 2025",
+      intro: {
+        title: "1. Introduction",
+        content: "Welcome to Canary Weather (\"we,\" \"our,\" or \"us\"). We are committed to protecting your privacy and ensuring you have a positive experience on our website and with our services. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our application."
+      },
+      infoCollect: {
+        title: "2. Information We Collect",
+        content: "We may collect information about you in a variety of ways. The information we may collect via the Application includes:",
+        geo: "Geolocation Data: We may request access or permission to and track location-based information from your mobile device or browser, either continuously or while you are using the Application, to provide location-based services (such as local weather forecasts).",
+        personal: "Personal Data: Personally identifiable information, such as your name, email address, and profile picture, that you voluntarily give to us when you register with the Application or when you choose to participate in various activities related to the Application."
+      },
+      useInfo: {
+        title: "3. Use of Your Information",
+        content: "Having accurate information about you permits us to provide you with a smooth, efficient, and customized experience. Specifically, we may use information collected about you via the Application to:",
+        items: [
+          "Create and manage your account.",
+          "Compile anonymous statistical data and analysis for use internally.",
+          "Email you regarding your account or order.",
+          "Enable user-to-user communications.",
+          "Generate a personal profile about you to make future visits to the Application more personalized.",
+          "Provide accurate weather forecasts based on your location."
+        ]
+      },
+      disclosure: {
+        title: "4. Disclosure of Your Information",
+        content: "We may share information we have collected about you in certain situations. Your information may be disclosed as follows:",
+        law: "By Law or to Protect Rights: If we believe the release of information about you is necessary to respond to legal process, to investigate or remedy potential violations of our policies, or to protect the rights, property, and safety of others, we may share your information as permitted or required by any applicable law, rule, or regulation."
+      },
+      security: {
+        title: "5. Security of Your Information",
+        content: "We use administrative, technical, and physical security measures to help protect your personal information. While we have taken reasonable steps to secure the personal information you provide to us, please be aware that despite our efforts, no security measures are perfect or impenetrable, and no method of data transmission can be guaranteed against any interception or other type of misuse."
+      },
+      contact: {
+        title: "6. Contact Us",
+        content: "If you have questions or comments about this Privacy Policy, please contact us at:"
+      }
+    },
+
+    // Terms and Conditions
+    terms: {
+      title: "Terms and Conditions",
+      lastUpdated: "Last updated: December 1, 2025",
+      agreement: {
+        title: "1. Agreement to Terms",
+        content: "These Terms and Conditions constitute a legally binding agreement made between you, whether personally or on behalf of an entity (\"you\") and Canary Weather (\"we,\" \"us\" or \"our\"), concerning your access to and use of the Canary Weather website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto (collectively, the \"Site\")."
+      },
+      ip: {
+        title: "2. Intellectual Property Rights",
+        content: "Unless otherwise indicated, the Site is our proprietary property and all source code, databases, functionality, software, website designs, audio, video, text, photographs, and graphics on the Site (collectively, the \"Content\") and the trademarks, service marks, and logos contained therein (the \"Marks\") are owned or controlled by us or licensed to us, and are protected by copyright and trademark laws."
+      },
+      userRep: {
+        title: "3. User Representations",
+        content: "By using the Site, you represent and warrant that:",
+        items: [
+          "All registration information you submit will be true, accurate, current, and complete.",
+          "You will maintain the accuracy of such information and promptly update such registration information as necessary.",
+          "You have the legal capacity and you agree to comply with these Terms and Conditions.",
+          "You will not access the Site through automated or non-human means, whether through a bot, script or otherwise."
+        ]
+      },
+      prohibited: {
+        title: "4. Prohibited Activities",
+        content: "You may not access or use the Site for any purpose other than that for which we make the Site available. The Site may not be used in connection with any commercial endeavors except those that are specifically endorsed or approved by us."
+      },
+      management: {
+        title: "5. Site Management",
+        content: "We reserve the right, but not the obligation, to: (1) monitor the Site for violations of these Terms and Conditions; (2) take appropriate legal action against anyone who, in our sole discretion, violates the law or these Terms and Conditions; and (3) otherwise manage the Site in a manner designed to protect our rights and property and to facilitate the proper functioning of the Site."
+      },
+      modifications: {
+        title: "6. Modifications and Interruptions",
+        content: "We reserve the right to change, modify, or remove the contents of the Site at any time or for any reason at our sole discretion without notice. However, we have no obligation to update any information on our Site. We also reserve the right to modify or discontinue all or part of the Site without notice at any time."
+      },
+      contact: {
+        title: "7. Contact Us",
+        content: "In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at:"
+      }
+    },
   },
 };
