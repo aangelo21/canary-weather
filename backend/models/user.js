@@ -13,7 +13,6 @@ import { DataTypes } from "sequelize";
  * @property {string} id - Unique identifier (UUID).
  * @property {string} email - User's email address (unique).
  * @property {string} username - User's display name.
- * @property {string} password - Hashed password.
  * @property {string} profile_picture_url - URL to profile image.
  * @property {boolean} is_admin - Flag indicating administrative privileges.
  * @property {Date} createdAt - Timestamp of creation.

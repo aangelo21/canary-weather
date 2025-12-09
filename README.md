@@ -122,6 +122,11 @@ LDAP_ADMIN_PASSWORD=
 
 # Email Service
 RESEND_API_KEY=
+
+#Vapid
+VAPID_PUBLIC_KEY=your_public_key
+VAPID_PRIVATE_KEY=your_private_key
+VAPID_SUBJECT=mailto:admin@canaryweather.xyz 
 ```
 
 > **Note:** Empty fields are intentionally left blank for security reasons. Please provide your own values for `DB_PASSWORD`, `JWT_SECRET`, `LDAP_ADMIN_PASSWORD`, and `RESEND_API_KEY` in your local environment.
