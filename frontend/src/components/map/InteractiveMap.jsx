@@ -181,7 +181,7 @@ function InteractiveMap() {
         return (
             <div
                 id="map-controls"
-                className="absolute top-4 right-4 z-[1000] flex flex-col gap-2 items-end"
+                className="absolute top-4 right-4 z-1000 flex flex-col gap-2 items-end"
             >
                 {/* Search Bar */}
                 <form
