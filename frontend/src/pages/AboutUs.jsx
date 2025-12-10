@@ -183,13 +183,14 @@ const RoadmapSection = ({ t }) => (
  * - **Neon Accents**: Cyan glows to guide user attention.
  */
 const ContactSection = ({ t }) => {
-    const [formState, setFormState] = useState({ name: '', email: '', message: '' });
+    const [formState, setFormState] = useState({ name: '', subject: '', message: '' });
     const [focusedField, setFocusedField] = useState(null);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // In a real app, this would send data to a backend
-        window.location.href = `mailto:info@canaryweather.xyz?subject=Contact from ${formState.name}&body=${formState.message}`;
+        const subject = encodeURIComponent(formState.subject || `Contact from ${formState.name}`);
+        const body = encodeURIComponent(`Name: ${formState.name}\n\nMessage:\n${formState.message}`);
+        window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=canaryweatherxyz@gmail.com&su=${subject}&body=${body}`, '_blank');
     };
 
     /**
@@ -250,7 +251,7 @@ const ContactSection = ({ t }) => {
                                 </div>
                                 <div>
                                     <h3 className="text-white font-semibold mb-1">Email Us</h3>
-                                    <p className="text-slate-400 text-sm">info@canaryweather.xyz</p>
+                                    <p className="text-slate-400 text-sm">canaryweatherxyz@gmail.com</p>
                                     <p className="text-slate-500 text-xs mt-1">Response within 24h</p>
                                 </div>
                             </div>
@@ -290,16 +291,16 @@ const ContactSection = ({ t }) => {
                                 </div>
                                 <div className="relative">
                                     <input 
-                                        type="email" 
-                                        id="email"
-                                        className={inputClasses('email')}
-                                        value={formState.email}
-                                        onChange={(e) => setFormState({...formState, email: e.target.value})}
-                                        onFocus={() => setFocusedField('email')}
+                                        type="text" 
+                                        id="subject"
+                                        className={inputClasses('subject')}
+                                        value={formState.subject}
+                                        onChange={(e) => setFormState({...formState, subject: e.target.value})}
+                                        onFocus={() => setFocusedField('subject')}
                                         onBlur={() => setFocusedField(null)}
                                     />
-                                    <label htmlFor="email" className={labelClasses('email')}>
-                                        Email Address
+                                    <label htmlFor="subject" className={labelClasses('subject')}>
+                                        Subject
                                     </label>
                                 </div>
                             </div>

@@ -211,7 +211,7 @@ export default function Footer() {
                             to="/privacy-policy"
                             className="text-blue-100 dark:text-gray-500 hover:text-white transition-colors"
                         >
-                            {t('privacyPolicy')}
+                            {typeof t('privacyPolicy') === 'string' ? t('privacyPolicy') : 'Privacy Policy'}
                         </Link>
                         <Link
                             to="/terms-and-conditions"
