@@ -3,6 +3,12 @@ import { sendPoiCreatedEmail, sendPoiUpdatedEmail, sendPoiDeletedEmail } from ".
 import { LdapService } from "../services/ldapService.js";
 import { Op } from "sequelize";
 import sequelize from "../controllers/dbController.js";
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Point of Interest (POI) Controller
@@ -199,6 +205,11 @@ export const updatePointOfInterest = async (req, res) => {
     const { id } = req.params;
     const payload = { ...req.body };
 
+    const currentPoi = await PointOfInterest.findByPk(id);
+    if (!currentPoi) {
+        return res.status(404).json({ error: "PointOfInterest not found" });
+    }
+
     if (payload.latitude !== undefined && payload.latitude !== "") {
       payload.latitude = parseFloat(payload.latitude);
     } else if (payload.latitude === "") {
@@ -217,14 +228,21 @@ export const updatePointOfInterest = async (req, res) => {
     }
 
     if (req.file) {
+      if (currentPoi.image_url && currentPoi.image_url.startsWith('/uploads/')) {
+          const relativePath = currentPoi.image_url.startsWith('/') ? currentPoi.image_url.substring(1) : currentPoi.image_url;
+          const oldPath = path.join(__dirname, '..', relativePath);
+          try {
+              if (fs.existsSync(oldPath)) {
+                  fs.unlinkSync(oldPath);
+              }
+          } catch (err) {
+              console.error("Failed to delete old POI image:", err);
+          }
+      }
       payload.image_url = `/uploads/poi-images/${req.file.filename}`;
     }
 
-    const [updated] = await PointOfInterest.update(payload, {
-      where: { id },
-    });
-    if (!updated)
-      return res.status(404).json({ error: "PointOfInterest not found" });
+    await currentPoi.update(payload);
     const updatedItem = await PointOfInterest.findByPk(id);
 
     // Send email notification
