@@ -8,6 +8,7 @@ import {
   deletePointOfInterest,
 } from "../controllers/pointOfInterestController.js";
 import { uploadPOI } from "../middleware/uploadMiddleware.js";
+import { optimizeImage } from "../middleware/imageOptimizationMiddleware.js";
 import {
   authenticateToken,
   optionalAuthenticateToken,
@@ -274,6 +275,7 @@ router.put(
   "/:id",
   authenticateToken,
   uploadPOI.single("poi_image"),
+  optimizeImage,
   updatePointOfInterest
 );
 router.delete("/:id", authenticateToken, deletePointOfInterest);

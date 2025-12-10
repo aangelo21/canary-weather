@@ -20,6 +20,7 @@ import { forgotPassword, resetPassword } from "../controllers/authController.js"
 
 // Import multer middleware for profile picture uploads
 import { upload } from "../middleware/uploadMiddleware.js";
+import { optimizeImage } from "../middleware/imageOptimizationMiddleware.js";
 
 // Create Express router instance
 const router = express.Router();
@@ -492,6 +493,7 @@ router.put(
   "/:id",
   authenticateToken,
   upload.single("profile_picture"),
+  optimizeImage,
   updateUser
 );
 router.delete("/:id", authenticateToken, deleteUser);
