@@ -26,12 +26,12 @@ export const optimizeImage = async (req, res, next) => {
     if (originalPath === newPath) {
         const tempPath = newPath + '.tmp';
         await sharp(originalPath)
-            .webp({ quality: 75 })
+            .webp({ quality: 60 })
             .toFile(tempPath);
         fs.renameSync(tempPath, newPath);
     } else {
         await sharp(originalPath)
-            .webp({ quality: 75 })
+            .webp({ quality: 60 })
             .toFile(newPath);
         
         // Delete the original file

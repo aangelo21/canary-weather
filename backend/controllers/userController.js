@@ -3,6 +3,12 @@ import { LdapService } from "../services/ldapService.js";
 import { sendWelcomeEmail, sendLoginNotification, sendContactEmail } from "../services/emailService.js";
 import { Op } from "sequelize";
 import jwt from 'jsonwebtoken';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
@@ -274,11 +280,26 @@ export const updateUser = async (req, res) => {
     if (!user) return res.status(404).json({ error: "User not found" });
 
     // Update profile fields
+    if (req.file || (payload.profile_picture_url === '' || payload.profile_picture_url === null)) {
+        // If there is an existing profile picture and it is a local file, delete it
+        if (user.profile_picture_url && user.profile_picture_url.startsWith('/uploads/')) {
+            const relativePath = user.profile_picture_url.startsWith('/') ? user.profile_picture_url.substring(1) : user.profile_picture_url;
+            const oldPath = path.join(__dirname, '..', relativePath);
+            try {
+                if (fs.existsSync(oldPath)) {
+                    fs.unlinkSync(oldPath);
+                }
+            } catch (err) {
+                console.error("Failed to delete old profile picture:", err);
+            }
+        }
+    }
+
     if (req.file) {
       // Construct the URL for the uploaded file
-      // Assuming the server serves uploads from /uploads/profile-pictures
-      // You might need to adjust the path based on your static file serving configuration
       user.profile_picture_url = `/uploads/profile-pictures/${req.file.filename}`;
+    } else if (payload.profile_picture_url === '' || payload.profile_picture_url === null) {
+        user.profile_picture_url = null;
     } else if (payload.profile_picture_url) {
         user.profile_picture_url = payload.profile_picture_url;
     }
