@@ -84,9 +84,17 @@ export const en = {
       name: "Your Name",
       subject: "Subject",
       message: "How can we help you?",
-      send: "Send Message"
+      send: "Send Message",
+      successTitle: "Message Sent!",
+      successDesc: "Thank you for reaching out. We will get back to you shortly."
     },
     contactPrompt: "Have feedback or feature requests?",
+    
+    // Notifications
+    enableNotifications: "Enable Notifications",
+    disableNotifications: "Disable Notifications",
+    enabling: "Enabling...",
+    disabling: "Disabling...",
     joinUs: "Join the Journey",
     quickLinks: "Explore",
     followUs: "Follow Us",

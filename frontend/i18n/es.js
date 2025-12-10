@@ -89,7 +89,9 @@ export const es = {
       name: "Tu Nombre",
       subject: "Asunto",
       message: "¿Cómo podemos ayudarte?",
-      send: "Enviar Mensaje"
+      send: "Enviar Mensaje",
+      successTitle: "¡Mensaje Enviado!",
+      successDesc: "Gracias por contactarnos. Te responderemos en breve."
     },
     contactPrompt: "¿Tienes comentarios o sugerencias?",
     joinUs: "Únete al Viaje",

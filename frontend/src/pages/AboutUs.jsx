@@ -310,7 +310,21 @@ const ContactSection = ({ t }) => {
                      * Clean, spacious, and focused.
                      */}
                     <div className="lg:col-span-3 p-12 bg-slate-900/30 backdrop-blur-sm">
-                        {!isLoggedIn ? (
+                        {status === 'success' ? (
+                            <div className="h-full flex flex-col items-center justify-center text-center space-y-6 animate-fade-in">
+                                <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mb-4">
+                                    <svg className="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-2xl font-bold text-white">
+                                    {t('contactForm.successTitle') || 'Message Sent!'}
+                                </h3>
+                                <p className="text-slate-400 max-w-md">
+                                    {t('contactForm.successDesc') || 'Thank you for reaching out. We will get back to you shortly.'}
+                                </p>
+                            </div>
+                        ) : !isLoggedIn ? (
                             <div className="h-full flex flex-col items-center justify-center text-center space-y-6">
                                 <div className="w-20 h-20 rounded-full bg-slate-800/50 flex items-center justify-center mb-4">
                                     <svg className="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
