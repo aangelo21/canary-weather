@@ -83,9 +83,11 @@ export const es = {
     getInTouch: "Contáctanos",
     contactDesc: "Construir el futuro del pronóstico del tiempo requiere comunidad. Ya sea que tengas una solicitud de función, un informe de error o simplemente quieras hablar de meteorología, somos todo oídos.",
     ourHQ: "Nuestra Sede",
+    loginToContact: "Inicia sesión para enviar mensaje",
+    loginToContactDesc: "Por favor, inicia sesión en tu cuenta para enviarnos un mensaje. Esto nos ayuda a prevenir el spam y responderte más rápido.",
     contactForm: {
       name: "Tu Nombre",
-      email: "Correo Electrónico",
+      subject: "Asunto",
       message: "¿Cómo podemos ayudarte?",
       send: "Enviar Mensaje"
     },
