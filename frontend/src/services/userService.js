@@ -27,8 +27,15 @@ export async function loginUser({ username, password }) {
   });
   // Handle error responses
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || "Error logging in");
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.indexOf("application/json") !== -1) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error logging in");
+    } else {
+        const text = await response.text();
+        console.error("Non-JSON error response:", text);
+        throw new Error(`Server error: ${response.status} ${response.statusText}`);
+    }
   }
   
   const data = await response.json();
