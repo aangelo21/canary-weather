@@ -47,6 +47,9 @@ app.set("views", path.join(__dirname, "views"));
 // Set the port from environment variable or default to 85
 const PORT = process.env.PORT || 85;
 
+const isProduction = process.env.NODE_ENV === 'production' || (process.env.FRONTEND_URL && process.env.FRONTEND_URL.includes('canaryweather.xyz'));
+const isDevelopment = !isProduction;
+
 // Define allowed origins for CORS (Cross-Origin Resource Sharing)
 // This list should match the one used in the WebSocket service.
 const ALLOWED_ORIGINS = [
@@ -93,8 +96,6 @@ app.use(
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Swagger API Documentation - Route based on environment
-const isDevelopment = process.env.NODE_ENV !== 'production';
-
 app.use(
   "/api-docs",
   isDevelopment 
