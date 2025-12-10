@@ -1,4 +1,13 @@
 import swaggerJsdoc from "swagger-jsdoc";
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env from parent directory (backend root)
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const options = {
   definition: {
@@ -19,7 +28,7 @@ const options = {
     },
     servers: [
       {
-        url: "https://canaryweather.xyz",
+        url: process.env.FRONTEND_URL || "https://canaryweather.xyz",
         description: "Production server",
       },
     ],

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 
 /**
  * MapLegend Component.
@@ -20,9 +20,9 @@ function MapLegend() {
     const [activeTab, setActiveTab] = useState('layers');
 
     const tabs = [
-        { id: 'layers', label: 'Weather Layers', icon: '🌤️' },
-        { id: 'controls', label: 'Map Controls', icon: '🎮' },
-        { id: 'interaction', label: 'Interactions', icon: '👆' },
+        { id: 'layers', label: t('mapLegend.tabs.layers'), icon: '🌤️' },
+        { id: 'controls', label: t('mapLegend.tabs.controls'), icon: '🎮' },
+        { id: 'interaction', label: t('mapLegend.tabs.interaction'), icon: '👆' },
     ];
 
     return (
@@ -33,11 +33,10 @@ function MapLegend() {
                     <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0121 18.382V7.618a1 1 0 01-.553-.894L15 4m0 13V4m0 0L9 7" />
                     </svg>
-                    Interactive Map Guide
+                    {t('mapLegend.title')}
                 </h3>
                 <p className="text-blue-100 mt-2 text-sm max-w-2xl">
-                    Master the map features to get the most precise weather insights for the Canary Islands.
-                    Switch tabs below to explore different functionalities.
+                    {t('mapLegend.description')}
                 </p>
             </div>
 
@@ -72,17 +71,17 @@ function MapLegend() {
                                     <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg text-red-600 dark:text-red-400">
                                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                                     </div>
-                                    <h4 className="font-bold text-gray-900 dark:text-white">Temperature Heatmap</h4>
+                                    <h4 className="font-bold text-gray-900 dark:text-white">{t('mapLegend.layers.temp.title')}</h4>
                                 </div>
                                 <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                                    Visualizes air temperature at 2 meters above ground. Warmer colors indicate higher temperatures.
+                                    {t('mapLegend.layers.temp.desc')}
                                 </p>
                                 {/* Color Scale Visualization */}
                                 <div className="h-4 rounded-full bg-gradient-to-r from-blue-500 via-green-400 to-red-500 w-full mb-1"></div>
                                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 font-mono">
-                                    <span>0°C</span>
-                                    <span>15°C</span>
-                                    <span>30°C+</span>
+                                    <span>{t('mapLegend.layers.temp.scale.light')}</span>
+                                    <span>{t('mapLegend.layers.temp.scale.moderate')}</span>
+                                    <span>{t('mapLegend.layers.temp.scale.heavy')}</span>
                                 </div>
                             </div>
 
@@ -92,17 +91,17 @@ function MapLegend() {
                                     <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
                                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
                                     </div>
-                                    <h4 className="font-bold text-gray-900 dark:text-white">Precipitation Intensity</h4>
+                                    <h4 className="font-bold text-gray-900 dark:text-white">{t('mapLegend.layers.precip.title')}</h4>
                                 </div>
                                 <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                                    Shows rain intensity. Darker blue/purple areas indicate heavier rainfall.
+                                    {t('mapLegend.layers.precip.desc')}
                                 </p>
                                 {/* Color Scale Visualization */}
                                 <div className="h-4 rounded-full bg-gradient-to-r from-transparent via-blue-400 to-purple-600 w-full mb-1 border border-gray-200 dark:border-gray-600"></div>
                                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 font-mono">
-                                    <span>Light</span>
-                                    <span>Moderate</span>
-                                    <span>Heavy</span>
+                                    <span>{t('mapLegend.layers.precip.scale.light')}</span>
+                                    <span>{t('mapLegend.layers.precip.scale.moderate')}</span>
+                                    <span>{t('mapLegend.layers.precip.scale.heavy')}</span>
                                 </div>
                             </div>
 
@@ -112,10 +111,10 @@ function MapLegend() {
                                     <div className="p-2 bg-gray-200 dark:bg-gray-600 rounded-lg text-gray-600 dark:text-gray-300">
                                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" /></svg>
                                     </div>
-                                    <h4 className="font-bold text-gray-900 dark:text-white">Cloud Cover</h4>
+                                    <h4 className="font-bold text-gray-900 dark:text-white">{t('mapLegend.layers.clouds.title')}</h4>
                                 </div>
                                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                                    Displays total cloud coverage percentage. Opaque white areas represent 100% cloud cover (overcast), while transparent areas are clear skies.
+                                    {t('mapLegend.layers.clouds.desc')}
                                 </p>
                             </div>
 
@@ -125,10 +124,10 @@ function MapLegend() {
                                     <div className="p-2 bg-teal-100 dark:bg-teal-900/30 rounded-lg text-teal-600 dark:text-teal-400">
                                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                     </div>
-                                    <h4 className="font-bold text-gray-900 dark:text-white">Wind Speed</h4>
+                                    <h4 className="font-bold text-gray-900 dark:text-white">{t('mapLegend.layers.wind.title')}</h4>
                                 </div>
                                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                                    Dynamic visualization of wind flow. Faster moving particles and warmer colors indicate higher wind speeds (km/h).
+                                    {t('mapLegend.layers.wind.desc')}
                                 </p>
                             </div>
                         </div>
@@ -142,9 +141,9 @@ function MapLegend() {
                             <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                             </div>
-                            <h4 className="font-bold text-gray-900 dark:text-white mb-2">Search Bar</h4>
+                            <h4 className="font-bold text-gray-900 dark:text-white mb-2">{t('mapLegend.controls.search.title')}</h4>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                                Quickly find any city, town, or municipality in the Canary Islands. Just type the name and hit enter.
+                                {t('mapLegend.controls.search.desc')}
                             </p>
                         </div>
 
@@ -152,9 +151,9 @@ function MapLegend() {
                             <div className="w-12 h-12 bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-4 text-green-600 dark:text-green-400">
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                             </div>
-                            <h4 className="font-bold text-gray-900 dark:text-white">My Location</h4>
+                            <h4 className="font-bold text-gray-900 dark:text-white">{t('mapLegend.controls.location.title')}</h4>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                                Click the target icon to instantly center the map on your current GPS position.
+                                {t('mapLegend.controls.location.desc')}
                             </p>
                         </div>
 
@@ -162,9 +161,9 @@ function MapLegend() {
                             <div className="w-12 h-12 bg-purple-50 dark:bg-purple-900/20 rounded-full flex items-center justify-center mb-4 text-purple-600 dark:text-purple-400">
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                             </div>
-                            <h4 className="font-bold text-gray-900 dark:text-white">Reset View</h4>
+                            <h4 className="font-bold text-gray-900 dark:text-white">{t('mapLegend.controls.reset.title')}</h4>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                                Lost? Use the reset button to zoom back out to the full view of the Canary Islands archipelago.
+                                {t('mapLegend.controls.reset.desc')}
                             </p>
                         </div>
                     </div>
@@ -176,9 +175,9 @@ function MapLegend() {
                         <div className="flex items-start gap-4 p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800">
                             <span className="text-3xl">👆</span>
                             <div>
-                                <h4 className="font-bold text-gray-900 dark:text-white mb-1">Click Anywhere</h4>
+                                <h4 className="font-bold text-gray-900 dark:text-white mb-1">{t('mapLegend.interaction.click.title')}</h4>
                                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                                    Clicking on any point on the map (land or sea) will drop a pin and show a <strong>Weather Popup</strong> with real-time data for that exact coordinate.
+                                    <Trans i18nKey="mapLegend.interaction.click.desc" components={{ strong: <strong /> }} />
                                 </p>
                             </div>
                         </div>
@@ -186,9 +185,9 @@ function MapLegend() {
                         <div className="flex items-start gap-4 p-4 bg-yellow-50 dark:bg-yellow-900/10 rounded-xl border border-yellow-100 dark:border-yellow-800">
                             <span className="text-3xl">📍</span>
                             <div>
-                                <h4 className="font-bold text-gray-900 dark:text-white mb-1">Save Points of Interest</h4>
+                                <h4 className="font-bold text-gray-900 dark:text-white mb-1">{t('mapLegend.interaction.save.title')}</h4>
                                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                                    Logged-in users can save any location as a "Personal POI" directly from the weather popup. These will appear in your "Points of Interest" list.
+                                    {t('mapLegend.interaction.save.desc')}
                                 </p>
                             </div>
                         </div>
@@ -196,9 +195,9 @@ function MapLegend() {
                         <div className="flex items-start gap-4 p-4 bg-indigo-50 dark:bg-indigo-900/10 rounded-xl border border-indigo-100 dark:border-indigo-800">
                             <span className="text-3xl">🗺️</span>
                             <div>
-                                <h4 className="font-bold text-gray-900 dark:text-white mb-1">Layer Switching</h4>
+                                <h4 className="font-bold text-gray-900 dark:text-white mb-1">{t('mapLegend.interaction.layers.title')}</h4>
                                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                                    Use the layer control icon (top-right of the map) to toggle between <strong>Satellite</strong>, <strong>Terrain</strong>, and various weather overlays like Clouds or Rain.
+                                    <Trans i18nKey="mapLegend.interaction.layers.desc" components={{ strong: <strong /> }} />
                                 </p>
                             </div>
                         </div>

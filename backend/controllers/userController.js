@@ -1,4 +1,4 @@
-import { Location, UserLocation, UserPointOfInterest, PointOfInterest, User } from "../models/index.js";
+import { Location, UserLocation, UserPointOfInterest, PointOfInterest, User, UserProfile } from "../models/index.js";
 import { LdapService } from "../services/ldapService.js";
 import { sendWelcomeEmail, sendLoginNotification, sendContactEmail } from "../services/emailService.js";
 import { Op } from "sequelize";
@@ -276,6 +276,12 @@ export const updateUser = async (req, res) => {
     } else if (payload.profile_picture_url) {
         user.profile_picture_url = payload.profile_picture_url;
     }
+
+    // Update password if provided
+    if (payload.password) {
+        await LdapService.updateUser(user.username, { password: payload.password });
+    }
+
     // Only admin can update is_admin, but let's assume this endpoint is protected or logic is elsewhere
     // For now, let's just save the user if changed
     await user.save();

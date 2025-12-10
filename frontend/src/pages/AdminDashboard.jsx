@@ -39,7 +39,7 @@ const AdminDashboard = () => {
     return (
         <div>
             <h1>{t('adminDashboard')}</h1>
-            <p>Redirecting to server-side dashboard...</p>
+            <p>{t('redirectingToServer')}</p>
         </div>
     );
 };
