@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { apiFetch } from '../services/api';
 
 /**
  * @component HeroSection
@@ -185,12 +186,39 @@ const RoadmapSection = ({ t }) => (
 const ContactSection = ({ t }) => {
     const [formState, setFormState] = useState({ name: '', subject: '', message: '' });
     const [focusedField, setFocusedField] = useState(null);
+    const [status, setStatus] = useState('idle');
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    const handleSubmit = (e) => {
+    useEffect(() => {
+        const user = localStorage.getItem('cw_user');
+        setIsLoggedIn(!!user);
+    }, []);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const subject = encodeURIComponent(formState.subject || `Contact from ${formState.name}`);
-        const body = encodeURIComponent(`Name: ${formState.name}\n\nMessage:\n${formState.message}`);
-        window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=canaryweatherxyz@gmail.com&su=${subject}&body=${body}`, '_blank');
+        setStatus('sending');
+        try {
+            const response = await apiFetch('/users/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formState),
+            });
+
+            if (response.ok) {
+                setStatus('success');
+                setFormState({ name: '', subject: '', message: '' });
+                setTimeout(() => setStatus('idle'), 3000);
+            } else {
+                setStatus('error');
+                setTimeout(() => setStatus('idle'), 3000);
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+            setStatus('error');
+            setTimeout(() => setStatus('idle'), 3000);
+        }
     };
 
     /**
@@ -273,66 +301,81 @@ const ContactSection = ({ t }) => {
                      * Clean, spacious, and focused.
                      */}
                     <div className="lg:col-span-3 p-12 bg-slate-900/30 backdrop-blur-sm">
-                        <form onSubmit={handleSubmit} className="space-y-8 h-full flex flex-col justify-center">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {isLoggedIn ? (
+                            <form onSubmit={handleSubmit} className="space-y-8 h-full flex flex-col justify-center">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="relative">
+                                        <input 
+                                            type="text" 
+                                            id="name"
+                                            className={inputClasses('name')}
+                                            value={formState.name}
+                                            onChange={(e) => setFormState({...formState, name: e.target.value})}
+                                            onFocus={() => setFocusedField('name')}
+                                            onBlur={() => setFocusedField(null)}
+                                        />
+                                        <label htmlFor="name" className={labelClasses('name')}>
+                                            Your Name
+                                        </label>
+                                    </div>
+                                    <div className="relative">
+                                        <input 
+                                            type="text" 
+                                            id="subject"
+                                            className={inputClasses('subject')}
+                                            value={formState.subject}
+                                            onChange={(e) => setFormState({...formState, subject: e.target.value})}
+                                            onFocus={() => setFocusedField('subject')}
+                                            onBlur={() => setFocusedField(null)}
+                                        />
+                                        <label htmlFor="subject" className={labelClasses('subject')}>
+                                            Subject
+                                        </label>
+                                    </div>
+                                </div>
+
                                 <div className="relative">
-                                    <input 
-                                        type="text" 
-                                        id="name"
-                                        className={inputClasses('name')}
-                                        value={formState.name}
-                                        onChange={(e) => setFormState({...formState, name: e.target.value})}
-                                        onFocus={() => setFocusedField('name')}
+                                    <textarea 
+                                        id="message"
+                                        rows="6"
+                                        className={`${inputClasses('message')} resize-none`}
+                                        value={formState.message}
+                                        onChange={(e) => setFormState({...formState, message: e.target.value})}
+                                        onFocus={() => setFocusedField('message')}
                                         onBlur={() => setFocusedField(null)}
-                                    />
-                                    <label htmlFor="name" className={labelClasses('name')}>
-                                        Your Name
+                                    ></textarea>
+                                    <label htmlFor="message" className={labelClasses('message')}>
+                                        How can we help you?
                                     </label>
                                 </div>
-                                <div className="relative">
-                                    <input 
-                                        type="text" 
-                                        id="subject"
-                                        className={inputClasses('subject')}
-                                        value={formState.subject}
-                                        onChange={(e) => setFormState({...formState, subject: e.target.value})}
-                                        onFocus={() => setFocusedField('subject')}
-                                        onBlur={() => setFocusedField(null)}
-                                    />
-                                    <label htmlFor="subject" className={labelClasses('subject')}>
-                                        Subject
-                                    </label>
+
+                                <div className="flex justify-end">
+                                    <button 
+                                        type="submit" 
+                                        disabled={status === 'sending'}
+                                        className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl font-bold text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 hover:-translate-y-0.5 transition-all duration-300 overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed"
+                                    >
+                                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                                        <span className="relative flex items-center gap-2">
+                                            {status === 'sending' ? 'Sending...' : status === 'success' ? 'Sent!' : status === 'error' ? 'Error' : 'Send Message'}
+                                            {status === 'idle' && <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>}
+                                        </span>
+                                    </button>
                                 </div>
+                            </form>
+                        ) : (
+                            <div className="h-full flex flex-col justify-center items-center text-center space-y-6">
+                                <div className="w-20 h-20 rounded-full bg-slate-800/50 flex items-center justify-center mb-4">
+                                    <svg className="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-2xl font-bold text-white">Login Required</h3>
+                                <p className="text-slate-400 max-w-md">
+                                    Please log in or create an account to send us a message. We'd love to hear from you!
+                                </p>
                             </div>
-
-                            <div className="relative">
-                                <textarea 
-                                    id="message"
-                                    rows="6"
-                                    className={`${inputClasses('message')} resize-none`}
-                                    value={formState.message}
-                                    onChange={(e) => setFormState({...formState, message: e.target.value})}
-                                    onFocus={() => setFocusedField('message')}
-                                    onBlur={() => setFocusedField(null)}
-                                ></textarea>
-                                <label htmlFor="message" className={labelClasses('message')}>
-                                    How can we help you?
-                                </label>
-                            </div>
-
-                            <div className="flex justify-end">
-                                <button 
-                                    type="submit" 
-                                    className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl font-bold text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
-                                >
-                                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                                    <span className="relative flex items-center gap-2">
-                                        Send Message
-                                        <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                                    </span>
-                                </button>
-                            </div>
-                        </form>
+                        )}
                     </div>
                 </div>
             </div>

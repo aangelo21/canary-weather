@@ -1,6 +1,6 @@
 import { Location, UserLocation, UserPointOfInterest, PointOfInterest, User } from "../models/index.js";
 import { LdapService } from "../services/ldapService.js";
-import { sendWelcomeEmail, sendLoginNotification } from "../services/emailService.js";
+import { sendWelcomeEmail, sendLoginNotification, sendContactEmail } from "../services/emailService.js";
 import { Op } from "sequelize";
 import jwt from 'jsonwebtoken';
 
@@ -374,5 +374,32 @@ export const getMunicipalities = async (req, res) => {
     return res.json(municipalities);
   } catch (err) {
     return res.status(500).json({ error: err.message });
+  }
+};
+
+/**
+ * Sends a contact email from the user to support.
+ */
+export const contactSupport = async (req, res) => {
+  try {
+    const { name, subject, message } = req.body;
+    // Use email from authenticated user if available, otherwise require it in body (but frontend uses auth)
+    // The user is in req.user from authenticateToken middleware
+    const userEmail = req.user ? req.user.email : req.body.email;
+
+    if (!userEmail) {
+        return res.status(400).json({ error: "User email not found. Please login or provide email." });
+    }
+
+    const result = await sendContactEmail(userEmail, name, subject, message);
+
+    if (result.success) {
+      return res.json({ message: "Message sent successfully" });
+    } else {
+      return res.status(500).json({ error: "Failed to send message" });
+    }
+  } catch (err) {
+    console.error("Contact support error:", err);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };

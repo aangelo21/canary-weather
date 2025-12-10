@@ -164,9 +164,9 @@ export default function Hero() {
             icon = (
                 <div className="relative w-32 h-32 mb-4">
                     <div className="absolute inset-0 bg-blue-400 rounded-full blur-xl opacity-20 animate-pulse"></div>
-                    <svg className="w-full h-full text-blue-500 animate-bounce" style={{ animationDuration: '2s' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-full h-full text-blue-500 animate-bounce" style={{ animationDuration: '3s' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 16.2A4.5 4.5 0 0017.5 8h-1.832A4.5 4.5 0 009.355 8H7.5a4.5 4.5 0 00-1.3 8.8" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 22v-2m-4 2v-4m-4 4v-2" className="animate-ping" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 22v-2m-4 2v-4m-4 4v-2" className="animate-ping" style={{ animationDuration: '3s' }} />
                     </svg>
                 </div>
             );
