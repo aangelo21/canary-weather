@@ -62,9 +62,39 @@ export const en = {
     underTheHood: "Under The Hood",
     techDesc: "Built with cutting-edge technologies to ensure speed, reliability, and scalability. We leverage the power of the modern web.",
     roadmapTitle: "Future Horizons",
+    roadmap: {
+      q4_2025: {
+        title: "Advanced Alerts",
+        desc: "Real-time push notifications for severe weather events."
+      },
+      q1_2026: {
+        title: "Mobile App",
+        desc: "Native iOS and Android applications for on-the-go access."
+      },
+      q2_2026: {
+        title: "AI Forecasting",
+        desc: "Machine learning models to predict microclimate changes."
+      }
+    },
     getInTouch: "Get in Touch",
     contactDesc: "Have questions about the data? Found a bug? Or just want to say hello? We are always listening to our community.",
+    loginToContact: "Login to Send Message",
+    loginToContactDesc: "Please log in to your account to send us a message. This helps us prevent spam and respond to you faster.",
+    contactForm: {
+      name: "Your Name",
+      subject: "Subject",
+      message: "How can we help you?",
+      send: "Send Message",
+      successTitle: "Message Sent!",
+      successDesc: "Thank you for reaching out. We will get back to you shortly."
+    },
     contactPrompt: "Have feedback or feature requests?",
+    
+    // Notifications
+    enableNotifications: "Enable Notifications",
+    disableNotifications: "Disable Notifications",
+    enabling: "Enabling...",
+    disabling: "Disabling...",
     joinUs: "Join the Journey",
     quickLinks: "Explore",
     followUs: "Follow Us",
