@@ -67,6 +67,18 @@ function App() {
             setIsAuthLoaded(true);
         };
         initAuth();
+
+        // Refresh token every 14 minutes to prevent expiration (token expires in 15m)
+        const REFRESH_INTERVAL = 14 * 60 * 1000; 
+        const intervalId = setInterval(async () => {
+            const userStr = localStorage.getItem('cw_user');
+            if (userStr) {
+                console.log('Refreshing token...');
+                await restoreSession();
+            }
+        }, REFRESH_INTERVAL);
+
+        return () => clearInterval(intervalId);
     }, []);
 
     if (!isAuthLoaded) {

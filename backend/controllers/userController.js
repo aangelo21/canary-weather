@@ -45,6 +45,7 @@ export const loginUser = async (req, res) => {
       id: user.id,
       username: user.username,
       email: user.email,
+      profile_picture_url: user.profile_picture_url,
       is_admin: user.is_admin
     };
 
@@ -53,6 +54,7 @@ export const loginUser = async (req, res) => {
       id: user.id, 
       username: user.username, 
       email: user.email,
+      profile_picture_url: user.profile_picture_url,
       is_admin: user.is_admin 
     }, JWT_SECRET, { expiresIn: '15m' });
     
@@ -74,6 +76,7 @@ export const refreshToken = async (req, res) => {
     id: user.id, 
     username: user.username, 
     email: user.email,
+    profile_picture_url: user.profile_picture_url,
     is_admin: user.is_admin 
   }, JWT_SECRET, { expiresIn: '15m' });
   
@@ -236,6 +239,7 @@ export const createUser = async (req, res) => {
       id: user.id,
       username: user.username,
       email: user.email,
+      profile_picture_url: user.profile_picture_url,
       is_admin: user.is_admin
     };
 
@@ -244,8 +248,10 @@ export const createUser = async (req, res) => {
 
     // Generate JWT for the new user
     const token = jwt.sign({ 
-      id: safeUser.username, 
+      id: safeUser.id, 
       username: safeUser.username, 
+      email: safeUser.email,
+      profile_picture_url: safeUser.profile_picture_url,
       is_admin: safeUser.is_admin 
     }, JWT_SECRET, { expiresIn: '15m' });
 

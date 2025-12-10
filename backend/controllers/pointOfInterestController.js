@@ -46,12 +46,11 @@ export const getAllPointsOfInterest = async (req, res) => {
           include: [Location]
         });
 
-        if (userLocation && userLocation.Location) {
-          orConditions.push({
-            type: 'local',
-            name: `Municipio: ${userLocation.Location.name}`
-          });
-        }
+        // Show all local POIs regardless of specific location matching
+        // This fixes the issue where some local POIs were hidden because their name didn't match "Municipio: ..."
+        orConditions.push({
+          type: 'local'
+        });
       }
 
       whereClause = {
