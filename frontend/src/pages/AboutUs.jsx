@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { apiFetch } from '../services/api';
 
 /**
  * @component HeroSection
@@ -183,13 +184,50 @@ const RoadmapSection = ({ t }) => (
  * - **Neon Accents**: Cyan glows to guide user attention.
  */
 const ContactSection = ({ t }) => {
-    const [formState, setFormState] = useState({ name: '', email: '', message: '' });
+    const [formState, setFormState] = useState({ name: '', subject: '', message: '' });
     const [focusedField, setFocusedField] = useState(null);
+    const [status, setStatus] = useState('idle');
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    const handleSubmit = (e) => {
+    useEffect(() => {
+        const checkLogin = () => {
+            const user = localStorage.getItem('cw_user');
+            setIsLoggedIn(!!user);
+        };
+
+        checkLogin();
+
+        window.addEventListener('userLoggedIn', checkLogin);
+        return () => {
+            window.removeEventListener('userLoggedIn', checkLogin);
+        };
+    }, []);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // In a real app, this would send data to a backend
-        window.location.href = `mailto:info@canaryweather.xyz?subject=Contact from ${formState.name}&body=${formState.message}`;
+        setStatus('sending');
+        try {
+            const response = await apiFetch('/users/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formState),
+            });
+
+            if (response.ok) {
+                setStatus('success');
+                setFormState({ name: '', subject: '', message: '' });
+                setTimeout(() => setStatus('idle'), 3000);
+            } else {
+                setStatus('error');
+                setTimeout(() => setStatus('idle'), 3000);
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+            setStatus('error');
+            setTimeout(() => setStatus('idle'), 3000);
+        }
     };
 
     /**
@@ -288,14 +326,15 @@ const ContactSection = ({ t }) => {
                                         {t('contactForm.name') || 'Your Name'}
                                     </label>
                                 </div>
+
                                 <div className="relative">
-                                    <input 
-                                        type="email" 
-                                        id="email"
-                                        className={inputClasses('email')}
-                                        value={formState.email}
-                                        onChange={(e) => setFormState({...formState, email: e.target.value})}
-                                        onFocus={() => setFocusedField('email')}
+                                    <textarea 
+                                        id="message"
+                                        rows="6"
+                                        className={`${inputClasses('message')} resize-none`}
+                                        value={formState.message}
+                                        onChange={(e) => setFormState({...formState, message: e.target.value})}
+                                        onFocus={() => setFocusedField('message')}
                                         onBlur={() => setFocusedField(null)}
                                     />
                                     <label htmlFor="email" className={labelClasses('email')}>
@@ -331,7 +370,7 @@ const ContactSection = ({ t }) => {
                                     </span>
                                 </button>
                             </div>
-                        </form>
+                        )}
                     </div>
                 </div>
             </div>

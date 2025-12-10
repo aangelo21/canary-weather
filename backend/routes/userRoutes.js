@@ -13,6 +13,7 @@ import {
   getCurrentUser,
   getMunicipalities,
   refreshToken,
+  contactSupport,
 } from "../controllers/userController.js";
 
 import { forgotPassword, resetPassword } from "../controllers/authController.js";
@@ -494,6 +495,42 @@ router.put(
   updateUser
 );
 router.delete("/:id", authenticateToken, deleteUser);
+
+/**
+ * @swagger
+ * /api/users/contact:
+ *   post:
+ *     summary: Send a contact email
+ *     description: Sends a contact email from the authenticated user to support.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - subject
+ *               - message
+ *             properties:
+ *               name:
+ *                 type: string
+ *               subject:
+ *                 type: string
+ *               message:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Message sent successfully
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
+router.post("/contact", authenticateToken, contactSupport);
 
 // Export the router for use in the main app
 export default router;

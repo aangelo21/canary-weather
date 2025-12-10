@@ -133,3 +133,31 @@ export const sendPoiDeletedEmail = async (email, username, poiName) => {
     return { success: false, error: err };
   }
 };
+
+export const sendContactEmail = async (fromEmail, fromName, subject, message) => {
+  try {
+    const { data, error } = await resend.emails.send({
+      from: 'info@canaryweather.xyz',
+      to: ['canaryweatherxyz@gmail.com'],
+      reply_to: fromEmail,
+      subject: `Contact Form: ${subject}`,
+      html: `
+        <strong>New message from ${fromName} (${fromEmail})</strong><br><br>
+        <strong>Subject:</strong> ${subject}<br><br>
+        <strong>Message:</strong><br>
+        ${message.replace(/\n/g, '<br>')}
+      `,
+    });
+
+    if (error) {
+      console.error('Error sending contact email:', error);
+      return { success: false, error };
+    }
+
+    console.log('Contact email sent:', data);
+    return { success: true, data };
+  } catch (err) {
+    console.error('Exception sending contact email:', err);
+    return { success: false, error: err };
+  }
+};
