@@ -371,7 +371,6 @@ const ContactSection = ({ t }) => {
                             </div>
                         </form>
                     </div>
-                    </div>
                 </div>
             </div>
         </div>
