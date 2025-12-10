@@ -61,9 +61,34 @@ export const es = {
     gabrielBio: "Arquitectando experiencias de usuario fluidas. Obsesionado con el rendimiento y la interfaz perfecta.",
     underTheHood: "Bajo el Capó",
     techDesc: "Construido con tecnologías de vanguardia para garantizar velocidad, fiabilidad y escalabilidad. Aprovechamos el poder de la web moderna.",
+    
+    // Roadmap
     roadmapTitle: "Horizontes Futuros",
+    roadmap: {
+      q4_2025: {
+        title: "Alertas Avanzadas",
+        desc: "Notificaciones push en tiempo real para eventos meteorológicos severos."
+      },
+      q1_2026: {
+        title: "Aplicación Móvil",
+        desc: "Aplicaciones nativas iOS y Android para acceso sobre la marcha."
+      },
+      q2_2026: {
+        title: "Pronóstico IA",
+        desc: "Modelos de aprendizaje automático para predecir cambios microclimáticos."
+      }
+    },
+
+    // Contact
     getInTouch: "Contáctanos",
-    contactDesc: "¿Tienes preguntas sobre los datos? ¿Encontraste un error? ¿O simplemente quieres saludar? Siempre escuchamos a nuestra comunidad.",
+    contactDesc: "Construir el futuro del pronóstico del tiempo requiere comunidad. Ya sea que tengas una solicitud de función, un informe de error o simplemente quieras hablar de meteorología, somos todo oídos.",
+    ourHQ: "Nuestra Sede",
+    contactForm: {
+      name: "Tu Nombre",
+      email: "Correo Electrónico",
+      message: "¿Cómo podemos ayudarte?",
+      send: "Enviar Mensaje"
+    },
     contactPrompt: "¿Tienes comentarios o sugerencias?",
     joinUs: "Únete al Viaje",
     quickLinks: "Explorar",
@@ -98,6 +123,79 @@ export const es = {
     signIn: "Iniciar Sesión",
     processing: "Procesando...",
     allFieldsRequired: "Todos los campos son obligatorios",
+    
+    // Notifications
+    enableNotifications: "Activar Notificaciones",
+    disableNotifications: "Desactivar Notificaciones",
+    enabling: "Activando...",
+    disabling: "Desactivando...",
+
+    // Map Legend
+    mapLegend: {
+      title: "Guía del Mapa",
+      description: "Entiende las capas meteorológicas y controles.",
+      tabs: {
+        layers: "Capas",
+        controls: "Controles",
+        interaction: "Interacción"
+      },
+      layers: {
+        temp: {
+          title: "Temperatura",
+          desc: "Muestra la temperatura actual en grados Celsius.",
+          scale: {
+            light: "Frío",
+            moderate: "Templado",
+            heavy: "Caliente"
+          }
+        },
+        precip: {
+          title: "Precipitación",
+          desc: "Intensidad de lluvia en mm/h.",
+          scale: {
+            light: "Ligera",
+            moderate: "Moderada",
+            heavy: "Intensa"
+          }
+        },
+        clouds: {
+          title: "Nubes",
+          desc: "Cobertura nubosa en porcentaje."
+        },
+        wind: {
+          title: "Viento",
+          desc: "Velocidad y dirección del viento."
+        }
+      },
+      controls: {
+        search: {
+          title: "Buscar",
+          desc: "Encuentra municipios y lugares."
+        },
+        location: {
+          title: "Mi Ubicación",
+          desc: "Centra el mapa en tu posición."
+        },
+        reset: {
+          title: "Reiniciar",
+          desc: "Vuelve a la vista inicial."
+        }
+      },
+      interaction: {
+        click: {
+          title: "Clic en el Mapa",
+          desc: "Haz clic en cualquier lugar para ver <strong>detalles del clima</strong>."
+        },
+        save: {
+          title: "Guardar Ubicación",
+          desc: "Guarda tus lugares favoritos."
+        },
+        layers: {
+          title: "Cambiar Capas",
+          desc: "Usa el menú para alternar entre <strong>Temperatura, Lluvia, Nubes y Viento</strong>."
+        }
+      }
+    },
     errorCreateUser: "Error al crear usuario",
     password: "Contraseña",
     confirmPassword: "Confirmar Contraseña",
