@@ -190,8 +190,17 @@ const ContactSection = ({ t }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-        const user = localStorage.getItem('cw_user');
-        setIsLoggedIn(!!user);
+        const checkLogin = () => {
+            const user = localStorage.getItem('cw_user');
+            setIsLoggedIn(!!user);
+        };
+
+        checkLogin();
+
+        window.addEventListener('userLoggedIn', checkLogin);
+        return () => {
+            window.removeEventListener('userLoggedIn', checkLogin);
+        };
     }, []);
 
     const handleSubmit = async (e) => {
