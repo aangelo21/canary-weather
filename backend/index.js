@@ -92,14 +92,23 @@ app.use(
 // Serve static files from the uploads directory for profile pictures and POI images
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Swagger API Documentation - Development
+// Swagger API Documentation - Route based on environment
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
 app.use(
   "/api-docs",
-  swaggerUi.serveFiles(swaggerSpec, {}),
-  swaggerUi.setup(swaggerSpec, {
-    customCss: ".swagger-ui .topbar { display: none }",
-    customSiteTitle: "CanaryWeather API Docs - Development",
-  })
+  isDevelopment 
+    ? swaggerUi.serveFiles(swaggerSpec, {})
+    : swaggerUi.serveFiles(swaggerSpecProd, {}),
+  isDevelopment
+    ? swaggerUi.setup(swaggerSpec, {
+        customCss: ".swagger-ui .topbar { display: none }",
+        customSiteTitle: "CanaryWeather API Docs - Development",
+      })
+    : swaggerUi.setup(swaggerSpecProd, {
+        customCss: ".swagger-ui .topbar { display: none }",
+        customSiteTitle: "CanaryWeather API Docs - Production",
+      })
 );
 
 // Swagger API Documentation - Production (read-only)
