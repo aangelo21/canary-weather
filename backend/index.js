@@ -185,6 +185,11 @@ app.get("/api/health", (req, res) => {
     // The `initWebsocket` function encapsulates all websocket event wiring
     initWebsocket(server);
 
+    // Handle server errors (e.g. EACCES if port 85 is privileged)
+    server.on('error', (error) => {
+      console.error('Server failed to start:', error);
+    });
+
     // Start listening on the specified port
     server.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
