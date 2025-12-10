@@ -1,4 +1,15 @@
 import swaggerJsdoc from "swagger-jsdoc";
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env from parent directory (backend root)
+dotenv.config({ path: path.join(__dirname, '../.env') });
+
+const PORT = process.env.PORT || 85;
 
 const options = {
   definition: {
@@ -19,7 +30,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:85",
+        url: `http://localhost:${PORT}`,
         description: "Development server",
       },
     ],
