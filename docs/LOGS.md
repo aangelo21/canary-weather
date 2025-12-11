@@ -57,7 +57,7 @@ pm2 set pm2-logrotate:rotateInterval '0 0 * * *'
 pm2 set pm2-logrotate:retain 30
 
 # Maximum size of log file before rotation (e.g., 10MB) - Optional if using daily rotation
-pm2 set pm2-logrotate:max_size 10M
+pm2 set pm2-logrotate:max_size 5M
 
 # Compress rotated logs
 pm2 set pm2-logrotate:compress true
@@ -65,6 +65,7 @@ pm2 set pm2-logrotate:compress true
 # Date format in log filenames
 pm2 set pm2-logrotate:dateFormat YYYY-MM-DD_HH-mm-ss
 ```
+![logrotate config](/docs/public/logs/config-logs.png)
 
 ### 3. Build the Frontend
 
@@ -84,6 +85,7 @@ Start the application using the ecosystem file:
 ```bash
 pm2 start ecosystem.config.js
 ```
+![pm2 start ecosystem](/docs/public/logs/pm2-start-module.png)
 
 This will start both the backend and frontend processes.
 
