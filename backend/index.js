@@ -32,6 +32,7 @@ import swaggerSpec from "./config/swagger.config.js";
 import swaggerSpecProd from "./config/swagger.config.prod.js";
 // Import websocket initializer. This module will encapsulate all Socket.IO logic.
 import initWebsocket from "./services/websocketService.js";
+import { startAlertScheduler } from "./services/alertScheduler.js";
 
 // Define __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -193,6 +194,7 @@ app.get("/api/health", (req, res) => {
     // Start listening on the specified port
     server.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
+      startAlertScheduler();
     });
   } catch (error) {
     // Log any errors during database connection or sync

@@ -54,7 +54,12 @@ const PrivacyPolicy = () => {
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{t('privacyPolicyPage.useInfo.title')}</h2>
                             <p>{t('privacyPolicyPage.useInfo.content')}</p>
                             <ul className="list-disc pl-5 space-y-2 mt-2">
-                                {t('privacyPolicyPage.useInfo.items', { returnObjects: true }).map((item, index) => (
+                                {(Array.isArray(
+                                    t('privacyPolicyPage.useInfo.items', { returnObjects: true, defaultValue: [] })
+                                )
+                                    ? t('privacyPolicyPage.useInfo.items', { returnObjects: true, defaultValue: [] })
+                                    : []
+                                ).map((item, index) => (
                                     <li key={index}>{item}</li>
                                 ))}
                             </ul>
