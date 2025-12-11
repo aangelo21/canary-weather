@@ -44,7 +44,39 @@ export const en = {
     local: "LOCAL",
     moderate: "Moderate (Yellow)",
     severe: "Severe/Extreme (Orange/Red)",
+    upcoming: "Upcoming",
     errorFetchingExternal: "Could not update warnings from external source. Showing cached data.",
+    
+    // Alert severity levels
+    severityModerate: "Yellow",
+    severitySevere: "Orange",
+    severityExtreme: "Red",
+    filters: "Filters",
+    severity: "Severity",
+    areas: "Areas",
+      islands: "Islands",
+    phenomena: "Phenomena",
+    resetFilters: "Reset Filters",
+    noMatchingWarnings: "No warnings match the current filters.",
+    
+    // Weather phenomena (keeping English as default)
+    "Severe wind warning": "Severe wind warning",
+    "Severe rain warning": "Severe rain warning",
+    "Severe thunderstorm warning": "Severe thunderstorm warning",
+    "Severe snow warning": "Severe snow warning",
+    "Severe coastalevent warning": "Severe coastal event warning",
+    "Severe high-temperature warning": "Severe high-temperature warning",
+    "Severe low-temperature warning": "Severe low-temperature warning",
+    "Severe fog warning": "Severe fog warning",
+    "Extreme wind warning": "Extreme wind warning",
+    "Extreme rain warning": "Extreme rain warning",
+    "Extreme thunderstorm warning": "Extreme thunderstorm warning",
+    "Extreme snow warning": "Extreme snow warning",
+    "Extreme coastalevent warning": "Extreme coastal event warning",
+    "Extreme high-temperature warning": "Extreme high-temperature warning",
+    "Extreme low-temperature warning": "Extreme low-temperature warning",
+    "Extreme fog warning": "Extreme fog warning",
+    
     // Footer
     copyright: "©CanaryWeather |",
     website: "canaryweather.xyz",
@@ -340,7 +372,7 @@ export const en = {
     },
 
     // Privacy Policy
-    privacyPolicy: {
+    privacyPolicyPage: {
       title: "Privacy Policy",
       lastUpdated: "Last updated: December 1, 2025",
       intro: {

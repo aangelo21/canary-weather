@@ -80,16 +80,16 @@ export const fetchWarnings = async () => {
                 continue;
             }
 
-            // Filter for Severity (Orange/Red equivalent)
+            // Filter for Severity (Yellow/Orange/Red)
             // Meteoalarm severities: Moderate (Yellow), Severe (Orange), Extreme (Red)
-            // User requested "avisos naranjas o rojos" (Orange or Red)
-            if (severity !== 'Severe' && severity !== 'Extreme') {
+            // Include all important alerts: Yellow, Orange, and Red
+            if (severity !== 'Moderate' && severity !== 'Severe' && severity !== 'Extreme') {
                 continue;
             }
 
             alerts.push({
                 phenomenon: event,
-                level: severity, // 'Severe' or 'Extreme'
+                level: severity, // 'Moderate', 'Severe' or 'Extreme'
                 onset: onset,
                 expires: expires,
                 area_name: areaDesc
@@ -112,9 +112,11 @@ export const fetchWarnings = async () => {
  * Associates alerts with a default location (e.g., 'Canary Islands') or a fallback.
  * 
  * @param {Array<Object>} warnings - The list of warning objects to store.
- * @returns {Promise<void>}
+ * @returns {Promise<Array<Object>>} Array of newly created alert objects.
  */
-export const storeWarnings = async (warnings) => {
+export const storeWarningsAndGetNew = async (warnings) => {
+    const newAlerts = [];
+    
     try {
         // Find a default location to link alerts to (e.g., "Canary Islands")
         let location = await Location.findOne({ where: { name: 'Canary Islands' } });
@@ -125,7 +127,7 @@ export const storeWarnings = async (warnings) => {
         
         if (!location) {
             console.error("No location found in DB to link alerts.");
-            return;
+            return newAlerts;
         }
 
         for (const warning of warnings) {
@@ -140,7 +142,7 @@ export const storeWarnings = async (warnings) => {
             });
 
             if (!existing) {
-                await Alert.create({
+                const newAlert = await Alert.create({
                     phenomenon: warning.phenomenon,
                     level: warning.level,
                     start_date: new Date(warning.onset),
@@ -149,8 +151,11 @@ export const storeWarnings = async (warnings) => {
                     location_id: location.id
                 });
                 console.log(`Stored alert: ${warning.phenomenon} in ${warning.area_name}`);
+                newAlerts.push(newAlert.toJSON());
             }
         }
+        
+        return newAlerts;
     } catch (error) {
         console.error("Error storing warnings:", error);
         throw error;
@@ -158,14 +163,68 @@ export const storeWarnings = async (warnings) => {
 };
 
 /**
+ * Sends push notifications to all subscribed users about new weather alerts.
+ * Groups all new alerts into a single notification.
+ * 
+ * @param {Array<Object>} newAlerts - Array of new alert objects to notify about.
+ * @returns {Promise<void>}
+ */
+export const notifyUsersAboutAlerts = async (newAlerts) => {
+    if (newAlerts.length === 0) return;
+    
+    try {
+        const { sendPushNotificationToAll } = await import('./pushNotificationService.js');
+        
+        // Group alerts by severity to determine overall severity
+        const hasExtreme = newAlerts.some(alert => alert.level === 'Extreme');
+        const hasSevere = newAlerts.some(alert => alert.level === 'Severe');
+        
+        // Determine title based on highest severity and count
+        const severityEmoji = hasExtreme ? '🔴' : hasSevere ? '🟠' : '🟡';
+        const severityText = hasExtreme ? 'Extremas' : hasSevere ? 'Severas' : 'Moderadas';
+        const count = newAlerts.length;
+        const title = count === 1 
+            ? `${severityEmoji} Nueva Alerta Meteorológica`
+            : `${severityEmoji} ${count} Nuevas Alertas ${severityText}`;
+        
+        // Create body with list of alerts
+        const alertsList = newAlerts.map(alert => {
+            const emoji = alert.level === 'Extreme' ? '🔴' : alert.level === 'Severe' ? '🟠' : '🟡';
+            return `${emoji} ${alert.phenomenon} - ${alert.area_name}`;
+        }).join('\n');
+        
+        await sendPushNotificationToAll({
+            title,
+            body: alertsList,
+            icon: '/logo.webp',
+            badge: '/logo.webp',
+            data: {
+                url: '/warnings',
+                count: count
+            }
+        });
+        
+        console.log(`Sent notification for ${count} new alert(s)`);
+    } catch (error) {
+        console.error('Error sending alert notifications:', error);
+    }
+};
+
+/**
  * Orchestrates the fetching and storing of weather warnings.
  * 
  * Calls `fetchWarnings` to get data from the external API and then `storeWarnings`
- * to save it to the database.
+ * to save it to the database. Also sends notifications to users about new alerts.
  * 
- * @returns {Promise<void>}
+ * @returns {Promise<Array<Object>>} Array of newly created alerts.
  */
 export const fetchAndStoreWarnings = async () => {
     const warnings = await fetchWarnings();
-    await storeWarnings(warnings);
+    const newAlerts = await storeWarningsAndGetNew(warnings);
+    
+    if (newAlerts.length > 0) {
+        await notifyUsersAboutAlerts(newAlerts);
+    }
+    
+    return newAlerts;
 };

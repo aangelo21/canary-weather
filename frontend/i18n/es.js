@@ -44,7 +44,39 @@ export const es = {
     local: "LOCAL",
     moderate: "Moderado (Amarillo)",
     severe: "Grave/Extremo (Naranja/Rojo)",
+    upcoming: "Próximo",
     errorFetchingExternal: "No se pudieron actualizar los avisos de la fuente externa. Mostrando datos en caché.",
+    
+    // Alert severity levels
+    severityModerate: "Amarillo",
+    severitySevere: "Naranja",
+    severityExtreme: "Rojo",
+    filters: "Filtros",
+    severity: "Severidad",
+    areas: "Áreas",
+      islands: "Islas",
+    phenomena: "Fenómenos",
+    resetFilters: "Resetear Filtros",
+    noMatchingWarnings: "No hay alertas que coincidan con los filtros.",
+    
+    // Weather phenomena
+    "Severe wind warning": "Aviso de viento severo",
+    "Severe rain warning": "Aviso de lluvia severa",
+    "Severe thunderstorm warning": "Aviso de tormenta severa",
+    "Severe snow warning": "Aviso de nieve severa",
+    "Severe coastalevent warning": "Aviso de fenómeno costero severo",
+    "Severe high-temperature warning": "Aviso de temperatura alta severa",
+    "Severe low-temperature warning": "Aviso de temperatura baja severa",
+    "Severe fog warning": "Aviso de niebla severa",
+    "Extreme wind warning": "Aviso extremo de viento",
+    "Extreme rain warning": "Aviso extremo de lluvia",
+    "Extreme thunderstorm warning": "Aviso extremo de tormenta",
+    "Extreme snow warning": "Aviso extremo de nieve",
+    "Extreme coastalevent warning": "Aviso extremo de fenómeno costero",
+    "Extreme high-temperature warning": "Aviso extremo de temperatura alta",
+    "Extreme low-temperature warning": "Aviso extremo de temperatura baja",
+    "Extreme fog warning": "Aviso extremo de niebla",
+    
     // Footer
     copyright: "©CanaryWeather |",
     website: "canaryweather.xyz",
@@ -412,7 +444,7 @@ export const es = {
     },
 
     // Política de Privacidad
-    privacyPolicy: {
+    privacyPolicyPage: {
       title: "Política de Privacidad",
       lastUpdated: "Última actualización: 1 de diciembre de 2025",
       intro: {

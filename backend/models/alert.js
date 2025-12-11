@@ -48,6 +48,10 @@ const Alert = sequelize.define(
       type: DataTypes.UUID,
       allowNull: true,
     },
+    area_name: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   { timestamps: true }
 );

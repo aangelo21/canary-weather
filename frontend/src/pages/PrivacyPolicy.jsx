@@ -22,67 +22,67 @@ const PrivacyPolicy = () => {
             <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
                 <div className="px-6 py-8 sm:p-10">
                     <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-8 border-b border-gray-200 dark:border-gray-700 pb-4">
-                        {t('privacyPolicy.title')}
+                        {t('privacyPolicyPage.title')}
                     </h1>
                     
                     <div className="prose prose-blue dark:prose-invert max-w-none space-y-6 text-gray-600 dark:text-gray-300">
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {t('privacyPolicy.lastUpdated')}
+                            {t('privacyPolicyPage.lastUpdated')}
                         </p>
 
                         <section>
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{t('privacyPolicy.intro.title')}</h2>
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{t('privacyPolicyPage.intro.title')}</h2>
                             <p>
-                                {t('privacyPolicy.intro.content')}
+                                {t('privacyPolicyPage.intro.content')}
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{t('privacyPolicy.infoCollect.title')}</h2>
-                            <p>{t('privacyPolicy.infoCollect.content')}</p>
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{t('privacyPolicyPage.infoCollect.title')}</h2>
+                            <p>{t('privacyPolicyPage.infoCollect.content')}</p>
                             <ul className="list-disc pl-5 space-y-2 mt-2">
                                 <li>
-                                    {t('privacyPolicy.infoCollect.geo')}
+                                    {t('privacyPolicyPage.infoCollect.geo')}
                                 </li>
                                 <li>
-                                    {t('privacyPolicy.infoCollect.personal')}
+                                    {t('privacyPolicyPage.infoCollect.personal')}
                                 </li>
                             </ul>
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{t('privacyPolicy.useInfo.title')}</h2>
-                            <p>{t('privacyPolicy.useInfo.content')}</p>
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{t('privacyPolicyPage.useInfo.title')}</h2>
+                            <p>{t('privacyPolicyPage.useInfo.content')}</p>
                             <ul className="list-disc pl-5 space-y-2 mt-2">
-                                {t('privacyPolicy.useInfo.items', { returnObjects: true }).map((item, index) => (
+                                {t('privacyPolicyPage.useInfo.items', { returnObjects: true }).map((item, index) => (
                                     <li key={index}>{item}</li>
                                 ))}
                             </ul>
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{t('privacyPolicy.disclosure.title')}</h2>
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{t('privacyPolicyPage.disclosure.title')}</h2>
                             <p>
-                                {t('privacyPolicy.disclosure.content')}
+                                {t('privacyPolicyPage.disclosure.content')}
                             </p>
                             <ul className="list-disc pl-5 space-y-2 mt-2">
                                 <li>
-                                    {t('privacyPolicy.disclosure.law')}
+                                    {t('privacyPolicyPage.disclosure.law')}
                                 </li>
                             </ul>
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{t('privacyPolicy.security.title')}</h2>
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{t('privacyPolicyPage.security.title')}</h2>
                             <p>
-                                {t('privacyPolicy.security.content')}
+                                {t('privacyPolicyPage.security.content')}
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{t('privacyPolicy.contact.title')}</h2>
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{t('privacyPolicyPage.contact.title')}</h2>
                             <p>
-                                {t('privacyPolicy.contact.content')}
+                                {t('privacyPolicyPage.contact.content')}
                             </p>
                             <p className="mt-2 font-semibold text-brand-primary dark:text-blue-400">
                                 info@canaryweather.xyz

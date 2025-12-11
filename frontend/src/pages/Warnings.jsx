@@ -45,6 +45,19 @@ function Warnings() {
     const [fetchError, setFetchError] = useState(null);
 
     /**
+     * @type {[boolean, Function]} showFilters - State for filter panel visibility.
+     */
+    const [showFilters, setShowFilters] = useState(false);
+
+    /**
+     * @type {[Object, Function]} filters - State for active filters.
+     */
+    const [filters, setFilters] = useState({
+        severity: { Extreme: true, Severe: true, Moderate: true },
+        islands: {}
+    });
+
+    /**
      * Effect hook to fetch and process alert data on mount.
      * It first attempts to trigger a refresh from the external source, then fetches the local database records.
      * Alerts are filtered by severity and categorized by date.
@@ -92,15 +105,23 @@ function Warnings() {
 
                     if (!isImportant) return;
 
-                    // Active: Started and not ended
-                    if (startDate <= now && endDate > now) {
+                    // Active: Not ended yet (includes both current and upcoming alerts)
+                    if (endDate > now) {
                         active.push(alert);
                     }
                     // Past: Ended
                     else if (endDate <= now) {
                         past.push(alert);
                     }
-                    // Future: startDate > now (Ignored as per request)
+                });
+
+                // Sort active alerts: current alerts first, then upcoming ones
+                active.sort((a, b) => {
+                    const aStarted = new Date(a.start_date) <= now;
+                    const bStarted = new Date(b.start_date) <= now;
+                    if (aStarted && !bStarted) return -1;
+                    if (!aStarted && bStarted) return 1;
+                    return new Date(a.start_date) - new Date(b.start_date);
                 });
 
                 // Sort past alerts by date descending
@@ -171,6 +192,101 @@ function Warnings() {
         }
     };
 
+    const translateSeverity = (level) => {
+        if (!level) return level;
+        if (level === 'Moderate') return t('severityModerate');
+        if (level === 'Severe') return t('severitySevere');
+        if (level === 'Extreme') return t('severityExtreme');
+        return level;
+    };
+
+    const translatePhenomenon = (phenomenon) => {
+        if (!phenomenon) return phenomenon;
+        return t(phenomenon) || phenomenon;
+    };
+
+    /**
+     * Applies filters to the alerts list.
+     */
+    const applyFilters = (alertsList) => {
+        return alertsList.filter(alert => {
+            // Filter by severity
+            if (!filters.severity[alert.level]) return false;
+            
+            // Filter by island if any island filter is active
+            const activeIslands = Object.entries(filters.islands).filter(([_, active]) => active);
+            if (activeIslands.length > 0) {
+                const alertIsland = getIslandFromArea(alert.area_name);
+                if (!alertIsland || !filters.islands[alertIsland]) return false;
+            }
+            
+            return true;
+        });
+    };
+
+    /**
+     * Extracts island name from area description.
+     */
+    const getIslandFromArea = (areaName) => {
+        if (!areaName) return null;
+        const islandNames = ['Lanzarote', 'Fuerteventura', 'Gran Canaria', 'Tenerife', 'La Gomera', 'La Palma', 'El Hierro'];
+        for (const island of islandNames) {
+            if (areaName.includes(island)) {
+                return island;
+            }
+        }
+        return null;
+    };
+
+    /**
+     * Get unique islands from all alerts.
+     * Extracts island names from area descriptions.
+     */
+    const getUniqueIslands = () => {
+        const islands = new Set();
+        const islandNames = ['Lanzarote', 'Fuerteventura', 'Gran Canaria', 'Tenerife', 'La Gomera', 'La Palma', 'El Hierro'];
+        
+        [...activeAlerts, ...pastAlerts].forEach(alert => {
+            if (alert.area_name) {
+                // Find which island is mentioned in the area name
+                for (const island of islandNames) {
+                    if (alert.area_name.includes(island)) {
+                        islands.add(island);
+                        break;
+                    }
+                }
+            }
+        });
+        return Array.from(islands).sort();
+    };
+
+    /**
+     * Toggle filter option.
+     */
+    const toggleFilter = (category, value) => {
+        setFilters(prev => ({
+            ...prev,
+            [category]: {
+                ...prev[category],
+                [value]: !prev[category][value]
+            }
+        }));
+    };
+
+    /**
+     * Reset all filters.
+     */
+    const resetFilters = () => {
+        setFilters({
+            severity: { Extreme: true, Severe: true, Moderate: true },
+            islands: {}
+        });
+    };
+
+    // Apply filters to alerts
+    const filteredActiveAlerts = applyFilters(activeAlerts);
+    const filteredPastAlerts = applyFilters(pastAlerts);
+
     if (loading) return <div className="text-center">{t('loading')}</div>;
     if (error)
         return <div className="text-center text-red-500">{error}</div>;
@@ -190,45 +306,116 @@ function Warnings() {
                 </div>
             )}
 
+            {/* Filter Section - Styled like POIs */}
+            {/* Filter Section - POI Style */}
+            <div className="mb-6">
+                <div className="flex gap-2 flex-wrap mb-4">
+                    <button
+                        onClick={() => toggleFilter('severity', 'Extreme')}
+                        className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                            filters.severity.Extreme
+                                ? 'bg-#b50909 text-white'
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-neutral-700 dark:text-gray-300 dark:hover:bg-neutral-600'
+                        }`}
+                    >
+                        {(t('severityExtreme') || 'ROJO').toUpperCase()}
+                    </button>
+                    <button
+                        onClick={() => toggleFilter('severity', 'Severe')}
+                        className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                            filters.severity.Severe
+                                ? 'bg-orange-500 text-white'
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-neutral-700 dark:text-gray-300 dark:hover:bg-neutral-600'
+                        }`}
+                    >
+                        {(t('severitySevere') || 'NARANJA').toUpperCase()}
+                    </button>
+                    <button
+                        onClick={() => toggleFilter('severity', 'Moderate')}
+                        className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                            filters.severity.Moderate
+                                ? 'bg-#e5a000 text-white'
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-neutral-700 dark:text-gray-300 dark:hover:bg-neutral-600'
+                        }`}
+                    >
+                        {(t('severityModerate') || 'AMARILLO').toUpperCase()}
+                    </button>
+                </div>
+
+                {getUniqueIslands().length > 0 && (
+                    <div className="flex gap-2 flex-wrap">
+                        {getUniqueIslands().map(island => (
+                            <button
+                                key={island}
+                                onClick={() => toggleFilter('islands', island)}
+                                className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                                    filters.islands[island]
+                                        ? 'bg-[#0f6fb9] text-white'
+                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-neutral-700 dark:text-gray-300 dark:hover:bg-neutral-600'
+                                }`}
+                            >
+                                {island.toUpperCase()}
+                            </button>
+                        ))}
+                    </div>
+                )}
+            </div>
+
             <section className="mb-12">
                 <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-blue-200">
                     {t('activeWarnings') || 'Active Warnings'}
                 </h2>
-                {activeAlerts.length === 0 ? (
+                {filteredActiveAlerts.length === 0 ? (
                     <p className="text-center text-gray-500">
-                        {t('noActiveWarnings') || 'No active warnings.'}
+                        {activeAlerts.length === 0 
+                            ? (t('noActiveWarnings') || 'No active warnings.')
+                            : (t('noMatchingWarnings') || 'No hay alertas que coincidan con los filtros.')}
                     </p>
                 ) : (
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        {activeAlerts.map((alert) => (
-                            <div
-                                key={alert.id}
-                                className={`border-l-4 p-4 rounded shadow ${getSeverityClasses(alert.level)}`}
-                            >
-                                <h3 className="text-xl font-semibold">
-                                    {alert.phenomenon}
-                                </h3>
-                                <p className="font-medium">{alert.level}</p>
-                                <div className="mt-2 text-sm opacity-90">
-                                    <p>
-                                        <span className="font-semibold">
-                                            {t('start')}:
-                                        </span>{' '}
-                                        {new Date(
-                                            alert.start_date
-                                        ).toLocaleString()}
-                                    </p>
-                                    <p>
-                                        <span className="font-semibold">
-                                            {t('end')}:
-                                        </span>{' '}
-                                        {new Date(
-                                            alert.end_date
-                                        ).toLocaleString()}
-                                    </p>
+                        {filteredActiveAlerts.map((alert) => {
+                            const now = new Date();
+                            const isUpcoming = new Date(alert.start_date) > now;
+                            return (
+                                <div
+                                    key={alert.id}
+                                    className={`border-l-4 p-4 rounded shadow ${getSeverityClasses(alert.level)}`}
+                                >
+                                    {isUpcoming && (
+                                        <span className="inline-block px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-800 mb-2">
+                                            {t('upcoming') || 'Upcoming'}
+                                        </span>
+                                    )}
+                                    <h3 className="text-xl font-semibold">
+                                        {translatePhenomenon(alert.phenomenon)}
+                                    </h3>
+                                    <p className="font-medium">{translateSeverity(alert.level)}</p>
+                                    {alert.area_name && (
+                                        <p className="text-sm mt-1 opacity-80">
+                                            📍 {alert.area_name}
+                                        </p>
+                                    )}
+                                    <div className="mt-2 text-sm opacity-90">
+                                        <p>
+                                            <span className="font-semibold">
+                                                {t('start')}:
+                                            </span>{' '}
+                                            {new Date(
+                                                alert.start_date
+                                            ).toLocaleString()}
+                                        </p>
+                                        <p>
+                                            <span className="font-semibold">
+                                                {t('end')}:
+                                            </span>{' '}
+                                            {new Date(
+                                                alert.end_date
+                                            ).toLocaleString()}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
             </section>
@@ -237,9 +424,11 @@ function Warnings() {
                 <h2 className="text-2xl font-bold mb-4 text-gray-700">
                     {t('warningsHistory') || 'Warnings History'}
                 </h2>
-                {pastAlerts.length === 0 ? (
+                {filteredPastAlerts.length === 0 ? (
                     <p className="text-center text-gray-500">
-                        {t('noPastWarnings') || 'No past warnings recorded.'}
+                        {pastAlerts.length === 0
+                            ? (t('noPastWarnings') || 'No past warnings recorded.')
+                            : (t('noMatchingWarnings') || 'No hay alertas que coincidan con los filtros.')}
                     </p>
                 ) : (
                     <div className="overflow-x-auto">
@@ -261,16 +450,16 @@ function Warnings() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {pastAlerts.map((alert) => (
+                                {filteredPastAlerts.map((alert) => (
                                     <tr
                                         key={alert.id}
                                         className="hover:bg-gray-50"
                                     >
                                         <td className="py-2 px-4 border-b">
-                                            {alert.phenomenon}
+                                            {translatePhenomenon(alert.phenomenon)}
                                         </td>
                                         <td className="py-2 px-4 border-b">
-                                            {alert.level}
+                                            {translateSeverity(alert.level)}
                                         </td>
                                         <td className="py-2 px-4 border-b">
                                             {new Date(
