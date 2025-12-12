@@ -11,6 +11,15 @@ import {
 const router = express.Router();
 
 /**
+ * Alert Routes
+ * 
+ * Defines routes for managing weather alerts.
+ * Includes CRUD operations and a route to trigger fetching warnings from external sources.
+ * 
+ * Base Path: /api/alerts
+ */
+
+/**
  * @swagger
  * /api/alerts:
  *   get:

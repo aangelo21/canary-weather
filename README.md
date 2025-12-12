@@ -10,16 +10,27 @@
 
 ## 📋 Table of Contents
 
-- [Overview](#overview)
-- [Features](#features)
-- [Technology Stack](#technology-stack)
-- [Quick Start](#quick-start)
-- [Installation](#installation)
-- [API Documentation](#api-documentation)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [License](#license)
-- [Acknowledgements](#acknowledgements)
+- [🌟 Overview](#-overview)
+- [✨ Features](#-features)
+- [🛠️ Technology Stack](#-technology-stack)
+- [🚀 Quick Start](#-quick-start)
+- [📦 Installation](#-installation)
+- [📚 API Documentation](#-api-documentation)
+- [📁 Project Structure](#-project-structure)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [🚀 Deployment](#-deployment)
+- [📖 Additional Documentation](#-additional-documentation)
+   - [API Documentation](https://github.com/aangelo21/canary_weather/blob/main/docs/API.md)
+   - [Architecture Overview](https://github.com/aangelo21/canary_weather/blob/main/docs/ARCHITECTURE.md)
+   - [Authentication Guide](https://github.com/aangelo21/canary_weather/blob/main/docs/AUTHENTICATION.md)
+   - [Database Schema](https://github.com/aangelo21/canary_weather/blob/main/docs/DATABASE.md)
+   - [Deployment Guide](https://github.com/aangelo21/canary_weather/blob/main/docs/DEPLOYMENT.md)
+   - [Diagrams](https://github.com/aangelo21/canary_weather/blob/main/docs/DIAGRAMS.md)
+   - [Domain Configuration](https://github.com/aangelo21/canary_weather/blob/main/docs/DOMAIN_CONFIG.md)
+   - [LDAP Guide](https://github.com/aangelo21/canary_weather/blob/main/docs/LDAP.md)
+   - [Packages](https://github.com/aangelo21/canary_weather/blob/main/docs/PACKAGES.md)
+- [🙏 Acknowledgements](#-acknowledgements)
 
 ## 🌟 Overview
 
@@ -59,33 +70,9 @@ The application integrates with AEMET (Spanish Meteorological Agency) API to pro
 
 ## 🛠️ Technology Stack
 
-### Backend
+For a detailed list of all packages and dependencies, please refer to [Packages Documentation](https://github.com/aangelo21/canary_weather/blob/main/docs/PACKAGES.md).
 
-- **Runtime**: Node.js (v18+)
-- **Framework**: Express.js v5
-- **ORM**: Sequelize v6
-- **Authentication**: JWT (JSON Web Tokens) + Express Session
-- **File Upload**: Multer v2
-- **Password Hashing**: bcrypt
-- **API Documentation**: Swagger/OpenAPI 3.0
-- **Database**: MySQL 8.0+
-
-### Frontend
-
-- **Framework**: React 18
-- **Build Tool**: Vite
-- **Mapping**: Leaflet
-- **HTTP Client**: Axios
-- **Routing**: React Router
-- **Styling**: CSS3
-- **Internationalization**: i18next
-
-### DevOps & Deployment
-
-- **Process Manager**: PM2
-- **Version Control**: Git
-- **Hosting**: DigitalOcean
-- **Database Hosting**: DigitalOcean Managed MySQL
+For architecture details and technology decisions, see [Architecture Documentation](https://github.com/aangelo21/canary_weather/blob/main/docs/ARCHITECTURE.md).
 
 ## 🚀 Quick Start
 
@@ -107,40 +94,56 @@ cd canary_weather
 
 ### Environment Setup
 
+
+
 #### Backend Environment Variables
 
 Create a `.env` file in the `backend` directory:
 
 ```env
 # Database Configuration
-DB_HOST=localhost
-DB_USER=your_mysql_username
-DB_PASSWORD=your_mysql_password
-DB_NAME=canary_weather
+DB_HOST=db-mysql-lon1-75034-do-user-27863084-0.j.db.ondigitalocean.com
+DB_USER=doadmin
+DB_PASSWORD=
+DB_NAME=defaultdb
 DB_DIALECT=mysql
-DB_PORT=3306
+DB_PORT=25060
+DB_SSL=REQUIRED
 
-# JWT Secret (use a strong random string)
-JWT_SECRET=your_super_secret_jwt_key_here
+# Authentication
+JWT_SECRET=
 
-# Session Secret
-SESSION_SECRET=your_session_secret_here
+# Frontend URL
+FRONTEND_URL=canaryweather.xyz
 
-# Server Port
-PORT=85
+# LDAP Configuration
+LDAP_ADMIN_DN=cn=admin,dc=canaryweather,dc=xyz
+LDAP_ADMIN_PASSWORD=
 
-# AEMET API Key (get from https://opendata.aemet.es/)
-AEMET_API_KEY=your_aemet_api_key_here
+# Email Service
+RESEND_API_KEY=
+
+#Vapid
+VAPID_PUBLIC_KEY=your_public_key
+VAPID_PRIVATE_KEY=your_private_key
+VAPID_SUBJECT=mailto:admin@canaryweather.xyz 
 ```
+
+> **Note:** Empty fields are intentionally left blank for security reasons. Please provide your own values for `DB_PASSWORD`, `JWT_SECRET`, `LDAP_ADMIN_PASSWORD`, and `RESEND_API_KEY` in your local environment.
 
 #### Frontend Environment Variables
 
 Create a `.env` file in the `frontend` directory:
 
 ```env
-VITE_API_URL=http://localhost:85
-VITE_API_KEY=your_api_key_here
+# API Configuration
+VITE_API_BASE=/api 
+
+# Weather API
+VITE_OPENWEATHER_API_KEY=
 ```
+
+> **Note:** Empty fields are intentionally left blank for security reasons. Please provide your own value for `VITE_OPENWEATHER_API_KEY` in your local environment.
 
 ## 📦 Installation
 
@@ -216,83 +219,13 @@ The frontend application will be available at `http://localhost:5173`
 
 ## 📚 API Documentation
 
-### Swagger UI
-
 Interactive API documentation is available at: **http://localhost:85/api-docs**
 
-The Swagger UI provides:
-
-- Complete endpoint documentation
-- Request/response schemas
-- Interactive API testing
-- JWT authentication support
-
-### Quick API Reference
-
-**Authentication**
-
-- `POST /api/users` - Register new user
-- `POST /api/users/login` - Login
-- `POST /api/users/logout` - Logout
-- `POST /api/users/refresh-token` - Refresh JWT token
-
-**Users**
-
-- `GET /api/users/me` - Get current user
-- `GET /api/users` - List all users
-- `PUT /api/users/:id` - Update user
-- `DELETE /api/users/:id` - Delete user
-
-**Points of Interest**
-
-- `GET /api/pois` - List all POIs
-- `GET /api/pois/personal` - Get user's POIs
-- `POST /api/pois` - Create POI
-- `PUT /api/pois/:id` - Update POI
-- `DELETE /api/pois/:id` - Delete POI
-
-**Alerts**
-
-- `GET /api/alerts` - List all alerts
-- `POST /api/alerts/fetch` - Fetch alerts from AEMET
-
-**Notifications**
-
-- `GET /api/notifications` - List user notifications
-- `PUT /api/notifications/:id` - Mark as read
-
-For complete API documentation, see [docs/api.md](docs/api.md)
+For complete documentation including authentication, endpoints, and schemas, see the [API Documentation](https://github.com/aangelo21/canary_weather/blob/main/docs/API.md).
 
 ## 📁 Project Structure
 
-```
-canary_weather/
-├── backend/                 # Backend application
-│   ├── config/             # Configuration files
-│   ├── controllers/        # Route controllers
-│   ├── middleware/         # Custom middleware
-│   ├── models/             # Sequelize models
-│   ├── routes/             # API routes
-│   ├── migrations/         # Database migrations
-│   ├── seeders/            # Database seeders
-│   ├── uploads/            # Uploaded files
-│   └── index.js            # Entry point
-├── frontend/               # Frontend application
-│   ├── public/             # Static assets
-│   ├── src/                # Source code
-│   │   ├── components/     # React components
-│   │   ├── pages/          # Page components
-│   │   ├── services/       # API services
-│   │   └── App.jsx         # Main app component
-│   └── index.html          # HTML template
-├── docs/                   # Documentation
-│   ├── api.md              # API documentation
-│   ├── deployment.md       # Deployment guide
-│   └── diagrams.md         # System diagrams
-├── readme.md               # This file
-├── contributing.md         # Contribution guidelines
-└── license                 # License information
-```
+See [Architecture Documentation](https://github.com/aangelo21/canary_weather/blob/main/docs/ARCHITECTURE.md) for detailed project structure and design patterns.
 
 ## 🤝 Contributing
 
@@ -309,17 +242,19 @@ This project is licensed under the MIT License - see the [license](license) file
 
 ## 🚀 Deployment
 
-For production deployment instructions, including DigitalOcean setup, PM2 configuration, and database hosting, see [docs/deployment.md](docs/deployment.md).
+For production deployment instructions, including DigitalOcean setup, PM2 configuration, and database hosting, see [docs/deployment.md](https://github.com/aangelo21/canary_weather/blob/main/docs/DEPLOYMENT.md).
 
 ## 📖 Additional Documentation
 
-- [Architecture Overview](docs/ARCHITECTURE.md)
-- [Database Schema](docs/DATABASE.md)
-- [Authentication Guide](docs/AUTHENTICATION.md)
-- [Frontend Documentation](docs/FRONTEND.md)
-- [Backend Documentation](docs/BACKEND.md)
-- [Testing Guide](docs/TESTING.md)
-- [Troubleshooting](docs/TROUBLESHOOTING.md)
+- [API Documentation](https://github.com/aangelo21/canary_weather/blob/main/docs/API.md)
+- [Architecture Overview](https://github.com/aangelo21/canary_weather/blob/main/docs/ARCHITECTURE.md)
+- [Authentication Guide](https://github.com/aangelo21/canary_weather/blob/main/docs/AUTHENTICATION.md)
+- [Database Schema](https://github.com/aangelo21/canary_weather/blob/main/docs/DATABASE.md)
+- [Deployment Guide](https://github.com/aangelo21/canary_weather/blob/main/docs/DEPLOYMENT.md)
+- [Diagrams](https://github.com/aangelo21/canary_weather/blob/main/docs/DIAGRAMS.md)
+- [Domain Configuration](https://github.com/aangelo21/canary_weather/blob/main/docs/DOMAIN_CONFIG.md)
+- [LDAP Guide](https://github.com/aangelo21/canary_weather/blob/main/docs/LDAP.md)
+- [Packages](https://github.com/aangelo21/canary_weather/blob/main/docs/PACKAGES.md)
 
 ## 🙏 Acknowledgements
 

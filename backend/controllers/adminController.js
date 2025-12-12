@@ -1,52 +1,49 @@
-import { User, PointOfInterest, Alert, Location, UserLocation } from "../models/index.js";
+import { PointOfInterest, Alert, Location, UserLocation, User } from "../models/index.js";
+import { LdapService } from "../services/ldapService.js";
 import { Op } from "sequelize";
 import sequelize from "./dbController.js";
 
-// Controller for admin-related endpoints
-
-// Get admin dashboard
 export const getDashboard = async (req, res) => {
   try {
     const { search, type, userSearch } = req.query;
     const where = {};
-    const userWhere = {};
-
+    
+    // Apply search filter for POIs if provided
     if (search) {
       where.name = { [Op.like]: `%${search}%` };
     }
 
+    // Apply type filter for POIs if provided
     if (type && type !== "") {
       where.type = type;
     }
 
+    // Fetch basic counts
+    const poisCount = await PointOfInterest.count();
+    const alertsCount = await Alert.count();
+
+    // Fetch filtered POIs
+    const pois = await PointOfInterest.findAll({
+      where,
+      order: [["createdAt", "DESC"]],
+    });
+
+    // Fetch filtered Users from DB
+    const userWhere = {};
     if (userSearch) {
       userWhere[Op.or] = [
         { username: { [Op.like]: `%${userSearch}%` } },
         { email: { [Op.like]: `%${userSearch}%` } }
       ];
     }
-
-    const usersCount = await User.count();
-    const poisCount = await PointOfInterest.count();
-    const alertsCount = await Alert.count();
-
-    const pois = await PointOfInterest.findAll({
-      where,
-      include: [
-        {
-          model: User,
-          through: { attributes: [] }, // Hide join table attributes
-        },
-      ],
-      order: [["createdAt", "DESC"]],
-    });
-
     const users = await User.findAll({
-      where: userWhere,
-      order: [["createdAt", "DESC"]],
+        where: userWhere,
+        order: [['createdAt', 'DESC']]
     });
+    const usersCount = await User.count();
 
     // --- Dashboard Statistics ---
+    
     // 1. POI count by category
     const poiByCategory = await PointOfInterest.findAll({
       attributes: ['type', [sequelize.fn('COUNT', sequelize.col('PointOfInterest.id')), 'count']],
@@ -107,7 +104,6 @@ export const getDashboard = async (req, res) => {
   }
 };
 
-// Create Global POI
 export const createGlobalPOI = async (req, res) => {
   try {
     const { name, latitude, longitude, description, token } = req.body;
@@ -127,7 +123,6 @@ export const createGlobalPOI = async (req, res) => {
   }
 };
 
-// Update POI
 export const updatePOI = async (req, res) => {
   try {
     const { id } = req.params;
@@ -150,7 +145,6 @@ export const updatePOI = async (req, res) => {
   }
 };
 
-// Delete POI
 export const deletePOI = async (req, res) => {
   try {
     const { id } = req.params;
@@ -166,16 +160,20 @@ export const deletePOI = async (req, res) => {
   }
 };
 
-// User Management
 export const createUser = async (req, res) => {
   try {
     const { username, email, password, is_admin } = req.body;
+    
+    // Create in LDAP (credentials)
+    await LdapService.createUser(username, email, password);
+    
+    // Create in DB (profile + admin role)
     await User.create({
-      username,
-      email,
-      password,
-      is_admin: is_admin === 'on'
+        username,
+        email,
+        is_admin: is_admin === 'on'
     });
+    
     return res.redirect('/admin');
   } catch (err) {
     return res.status(500).send("Error creating user: " + err.message);
@@ -184,16 +182,19 @@ export const createUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { username, email, is_admin } = req.body;
+    const { id } = req.params; // UUID
+    const { email, is_admin } = req.body;
     
-    const updateData = {
-      username,
-      email,
-      is_admin: is_admin === 'on'
-    };
+    const user = await User.findByPk(id);
+    if (user) {
+        user.email = email;
+        user.is_admin = is_admin === 'on';
+        await user.save();
+        
+        // Optionally update email in LDAP if needed
+        // await LdapService.updateUser(user.username, { email });
+    }
 
-    await User.update(updateData, { where: { id } });
     return res.redirect('/admin');
   } catch (err) {
     return res.status(500).send("Error updating user: " + err.message);
@@ -202,8 +203,16 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   try {
-    const { id } = req.params;
-    await User.destroy({ where: { id } });
+    const { id } = req.params; // UUID
+    const user = await User.findByPk(id);
+    
+    if (user) {
+        // Delete from LDAP
+        await LdapService.deleteUser(user.username);
+        // Delete from DB
+        await user.destroy();
+    }
+    
     return res.redirect('/admin');
   } catch (err) {
     return res.status(500).send("Error deleting user: " + err.message);

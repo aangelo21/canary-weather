@@ -6,7 +6,15 @@ import { apiFetch, setAccessToken } from "./api";
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 
-// Function to authenticate a user with username/email and password
+/**
+ * Authenticates a user with username and password.
+ * 
+ * @param {Object} credentials - The user credentials.
+ * @param {string} credentials.username - The username.
+ * @param {string} credentials.password - The password.
+ * @returns {Promise<Object>} The user data and access token.
+ * @throws {Error} If authentication fails.
+ */
 export async function loginUser({ username, password }) {
   // Make POST request to login endpoint with JSON body
   const response = await fetch(`${API_BASE}/users/login`, {
@@ -19,8 +27,15 @@ export async function loginUser({ username, password }) {
   });
   // Handle error responses
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || "Error logging in");
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.indexOf("application/json") !== -1) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error logging in");
+    } else {
+        const text = await response.text();
+        console.error("Non-JSON error response:", text);
+        throw new Error(`Server error: ${response.status} ${response.statusText}`);
+    }
   }
   
   const data = await response.json();
@@ -30,7 +45,13 @@ export async function loginUser({ username, password }) {
   return data;
 }
 
-// Function to logout the user
+/**
+ * Logs out the current user.
+ * Clears the session cookie and the local access token.
+ * 
+ * @returns {Promise<Object>} The logout response.
+ * @throws {Error} If the logout request fails.
+ */
 export async function logoutUser() {
   const response = await fetch(`${API_BASE}/users/logout`, {
     method: "POST",
@@ -43,7 +64,38 @@ export async function logoutUser() {
   return response.json();
 }
 
-// Function to get the current authenticated user's profile
+/**
+ * Attempts to restore the user session by refreshing the access token.
+ * Uses the HTTP-only session cookie to request a new JWT.
+ * 
+ * @returns {Promise<boolean>} True if session restored successfully, false otherwise.
+ */
+export async function restoreSession() {
+  try {
+    const response = await fetch(`${API_BASE}/users/refresh-token`, {
+      method: "POST",
+      credentials: "include",
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data.token) {
+        setAccessToken(data.token);
+        return true;
+      }
+    }
+  } catch (error) {
+    console.error("Error restoring session:", error);
+  }
+  return false;
+}
+
+/**
+ * Retrieves the profile of the currently authenticated user.
+ * 
+ * @returns {Promise<Object>} The user profile data.
+ * @throws {Error} If the request fails.
+ */
 export async function getCurrentUser() {
   // Make GET request to user profile endpoint with credentials
   const response = await apiFetch(`/users/me`);
@@ -56,7 +108,12 @@ export async function getCurrentUser() {
   return response.json();
 }
 
-// Function to fetch all users (admin functionality)
+/**
+ * Fetches all users (Admin only).
+ * 
+ * @returns {Promise<Array>} A list of all users.
+ * @throws {Error} If the request fails.
+ */
 export async function fetchUsers() {
   // Make GET request to users endpoint
   const response = await apiFetch(`/users`);
@@ -65,8 +122,15 @@ export async function fetchUsers() {
   return response.json();
 }
 
-// Function to create a new user or update an existing one
-// Supports both JSON data and FormData for profile picture uploads
+/**
+ * Creates a new user or updates an existing one.
+ * Supports both JSON data and FormData (for profile pictures).
+ * 
+ * @param {Object|FormData} formData - The user data.
+ * @param {string|null} editingId - The ID of the user to update, or null to create.
+ * @returns {Promise<Object>} The created or updated user object.
+ * @throws {Error} If the request fails.
+ */
 export async function createOrUpdateUser(formData, editingId) {
   // Determine URL and method based on create vs update operation
   const endpoint = editingId
@@ -108,11 +172,23 @@ export async function createOrUpdateUser(formData, editingId) {
     const errorData = await response.json();
     throw new Error(errorData.error || "Error saving user");
   }
+  
+  const data = await response.json();
+  if (data.token) {
+    setAccessToken(data.token);
+  }
+  
   // Return success response
-  return response.json();
+  return data;
 }
 
-// Function to delete a user account
+/**
+ * Deletes a user account.
+ * 
+ * @param {string} id - The ID of the user to delete.
+ * @returns {Promise<Object>} A success object or the parsed JSON response.
+ * @throws {Error} If the deletion fails.
+ */
 export async function deleteUser(id) {
   // Make DELETE request to specific user endpoint
   const response = await apiFetch(`/users/${id}`, {
@@ -127,7 +203,13 @@ export async function deleteUser(id) {
   return response.status === 204 ? { success: true } : response.json();
 }
 
-// Function to fetch all available municipalities
+/**
+ * Fetches all available municipalities.
+ * Used for populating location selection lists.
+ * 
+ * @returns {Promise<Array>} A list of municipality objects.
+ * @throws {Error} If the request fails.
+ */
 export async function fetchMunicipalities() {
   // Make GET request to municipalities endpoint
   const response = await fetch(`${API_BASE}/users/municipalities`);

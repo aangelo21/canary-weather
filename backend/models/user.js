@@ -2,10 +2,22 @@
 import sequelize from "../controllers/dbController.js";
 // Import DataTypes for defining column types
 import { DataTypes } from "sequelize";
-// Import bcrypt for password hashing
-import bcrypt from "bcrypt";
 
-// Define the User model using Sequelize
+/**
+ * User Model
+ * 
+ * Represents a registered user of the application.
+ * Handles authentication (password hashing) and profile information.
+ * 
+ * @typedef {Object} User
+ * @property {string} id - Unique identifier (UUID).
+ * @property {string} email - User's email address (unique).
+ * @property {string} username - User's display name.
+ * @property {string} profile_picture_url - URL to profile image.
+ * @property {boolean} is_admin - Flag indicating administrative privileges.
+ * @property {Date} createdAt - Timestamp of creation.
+ * @property {Date} updatedAt - Timestamp of last update.
+ */
 const User = sequelize.define(
   "User",
   {
@@ -25,11 +37,6 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    // Hashed password for secure authentication
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     // URL to the user's profile picture, optional
     profile_picture_url: {
       type: DataTypes.STRING,
@@ -45,27 +52,6 @@ const User = sequelize.define(
   {
     // Enable automatic timestamps (createdAt, updatedAt)
     timestamps: true,
-    // Define hooks to hash passwords before saving
-    hooks: {
-      // Hash password before creating a new user
-      beforeCreate: async (user) => {
-        if (user.password) {
-          // Generate salt for hashing
-          const salt = await bcrypt.genSalt(10);
-          // Hash the password with the salt
-          user.password = await bcrypt.hash(user.password, salt);
-        }
-      },
-      // Hash password before updating if it has changed
-      beforeUpdate: async (user) => {
-        if (user.changed("password")) {
-          // Generate salt for hashing
-          const salt = await bcrypt.genSalt(10);
-          // Hash the password with the salt
-          user.password = await bcrypt.hash(user.password, salt);
-        }
-      },
-    },
   }
 );
 

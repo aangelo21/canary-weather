@@ -1,3 +1,11 @@
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const _filename = fileURLToPath(import.meta.url);
+const _dirname = path.dirname(_filename);
+dotenv.config({ path: path.join(_dirname, '.env') });
+
 // Import necessary modules for the Express server
 import express from "express";
 import cors from "cors";
@@ -7,8 +15,7 @@ import connectSessionSequelize from "connect-session-sequelize";
 import sequelize from "./controllers/dbController.js";
 // Import models to ensure they are registered with Sequelize
 import "./models/index.js";
-import path from "path";
-import { fileURLToPath } from "url";
+import http from "http";
 
 import pointOfInterestRoutes from "./routes/pointOfInterestRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -16,10 +23,16 @@ import alertRoutes from "./routes/alertRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import userLocationRoutes from "./routes/userLocationRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import pushRoutes from "./routes/pushRoutes.js";
 
 // Import Swagger for API documentation
 import swaggerUi from "swagger-ui-express";
+
 import swaggerSpec from "./config/swagger.config.js";
+import swaggerSpecProd from "./config/swagger.config.prod.js";
+// Import websocket initializer. This module will encapsulate all Socket.IO logic.
+import initWebsocket from "./services/websocketService.js";
+import { startAlertScheduler } from "./services/alertScheduler.js";
 
 // Define __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -35,11 +48,22 @@ app.set("views", path.join(__dirname, "views"));
 // Set the port from environment variable or default to 85
 const PORT = process.env.PORT || 85;
 
+const isProduction = process.env.NODE_ENV === 'production' || (process.env.FRONTEND_URL && process.env.FRONTEND_URL.includes('canaryweather.xyz'));
+const isDevelopment = !isProduction;
+
+// Define allowed origins for CORS (Cross-Origin Resource Sharing)
+// This list should match the one used in the WebSocket service.
+const ALLOWED_ORIGINS = [
+  "http://localhost:5173",
+  "http://134.209.22.118:5173",
+  "https://canaryweather.xyz",
+];
+
 // Enable CORS for cross-origin requests
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://134.209.22.118:5173", "https://canaryweather.xyz"],
-    credentials: true,
+    origin: ALLOWED_ORIGINS,
+    credentials: true, // Allow cookies/headers to be sent
   })
 );
 // Parse incoming JSON payloads
@@ -72,13 +96,30 @@ app.use(
 // Serve static files from the uploads directory for profile pictures and POI images
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Swagger API Documentation
+// Swagger API Documentation - Route based on environment
 app.use(
   "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, {
+  isDevelopment 
+    ? swaggerUi.serveFiles(swaggerSpec, {})
+    : swaggerUi.serveFiles(swaggerSpecProd, {}),
+  isDevelopment
+    ? swaggerUi.setup(swaggerSpec, {
+        customCss: ".swagger-ui .topbar { display: none }",
+        customSiteTitle: "CanaryWeather API Docs - Development",
+      })
+    : swaggerUi.setup(swaggerSpecProd, {
+        customCss: ".swagger-ui .topbar { display: none }",
+        customSiteTitle: "CanaryWeather API Docs - Production",
+      })
+);
+
+// Swagger API Documentation - Production (read-only)
+app.use(
+  "/api-docs-prod",
+  swaggerUi.serveFiles(swaggerSpecProd, {}),
+  swaggerUi.setup(swaggerSpecProd, {
     customCss: ".swagger-ui .topbar { display: none }",
-    customSiteTitle: "CanaryWeather API Docs",
+    customSiteTitle: "CanaryWeather API Docs - Production",
   })
 );
 
@@ -87,6 +128,15 @@ app.get("/api-docs.json", (req, res) => {
   res.setHeader("Content-Type", "application/json");
   res.send(swaggerSpec);
 });
+
+// Serve OpenAPI JSON spec for production
+app.get("/api-docs-prod.json", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.send(swaggerSpecProd);
+});
+
+// Serve static files from the uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use("/api/pois", pointOfInterestRoutes);
 
@@ -99,9 +149,11 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/user-locations", userLocationRoutes);
 
 app.use("/admin", adminRoutes);
+app.use("/api/push", pushRoutes);
 
 // Health check endpoint to verify server status
 app.get("/api/health", (req, res) => {
+
   res.json({ status: "OK", message: "CanaryWeather API is running" });
 });
 
@@ -112,17 +164,37 @@ app.get("/api/health", (req, res) => {
     await sequelize.authenticate();
     console.log("Connection has been established successfully.");
 
+    // Disable foreign key checks to prevent deadlocks during sync
+    await sequelize.query('SET FOREIGN_KEY_CHECKS = 0');
+
     // Synchronize models with database (create tables if they don't exist)
-    await sequelize.sync({ alter: true });
+    // We use migrations for schema changes, so we don't need alter: true
+    await sequelize.sync();
     console.log("All models were synchronized successfully.");
+
+    // Re-enable foreign key checks
+    await sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
 
     // Sync session store
     await sessionStore.sync();
     console.log("Session store synchronized successfully.");
 
-    // Start the server and listen on the specified port
-    app.listen(PORT, () => {
+    // Create an HTTP server from the Express app so we can attach Socket.IO
+    const server = http.createServer(app);
+
+    // Initialize the websocket layer (Socket.IO) with the HTTP server
+    // The `initWebsocket` function encapsulates all websocket event wiring
+    initWebsocket(server);
+
+    // Handle server errors (e.g. EACCES if port 85 is privileged)
+    server.on('error', (error) => {
+      console.error('Server failed to start:', error);
+    });
+
+    // Start listening on the specified port
+    server.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
+      startAlertScheduler();
     });
   } catch (error) {
     // Log any errors during database connection or sync

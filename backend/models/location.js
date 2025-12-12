@@ -3,7 +3,21 @@ import sequelize from "../controllers/dbController.js";
 // Import DataTypes for defining column types
 import { DataTypes } from "sequelize";
 
-// Define the Location model representing geographical locations in the Canary Islands
+/**
+ * Location Model
+ * 
+ * Represents a geographical location, typically a municipality or island in the Canary Islands.
+ * Used as a reference for Alerts and User preferences.
+ * 
+ * @typedef {Object} Location
+ * @property {string} id - Unique identifier (UUID).
+ * @property {string} aemet_code - Code used by AEMET (Spanish Met Office) for this location.
+ * @property {string} name - Name of the location (e.g., 'Santa Cruz de Tenerife').
+ * @property {number} latitude - Geographical latitude.
+ * @property {number} longitude - Geographical longitude.
+ * @property {Date} createdAt - Timestamp of creation.
+ * @property {Date} updatedAt - Timestamp of last update.
+ */
 const Location = sequelize.define(
   "Location",
   {

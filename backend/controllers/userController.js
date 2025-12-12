@@ -1,11 +1,20 @@
-import { User, Location, UserLocation, UserPointOfInterest, PointOfInterest } from "../models/index.js";
-import bcrypt from "bcrypt";
+import { Location, UserLocation, UserPointOfInterest, PointOfInterest, User, UserProfile } from "../models/index.js";
+import { LdapService } from "../services/ldapService.js";
+import { sendWelcomeEmail, sendLoginNotification, sendContactEmail } from "../services/emailService.js";
 import { Op } from "sequelize";
 import jwt from 'jsonwebtoken';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
-// Controller function to handle user login
+/**
+ * Authenticates a user and returns a JWT token.
+ */
 export const loginUser = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -14,118 +23,195 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ error: "Username and password are required" });
     }
 
-    // Find user by username
-    const user = await User.findOne({ 
-      where: { username },
-      include: [{ model: Location }]
-    });
-    if (!user) {
+    // Authenticate against LDAP
+    const ldapUser = await LdapService.authenticate(username, password);
+    
+    if (!ldapUser) {
       return res.status(401).json({ error: "Invalid username or password" });
     }
-    // Compare provided password with hashed password
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) {
-      return res.status(401).json({ error: "Invalid username or password" });
+
+    // Find or Create User in DB
+    let user = await User.findOne({ where: { username: username } });
+    if (!user) {
+        // If user exists in LDAP but not in DB, create them in DB
+        user = await User.create({
+            username: username,
+            email: ldapUser.email || `${username}@example.com`, // Fallback if email missing
+            is_admin: false // Default to false, admin management is now DB based
+        });
+    }
+
+    // Send login notification
+    if (user.email) {
+        sendLoginNotification(user.email, user.username);
     }
     
     // Set user in session
-    const safe = user.toJSON();
-    delete safe.password;
-    
-    req.session.user = safe;
+    req.session.user = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      profile_picture_url: user.profile_picture_url,
+      is_admin: user.is_admin
+    };
 
     // Generate JWT
-    const token = jwt.sign({ id: user.id, username: user.username, is_admin: user.is_admin }, JWT_SECRET, { expiresIn: '15m' });
+    const token = jwt.sign({ 
+      id: user.id, 
+      username: user.username, 
+      email: user.email,
+      profile_picture_url: user.profile_picture_url,
+      is_admin: user.is_admin 
+    }, JWT_SECRET, { expiresIn: '15m' });
     
     // Return user data and token
-    return res.json({ user: safe, token });
+    return res.json({ user: req.session.user, token });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    console.error(err);
+    return res.status(500).json({ error: "Authentication failed" });
   }
 };
 
-// Controller function to refresh token
+/**
+ * Refreshes the JWT token for an authenticated user.
+ */
 export const refreshToken = async (req, res) => {
-  // The user is already authenticated by session middleware
   const user = req.user;
-  
-  // Generate new JWT
-  const token = jwt.sign({ id: user.id, username: user.username, is_admin: user.is_admin }, JWT_SECRET, { expiresIn: '15m' });
+  // Ensure we are using the DB user ID
+  const token = jwt.sign({ 
+    id: user.id, 
+    username: user.username, 
+    email: user.email,
+    profile_picture_url: user.profile_picture_url,
+    is_admin: user.is_admin 
+  }, JWT_SECRET, { expiresIn: '15m' });
   
   return res.json({ token });
 };
 
-// Controller function to logout user
+/**
+ * Logs out the current user.
+ */
 export const logoutUser = async (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       return res.status(500).json({ error: "Could not log out" });
     }
-    res.clearCookie("connect.sid"); // Default cookie name
+    res.clearCookie("connect.sid");
     return res.json({ message: "Logged out successfully" });
   });
 };
 
-// Controller function to get the current authenticated user
+/**
+ * Retrieves the currently authenticated user's profile.
+ */
 export const getCurrentUser = async (req, res) => {
   try {
-    // Extract user ID from session
     const userId = req.session.user && req.session.user.id;
     if (!userId) return res.status(401).json({ error: "Not authenticated" });
-    // Find user by ID, excluding password
+
     const user = await User.findByPk(userId, {
-      attributes: { exclude: ["password"] },
-      include: [{ model: Location }]
+        include: [
+            { model: UserLocation, include: [Location] }
+        ]
     });
+
     if (!user) return res.status(404).json({ error: "User not found" });
-    return res.json(user);
+
+    const locations = user.UserLocations ? user.UserLocations.map(ul => ul.Location) : [];
+
+    // Fetch user profile (for profile picture)
+    const userProfileData = await UserProfile.findByPk(userId);
+
+    const userProfile = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      profile_picture_url: user.profile_picture_url,
+      is_admin: user.is_admin,
+      Locations: locations
+    };
+
+    return res.json(userProfile);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
 };
 
-// Controller function to get all users
+/**
+ * Retrieves all users.
+ * Not fully implemented for LDAP yet (would require search).
+ */
 export const getAllUsers = async (req, res) => {
-  try {
-    // Fetch all users, excluding passwords
-    const users = await User.findAll({
-      attributes: { exclude: ["password"] },
-    });
-    return res.json(users);
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
-  }
+  return res.status(501).json({ error: "Not implemented for LDAP" });
 };
 
-// Controller function to get a user by ID
+/**
+ * Retrieves a specific user by ID (username).
+ */
 export const getUserById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    // Find user by primary key, excluding password
-    const user = await User.findByPk(id, {
-      attributes: { exclude: ["password"] },
-    });
-    if (!user) return res.status(404).json({ error: "User not found" });
-    return res.json(user);
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
-  }
+  // Not implemented
+  return res.status(501).json({ error: "Not implemented for LDAP" });
 };
 
-// Controller function to create a new user
+/**
+ * Creates a new user account in LDAP.
+ */
 export const createUser = async (req, res) => {
   try {
     const { email, username, password, location_ids } = req.body;
     if (!email || !username || !password) {
       return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
-    const exists = await User.findOne({ where: { email } });
+
+    // Check if user exists in LDAP
+    const exists = await LdapService.userExists(username);
     if (exists) {
-      return res.status(409).json({ error: "El email ya está registrado" });
+      // If user exists in LDAP, check if they exist in DB
+      const dbUser = await User.findOne({ where: { username } });
+      if (!dbUser) {
+          // Inconsistent state: User in LDAP but not DB.
+          // We can allow "registration" to proceed to fix the DB entry, 
+          // but we should probably verify the password if we were doing a login.
+          // Since this is registration, we can't verify the old password easily without asking for it.
+          // However, if the user is trying to register, they are providing a password.
+          // We could try to authenticate with the provided password to verify ownership.
+          
+          const authenticated = await LdapService.authenticate(username, password);
+          if (authenticated) {
+              // User owns the LDAP account, so we create the DB entry
+              const user = await User.create({
+                  username,
+                  email,
+                  is_admin: false
+              });
+              
+              // Continue with post-creation logic (emails, locations, etc.)
+              // ... duplicate logic below, let's refactor or just fall through
+          } else {
+              return res.status(409).json({ error: "El usuario ya existe en LDAP (contraseña incorrecta)" });
+          }
+      } else {
+          return res.status(409).json({ error: "El usuario ya existe" });
+      }
+    } else {
+        // Create in LDAP
+        await LdapService.createUser(username, email, password);
     }
-    const user = await User.create({ email, username, password });
-    const safe = user.toJSON();
-    delete safe.password;
+    
+    // Check if user exists in DB (if we didn't just create them above)
+    let user = await User.findOne({ where: { username } });
+    if (!user) {
+        // Create in DB
+        user = await User.create({
+            username,
+            email,
+            is_admin: false
+        });
+    }
+
+    // Send welcome email
+    sendWelcomeEmail(email, username);
 
     if (location_ids && Array.isArray(location_ids)) {
       for (const location_id of location_ids) {
@@ -155,33 +241,79 @@ export const createUser = async (req, res) => {
       }
     }
 
-    // Set user in session
-    req.session.user = safe;
+    const safeUser = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      profile_picture_url: user.profile_picture_url,
+      is_admin: user.is_admin
+    };
 
-    return res.status(201).json({ user: safe });
+    // Set user in session
+    req.session.user = safeUser;
+
+    // Generate JWT for the new user
+    const token = jwt.sign({ 
+      id: safeUser.id, 
+      username: safeUser.username, 
+      email: safeUser.email,
+      profile_picture_url: safeUser.profile_picture_url,
+      is_admin: safeUser.is_admin 
+    }, JWT_SECRET, { expiresIn: '15m' });
+
+    return res.status(201).json({ user: safeUser, token });
   } catch (err) {
-    return res.status(400).json({ error: err.message });
+    console.error(err);
+    return res.status(400).json({ error: "Error creating user: " + err.message });
   }
 };
 
-// Controller function to update an existing user
+/**
+ * Updates an existing user's profile (Locations and Profile Picture).
+ */
 export const updateUser = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; // This is the UUID now
     const payload = { ...req.body };
 
-    if (req.file) {
-      payload.profile_picture_url = `/uploads/profile-pictures/${req.file.filename}`;
+    const user = await User.findByPk(id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Update profile fields
+    if (req.file || (payload.profile_picture_url === '' || payload.profile_picture_url === null)) {
+        // If there is an existing profile picture and it is a local file, delete it
+        if (user.profile_picture_url && user.profile_picture_url.startsWith('/uploads/')) {
+            const relativePath = user.profile_picture_url.startsWith('/') ? user.profile_picture_url.substring(1) : user.profile_picture_url;
+            const oldPath = path.join(__dirname, '..', relativePath);
+            try {
+                if (fs.existsSync(oldPath)) {
+                    fs.unlinkSync(oldPath);
+                }
+            } catch (err) {
+                console.error("Failed to delete old profile picture:", err);
+            }
+        }
     }
 
-    const currentUser = await User.findByPk(id);
-    if (!currentUser) return res.status(404).json({ error: "User not found" });
+    if (req.file) {
+      // Construct the URL for the uploaded file
+      user.profile_picture_url = `/uploads/profile-pictures/${req.file.filename}`;
+    } else if (payload.profile_picture_url === '' || payload.profile_picture_url === null) {
+        user.profile_picture_url = null;
+    } else if (payload.profile_picture_url) {
+        user.profile_picture_url = payload.profile_picture_url;
+    }
+
+    // Update password if provided
+    if (payload.password) {
+        await LdapService.updateUser(user.username, { password: payload.password });
+    }
+
+    // Only admin can update is_admin, but let's assume this endpoint is protected or logic is elsewhere
+    // For now, let's just save the user if changed
+    await user.save();
 
     const location_ids = payload.location_ids;
-    delete payload.location_ids;
-    delete payload.location_id;
-
-    await User.update(payload, { where: { id }, individualHooks: true });
 
     if (location_ids && Array.isArray(location_ids)) {
       // Remove any existing location for this user
@@ -228,38 +360,45 @@ export const updateUser = async (req, res) => {
       }
     }
 
-    const updated = await User.findByPk(id, {
-      attributes: { exclude: ["password"] },
-      include: [{ model: Location }]
+    // Return updated profile
+    const updatedUser = await User.findByPk(id, {
+        include: [{ model: UserLocation, include: [Location] }]
     });
-    if (!updated) return res.status(404).json({ error: "User not found" });
+    
+    const locations = updatedUser.UserLocations ? updatedUser.UserLocations.map(ul => ul.Location) : [];
+
+    // Fetch updated profile data
+    const userProfileData = await UserProfile.findByPk(id);
+
+    const updated = {
+      id: updatedUser.id,
+      username: updatedUser.username,
+      email: updatedUser.email,
+      profile_picture_url: updatedUser.profile_picture_url,
+      is_admin: updatedUser.is_admin,
+      Locations: locations
+    };
+
     return res.json(updated);
   } catch (err) {
     return res.status(400).json({ error: err.message });
   }
 };
 
-// Controller function to delete a user
+/**
+ * Deletes a user account.
+ */
 export const deleteUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-    // Delete user by ID
-    const deleted = await User.destroy({ where: { id } });
-    if (!deleted) return res.status(404).json({ error: "User not found" });
-    // Return 204 No Content on success
-    return res.status(204).send();
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
-  }
+  return res.status(501).json({ error: "Not implemented for LDAP" });
 };
 
-// Controller function to get all available municipalities
+/**
+ * Retrieves all available municipalities.
+ */
 export const getMunicipalities = async (req, res) => {
   try {
-    // Get all locations that are municipalities (not just islands)
     const municipalities = await Location.findAll({
       where: {
-        // Assuming municipalities have coordinates (islands might not in some cases)
         latitude: { [Op.ne]: null },
         longitude: { [Op.ne]: null },
       },
@@ -268,5 +407,32 @@ export const getMunicipalities = async (req, res) => {
     return res.json(municipalities);
   } catch (err) {
     return res.status(500).json({ error: err.message });
+  }
+};
+
+/**
+ * Sends a contact email from the user to support.
+ */
+export const contactSupport = async (req, res) => {
+  try {
+    const { name, subject, message } = req.body;
+    // Use email from authenticated user if available, otherwise require it in body (but frontend uses auth)
+    // The user is in req.user from authenticateToken middleware
+    const userEmail = req.user ? req.user.email : req.body.email;
+
+    if (!userEmail) {
+        return res.status(400).json({ error: "User email not found. Please login or provide email." });
+    }
+
+    const result = await sendContactEmail(userEmail, name, subject, message);
+
+    if (result.success) {
+      return res.json({ message: "Message sent successfully" });
+    } else {
+      return res.status(500).json({ error: "Failed to send message" });
+    }
+  } catch (err) {
+    console.error("Contact support error:", err);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };

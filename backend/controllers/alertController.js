@@ -1,6 +1,22 @@
 import { Alert } from "../models/index.js";
 import { fetchAndStoreWarnings } from "../services/meteoalarmService.js";
 
+/**
+ * Alert Controller
+ * 
+ * Manages weather alerts and warnings.
+ * Handles CRUD operations for alerts and triggers the external fetching service.
+ */
+
+/**
+ * Retrieves all alerts.
+ * 
+ * Fetches a list of all weather alerts currently stored in the database.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response containing an array of alerts.
+ */
 export const getAllAlerts = async (req, res) => {
   try {
     const items = await Alert.findAll();
@@ -10,6 +26,15 @@ export const getAllAlerts = async (req, res) => {
   }
 };
 
+/**
+ * Retrieves a specific alert by ID.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.params - URL parameters.
+ * @param {string} req.params.id - The ID of the alert to retrieve.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response containing the alert object or a 404 error.
+ */
 export const getAlertById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -21,6 +46,16 @@ export const getAlertById = async (req, res) => {
   }
 };
 
+/**
+ * Creates a new alert manually.
+ * 
+ * Typically used for testing or manual overrides, as most alerts come from the external service.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.body - The alert data.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response containing the created alert.
+ */
 export const createAlert = async (req, res) => {
   try {
     const payload = req.body;
@@ -31,6 +66,16 @@ export const createAlert = async (req, res) => {
   }
 };
 
+/**
+ * Updates an existing alert.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.params - URL parameters.
+ * @param {string} req.params.id - The ID of the alert to update.
+ * @param {Object} req.body - The updated alert data.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response containing the updated alert or a 404 error.
+ */
 export const updateAlert = async (req, res) => {
   try {
     const { id } = req.params;
@@ -44,6 +89,15 @@ export const updateAlert = async (req, res) => {
   }
 };
 
+/**
+ * Deletes an alert.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.params - URL parameters.
+ * @param {string} req.params.id - The ID of the alert to delete.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} 204 No Content response on success or a 404 error.
+ */
 export const deleteAlert = async (req, res) => {
   try {
     const { id } = req.params;
@@ -55,10 +109,24 @@ export const deleteAlert = async (req, res) => {
   }
 };
 
+/**
+ * Triggers the external warning fetch process.
+ * 
+ * Calls the `meteoalarmService` to scrape or fetch the latest warnings
+ * from the external provider, update the database, and send notifications
+ * to all subscribed users about new alerts.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response confirming the operation and number of new alerts.
+ */
 export const fetchWarnings = async (req, res) => {
   try {
-    await fetchAndStoreWarnings();
-    return res.json({ message: 'Warnings fetched and stored successfully' });
+    const newAlerts = await fetchAndStoreWarnings();
+    return res.json({ 
+      message: 'Warnings fetched and stored successfully',
+      newAlerts: newAlerts.length
+    });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

@@ -24,7 +24,7 @@
     <div class="max-w-6xl mx-auto">
         <div class="flex justify-between items-center mb-8">
             <h1 class="text-3xl font-bold text-gray-800">Panel de Administración</h1>
-            <a href="<%= frontendUrl %>" class="bg-brand-primary hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg inline-flex items-center transition-colors shadow-sm">
+            <a href="<%= frontendUrl || '/' %>" class="bg-brand-primary hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg inline-flex items-center transition-colors shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                 </svg>
@@ -72,7 +72,19 @@
             </div>
         </div>
 
-        <div class="mt-12">
+        <!-- View Switcher -->
+        <div class="mt-8 mb-6 flex justify-center">
+            <div class="bg-white p-1 rounded-lg shadow-sm border border-gray-200 inline-flex">
+                <button onclick="switchView('pois')" id="btn-pois" class="px-6 py-2 rounded-md text-sm font-medium transition-colors bg-brand-primary text-white">
+                    Gestionar POIs
+                </button>
+                <button onclick="switchView('users')" id="btn-users" class="px-6 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+                    Gestionar Usuarios
+                </button>
+            </div>
+        </div>
+
+        <div id="pois-section" class="mt-6">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-800">Puntos de Interés</h2>
                 <button onclick="openCreateModal()" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors shadow-sm">
@@ -164,7 +176,7 @@
         </div>
 
         <!-- User Management Section -->
-        <div class="mt-12">
+        <div id="users-section" class="mt-6 hidden">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-800">Usuarios</h2>
                 <button onclick="openCreateUserModal()" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors shadow-sm">
@@ -217,7 +229,7 @@
                                             <% } %>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            <%= new Date(user.createdAt).toLocaleDateString() %>
+                                            <%= user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-' %>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <button onclick="openEditUserModal('<%= user.id %>', '<%= user.username %>', '<%= user.email %>', '<%= user.is_admin %>')" class="text-indigo-600 hover:text-indigo-900 mr-4">Editar</button>
@@ -408,8 +420,44 @@
     </div>
 
     <script>
+        // View Switching Logic
+        function switchView(viewName) {
+            const poisSection = document.getElementById('pois-section');
+            const usersSection = document.getElementById('users-section');
+            const btnPois = document.getElementById('btn-pois');
+            const btnUsers = document.getElementById('btn-users');
+
+            if (viewName === 'pois') {
+                poisSection.classList.remove('hidden');
+                usersSection.classList.add('hidden');
+                
+                btnPois.classList.remove('text-gray-600', 'hover:text-gray-900', 'bg-transparent');
+                btnPois.classList.add('bg-brand-primary', 'text-white');
+                
+                btnUsers.classList.add('text-gray-600', 'hover:text-gray-900', 'bg-transparent');
+                btnUsers.classList.remove('bg-brand-primary', 'text-white');
+                
+                localStorage.setItem('adminView', 'pois');
+            } else {
+                poisSection.classList.add('hidden');
+                usersSection.classList.remove('hidden');
+                
+                btnUsers.classList.remove('text-gray-600', 'hover:text-gray-900', 'bg-transparent');
+                btnUsers.classList.add('bg-brand-primary', 'text-white');
+                
+                btnPois.classList.add('text-gray-600', 'hover:text-gray-900', 'bg-transparent');
+                btnPois.classList.remove('bg-brand-primary', 'text-white');
+                
+                localStorage.setItem('adminView', 'users');
+            }
+        }
+
         // Initialize Charts
         document.addEventListener('DOMContentLoaded', function() {
+            // Restore view from localStorage
+            const savedView = localStorage.getItem('adminView') || 'pois';
+            switchView(savedView);
+
             const stats = <%- JSON.stringify(stats || {}) %>;
             
             if (stats.poiByCategory) {

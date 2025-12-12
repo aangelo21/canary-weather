@@ -1,4 +1,15 @@
 import swaggerJsdoc from "swagger-jsdoc";
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env from parent directory (backend root)
+dotenv.config({ path: path.join(__dirname, '../.env') });
+
+const PORT = process.env.PORT || 85;
 
 const options = {
   definition: {
@@ -19,7 +30,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:85",
+        url: `http://localhost:${PORT}`,
         description: "Development server",
       },
     ],
@@ -30,7 +41,7 @@ const options = {
           scheme: "bearer",
           bearerFormat: "JWT",
           description:
-            "Enter your JWT token obtained from login or registration",
+            "Enter your JWT token obtained from login or registration. Note: Tokens expire after 15 minutes.",
         },
       },
       schemas: {
@@ -39,8 +50,7 @@ const options = {
           properties: {
             id: {
               type: "string",
-              format: "uuid",
-              description: "User unique identifier",
+              description: "User unique identifier (username)",
             },
             email: {
               type: "string",
@@ -51,22 +61,9 @@ const options = {
               type: "string",
               description: "User display name",
             },
-            profile_picture_url: {
-              type: "string",
-              nullable: true,
-              description: "URL to user profile picture",
-            },
             is_admin: {
               type: "boolean",
               description: "Admin privileges flag",
-            },
-            createdAt: {
-              type: "string",
-              format: "date-time",
-            },
-            updatedAt: {
-              type: "string",
-              format: "date-time",
             },
           },
         },
@@ -186,7 +183,7 @@ const options = {
             },
             user_id: {
               type: "string",
-              format: "uuid",
+              description: "User username",
             },
             message: {
               type: "string",
@@ -219,7 +216,7 @@ const options = {
     tags: [
       {
         name: "Authentication",
-        description: "User authentication and authorization endpoints",
+        description: "User authentication and authorization endpoints (LDAP-based)",
       },
       {
         name: "Users",

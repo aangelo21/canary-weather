@@ -5,6 +5,14 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
+/**
+ * Database Controller (Configuration)
+ * 
+ * This module initializes the Sequelize instance for connecting to the MySQL database.
+ * It handles environment variable loading, SSL configuration for secure connections (e.g., Azure MySQL),
+ * and exports the configured Sequelize instance for use in models and other controllers.
+ */
+
 // Load environment variables from .env file
 config();
 
@@ -25,6 +33,7 @@ console.log("DB_PORT:", DB_PORT);
 console.log("DB_NAME:", DB_NAME);
 console.log("DB_USER:", DB_USER);
 console.log("==============================");
+
 // Default path to SSL CA certificate
 const defaultCaPath = path.resolve(
   __dirname,
@@ -48,6 +57,7 @@ try {
   console.warn(
     `Warning: Unable to read SSL CA file at ${CA_PATH}. Proceeding without explicit CA.`
   );
+
 }
 
 // Create Sequelize instance with database configuration

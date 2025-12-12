@@ -2,6 +2,12 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext();
 
+/**
+ * Custom hook to access the ThemeContext.
+ * 
+ * @returns {Object} The theme context value containing `isDarkMode` and `toggleTheme`.
+ * @throws {Error} If used outside of a ThemeProvider.
+ */
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
@@ -10,6 +16,17 @@ export const useTheme = () => {
   return context;
 };
 
+/**
+ * ThemeProvider Component
+ * 
+ * Manages the application's theme (light/dark mode).
+ * Persists the user's preference in localStorage and applies the 'dark' class
+ * to the document root element.
+ * 
+ * @param {Object} props - Component props.
+ * @param {React.ReactNode} props.children - Child components.
+ * @returns {JSX.Element} The provider component.
+ */
 export const ThemeProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     // Check localStorage for saved theme preference

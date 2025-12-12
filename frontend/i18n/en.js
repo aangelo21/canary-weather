@@ -44,10 +44,90 @@ export const en = {
     local: "LOCAL",
     moderate: "Moderate (Yellow)",
     severe: "Severe/Extreme (Orange/Red)",
+    upcoming: "Upcoming",
     errorFetchingExternal: "Could not update warnings from external source. Showing cached data.",
+    
+    // Alert severity levels
+    severityModerate: "Yellow",
+    severitySevere: "Orange",
+    severityExtreme: "Red",
+    filters: "Filters",
+    severity: "Severity",
+    areas: "Areas",
+      islands: "Islands",
+    phenomena: "Phenomena",
+    resetFilters: "Reset Filters",
+    noMatchingWarnings: "No warnings match the current filters.",
+    
+    // Weather phenomena (keeping English as default)
+    "Severe wind warning": "Severe wind warning",
+    "Severe rain warning": "Severe rain warning",
+    "Severe thunderstorm warning": "Severe thunderstorm warning",
+    "Severe snow warning": "Severe snow warning",
+    "Severe coastalevent warning": "Severe coastal event warning",
+    "Severe high-temperature warning": "Severe high-temperature warning",
+    "Severe low-temperature warning": "Severe low-temperature warning",
+    "Severe fog warning": "Severe fog warning",
+    "Extreme wind warning": "Extreme wind warning",
+    "Extreme rain warning": "Extreme rain warning",
+    "Extreme thunderstorm warning": "Extreme thunderstorm warning",
+    "Extreme snow warning": "Extreme snow warning",
+    "Extreme coastalevent warning": "Extreme coastal event warning",
+    "Extreme high-temperature warning": "Extreme high-temperature warning",
+    "Extreme low-temperature warning": "Extreme low-temperature warning",
+    "Extreme fog warning": "Extreme fog warning",
+    
     // Footer
     copyright: "©CanaryWeather |",
     website: "canaryweather.xyz",
+
+    // About Us
+    est: "EST. 2025 • CANARY ISLANDS",
+    aboutTitlePrefix: "Forecasting",
+    theUnpredictable: "The Unpredictable.",
+    aboutSubtitle: "We decode the complex microclimates of the archipelago, turning raw meteorological data into actionable insights for locals and travelers alike.",
+    ourPhilosophy: "Our Philosophy",
+    philosophyDesc1: "In the Canary Islands, weather is not just a backdrop—it is the protagonist. From the trade winds of the north to the calimas of the east, our lives are shaped by the elements.",
+    philosophyDesc2: "We built Canary Weather to honor this complexity. We believe that everyone deserves access to hyper-local, precise data that respects the unique microclimates of our archipelago.",
+    angeloBio: "Ensuring data integrity and system resilience. Building the engine that powers the forecast.",
+    gabrielBio: "Architecting seamless user experiences. Obsessed with performance and pixel-perfect UI.",
+    underTheHood: "Under The Hood",
+    techDesc: "Built with cutting-edge technologies to ensure speed, reliability, and scalability. We leverage the power of the modern web.",
+    roadmapTitle: "Future Horizons",
+    roadmap: {
+      q4_2025: {
+        title: "Advanced Alerts",
+        desc: "Real-time push notifications for severe weather events."
+      },
+      q1_2026: {
+        title: "Mobile App",
+        desc: "Native iOS and Android applications for on-the-go access."
+      },
+      q2_2026: {
+        title: "AI Forecasting",
+        desc: "Machine learning models to predict microclimate changes."
+      }
+    },
+    getInTouch: "Get in Touch",
+    contactDesc: "Have questions about the data? Found a bug? Or just want to say hello? We are always listening to our community.",
+    loginToContact: "Login to Send Message",
+    loginToContactDesc: "Please log in to your account to send us a message. This helps us prevent spam and respond to you faster.",
+    contactForm: {
+      name: "Your Name",
+      subject: "Subject",
+      message: "How can we help you?",
+      send: "Send Message",
+      successTitle: "Message Sent!",
+      successDesc: "Thank you for reaching out. We will get back to you shortly."
+    },
+    contactPrompt: "Have feedback or feature requests?",
+    
+    // Notifications
+    enableNotifications: "Enable Notifications",
+    disableNotifications: "Disable Notifications",
+    enabling: "Enabling...",
+    disabling: "Disabling...",
+    joinUs: "Join the Journey",
     quickLinks: "Explore",
     followUs: "Follow Us",
     privacyPolicy: "Privacy Policy",
@@ -147,9 +227,14 @@ export const en = {
         location: "La Gomera",
         description: "Ancient laurel forests shrouded in mist.",
       },
+      roquenublo: {
+        name: "Roque Nublo",
+        location: "Gran Canaria",
+        description: "An iconic volcanic rock formation and ancient sacred place.",
+      },
     },
-    forecastForYou: "Forecast for you",
-    lifestyleDesc: "Whether you're catching waves or climbing peaks, get the precise data you need.",
+    forecastForYou: "Perfect for activities",
+    lifestyleDesc: "Going for sports and it starts raining? Get real-time weather forecast and avoid that.",
     surfing: "Surfing & Water Sports",
     surfingDesc: "Swell height, wind direction, and tide charts.",
     hiking: "Hiking & Trekking",
@@ -179,5 +264,192 @@ export const en = {
     exploreMap: "Explore the Map",
     clickLocation: "Click on a Location to see its forecast",
     mapDescription: "Navigate through the islands and discover real-time weather conditions.",
+    ourHQ: "Our Basement",
+    // Testimonials
+    testimonialsTitle: "Loved by Locals & Travelers",
+    testimonialsSubtitle: "See how Canary Weather helps thousands of people plan their perfect days in the archipelago.",
+    testimonial1: "I used to check three different apps before heading out to surf. Now, Canary Weather is the only one I need. The wind and tide accuracy is unmatched, and the real-time alerts have saved me from wasted trips more than once.",
+    testimonial1Highlight: "The wind and tide accuracy is unmatched",
+    testimonial2: "As a digital nomad working from different islands, reliable weather data is crucial for my weekend hikes. This app doesn't just give you numbers; it gives you context. The microclimate warnings are a game-changer for planning routes.",
+    testimonial2Highlight: "The microclimate warnings are a game-changer",
+    testimonial3: "Planning a family trip to Tenerife was stressful until I found this. We could find the sunny spots easily even when the north was cloudy. The interface is beautiful and so easy to use, even my kids love checking the map.",
+    testimonial3Highlight: "We could find the sunny spots easily",
+    // Forgot Password & Reset
+    forgotPassword: "Forgot Password?",
+    resetPasswordTitle: "Reset your password",
+    resetPasswordDesc: "Enter your email address and we'll send you a link to reset your password.",
+    emailAddress: "Email address",
+    resetLinkSent: "If an account with that email exists, a password reset link has been sent.",
+    errorOccurred: "An error occurred. Please try again.",
+    connectionFailed: "Failed to connect to the server.",
+    sending: "Sending...",
+    sendResetLink: "Send Reset Link",
+    backToHome: "Back to Home",
+    invalidTokenError: "Invalid or missing reset token.",
+    passwordResetSuccess: "Password has been reset successfully.",
+    resetFailed: "Failed to reset password.",
+    invalidRequest: "Invalid Request",
+    missingToken: "Missing reset token.",
+    returnToHome: "Return to Home",
+    setNewPassword: "Set new password",
+    newPasswordLabel: "New Password",
+    redirectingHome: "Redirecting to home...",
+    resetting: "Resetting...",
+    resetPasswordButton: "Reset Password",
+    emailPlaceholder: "m@example.com",
+    usernamePlaceholder: "Username",
+    emailOrUsernamePlaceholder: "m@example.com or username",
+    
+    // Admin Dashboard
+    adminDashboard: "Admin Dashboard",
+    redirectingToServer: "Redirecting to server-side dashboard...",
+
+    // Map Legend
+    mapLegend: {
+      title: "Interactive Map Guide",
+      description: "Master the map features to get the most precise weather insights for the Canary Islands. Switch tabs below to explore different functionalities.",
+      tabs: {
+        layers: "Weather Layers",
+        controls: "Map Controls",
+        interaction: "Interactions"
+      },
+      layers: {
+        temp: {
+          title: "Temperature Heatmap",
+          desc: "Visualizes air temperature at 2 meters above ground. Warmer colors indicate higher temperatures.",
+          scale: {
+            light: "0°C",
+            moderate: "15°C",
+            heavy: "30°C+"
+          }
+        },
+        precip: {
+          title: "Precipitation Intensity",
+          desc: "Shows rain intensity. Darker blue/purple areas indicate heavier rainfall.",
+          scale: {
+            light: "Light",
+            moderate: "Moderate",
+            heavy: "Heavy"
+          }
+        },
+        clouds: {
+          title: "Cloud Cover",
+          desc: "Displays total cloud coverage percentage. Opaque white areas represent 100% cloud cover (overcast), while transparent areas are clear skies."
+        },
+        wind: {
+          title: "Wind Speed",
+          desc: "Dynamic visualization of wind flow. Faster moving particles and warmer colors indicate higher wind speeds (km/h)."
+        }
+      },
+      controls: {
+        search: {
+          title: "Search Bar",
+          desc: "Quickly find any city, town, or municipality in the Canary Islands. Just type the name and hit enter."
+        },
+        location: {
+          title: "My Location",
+          desc: "Click the target icon to instantly center the map on your current GPS position."
+        },
+        reset: {
+          title: "Reset View",
+          desc: "Lost? Use the reset button to zoom back out to the full view of the Canary Islands archipelago."
+        }
+      },
+      interaction: {
+        click: {
+          title: "Click Anywhere",
+          desc: "Clicking on any point on the map (land or sea) will drop a pin and show a <strong>Weather Popup</strong> with real-time data for that exact coordinate."
+        },
+        save: {
+          title: "Save Points of Interest",
+          desc: "Logged-in users can save any location as a \"Personal POI\" directly from the weather popup. These will appear in your \"Points of Interest\" list."
+        },
+        layers: {
+          title: "Layer Switching",
+          desc: "Use the layer control icon (top-right of the map) to toggle between <strong>Satellite</strong>, <strong>Terrain</strong>, and various weather overlays like Clouds or Rain."
+        }
+      }
+    },
+
+    // Privacy Policy
+    privacyPolicyPage: {
+      title: "Privacy Policy",
+      lastUpdated: "Last updated: December 1, 2025",
+      intro: {
+        title: "1. Introduction",
+        content: "Welcome to Canary Weather (\"we,\" \"our,\" or \"us\"). We are committed to protecting your privacy and ensuring you have a positive experience on our website and with our services. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our application."
+      },
+      infoCollect: {
+        title: "2. Information We Collect",
+        content: "We may collect information about you in a variety of ways. The information we may collect via the Application includes:",
+        geo: "Geolocation Data: We may request access or permission to and track location-based information from your mobile device or browser, either continuously or while you are using the Application, to provide location-based services (such as local weather forecasts).",
+        personal: "Personal Data: Personally identifiable information, such as your name, email address, and profile picture, that you voluntarily give to us when you register with the Application or when you choose to participate in various activities related to the Application."
+      },
+      useInfo: {
+        title: "3. Use of Your Information",
+        content: "Having accurate information about you permits us to provide you with a smooth, efficient, and customized experience. Specifically, we may use information collected about you via the Application to:",
+        items: [
+          "Create and manage your account.",
+          "Compile anonymous statistical data and analysis for use internally.",
+          "Email you regarding your account or order.",
+          "Enable user-to-user communications.",
+          "Generate a personal profile about you to make future visits to the Application more personalized.",
+          "Provide accurate weather forecasts based on your location."
+        ]
+      },
+      disclosure: {
+        title: "4. Disclosure of Your Information",
+        content: "We may share information we have collected about you in certain situations. Your information may be disclosed as follows:",
+        law: "By Law or to Protect Rights: If we believe the release of information about you is necessary to respond to legal process, to investigate or remedy potential violations of our policies, or to protect the rights, property, and safety of others, we may share your information as permitted or required by any applicable law, rule, or regulation."
+      },
+      security: {
+        title: "5. Security of Your Information",
+        content: "We use administrative, technical, and physical security measures to help protect your personal information. While we have taken reasonable steps to secure the personal information you provide to us, please be aware that despite our efforts, no security measures are perfect or impenetrable, and no method of data transmission can be guaranteed against any interception or other type of misuse."
+      },
+      contact: {
+        title: "6. Contact Us",
+        content: "If you have questions or comments about this Privacy Policy, please contact us at:"
+      }
+    },
+
+    // Terms and Conditions
+    terms: {
+      title: "Terms and Conditions",
+      lastUpdated: "Last updated: December 1, 2025",
+      agreement: {
+        title: "1. Agreement to Terms",
+        content: "These Terms and Conditions constitute a legally binding agreement made between you, whether personally or on behalf of an entity (\"you\") and Canary Weather (\"we,\" \"us\" or \"our\"), concerning your access to and use of the Canary Weather website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto (collectively, the \"Site\")."
+      },
+      ip: {
+        title: "2. Intellectual Property Rights",
+        content: "Unless otherwise indicated, the Site is our proprietary property and all source code, databases, functionality, software, website designs, audio, video, text, photographs, and graphics on the Site (collectively, the \"Content\") and the trademarks, service marks, and logos contained therein (the \"Marks\") are owned or controlled by us or licensed to us, and are protected by copyright and trademark laws."
+      },
+      userRep: {
+        title: "3. User Representations",
+        content: "By using the Site, you represent and warrant that:",
+        items: [
+          "All registration information you submit will be true, accurate, current, and complete.",
+          "You will maintain the accuracy of such information and promptly update such registration information as necessary.",
+          "You have the legal capacity and you agree to comply with these Terms and Conditions.",
+          "You will not access the Site through automated or non-human means, whether through a bot, script or otherwise."
+        ]
+      },
+      prohibited: {
+        title: "4. Prohibited Activities",
+        content: "You may not access or use the Site for any purpose other than that for which we make the Site available. The Site may not be used in connection with any commercial endeavors except those that are specifically endorsed or approved by us."
+      },
+      management: {
+        title: "5. Site Management",
+        content: "We reserve the right, but not the obligation, to: (1) monitor the Site for violations of these Terms and Conditions; (2) take appropriate legal action against anyone who, in our sole discretion, violates the law or these Terms and Conditions; and (3) otherwise manage the Site in a manner designed to protect our rights and property and to facilitate the proper functioning of the Site."
+      },
+      modifications: {
+        title: "6. Modifications and Interruptions",
+        content: "We reserve the right to change, modify, or remove the contents of the Site at any time or for any reason at our sole discretion without notice. However, we have no obligation to update any information on our Site. We also reserve the right to modify or discontinue all or part of the Site without notice at any time."
+      },
+      contact: {
+        title: "7. Contact Us",
+        content: "In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at:"
+      }
+    },
   },
 };

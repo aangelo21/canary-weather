@@ -4,59 +4,69 @@ This document explains the authentication and authorization system used in Canar
 
 ## Overview
 
-CanaryWeather uses a **dual authentication system**:
+CanaryWeather uses a **hybrid authentication system**:
 
-1. **JWT (JSON Web Tokens)** for API endpoints
-2. **Express Sessions** for admin dashboard
+1.  **LDAP (Lightweight Directory Access Protocol)** for user identity and credential verification.
+2.  **JWT (JSON Web Tokens)** for API endpoints authorization.
+3.  **Express Sessions** for state management in some contexts.
 
-## JWT Authentication
+## LDAP Authentication
 
 ### How It Works
 
-1. User logs in with credentials
-2. Server validates credentials
-3. Server generates JWT token (15-minute expiry)
-4. Client stores token (localStorage/memory)
-5. Client includes token in subsequent requests
-6. Server validates token on each request
+1.  User submits credentials (username/password).
+2.  Server connects to the LDAP server.
+3.  Server binds as admin to search for the user DN (Distinguished Name).
+4.  Server attempts to bind as the user to verify the password.
+5.  Server checks group membership (`admins`, `normals`) to determine roles.
+6.  If successful, a JWT is generated and returned to the client.
+
+### LDAP Service
+
+The `LdapService` handles all interactions with the LDAP server:
+
+-   **Authenticate**: Verifies credentials and retrieves user details.
+-   **Create User**: Adds new users to LDAP and assigns them to the `normals` group.
+-   **Update User**: Modifies email, password, or admin status.
+-   **Delete User**: Removes user and their group memberships.
+
+## JWT Authentication
 
 ### Token Structure
 
 ```javascript
 {
-  "id": "user-uuid",
-  "username": "johndoe",
+  "id": "username",       // LDAP username serves as ID
+  "username": "username",
   "is_admin": false,
-  "iat": 1234567890,  // Issued at
-  "exp": 1234568790   // Expires at (15 minutes)
+  "iat": 1234567890,
+  "exp": 1234568790
 }
 ```
 
 ### Implementation
 
-#### Generating Tokens
+#### Login Controller
 
 ```javascript
 // backend/controllers/userController.js
+import { LdapService } from "../services/ldapService.js";
 import jwt from "jsonwebtoken";
-
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 
 export const loginUser = async (req, res) => {
   const { username, password } = req.body;
 
-  // Validate credentials
-  const user = await User.findOne({ where: { username } });
-  const match = await bcrypt.compare(password, user.password);
+  // Authenticate against LDAP
+  const user = await LdapService.authenticate(username, password);
 
-  if (!match) {
-    return res.status(401).json({ error: "Invalid credentials" });
+  if (!user) {
+    return res.status(401).json({ error: "Invalid username or password" });
   }
 
   // Generate JWT
   const token = jwt.sign(
-    { id: user.id, username: user.username, is_admin: user.is_admin },
-    JWT_SECRET,
+    { id: user.username, username: user.username, is_admin: user.isAdmin },
+    process.env.JWT_SECRET,
     { expiresIn: "15m" }
   );
 
@@ -200,47 +210,22 @@ router.get("/admin", authenticateSession, checkAdmin, getDashboard);
 
 ## Password Security
 
-### Password Hashing
+### LDAP Handling
 
-```javascript
-// backend/models/user.js
-import bcrypt from "bcrypt";
+Password security is managed by the LDAP server. The application does not store password hashes in its own database.
 
-const User = sequelize.define(
-  "User",
-  {
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  },
-  {
-    hooks: {
-      beforeCreate: async (user) => {
-        if (user.password) {
-          const salt = await bcrypt.genSalt(10);
-          user.password = await bcrypt.hash(user.password, salt);
-        }
-      },
-      beforeUpdate: async (user) => {
-        if (user.changed("password")) {
-          const salt = await bcrypt.genSalt(10);
-          user.password = await bcrypt.hash(user.password, salt);
-        }
-      },
-    },
-  }
-);
-```
+-   **Verification**: Done by attempting to bind to the LDAP server with the provided credentials.
+-   **Storage**: Handled by the LDAP directory (e.g., OpenLDAP) using its configured hashing algorithms (e.g., SSHA).
 
-### Password Validation
+### Password Reset
 
-```javascript
-const match = await bcrypt.compare(plainPassword, hashedPassword);
-if (!match) {
-  return res.status(401).json({ error: "Invalid password" });
-}
-```
+Password reset is handled via email verification:
+
+1.  User requests password reset.
+2.  System verifies email exists in LDAP.
+3.  System sends a reset link with a signed JWT.
+4.  User provides new password.
+5.  System updates the password in LDAP via `LdapService.updateUser`.
 
 ## Security Best Practices
 

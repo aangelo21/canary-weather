@@ -13,10 +13,14 @@ import {
   getCurrentUser,
   getMunicipalities,
   refreshToken,
+  contactSupport,
 } from "../controllers/userController.js";
+
+import { forgotPassword, resetPassword } from "../controllers/authController.js";
 
 // Import multer middleware for profile picture uploads
 import { upload } from "../middleware/uploadMiddleware.js";
+import { optimizeImage } from "../middleware/imageOptimizationMiddleware.js";
 
 // Create Express router instance
 const router = express.Router();
@@ -26,6 +30,16 @@ import {
   authenticateSession,
   authenticateToken,
 } from "../middleware/authMiddleware.js";
+
+/**
+ * User Routes
+ * 
+ * Defines routes for user authentication and management.
+ * Includes login, logout, registration, profile updates, and retrieval.
+ * Also handles token refreshing and fetching available municipalities.
+ * 
+ * Base Path: /api/users
+ */
 
 /**
  * @swagger
@@ -112,6 +126,63 @@ router.post("/login", loginUser);
  *               $ref: '#/components/schemas/Error'
  */
 router.post("/logout", logoutUser);
+
+/**
+ * @swagger
+ * /api/users/forgot-password:
+ *   post:
+ *     summary: Request password reset
+ *     description: Send a password reset link to the user's email
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *     responses:
+ *       200:
+ *         description: Email sent
+ *       400:
+ *         description: Missing email
+ */
+router.post("/forgot-password", forgotPassword);
+
+/**
+ * @swagger
+ * /api/users/reset-password:
+ *   post:
+ *     summary: Reset password
+ *     description: Reset user password using a valid token
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *               - newPassword
+ *             properties:
+ *               token:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       200:
+ *         description: Password reset successful
+ *       400:
+ *         description: Invalid token or missing fields
+ */
+router.post("/reset-password", resetPassword);
 
 /**
  * @swagger
@@ -422,9 +493,46 @@ router.put(
   "/:id",
   authenticateToken,
   upload.single("profile_picture"),
+  optimizeImage,
   updateUser
 );
 router.delete("/:id", authenticateToken, deleteUser);
+
+/**
+ * @swagger
+ * /api/users/contact:
+ *   post:
+ *     summary: Send a contact email
+ *     description: Sends a contact email from the authenticated user to support.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - subject
+ *               - message
+ *             properties:
+ *               name:
+ *                 type: string
+ *               subject:
+ *                 type: string
+ *               message:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Message sent successfully
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
+router.post("/contact", authenticateToken, contactSupport);
 
 // Export the router for use in the main app
 export default router;

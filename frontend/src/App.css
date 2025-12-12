@@ -40,18 +40,7 @@ body {
 /* Header styles */
 /* Removed to allow default dark mode styles (bg-white -> #1a1a1a) and shadow-sm to apply */
 
-/* Header navigation links */
-.dark header a {
-  color: #ffffff !important;
-}
-
-.dark header a:hover {
-  color: #e2e8f0 !important;
-}
-
-.dark header .font-semibold {
-  color: #ffffff !important;
-}
+/* Header navigation links - Handled by Tailwind classes in Header.jsx */
 
 /* Text colors */
 .dark .text-gray-700 {

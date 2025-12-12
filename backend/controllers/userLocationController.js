@@ -1,6 +1,17 @@
 import { UserLocation, User, Location, UserPointOfInterest, PointOfInterest } from "../models/index.js";
 
-// Controller function to get all locations favorited by a user
+/**
+ * Retrieves all locations selected by a specific user.
+ * 
+ * Returns a list of UserLocation records, including the associated Location details.
+ * Ordered by selection date in descending order.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.params - URL parameters.
+ * @param {string} req.params.userId - The ID of the user.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response with the list of user locations.
+ */
 export const getUserLocations = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -20,7 +31,21 @@ export const getUserLocations = async (req, res) => {
   }
 };
 
-// Controller function to add a location to a user's favorites
+/**
+ * Sets a location as the user's selected location.
+ * 
+ * Ensures a user has only one selected location at a time by removing existing ones.
+ * Also manages the synchronization with 'local' type Points of Interest (POIs).
+ * When a location is selected, the corresponding local POI is automatically favorited.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.params - URL parameters.
+ * @param {string} req.params.userId - The ID of the user.
+ * @param {Object} req.body - The request body.
+ * @param {number} req.body.location_id - The ID of the location to select.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} JSON response with the created UserLocation record.
+ */
 export const addUserLocation = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -84,7 +109,19 @@ export const addUserLocation = async (req, res) => {
   }
 };
 
-// Controller function to remove a location from a user's favorites
+/**
+ * Removes a location from a user's selection.
+ * 
+ * Deletes the UserLocation record and also removes the corresponding
+ * local Point of Interest from the user's favorites.
+ * 
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.params - URL parameters.
+ * @param {string} req.params.userId - The ID of the user.
+ * @param {string} req.params.locationId - The ID of the location to remove.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} 204 No Content response on success.
+ */
 export const removeUserLocation = async (req, res) => {
   try {
     const { userId, locationId } = req.params;

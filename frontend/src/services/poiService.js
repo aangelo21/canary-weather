@@ -6,7 +6,12 @@ import { apiFetch } from "./api";
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 
-// Function to fetch all Points of Interest from the API (global and local only)
+/**
+ * Fetches all Points of Interest (POIs).
+ * 
+ * @returns {Promise<Array>} A list of POI objects.
+ * @throws {Error} If the network request fails.
+ */
 export async function fetchPois() {
   // Make GET request to POIs endpoint
   const response = await apiFetch(`/pois`);
@@ -16,7 +21,13 @@ export async function fetchPois() {
   return response.json();
 }
 
-// Function to fetch only personal and local POIs for the authenticated user
+/**
+ * Fetches personal Points of Interest for the authenticated user.
+ * This typically includes POIs created by the user or marked as favorites.
+ * 
+ * @returns {Promise<Array>} A list of personal POI objects.
+ * @throws {Error} If the network request fails.
+ */
 export async function fetchPersonalPois() {
   // Make GET request to personal POIs endpoint (includes both personal and local)
   const response = await apiFetch(`/pois/personal`);
@@ -26,8 +37,16 @@ export async function fetchPersonalPois() {
   return response.json();
 }
 
-// Function to create a new POI or update an existing one
-// Supports both JSON data and file uploads for images
+/**
+ * Creates a new POI or updates an existing one.
+ * Handles both JSON data and multipart/form-data (for image uploads).
+ * 
+ * @param {Object} formData - The POI data (name, description, lat, long, etc.).
+ * @param {string|null} editingId - The ID of the POI to update, or null to create a new one.
+ * @param {File|null} imageFile - An optional image file to upload.
+ * @returns {Promise<Object>} The created or updated POI object.
+ * @throws {Error} If the API request fails.
+ */
 export async function createOrUpdatePoi(formData, editingId, imageFile) {
   // Determine URL and HTTP method based on whether we're editing or creating
   const endpoint = editingId
@@ -93,7 +112,13 @@ export async function createOrUpdatePoi(formData, editingId, imageFile) {
   return response.json();
 }
 
-// Function to delete a POI by ID
+/**
+ * Deletes a Point of Interest by its ID.
+ * 
+ * @param {string} id - The ID of the POI to delete.
+ * @returns {Promise<Object>} A success object or the parsed JSON response.
+ * @throws {Error} If the deletion fails.
+ */
 export async function deletePoi(id) {
   // Make DELETE request to specific POI endpoint
   const response = await apiFetch(`/pois/${id}`, {
