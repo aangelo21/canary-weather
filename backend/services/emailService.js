@@ -59,7 +59,8 @@ export const sendPasswordResetEmail = async (email, resetLink) => {
     }
 
     console.log('Password reset email sent:', data);
-    catch (err) {
+    return { success: true, data };
+  } catch (err) {
     console.error('Exception sending password reset email:', err);
     return { success: false, error: err };
   }
@@ -80,7 +81,8 @@ export const sendPoiCreatedEmail = async (email, username, poiName) => {
     }
 
     console.log('POI created email sent:', data);
-    catch (err) {
+    return { success: true, data };
+  } catch (err) {
     console.error('Exception sending POI created email:', err);
     return { success: false, error: err };
   }
@@ -102,7 +104,8 @@ export const sendPoiUpdatedEmail = async (email, username, poiName) => {
 
     console.log('POI updated email sent:', data);
     return { success: true, data };
-  } console.error('Exception sending POI updated email:', err);
+  } catch (err) {
+    console.error('Exception sending POI updated email:', err);
     return { success: false, error: err };
   }
 };

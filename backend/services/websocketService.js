@@ -83,33 +83,30 @@ export default function initWebsocket(httpServer) {
       const roomName = `poi_${poiId}`;
       socket.leave(roomName);
       socket.emit("unsubscribedPoi", { poiId, room: roomName });
-      console.log(`[WebSocket] Client ${socket.id} left room: ${roomName}`);
-    
+    });
+
     // 3. Subscribe to general notifications (e.g., system-wide alerts).
     socket.on("subscribeNotifications", () => {
       const roomName = "notifications_general";
       socket.join(roomName);
       socket.emit("subscribedNotifications");
-      console.log(
-    
+    });
+
     // 4. Unsubscribe from general notifications.
     socket.on("unsubscribeNotifications", () => {
       const roomName = "notifications_general";
       socket.leave(roomName);
       socket.emit("unsubscribedNotifications");
-      console.log(
-        `[WebSocket] Client ${socket.id} unsubscribed from general notifications.`
-      );
     });
-socket.on("serverTime", () => {
+
+    // 5. Server Time (Health Check).
+    // Allows clients to check latency or sync time.
+    socket.on("serverTime", () => {
       socket.emit("serverTime", { now: new Date().toISOString() });
     });
 
     // Handle client disconnection
     socket.on("disconnect", (reason) => {
-      console.log(
-        `[WebSocket] Client disconnected: ${socket.id} (Reason: ${reason})`
-      );
     });
   });
 

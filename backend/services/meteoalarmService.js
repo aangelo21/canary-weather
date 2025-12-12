@@ -148,9 +148,9 @@ export const storeWarningsAndGetNew = async (warnings) => {
                     location_id: location.id
                 });
                 console.log(`Stored alert: ${warning.phenomenon} in ${warning.area_name}`);
-                
+                newAlerts.push(newAlert);
+            }
         }
-        
         return newAlerts;
     } catch (error) {
         console.error("Error storing warnings:", error);

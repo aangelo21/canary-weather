@@ -181,7 +181,7 @@ app.get("/api/health", (req, res) => {
 
     // Sync session store
     await sessionStore.sync();
-    console.log("Session store synchronized successfully.");
+
     // Create an HTTP server from the Express app so we can attach Socket.IO
     const server = http.createServer(app);
 
@@ -196,8 +196,8 @@ app.get("/api/health", (req, res) => {
 
     // Start listening on the specified port
     server.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-      ;
+      startAlertScheduler();
+    });
   } catch (error) {
     // Log any errors during database connection or sync
     console.error("Unable to connect to the database:", error);
