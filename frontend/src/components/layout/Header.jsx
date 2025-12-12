@@ -159,7 +159,7 @@ function Header({ isTransparent = false }) {
     }, [showLanguageDropdown, showUserDropdown, showMobileSettings]);
 
     /**
-     * Effect hook to fetch active alerts on mount.
+     * Effect hook to fetch active alerts on mount and periodically refresh.
      */
     useEffect(() => {
         const loadAlerts = async () => {
@@ -170,7 +170,13 @@ function Header({ isTransparent = false }) {
                 console.error('Error fetching alerts:', error);
             }
         };
+        
         loadAlerts();
+        
+        // Refresh alerts every 5 minutes
+        const intervalId = setInterval(loadAlerts, 5 * 60 * 1000);
+        
+        return () => clearInterval(intervalId);
     }, []);
 
     /**
@@ -218,17 +224,22 @@ function Header({ isTransparent = false }) {
 
     /**
      * Determines the color indicator based on the highest alert level.
+     * Filters only active or upcoming alerts (not ended).
      * @returns {string} The CSS class for the background color.
      */
     const getAlertColor = () => {
-        if (alerts.length === 0) return 'bg-[#00a91c]';
-        const levels = alerts.map((alert) => alert.level.toLowerCase());
-        if (levels.includes('rojo') || levels.includes('red'))
-            return 'bg-[#b50909]';
-        if (levels.includes('naranja') || levels.includes('orange'))
-            return 'bg-orange-500';
-        if (levels.includes('amarillo') || levels.includes('yellow'))
-            return 'bg-[#e5a000]';
+        const now = new Date();
+        const activeOrUpcoming = alerts.filter(alert => {
+            const endDate = new Date(alert.end_date);
+            return endDate > now;
+        });
+        
+        if (activeOrUpcoming.length === 0) return 'bg-[#00a91c]';
+        
+        const levels = activeOrUpcoming.map((alert) => alert.level);
+        if (levels.includes('Extreme')) return 'bg-[#b50909]';
+        if (levels.includes('Severe')) return 'bg-orange-500';
+        if (levels.includes('Moderate')) return 'bg-[#e5a000]';
         return 'bg-[#00a91c]';
     };
 

@@ -113,16 +113,20 @@ export const deleteAlert = async (req, res) => {
  * Triggers the external warning fetch process.
  * 
  * Calls the `meteoalarmService` to scrape or fetch the latest warnings
- * from the external provider and update the database.
+ * from the external provider, update the database, and send notifications
+ * to all subscribed users about new alerts.
  * 
  * @param {Object} req - The Express request object.
  * @param {Object} res - The Express response object.
- * @returns {Promise<void>} JSON response confirming the operation.
+ * @returns {Promise<void>} JSON response confirming the operation and number of new alerts.
  */
 export const fetchWarnings = async (req, res) => {
   try {
-    await fetchAndStoreWarnings();
-    return res.json({ message: 'Warnings fetched and stored successfully' });
+    const newAlerts = await fetchAndStoreWarnings();
+    return res.json({ 
+      message: 'Warnings fetched and stored successfully',
+      newAlerts: newAlerts.length
+    });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
