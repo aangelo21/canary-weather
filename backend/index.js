@@ -96,8 +96,16 @@ app.use(
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Swagger API Documentation
+// Redirect to trailing slash to ensure relative paths work
+app.get(["/api/docs", "/docs"], (req, res, next) => {
+  if (!req.originalUrl.endsWith("/")) {
+    return res.redirect(req.originalUrl + "/");
+  }
+  next();
+});
+
 app.use(
-  "/api/docs",
+  ["/api/docs", "/docs"],
   swaggerUi.serve,
   swaggerUi.setup(swaggerSpec, {
     customCss: ".swagger-ui .topbar { display: none }",
@@ -108,14 +116,14 @@ app.use(
 );
 
 // Serve OpenAPI JSON spec
-app.get("/api/docs.json", (req, res) => {
+app.get(["/api/docs.json", "/docs.json"], (req, res) => {
   res.setHeader("Content-Type", "application/json");
   res.send(swaggerSpec);
 });
 
 // Redirect old API docs URL to new one
 app.get("/api-docs", (req, res) => {
-  res.redirect("/api/docs");
+  res.redirect("/api/docs/");
 });
 
 // Serve static files from the uploads directory
