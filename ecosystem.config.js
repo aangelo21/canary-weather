@@ -8,6 +8,10 @@ module.exports = {
       autorestart: true,
       watch: false,
       max_memory_restart: "1G",
+      env: {
+        NODE_ENV: "production",
+        PORT: 85
+      },
       env_file: "./backend/.env",
       // Logs configuration - stored outside the project directory
       output: "/dev/null",
