@@ -29,7 +29,6 @@ import pushRoutes from "./routes/pushRoutes.js";
 import swaggerUi from "swagger-ui-express";
 
 import swaggerSpec from "./config/swagger.config.js";
-import swaggerSpecProd from "./config/swagger.config.prod.js";
 // Import websocket initializer. This module will encapsulate all Socket.IO logic.
 import initWebsocket from "./services/websocketService.js";
 import { startAlertScheduler } from "./services/alertScheduler.js";
@@ -96,49 +95,27 @@ app.use(
 // Serve static files from the uploads directory for profile pictures and POI images
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Swagger API Documentation - Route based on environment
+// Swagger API Documentation
 app.use(
-  "/api-docs",
-  isDevelopment 
-    ? swaggerUi.serveFiles(swaggerSpec, {})
-    : swaggerUi.serveFiles(swaggerSpecProd, {}),
-  isDevelopment
-    ? swaggerUi.setup(swaggerSpec, {
-        customCss: ".swagger-ui .topbar { display: none }",
-        customSiteTitle: "CanaryWeather API Docs - Development",
-        customJs: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js",
-        customCssUrl: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css"
-      })
-    : swaggerUi.setup(swaggerSpecProd, {
-        customCss: ".swagger-ui .topbar { display: none }",
-        customSiteTitle: "CanaryWeather API Docs - Production",
-        customJs: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js",
-        customCssUrl: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css"
-      })
-);
-
-// Swagger API Documentation - Production (read-only)
-app.use(
-  "/api-docs-prod",
-  swaggerUi.serveFiles(swaggerSpecProd, {}),
-  swaggerUi.setup(swaggerSpecProd, {
+  "/api/docs",
+  swaggerUi.serveFiles(swaggerSpec, {}),
+  swaggerUi.setup(swaggerSpec, {
     customCss: ".swagger-ui .topbar { display: none }",
-    customSiteTitle: "CanaryWeather API Docs - Production",
+    customSiteTitle: "CanaryWeather API Docs",
     customJs: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js",
     customCssUrl: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css"
   })
 );
 
 // Serve OpenAPI JSON spec
-app.get("/api-docs.json", (req, res) => {
+app.get("/api/docs.json", (req, res) => {
   res.setHeader("Content-Type", "application/json");
   res.send(swaggerSpec);
 });
 
-// Serve OpenAPI JSON spec for production
-app.get("/api-docs-prod.json", (req, res) => {
-  res.setHeader("Content-Type", "application/json");
-  res.send(swaggerSpecProd);
+// Redirect old API docs URL to new one
+app.get("/api-docs", (req, res) => {
+  res.redirect("/api/docs");
 });
 
 // Serve static files from the uploads directory

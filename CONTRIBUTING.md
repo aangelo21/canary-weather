@@ -168,7 +168,7 @@ Fix any linting errors before proceeding.
 - Test both backend and frontend functionality
 - Ensure the application runs without errors
 - Verify that existing features still work
-- Test API endpoints using Swagger UI (http://localhost:85/api-docs)
+- Test API endpoints using Swagger UI (http://localhost:85/api/docs)
 - Check responsive design on different screen sizes
 
 ### 6. Commit Your Changes

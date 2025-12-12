@@ -351,7 +351,7 @@ For deployment details, see [deployment.md](deployment.md).
 
 1. **Local Development**: npm run dev (both frontend and backend)
 2. **Database Migrations**: Sequelize CLI
-3. **API Testing**: Swagger UI at /api-docs
+3. **API Testing**: Swagger UI at /api/docs
 4. **Version Control**: Git with feature branches
 5. **Code Review**: Pull requests on GitHub
 
