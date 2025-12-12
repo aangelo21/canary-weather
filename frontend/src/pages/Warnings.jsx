@@ -319,7 +319,7 @@ function Warnings() {
                         onClick={() => toggleFilter('severity', 'Extreme')}
                         className={`px-4 py-2 rounded-md font-medium transition-colors ${
                             filters.severity.Extreme
-                                ? 'bg-[#b50909] text-white'
+                                ? 'bg-error text-white'
                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-neutral-700 dark:text-gray-300 dark:hover:bg-neutral-600'
                         }`}
                     >
@@ -339,7 +339,7 @@ function Warnings() {
                         onClick={() => toggleFilter('severity', 'Moderate')}
                         className={`px-4 py-2 rounded-md font-medium transition-colors ${
                             filters.severity.Moderate
-                                ? 'bg-[#e5a000] text-white'
+                                ? 'bg-warning text-white'
                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-neutral-700 dark:text-gray-300 dark:hover:bg-neutral-600'
                         }`}
                     >

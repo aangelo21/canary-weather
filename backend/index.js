@@ -106,10 +106,14 @@ app.use(
     ? swaggerUi.setup(swaggerSpec, {
         customCss: ".swagger-ui .topbar { display: none }",
         customSiteTitle: "CanaryWeather API Docs - Development",
+        customJs: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js",
+        customCssUrl: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css"
       })
     : swaggerUi.setup(swaggerSpecProd, {
         customCss: ".swagger-ui .topbar { display: none }",
         customSiteTitle: "CanaryWeather API Docs - Production",
+        customJs: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js",
+        customCssUrl: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css"
       })
 );
 
@@ -120,6 +124,8 @@ app.use(
   swaggerUi.setup(swaggerSpecProd, {
     customCss: ".swagger-ui .topbar { display: none }",
     customSiteTitle: "CanaryWeather API Docs - Production",
+    customJs: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js",
+    customCssUrl: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css"
   })
 );
 
@@ -162,7 +168,6 @@ app.get("/api/health", (req, res) => {
   try {
     // Test database connection
     await sequelize.authenticate();
-    console.log("Connection has been established successfully.");
 
     // Disable foreign key checks to prevent deadlocks during sync
     await sequelize.query('SET FOREIGN_KEY_CHECKS = 0');
@@ -170,7 +175,6 @@ app.get("/api/health", (req, res) => {
     // Synchronize models with database (create tables if they don't exist)
     // We use migrations for schema changes, so we don't need alter: true
     await sequelize.sync();
-    console.log("All models were synchronized successfully.");
 
     // Re-enable foreign key checks
     await sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
@@ -178,7 +182,6 @@ app.get("/api/health", (req, res) => {
     // Sync session store
     await sessionStore.sync();
     console.log("Session store synchronized successfully.");
-
     // Create an HTTP server from the Express app so we can attach Socket.IO
     const server = http.createServer(app);
 
@@ -194,8 +197,7 @@ app.get("/api/health", (req, res) => {
     // Start listening on the specified port
     server.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
-      startAlertScheduler();
-    });
+      ;
   } catch (error) {
     // Log any errors during database connection or sync
     console.error("Unable to connect to the database:", error);

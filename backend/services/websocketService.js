@@ -57,14 +57,8 @@ export default function initWebsocket(httpServer) {
     },
   });
 
-  console.log(
-    "Socket.IO server initialized. Allowed CORS origins:",
-    ALLOWED_ORIGINS
-  );
-
   // Listen for new client connections
   ioInstance.on("connection", (socket) => {
-    console.log(`[WebSocket] Client connected: ${socket.id}`);
 
     // --- Event Handlers ---
 
@@ -81,7 +75,6 @@ export default function initWebsocket(httpServer) {
       socket.join(roomName);
       // Acknowledge the subscription
       socket.emit("subscribedPoi", { poiId, room: roomName });
-      console.log(`[WebSocket] Client ${socket.id} joined room: ${roomName}`);
     });
 
     // 2. Unsubscribe from POI updates.
@@ -91,18 +84,14 @@ export default function initWebsocket(httpServer) {
       socket.leave(roomName);
       socket.emit("unsubscribedPoi", { poiId, room: roomName });
       console.log(`[WebSocket] Client ${socket.id} left room: ${roomName}`);
-    });
-
+    
     // 3. Subscribe to general notifications (e.g., system-wide alerts).
     socket.on("subscribeNotifications", () => {
       const roomName = "notifications_general";
       socket.join(roomName);
       socket.emit("subscribedNotifications");
       console.log(
-        `[WebSocket] Client ${socket.id} subscribed to general notifications.`
-      );
-    });
-
+    
     // 4. Unsubscribe from general notifications.
     socket.on("unsubscribeNotifications", () => {
       const roomName = "notifications_general";
@@ -112,10 +101,7 @@ export default function initWebsocket(httpServer) {
         `[WebSocket] Client ${socket.id} unsubscribed from general notifications.`
       );
     });
-
-    // 5. Server Time (Health Check).
-    // Allows clients to check latency or sync time.
-    socket.on("serverTime", () => {
+socket.on("serverTime", () => {
       socket.emit("serverTime", { now: new Date().toISOString() });
     });
 

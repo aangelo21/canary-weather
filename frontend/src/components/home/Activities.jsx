@@ -42,9 +42,9 @@ export default function Activities() {
                         />
                         
                         {/* Gradient Overlay for Text Readability */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent"></div>
                         
-                        {/* Content Container - Positioned at bottom left with z-index to sit above image/gradient */}
+                        {/* Content Container - Positioned at bottom left with z-index to sit above image/linear */}
                         <div className="absolute bottom-0 left-0 p-8 z-10">
                             <div className="text-white mb-2">
                                 <svg
@@ -82,7 +82,7 @@ export default function Activities() {
                             loading="lazy"
                             className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent"></div>
                         <div className="absolute bottom-0 left-0 p-8 z-10">
                             <div className="text-white mb-2">
                                 <svg
@@ -120,7 +120,7 @@ export default function Activities() {
                             loading="lazy"
                             className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent"></div>
                         <div className="absolute bottom-0 left-0 p-8 z-10">
                             <div className="text-white mb-2">
                                 <svg

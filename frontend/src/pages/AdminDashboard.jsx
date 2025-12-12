@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import SEO from '../components/SEO';
 
 /**
  * AdminDashboard Page Component.
@@ -38,6 +39,12 @@ const AdminDashboard = () => {
 
     return (
         <div>
+            <SEO 
+                title="Admin Dashboard" 
+                description="Administrative dashboard for managing Canary Weather content and settings."
+                name="Canary Weather Admin"
+                type="website"
+            />
             <h1>{t('adminDashboard')}</h1>
             <p>{t('redirectingToServer')}</p>
         </div>

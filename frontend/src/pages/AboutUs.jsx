@@ -19,7 +19,7 @@ const HeroSection = ({ t }) => (
             </div>
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white leading-[0.95]">
                 {t('aboutTitlePrefix') || 'Forecasting'} <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500">
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-blue-500 to-indigo-500">
                     {t('theUnpredictable') || 'The Unpredictable.'}
                 </span>
             </h1>
@@ -39,9 +39,9 @@ const BentoGridSection = ({ t }) => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[minmax(180px,auto)] mb-32">
         {/* Philosophy Card */}
         <div className="col-span-1 md:col-span-2 row-span-2 bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-4xl p-10 flex flex-col justify-between group hover:bg-slate-900/60 transition-all duration-500 hover:border-cyan-500/30 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="absolute inset-0 bg-linear-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div className="relative z-10">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center mb-8 shadow-lg shadow-cyan-900/20 group-hover:scale-110 transition-transform duration-500">
+                <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-cyan-500 to-blue-600 flex items-center justify-center mb-8 shadow-lg shadow-cyan-900/20 group-hover:scale-110 transition-transform duration-500">
                     <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
                 </div>
                 <h2 className="text-3xl font-bold text-white mb-4">{t('ourPhilosophy') || 'Our Philosophy'}</h2>
@@ -57,7 +57,7 @@ const BentoGridSection = ({ t }) => (
         </div>
 
         {/* Metric Card 1 */}
-        <div className="col-span-1 bg-gradient-to-b from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/5 rounded-4xl p-8 flex flex-col justify-center items-center text-center group hover:-translate-y-1 transition-transform duration-300">
+        <div className="col-span-1 bg-linear-to-b from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/5 rounded-4xl p-8 flex flex-col justify-center items-center text-center group hover:-translate-y-1 transition-transform duration-300">
             <div className="relative mb-4">
                 <div className="absolute inset-0 bg-amber-400/20 blur-xl rounded-full animate-pulse"></div>
                 <svg className="w-12 h-12 text-amber-400 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
@@ -67,7 +67,7 @@ const BentoGridSection = ({ t }) => (
         </div>
 
         {/* Metric Card 2 */}
-        <div className="col-span-1 bg-gradient-to-b from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/5 rounded-4xl p-8 flex flex-col justify-center items-center text-center group hover:-translate-y-1 transition-transform duration-300">
+        <div className="col-span-1 bg-linear-to-b from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/5 rounded-4xl p-8 flex flex-col justify-center items-center text-center group hover:-translate-y-1 transition-transform duration-300">
             <div className="relative mb-4">
                 <div className="absolute inset-0 bg-emerald-400/20 blur-xl rounded-full animate-pulse delay-75"></div>
                 <svg className="w-12 h-12 text-emerald-400 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
@@ -78,7 +78,7 @@ const BentoGridSection = ({ t }) => (
 
         {/* Team Member: Angelo */}
         <div className="col-span-1 row-span-2 bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-4xl p-8 flex flex-col items-center text-center hover:border-blue-500/30 transition-colors duration-300 group">
-            <div className="w-32 h-32 rounded-full p-0.5 bg-gradient-to-b from-blue-500 to-transparent mb-6 group-hover:rotate-180 transition-transform duration-700">
+            <div className="w-32 h-32 rounded-full p-0.5 bg-linear-to-b from-blue-500 to-transparent mb-6 group-hover:rotate-180 transition-transform duration-700">
                 <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden group-hover:rotate-180 transition-transform duration-700">
                     <span className="text-4xl font-bold text-blue-400">A</span>
                 </div>
@@ -92,7 +92,7 @@ const BentoGridSection = ({ t }) => (
 
         {/* Team Member: Gabriel */}
         <div className="col-span-1 row-span-2 bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-4xl p-8 flex flex-col items-center text-center hover:border-teal-500/30 transition-colors duration-300 group">
-            <div className="w-32 h-32 rounded-full p-0.5 bg-gradient-to-b from-teal-500 to-transparent mb-6 group-hover:rotate-180 transition-transform duration-700">
+            <div className="w-32 h-32 rounded-full p-0.5 bg-linear-to-b from-teal-500 to-transparent mb-6 group-hover:rotate-180 transition-transform duration-700">
                 <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden group-hover:rotate-180 transition-transform duration-700">
                     <span className="text-4xl font-bold text-teal-400">G</span>
                 </div>
@@ -149,7 +149,7 @@ const RoadmapSection = ({ t }) => (
         <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-16">
             {t('roadmapTitle') || 'Future Horizons'}
         </h2>
-        <div className="space-y-12 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-700 before:to-transparent">
+        <div className="space-y-12 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-linear-to-b before:from-transparent before:via-slate-700 before:to-transparent">
             {[
                 { year: 'Q4 2026', title: t('roadmap.q4_2025.title'), desc: t('roadmap.q4_2025.desc'), active: true },
                 { year: 'Q1 2027', title: t('roadmap.q1_2026.title'), desc: t('roadmap.q1_2026.desc'), active: false },
@@ -180,7 +180,7 @@ const RoadmapSection = ({ t }) => (
  *
  * Design Features:
  * - **Glassmorphism**: Heavy backdrop blur and semi-transparent layers.
- * - **Mesh Gradient**: A subtle, animated gradient on the info side.
+ * - **Mesh linear**: A subtle, animated linear on the info side.
  * - **Floating Inputs**: Modern form fields with smooth focus transitions.
  * - **Neon Accents**: Cyan glows to guide user attention.
  */
@@ -255,18 +255,18 @@ const ContactSection = ({ t }) => {
     return (
         <div className="max-w-6xl mx-auto relative group mb-24">
             {/* Ambient Glow Effect behind the card */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+            <div className="absolute -inset-1 bg-linear-to-r from-cyan-500 to-blue-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
             
             <div className="relative bg-[#0B1120] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl">
                 <div className="grid grid-cols-1 lg:grid-cols-5 min-h-[600px]">
                     
                     {/* 
                      * Left Column: Contact Info & Atmosphere 
-                     * Uses a rich gradient overlay to create visual weight.
+                     * Uses a rich linear overlay to create visual weight.
                      */}
                     <div className="lg:col-span-2 relative p-12 flex flex-col justify-between overflow-hidden">
-                        {/* Background Gradients */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/90 via-slate-900/90 to-slate-900/90 z-0"></div>
+                        {/* Background linears */}
+                        <div className="absolute inset-0 bg-linear-to-br from-blue-900/90 via-slate-900/90 to-slate-900/90 z-0"></div>
                         <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 z-0"></div>
                         
                         {/* Decorative Circle */}
@@ -390,7 +390,7 @@ const ContactSection = ({ t }) => {
                                 <div className="flex justify-end">
                                     <button 
                                         type="submit" 
-                                        className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl font-bold text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
+                                        className="group relative px-8 py-4 bg-linear-to-r from-cyan-500 to-blue-600 rounded-xl font-bold text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
                                     >
                                         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                                         <span className="relative flex items-center gap-2">
@@ -438,7 +438,7 @@ function AboutUs() {
              * ==================================================================================
              * AMBIENT ATMOSPHERE LAYERS
              * ==================================================================================
-             * Multi-layered background gradients to simulate weather patterns and depth.
+             * Multi-layered background linears to simulate weather patterns and depth.
              * Uses mix-blend-modes to create organic color intersections.
              */}
             <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">

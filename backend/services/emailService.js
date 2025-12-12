@@ -16,7 +16,6 @@ export const sendWelcomeEmail = async (email, username) => {
       return { success: false, error };
     }
 
-    console.log('Welcome email sent:', data);
     return { success: true, data };
   } catch (err) {
     console.error('Exception sending welcome email:', err);
@@ -38,7 +37,6 @@ export const sendLoginNotification = async (email, username) => {
       return { success: false, error };
     }
 
-    console.log('Login notification sent:', data);
     return { success: true, data };
   } catch (err) {
     console.error('Exception sending login notification:', err);
@@ -61,8 +59,7 @@ export const sendPasswordResetEmail = async (email, resetLink) => {
     }
 
     console.log('Password reset email sent:', data);
-    return { success: true, data };
-  } catch (err) {
+    catch (err) {
     console.error('Exception sending password reset email:', err);
     return { success: false, error: err };
   }
@@ -83,8 +80,7 @@ export const sendPoiCreatedEmail = async (email, username, poiName) => {
     }
 
     console.log('POI created email sent:', data);
-    return { success: true, data };
-  } catch (err) {
+    catch (err) {
     console.error('Exception sending POI created email:', err);
     return { success: false, error: err };
   }
@@ -106,8 +102,7 @@ export const sendPoiUpdatedEmail = async (email, username, poiName) => {
 
     console.log('POI updated email sent:', data);
     return { success: true, data };
-  } catch (err) {
-    console.error('Exception sending POI updated email:', err);
+  } console.error('Exception sending POI updated email:', err);
     return { success: false, error: err };
   }
 };
@@ -129,7 +124,6 @@ export const sendPoiDeletedEmail = async (email, username, poiName) => {
     console.log('POI deleted email sent:', data);
     return { success: true, data };
   } catch (err) {
-    console.error('Exception sending POI deleted email:', err);
     return { success: false, error: err };
   }
 };
