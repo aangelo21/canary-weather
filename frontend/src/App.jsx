@@ -8,6 +8,7 @@ import i18n from '../i18n/index.js';
 import { ThemeProvider } from './context/ThemeContext';
 import { restoreSession } from './services/userService';
 import ScrollToTop from './components/ScrollToTop';
+import RedirectToApiDocs from './components/RedirectToApiDocs';
 
 // Lazy load pages for better performance
 const Home = lazy(() => import('./pages/Home'));
@@ -92,6 +93,7 @@ function App() {
                     <ScrollToTop />
                     <Suspense fallback={<PageLoader />}>
                         <Routes>
+                            <Route path="/api-docs" element={<RedirectToApiDocs />} />
                             <Route element={<Layout />}>
                                 <Route path="/" element={<Home />} />
                                 <Route path="/pois" element={<PointsOfInterest />} />

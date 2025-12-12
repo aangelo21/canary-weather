@@ -98,7 +98,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Swagger API Documentation
 app.use(
   "/api/docs",
-  swaggerUi.serveFiles(swaggerSpec, {}),
+  swaggerUi.serve,
   swaggerUi.setup(swaggerSpec, {
     customCss: ".swagger-ui .topbar { display: none }",
     customSiteTitle: "CanaryWeather API Docs",
