@@ -33,6 +33,10 @@ const options = {
         url: `http://localhost:${PORT}`,
         description: "Development server",
       },
+      {
+        url: process.env.FRONTEND_URL || "https://canaryweather.xyz",
+        description: "Production server",
+      },
     ],
     components: {
       securitySchemes: {

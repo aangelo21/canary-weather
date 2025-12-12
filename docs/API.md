@@ -6,8 +6,8 @@ Interactive API documentation is available in two environments:
 
 > **Note**: To access the development Swagger, you must have cloned the repository and followed all the necessary steps to run the project locally.
 
-- **Development**: http://localhost:85/api-docs
-- **Production**: https://canaryweather.xyz/api-docs-prod
+- **Development**: http://localhost:85/api/docs
+- **Production**: https://canaryweather.xyz/api/docs
 
 ### Features
 
@@ -198,8 +198,8 @@ All schemas are documented in Swagger UI, including:
 
 The OpenAPI specification in JSON format is available at:
 
-- **Development**: http://localhost:85/api-docs.json
-- **Production**: https://canaryweather.xyz/api-docs-prod.json
+- **Development**: http://localhost:85/api/docs.json
+- **Production**: https://canaryweather.xyz/api/docs.json
 
 You can import this into tools like Postman, Insomnia, or any OpenAPI-compatible client.
 

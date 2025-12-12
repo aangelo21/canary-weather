@@ -180,14 +180,6 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
-
-    # API Documentation
-    location /api-docs {
-        proxy_pass http://127.0.0.1:85;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
 }
 ```
 
@@ -219,7 +211,7 @@ The Nginx configuration file `/etc/nginx/sites-available/canaryweather.xyz` uses
 *   `location /api { ... }`: Routes API requests to the Express backend (port 85)
 *   `location /admin { ... }`: Routes admin dashboard requests to the backend
 *   `location /uploads { ... }`: Routes uploaded file requests (profile pictures, POI images) to the backend
-*   `location /api-docs { ... }`: Routes Swagger API documentation to the backend
+*   `location /api { ... }`: Routes all API requests (including Swagger at `/api/docs`) to the backend
 *   `proxy_pass`: Forwards requests to the specified internal server
 *   `proxy_set_header`: Passes client information (Host, IP, protocol) to backend servers for proper logging and security
 
@@ -347,14 +339,6 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
-
-    # API Documentation
-    location /api-docs {
-        proxy_pass http://127.0.0.1:85;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
 }
 
 # HTTP to HTTPS redirect
@@ -463,7 +447,7 @@ sudo certbot certificates
 **Test application access:**
 - HTTP (should redirect to HTTPS): `http://canaryweather.xyz`
 - HTTPS: `https://canaryweather.xyz`
-- API Documentation: `https://canaryweather.xyz/api-docs`
+- API Documentation: `https://canaryweather.xyz/api/docs`
 - Admin Panel: `https://canaryweather.xyz/admin`
 
 **Check PM2 processes:**

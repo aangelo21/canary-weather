@@ -351,7 +351,7 @@ app.use(cors({ credentials: true }));
 
 ### Using Swagger UI
 
-1. Go to http://localhost:85/api-docs
+1. Go to http://localhost:85/api/docs
 2. Click "Authorize" button
 3. Enter: `Bearer <your-token>`
 4. Test protected endpoints
