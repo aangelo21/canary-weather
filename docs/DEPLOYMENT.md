@@ -113,3 +113,25 @@ pm2 start "node index.js" --name backend
 ### DataBase
 
 We have hosted our MySQL database on DigitalOcean as well. See the architecture and setup in [diagrams.md](./diagrams.md).
+
+## 4th sprint deployment
+
+### Github
+
+Push the changes to the develop branch in github
+
+### PM2 & droplet
+
+Install the dependencies ``npm i``
+
+create production build ``npm run build``
+
+restart the pm2 services ``restart ecosystem.config.js``
+
+In droplet, pull the changes from develop to main, put the command ``pm2 restart`` 
+
+start the backend
+
+```bash
+pm2 start "node index.js" --name backend
+```
