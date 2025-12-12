@@ -288,7 +288,7 @@ const ContactSection = ({ t }) => {
                                 </div>
                                 <div>
                                     <h3 className="text-white font-semibold mb-1">{t('emailUs') || 'Email Us'}</h3>
-                                    <p className="text-slate-400 text-sm">info@canaryweather.xyz</p>
+                                    <p className="text-slate-400 text-sm">canaryweatherxyz@gmail.com</p>
                                     <p className="text-slate-500 text-xs mt-1">Response within 24h</p>
                                 </div>
                             </div>
