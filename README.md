@@ -219,7 +219,7 @@ The frontend application will be available at `http://localhost:5173`
 
 ## 📚 API Documentation
 
-Interactive API documentation is available at: **http://localhost:85/api-docs**
+Interactive API documentation is available at: **http://localhost:85/api/docs**
 
 For complete documentation including authentication, endpoints, and schemas, see the [API Documentation](https://github.com/aangelo21/canary_weather/blob/main/docs/API.md).
 

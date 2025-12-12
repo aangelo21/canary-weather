@@ -35,7 +35,7 @@ The backend is built on a Node.js environment. Below are the main dependencies d
 | **`ejs`** | Template engine used to render the Admin Panel (Server-Side Rendering). |
 | **`xml2js`** | Utility for parsing XML responses, necessary for processing weather alert feeds from external sources (AEMET/Meteoalarm). |
 | **`swagger-jsdoc`** | Generates OpenAPI specification based on JSDoc comments in the source code. |
-| **`swagger-ui-express`** | Serves the interactive graphical interface for API documentation at `/api-docs`. |
+| **`swagger-ui-express`** | Serves the interactive graphical interface for API documentation at `/api/docs`. |
 
 ### Development
 | Package | Purpose |

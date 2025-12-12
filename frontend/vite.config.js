@@ -19,6 +19,9 @@ export default defineConfig({
         VitePWA({
             registerType: 'autoUpdate',
             includeAssets: ['logo.webp'],
+            workbox: {
+                navigateFallbackDenylist: [/^\/api/, /^\/admin/, /^\/uploads/, /^\/api-docs/]
+            },
             manifest: {
                 name: 'Canary Weather',
                 short_name: 'CanaryWeather',
@@ -71,6 +74,35 @@ export default defineConfig({
                 secure: false,
             },
             '/admin': {
+                target: 'http://localhost:85',
+                changeOrigin: true,
+                secure: false,
+            },
+            '/api-docs': {
+                target: 'http://localhost:85',
+                changeOrigin: true,
+                secure: false,
+            },
+        }
+    },
+    preview: {
+        proxy: {
+            '/api': {
+                target: 'http://localhost:85',
+                changeOrigin: true,
+                secure: false,
+            },
+            '/uploads': {
+                target: 'http://localhost:85',
+                changeOrigin: true,
+                secure: false,
+            },
+            '/admin': {
+                target: 'http://localhost:85',
+                changeOrigin: true,
+                secure: false,
+            },
+            '/api-docs': {
                 target: 'http://localhost:85',
                 changeOrigin: true,
                 secure: false,
