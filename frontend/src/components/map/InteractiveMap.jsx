@@ -134,7 +134,7 @@ function MapControls({ setClickedPos, fetchWeather }) {
     return (
         <div
             id="map-controls"
-            className="absolute top-4 right-4 z-1000 flex flex-col gap-2 items-end"
+            className="absolute top-4 right-4 z-[1000] flex flex-col gap-2 items-end"
         >
             {/* Search Bar */}
             <form
@@ -146,7 +146,7 @@ function MapControls({ setClickedPos, fetchWeather }) {
                     placeholder="Search location..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="px-2 py-1 bg-transparent border-none focus:outline-none text-gray-800 dark:text-white w-40 sm:w-60"
+                    className="px-2 py-1 bg-transparent border-none focus:outline-none text-gray-800 dark:text-white w-32 sm:w-60"
                 />
                 <button
                     type="submit"
@@ -353,7 +353,7 @@ function InteractiveMap() {
                 maxBounds={bounds}
                 maxBoundsViscosity={1.0}
                 scrollWheelZoom={true}
-                className="leaflet-container shadow-xl dark:shadow-black/50 border-2 border-gray-200 dark:border-gray-700 rounded-xl h-[600px] w-full"
+                className="leaflet-container shadow-xl dark:shadow-black/50 border-2 border-gray-200 dark:border-gray-700 rounded-xl h-[50vh] md:h-[600px] w-full"
             >
                 <LayersControl position="topleft">
                     {/* Base Layers */}

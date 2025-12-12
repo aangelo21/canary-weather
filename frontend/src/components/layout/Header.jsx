@@ -252,9 +252,9 @@ function Header({ isTransparent = false }) {
      */
     const headerClasses = isTransparent
         ? isScrolled
-            ? 'fixed top-0 left-0 w-full z-50 bg-[#0B1120]/80 backdrop-blur-md border-b border-white/10 transition-all duration-300 shadow-lg shadow-black/20'
-            : 'absolute top-0 left-0 w-full z-50 bg-transparent border-b border-transparent transition-all duration-300'
-        : 'sticky top-0 z-50 w-full bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm border-b border-neutral-200 dark:border-neutral-800 transition-colors duration-300';
+            ? 'fixed top-0 left-0 w-full z-[2000] bg-[#0B1120]/80 backdrop-blur-md border-b border-white/10 transition-all duration-300 shadow-lg shadow-black/20'
+            : 'absolute top-0 left-0 w-full z-[2000] bg-transparent border-b border-transparent transition-all duration-300'
+        : 'sticky top-0 z-[2000] w-full bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm border-b border-neutral-200 dark:border-neutral-800 transition-colors duration-300';
 
     /**
      * Determines text colors based on transparency mode.
@@ -529,7 +529,7 @@ function Header({ isTransparent = false }) {
                      * A clean, slide-down menu for mobile devices.
                      */}
                     {isOpen && (
-                        <div className="lg:hidden py-4 border-t border-neutral-100 dark:border-neutral-800 animate-in slide-in-from-top-2 fade-in duration-200">
+                        <div className={`lg:hidden py-4 border-t border-neutral-100 dark:border-neutral-800 animate-in slide-in-from-top-2 fade-in duration-200 shadow-xl rounded-b-2xl ${isTransparent ? 'bg-[#0B1120]/95 backdrop-blur-md' : 'bg-white dark:bg-neutral-900'}`}>
                             <ul className="flex flex-col space-y-1">
                                 {[
                                     { to: '/', label: t('home') },
@@ -544,8 +544,12 @@ function Header({ isTransparent = false }) {
                                             className={({ isActive }) =>
                                                 `flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                                                     isActive
-                                                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                                                        : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-white'
+                                                        ? isTransparent 
+                                                            ? 'bg-white/10 text-cyan-400'
+                                                            : 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                                                        : isTransparent
+                                                            ? 'text-slate-300 hover:bg-white/5 hover:text-white'
+                                                            : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-white'
                                                 }`
                                             }
                                             onClick={(e) => {
@@ -565,7 +569,7 @@ function Header({ isTransparent = false }) {
                                         <div className="space-y-2">
                                             <button
                                                 onClick={() => setShowMobileUserDropdown(!showMobileUserDropdown)}
-                                                className="flex items-center gap-3 w-full px-4 py-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+                                                className={`flex items-center gap-3 w-full px-4 py-2 rounded-lg transition-colors ${isTransparent ? 'hover:bg-white/5 text-slate-200' : 'hover:bg-neutral-50 dark:hover:bg-neutral-800'}`}
                                             >
                                                 <div className="w-8 h-8 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center">
                                                     {getProfileImageUrl() ? (
@@ -575,18 +579,18 @@ function Header({ isTransparent = false }) {
                                                     )}
                                                 </div>
                                                 <div className="flex-1 text-left">
-                                                    <p className="text-sm font-semibold text-neutral-900 dark:text-white">{user.username}</p>
+                                                    <p className={`text-sm font-semibold ${isTransparent ? 'text-white' : 'text-neutral-900 dark:text-white'}`}>{user.username}</p>
                                                 </div>
-                                                <svg className={`w-4 h-4 text-neutral-400 transition-transform ${showMobileUserDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                                <svg className={`w-4 h-4 transition-transform ${showMobileUserDropdown ? 'rotate-180' : ''} ${isTransparent ? 'text-slate-400' : 'text-neutral-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                                             </button>
 
                                             {showMobileUserDropdown && (
-                                                <div className="mx-4 mt-2 bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700 overflow-hidden">
+                                                <div className={`mx-4 mt-2 rounded-xl shadow-sm border overflow-hidden ${isTransparent ? 'bg-[#1a2236] border-white/10' : 'bg-white dark:bg-neutral-800 border-neutral-100 dark:border-neutral-700'}`}>
                                                     <button
                                                         onClick={() => { setShowLogin(true); setIsOpen(false); }}
-                                                        className="w-full text-left px-5 py-4 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors flex items-center gap-3 border-b border-neutral-100 dark:border-neutral-700"
+                                                        className={`w-full text-left px-5 py-4 text-sm font-medium transition-colors flex items-center gap-3 border-b ${isTransparent ? 'text-slate-200 hover:bg-white/5 border-white/10' : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 border-neutral-100 dark:border-neutral-700'}`}
                                                     >
-                                                        <svg className="w-5 h-5 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                                        <svg className={`w-5 h-5 ${isTransparent ? 'text-slate-400' : 'text-neutral-500 dark:text-neutral-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                                         {t('editProfile')}
                                                     </button>
                                                     <NotificationToggle />
@@ -594,15 +598,15 @@ function Header({ isTransparent = false }) {
 
                                                         <button
                                                             onClick={() => { navigate('/admin'); setIsOpen(false); }}
-                                                            className="w-full text-left px-5 py-4 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors flex items-center gap-3 border-b border-neutral-100 dark:border-neutral-700"
+                                                            className={`w-full text-left px-5 py-4 text-sm font-medium transition-colors flex items-center gap-3 border-b ${isTransparent ? 'text-slate-200 hover:bg-white/5 border-white/10' : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 border-neutral-100 dark:border-neutral-700'}`}
                                                         >
-                                                            <svg className="w-5 h-5 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                                                            <svg className={`w-5 h-5 ${isTransparent ? 'text-slate-400' : 'text-neutral-500 dark:text-neutral-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
                                                             {t('dashboard')}
                                                         </button>
                                                     )}
                                                     <button
                                                         onClick={handleLogout}
-                                                        className="w-full text-left px-5 py-4 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors flex items-center gap-3"
+                                                        className={`w-full text-left px-5 py-4 text-sm font-medium transition-colors flex items-center gap-3 ${isTransparent ? 'text-red-400 hover:bg-red-900/20' : 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10'}`}
                                                     >
                                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                                                         {t('logout')}
