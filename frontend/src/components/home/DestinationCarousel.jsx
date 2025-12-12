@@ -176,7 +176,7 @@ export default function DestinationCarousel() {
                                 <div className="h-48 overflow-hidden">
                                     <img
                                         src={dest.image}
-                                        alt={dest.key}
+                                        alt={t(`destinations.${dest.key}.name`)}
                                         loading="lazy"
                                         className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                                     />

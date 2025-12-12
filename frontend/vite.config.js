@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwind from "@tailwindcss/vite";
 import viteCompression from 'vite-plugin-compression';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
     plugins: [
@@ -14,6 +15,30 @@ export default defineConfig({
         viteCompression({
             algorithm: 'brotliCompress',
             ext: '.br',
+        }),
+        VitePWA({
+            registerType: 'autoUpdate',
+            includeAssets: ['logo.webp'],
+            manifest: {
+                name: 'Canary Weather',
+                short_name: 'CanaryWeather',
+                description: 'Accurate weather forecasts, tide charts, and activity guides for the Canary Islands.',
+                theme_color: '#ffffff',
+                background_color: "#ffffff",
+                display: "standalone",
+                icons: [
+                    {
+                        src: 'logo.webp',
+                        sizes: '192x192',
+                        type: 'image/webp'
+                    },
+                    {
+                        src: 'logo.webp',
+                        sizes: '512x512',
+                        type: 'image/webp'
+                    }
+                ]
+            }
         }),
     ],
     build: {

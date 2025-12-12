@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { fetchAlerts, fetchWarnings } from '../services/alertService';
+import SEO from '../components/SEO';
 
 /**
  * Warnings Page Component.
@@ -293,6 +294,10 @@ function Warnings() {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <SEO 
+                title="Weather Warnings" 
+                description="Stay informed with the latest weather warnings and alerts for the Canary Islands."
+            />
             <h1 className="text-4xl font-bold text-center mb-8">
                 {t('warningsTitle')}
             </h1>

@@ -2,6 +2,7 @@ import Hero from '../components/home/Hero';
 import Stats from '../components/home/Stats';
 import Activities from '../components/home/Activities';
 import DestinationCarousel from '../components/home/DestinationCarousel';
+import SEO from '../components/SEO';
 
 /**
  * Home Page Component.
@@ -24,6 +25,10 @@ import DestinationCarousel from '../components/home/DestinationCarousel';
 function Home() {
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col transition-colors duration-300">
+            <SEO 
+                title="Home" 
+                description="Welcome to Canary Weather. Get the latest weather forecasts, tide charts, and activity guides for the Canary Islands."
+            />
             {/* Hero Section: Main introduction and CTA */}
             <Hero />
 

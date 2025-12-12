@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { apiFetch } from '../services/api';
+import SEO from '../components/SEO';
 
 /**
  * @component HeroSection
@@ -428,6 +429,10 @@ function AboutUs() {
 
     return (
         <div className="min-h-screen bg-[#0B1120] text-slate-200 overflow-hidden relative selection:bg-cyan-500/30 selection:text-cyan-200 font-sans">
+            <SEO 
+                title="About Us" 
+                description="Learn about the team behind Canary Weather and our mission to provide the most accurate weather data for the Canary Islands."
+            />
             
             {/* 
              * ==================================================================================
