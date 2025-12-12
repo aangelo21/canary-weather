@@ -115,10 +115,10 @@ export default function Footer() {
                                 <span>
                                     {t('emailUs')}:<br />
                                     <a
-                                        href="mailto:info@canaryweather.xyz"
+                                        href="mailto:canaryweatherxyz@gmail.com"
                                         className="hover:text-white transition-colors"
                                     >
-                                        info@canaryweather.xyz
+                                        canaryweatherxyz@gmail.com
                                     </a>
                                 </span>
                             </li>
