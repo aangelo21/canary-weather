@@ -16,7 +16,6 @@ export const sendWelcomeEmail = async (email, username) => {
       return { success: false, error };
     }
 
-    console.log('Welcome email sent:', data);
     return { success: true, data };
   } catch (err) {
     console.error('Exception sending welcome email:', err);
@@ -38,7 +37,6 @@ export const sendLoginNotification = async (email, username) => {
       return { success: false, error };
     }
 
-    console.log('Login notification sent:', data);
     return { success: true, data };
   } catch (err) {
     console.error('Exception sending login notification:', err);
@@ -129,7 +127,6 @@ export const sendPoiDeletedEmail = async (email, username, poiName) => {
     console.log('POI deleted email sent:', data);
     return { success: true, data };
   } catch (err) {
-    console.error('Exception sending POI deleted email:', err);
     return { success: false, error: err };
   }
 };

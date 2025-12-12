@@ -1,6 +1,7 @@
 import InteractiveMap from '../components/map/InteractiveMap';
 import MapLegend from '../components/map/MapLegend';
 import { useTranslation } from 'react-i18next';
+import SEO from '../components/SEO';
 
 /**
  * Map Page Component.
@@ -21,6 +22,10 @@ function Map() {
     const { t } = useTranslation();
     return (
         <div className="flex flex-col gap-10 px-4 sm:px-6 lg:px-8 py-8">
+            <SEO 
+                title="Interactive Map" 
+                description="Explore weather conditions, wind patterns, and wave heights across the Canary Islands with our interactive map."
+            />
             <h2 className="text-4xl font-bold text-center text-gray-900 dark:text-white">
                 {t('exploreMap')}
             </h2>

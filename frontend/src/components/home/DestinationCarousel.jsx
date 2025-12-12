@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 // Use translation keys for the destination text so content can be localized
 const destinations = [
-    { id: 1, key: 'teide', image: 'teide.webp' },
-    { id: 2, key: 'maspalomas', image: 'dunas.webp' },
-    { id: 3, key: 'timanfaya', image: 'timanfaya.webp' },
-    { id: 4, key: 'corralejo', image: 'corralejo.webp' },
-    { id: 5, key: 'garajonay', image: 'garajonay.webp' },
-    { id: 6, key: 'roquenublo', image: 'roquenublo.webp' },
+    { id: 1, key: 'teide', image: 'teide.webp', lat: 28.2724, lng: -16.6425 },
+    { id: 5, key: 'maspalomas', image: 'dunas.webp', lat: 27.7419, lng: -15.5891 },
+    { id: 7, key: 'timanfaya', image: 'timanfaya.webp', lat: 29.003, lng: -13.6216 },
+    { id: 9, key: 'corralejo', image: 'corralejo.webp', lat: 28.7373, lng: -13.8751 },
+    { id: 12, key: 'garajonay', image: 'garajonay.webp', lat: 28.0907, lng: -17.2349 },
+    { id: 4, key: 'roquenublo', image: 'roquenublo.webp', lat: 27.9871, lng: -15.6302 },
 ];
 
 /**
@@ -29,6 +30,7 @@ const destinations = [
  */
 export default function DestinationCarousel() {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     
     /**
      * @type {Array<Object>} extendedDestinations - Tripled list of destinations to simulate infinite scrolling.
@@ -172,11 +174,14 @@ export default function DestinationCarousel() {
                             ref={index === 0 ? itemRef : null}
                             className="shrink-0 w-[75%] sm:w-[40%] lg:w-[30%]"
                         >
-                            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden h-full transform transition-all hover:scale-105 duration-300">
+                            <div 
+                                className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden h-full transform transition-all hover:scale-105 duration-300 cursor-pointer"
+                                onClick={() => navigate('/map', { state: { lat: dest.lat, lng: dest.lng } })}
+                            >
                                 <div className="h-48 overflow-hidden">
                                     <img
                                         src={dest.image}
-                                        alt={dest.key}
+                                        alt={t(`destinations.${dest.key}.name`)}
                                         loading="lazy"
                                         className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                                     />

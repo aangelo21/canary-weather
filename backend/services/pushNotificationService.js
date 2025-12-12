@@ -97,7 +97,6 @@ export const sendPushNotification = async (userId, payload) => {
         .catch((err) => {
           if (err.statusCode === 410 || err.statusCode === 404) {
             // Subscription is no longer valid, remove it
-            console.log(`Subscription expired for user ${userId}, deleting...`);
             return sub.destroy();
           }
           console.error("Error sending push notification:", err);
@@ -121,8 +120,6 @@ export const sendPushNotificationToAll = async (payload) => {
     // Get all subscriptions
     const subscriptions = await PushSubscription.findAll();
 
-    console.log(`Sending notification to ${subscriptions.length} subscribers`);
-
     const notifications = subscriptions.map((sub) => {
       const pushSubscription = {
         endpoint: sub.endpoint,
@@ -139,8 +136,7 @@ export const sendPushNotificationToAll = async (payload) => {
             // Subscription is no longer valid, remove it
             console.log(`Subscription expired, deleting...`);
             return sub.destroy();
-          }
-          console.error("Error sending push notification:", err);
+          }nsole.error("Error sending push notification:", err);
         });
     });
 

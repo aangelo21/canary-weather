@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import SEO from '../components/SEO';
 
 /**
  * PrivacyPolicy Page.
@@ -19,6 +20,10 @@ const PrivacyPolicy = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
+            <SEO 
+                title="Privacy Policy" 
+                description="Read our Privacy Policy to understand how we collect, use, and protect your data."
+            />
             <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
                 <div className="px-6 py-8 sm:p-10">
                     <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-8 border-b border-gray-200 dark:border-gray-700 pb-4">

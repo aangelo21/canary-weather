@@ -24,6 +24,7 @@ const ThemeSwitch = () => {
                     className="theme-switch__checkbox"
                     checked={isDarkMode}
                     onChange={toggleTheme}
+                    aria-label="Toggle Dark Mode"
                 />
                 <div className="theme-switch__container">
                     <div className="theme-switch__clouds" />

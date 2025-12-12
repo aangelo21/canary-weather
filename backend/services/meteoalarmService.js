@@ -39,7 +39,6 @@ const EXCLUDE_KEYWORDS = [
  * @throws {Error} If the fetch fails or parsing errors occur.
  */
 export const fetchWarnings = async () => {
-    console.log("Fetching warnings from Meteoalarm...");
     try {
         const response = await fetch(METEOALARM_FEED_URL);
         if (!response.ok) {
@@ -54,7 +53,6 @@ export const fetchWarnings = async () => {
         });
 
         if (!result.feed || !result.feed.entry) {
-            console.log("No entries found in Meteoalarm feed.");
             return [];
         }
 
@@ -96,7 +94,6 @@ export const fetchWarnings = async () => {
             });
         }
 
-        console.log(`Found ${alerts.length} active alerts for Canary Islands.`);
         return alerts;
 
     } catch (error) {
@@ -151,10 +148,9 @@ export const storeWarningsAndGetNew = async (warnings) => {
                     location_id: location.id
                 });
                 console.log(`Stored alert: ${warning.phenomenon} in ${warning.area_name}`);
-                newAlerts.push(newAlert.toJSON());
+                newAlerts.push(newAlert);
             }
         }
-        
         return newAlerts;
     } catch (error) {
         console.error("Error storing warnings:", error);
@@ -206,7 +202,6 @@ export const notifyUsersAboutAlerts = async (newAlerts) => {
         
         console.log(`Sent notification for ${count} new alert(s)`);
     } catch (error) {
-        console.error('Error sending alert notifications:', error);
     }
 };
 

@@ -429,20 +429,21 @@ export default function PointsOfInterestList() {
                                 poi.is_global;
                             const canEdit = isAdmin || !isRestricted;
                             return (
-                                <POICard
-                                    key={poi.id}
-                                    poi={poi}
-                                    onEdit={
-                                        canEdit
-                                            ? () => handleEdit(poi)
-                                            : undefined
-                                    }
-                                    onDelete={
-                                        canEdit
-                                            ? () => handleDeleteClick(poi.id)
-                                            : undefined
-                                    }
-                                />
+                                <div key={poi.id} id={`poi-${poi.id}`}>
+                                    <POICard
+                                        poi={poi}
+                                        onEdit={
+                                            canEdit
+                                                ? () => handleEdit(poi)
+                                                : undefined
+                                        }
+                                        onDelete={
+                                            canEdit
+                                                ? () => handleDeleteClick(poi.id)
+                                                : undefined
+                                        }
+                                    />
+                                </div>
                             );
                         })
                     )}
