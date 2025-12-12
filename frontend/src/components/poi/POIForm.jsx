@@ -39,10 +39,14 @@ export default function POIForm({
         <div>
             <form onSubmit={onSubmit}>
                 <div className="mb-2">
-                    <label className="block text-sm font-medium mb-1">
+                    <label 
+                        htmlFor="poi-name"
+                        className="block text-sm font-medium mb-1"
+                    >
                         {t('name')}
                     </label>
                     <input
+                        id="poi-name"
                         type="text"
                         name="name"
                         value={formData.name}
@@ -53,10 +57,14 @@ export default function POIForm({
                 </div>
 
                 <div className="mb-2">
-                    <label className="block text-sm font-medium mb-1">
+                    <label 
+                        htmlFor="poi-description"
+                        className="block text-sm font-medium mb-1"
+                    >
                         {t('description')}
                     </label>
                     <textarea
+                        id="poi-description"
                         name="description"
                         value={formData.description}
                         onChange={onChange}
@@ -67,10 +75,14 @@ export default function POIForm({
                 </div>
 
                 <div className="mb-2">
-                    <label className="block text-sm font-medium mb-1">
+                    <label 
+                        htmlFor="poi-image"
+                        className="block text-sm font-medium mb-1"
+                    >
                         {t('poiImage')}
                     </label>
                     <input
+                        id="poi-image"
                         type="file"
                         name="poi_image"
                         accept="image/*"

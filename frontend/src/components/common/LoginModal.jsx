@@ -370,6 +370,7 @@ export default function LoginModal({
                             className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                             onClick={onClose}
                             type="button"
+                            aria-label={t('close') || 'Close'}
                         >
                             &times;
                         </button>
@@ -512,6 +513,7 @@ export default function LoginModal({
                             <input
                                 type="email"
                                 placeholder={t('email')}
+                                aria-label={t('email')}
                                 className="border rounded px-3 py-2"
                                 value={input.email}
                                 onChange={(e) =>
@@ -524,6 +526,7 @@ export default function LoginModal({
                             <input
                                 type="text"
                                 placeholder={t('username')}
+                                aria-label={t('username')}
                                 className="border rounded px-3 py-2"
                                 value={input.username}
                                 onChange={(e) =>
@@ -537,6 +540,7 @@ export default function LoginModal({
                                 <select
                                     className="border rounded px-3 py-2 flex-1 min-w-0"
                                     value={selectedLocationToAdd}
+                                    aria-label={t('selectMunicipality')}
                                     onChange={(e) =>
                                         setSelectedLocationToAdd(e.target.value)
                                     }
@@ -594,6 +598,7 @@ export default function LoginModal({
                                                 <button
                                                     type="button"
                                                     className="hover:text-blue-900 font-bold"
+                                                    aria-label={t('remove') || 'Remove'}
                                                     onClick={() => {
                                                         setInput((prev) => ({
                                                             ...prev,
@@ -768,11 +773,15 @@ export default function LoginModal({
                                             />
                                         </div>
                                         <div className="flex flex-col space-y-1.5">
-                                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-900 dark:text-white">
+                                            <label 
+                                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-900 dark:text-white"
+                                                htmlFor="municipality-select"
+                                            >
                                                 {t('selectMunicipality')}
                                             </label>
                                             <div className="flex gap-2 w-full min-w-0">
                                                 <select
+                                                    id="municipality-select"
                                                     className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:bg-gray-800 flex-1 min-w-0"
                                                     value={selectedLocationToAdd}
                                                     onChange={(e) =>
@@ -852,6 +861,7 @@ export default function LoginModal({
                                                                     <button
                                                                         type="button"
                                                                         className="hover:text-blue-900 font-bold"
+                                                                        aria-label={t('remove') || 'Remove'}
                                                                         onClick={() => {
                                                                             setInput(
                                                                                 (
