@@ -1,6 +1,5 @@
 import Hero from '../components/home/Hero';
 import Stats from '../components/home/Stats';
-import Activities from '../components/home/Activities';
 import DestinationCarousel from '../components/home/DestinationCarousel';
 
 /**
@@ -29,9 +28,6 @@ function Home() {
 
             {/* Stats Section: Key metrics display */}
             <Stats />
-
-            {/* Activities Section: Weather-dependent activity suggestions */}
-            <Activities />
 
             {/* Destination Carousel: Horizontal scroll of locations */}
             <div className="pt-10 bg-white dark:bg-gray-900">
