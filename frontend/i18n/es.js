@@ -461,5 +461,10 @@ export const es = {
         content: "Para resolver una queja relacionada con el Sitio o para recibir más información sobre el uso del Sitio, contáctenos en:"
       }
     },
+    // Hourly Forecast
+    hourlyForecastTitle: "Evolución 24h",
+    liveUpdates: "Actualizado ahora mismo",
+    wind: "Viento",
+    precipChance: "Lluvia",
   },
 };

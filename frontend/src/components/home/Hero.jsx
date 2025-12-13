@@ -17,7 +17,7 @@ import AIAssistant from './AIAssistant';
  * - **Dynamic Icons**: Displays different animated icons based on weather conditions.
  * - **Responsive Design**: Maintains the original responsive layout.
  */
-export default function Hero() {
+export default function Hero({ coords }) {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
@@ -27,8 +27,6 @@ export default function Hero() {
     const [locationName, setLocationName] = useState({ city: 'Locating...', region: '' });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    // Store coordinates to enable auto-refresh
-    const [coords, setCoords] = useState(null);
 
     /**
      * Fetches weather data from OpenWeatherMap API.
@@ -82,38 +80,15 @@ export default function Hero() {
     }, []);
 
     /**
-     * Effect to fetch user's location on component mount.
-     * If successful, it triggers weather and location name fetching.
-     * If it fails, it falls back to a default location (Tenerife).
+     * Effect to fetch weather when coords prop changes.
+     * Coords are now managed by the parent Home component.
      */
     useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    setCoords({ lat: latitude, lon: longitude });
-                    fetchWeatherData(latitude, longitude);
-                    fetchLocationName(latitude, longitude);
-                },
-                (err) => {
-                    console.warn("Geolocation access denied or failed:", err);
-                    setError("Location access denied. Showing default.");
-                    // Fallback to Tenerife coordinates
-                    const fallback = { lat: 28.4636, lon: -16.2518 };
-                    setCoords(fallback);
-                    fetchWeatherData(fallback.lat, fallback.lon);
-                    setLocationName({ city: 'Tenerife', region: 'Canary Islands' });
-                }
-            );
-        } else {
-            setError("Geolocation not supported.");
-            // Fallback to Tenerife coordinates
-            const fallback = { lat: 28.4636, lon: -16.2518 };
-            setCoords(fallback);
-            fetchWeatherData(fallback.lat, fallback.lon);
-            setLocationName({ city: 'Tenerife', region: 'Canary Islands' });
+        if (coords) {
+            fetchWeatherData(coords.lat, coords.lon);
+            fetchLocationName(coords.lat, coords.lon);
         }
-    }, [fetchWeatherData, fetchLocationName]);
+    }, [coords, fetchWeatherData, fetchLocationName]);
 
     /**
      * Effect to auto-refresh weather data every 5 minutes.
