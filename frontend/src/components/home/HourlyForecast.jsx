@@ -70,13 +70,13 @@ export default function HourlyForecast({ coords }) {
     // Scroll handlers
     const scrollLeft = () => {
         if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+            scrollContainerRef.current.scrollLeft -= 300;
         }
     };
 
     const scrollRight = () => {
         if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+            scrollContainerRef.current.scrollLeft += 300;
         }
     };
 
@@ -250,7 +250,7 @@ export default function HourlyForecast({ coords }) {
                     ) : (
                         <div 
                             ref={scrollContainerRef}
-                            className="overflow-x-auto scrollbar-hide h-full flex items-stretch relative select-none cursor-grab active:cursor-grabbing"
+                            className="overflow-x-auto scrollbar-hide h-full flex items-stretch relative select-none cursor-grab active:cursor-grabbing scroll-smooth"
                         >
                             {/* SVG Graph Layer */}
                             <div className="absolute top-[90px] left-0 h-[100px] pointer-events-none z-0" style={{ width: `${forecast.length * 120}px` }}>

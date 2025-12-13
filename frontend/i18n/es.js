@@ -462,7 +462,7 @@ export const es = {
       }
     },
     // Hourly Forecast
-    hourlyForecastTitle: "Evolución 24h",
+    hourlyForecastTitle: "Predicción 24h",
     liveUpdates: "Actualizado ahora mismo",
     wind: "Viento",
     precipChance: "Lluvia",
