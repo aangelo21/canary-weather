@@ -17,7 +17,7 @@ import AIAssistant from './AIAssistant';
  * - **Dynamic Icons**: Displays different animated icons based on weather conditions.
  * - **Responsive Design**: Maintains the original responsive layout.
  */
-export default function Hero() {
+export default function Hero({ coords }) {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
@@ -27,8 +27,6 @@ export default function Hero() {
     const [locationName, setLocationName] = useState({ city: 'Locating...', region: '' });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    // Store coordinates to enable auto-refresh
-    const [coords, setCoords] = useState(null);
 
     /**
      * Fetches weather data from OpenWeatherMap API.
@@ -82,38 +80,15 @@ export default function Hero() {
     }, []);
 
     /**
-     * Effect to fetch user's location on component mount.
-     * If successful, it triggers weather and location name fetching.
-     * If it fails, it falls back to a default location (Tenerife).
+     * Effect to fetch weather when coords prop changes.
+     * Coords are now managed by the parent Home component.
      */
     useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    setCoords({ lat: latitude, lon: longitude });
-                    fetchWeatherData(latitude, longitude);
-                    fetchLocationName(latitude, longitude);
-                },
-                (err) => {
-                    console.warn("Geolocation access denied or failed:", err);
-                    setError("Location access denied. Showing default.");
-                    // Fallback to Tenerife coordinates
-                    const fallback = { lat: 28.4636, lon: -16.2518 };
-                    setCoords(fallback);
-                    fetchWeatherData(fallback.lat, fallback.lon);
-                    setLocationName({ city: 'Tenerife', region: 'Canary Islands' });
-                }
-            );
-        } else {
-            setError("Geolocation not supported.");
-            // Fallback to Tenerife coordinates
-            const fallback = { lat: 28.4636, lon: -16.2518 };
-            setCoords(fallback);
-            fetchWeatherData(fallback.lat, fallback.lon);
-            setLocationName({ city: 'Tenerife', region: 'Canary Islands' });
+        if (coords) {
+            fetchWeatherData(coords.lat, coords.lon);
+            fetchLocationName(coords.lat, coords.lon);
         }
-    }, [fetchWeatherData, fetchLocationName]);
+    }, [coords, fetchWeatherData, fetchLocationName]);
 
     /**
      * Effect to auto-refresh weather data every 5 minutes.
@@ -168,7 +143,7 @@ export default function Hero() {
                     <div className="absolute inset-0 bg-blue-400 rounded-full blur-xl opacity-20 animate-pulse"></div>
                     <svg className="w-full h-full text-blue-500 animate-bounce" style={{ animationDuration: '3s' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 16.2A4.5 4.5 0 0017.5 8h-1.832A4.5 4.5 0 009.355 8H7.5a4.5 4.5 0 00-1.3 8.8" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 22v-2m-4 2v-4m-4 4v-2" className="animate-ping" style={{ animationDuration: '3s' }} />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 18v-2m-4 2v-4m-4 4v-2" className="animate-ping" style={{ animationDuration: '5s' }} />
                     </svg>
                 </div>
             );

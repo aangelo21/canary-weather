@@ -455,5 +455,14 @@ export const en = {
         content: "In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at:"
       }
     },
+    // Hourly Forecast
+    hourlyForecastTitle: "24h Forecast",
+    liveUpdates: "Updated just now",
+    wind: "Wind",
+    precipChance: "Rain",
+    humidity: "Humidity",
+    visibility: "Visibility",
+    pressure: "Pressure",
+    sunCycle: "Sun Cycle",
   },
 };

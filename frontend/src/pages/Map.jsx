@@ -21,7 +21,7 @@ import SEO from '../components/SEO';
 function Map() {
     const { t } = useTranslation();
     return (
-        <div className="flex flex-col gap-10 px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col gap-4 px-4 sm:px-6 lg:px-8 py-8">
             <SEO 
                 title="Interactive Map" 
                 description="Explore weather conditions, wind patterns, and wave heights across the Canary Islands with our interactive map."

@@ -26,29 +26,29 @@ function MapLegend() {
     ];
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden max-w-5xl mx-auto mt-12 transition-all duration-300">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden max-w-5xl mx-auto mt-6 md:mt-12 transition-all duration-300">
             {/* Header Section */}
-            <div className="bg-gradient-to-r from-brand-primary to-blue-600 p-6 text-white">
-                <h3 className="text-2xl font-bold flex items-center gap-3">
-                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-gradient-to-r from-brand-primary to-blue-600 p-4 md:p-6 text-white">
+                <h3 className="text-xl md:text-2xl font-bold flex items-center gap-3">
+                    <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0121 18.382V7.618a1 1 0 01-.553-.894L15 4m0 13V4m0 0L9 7" />
                     </svg>
                     {t('mapLegend.title')}
                 </h3>
-                <p className="text-blue-100 mt-2 text-sm max-w-2xl">
+                <p className="text-blue-100 mt-2 text-xs md:text-sm max-w-2xl">
                     {t('mapLegend.description')}
                 </p>
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
+            <div className="flex flex-col sm:flex-row border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
                 {tabs.map((tab) => (
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`flex-1 py-4 px-6 text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2
+                        className={`flex-1 py-3 px-4 md:py-4 md:px-6 text-sm font-semibold transition-all duration-200 flex items-center justify-center sm:justify-center justify-start gap-3 md:gap-2
                             ${activeTab === tab.id 
-                                ? 'text-brand-primary border-b-2 border-brand-primary bg-white dark:bg-gray-800 dark:text-blue-400' 
+                                ? 'text-brand-primary border-l-4 sm:border-l-0 sm:border-b-2 border-brand-primary bg-white dark:bg-gray-800 dark:text-blue-400' 
                                 : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'
                             }`}
                     >
@@ -59,7 +59,7 @@ function MapLegend() {
             </div>
 
             {/* Content Area */}
-            <div className="p-6 md:p-8 min-h-[400px]">
+            <div className="p-4 md:p-8 min-h-[300px] md:min-h-[400px]">
                 
                 {/* LAYERS TAB */}
                 {activeTab === 'layers' && (
