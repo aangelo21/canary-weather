@@ -1,4 +1,5 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import NotificationToggle from '../NotificationToggle';
 import * as apiService from '../../services/api';
@@ -96,6 +97,7 @@ describe('NotificationToggle', () => {
   });
 
   it('should handle subscription process', async () => {
+    const user = userEvent.setup();
     mockServiceWorker.getRegistration.mockResolvedValue({
       pushManager: mockPushManager,
     });
@@ -132,7 +134,7 @@ describe('NotificationToggle', () => {
     });
 
     const button = screen.getByText('enableNotifications');
-    fireEvent.click(button);
+    await user.click(button);
 
     await waitFor(() => {
       expect(mockPushManager.subscribe).toHaveBeenCalled();
