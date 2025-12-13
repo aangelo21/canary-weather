@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useCallback } from 'react';
+import Skeleton from '../common/Skeleton';
+import AIAssistant from './AIAssistant';
 
 /**
  * Hero Component.
@@ -307,6 +309,12 @@ export default function Hero() {
                          */}
                         <div className="relative w-full max-w-sm bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-white/50 dark:border-gray-700/50 rounded-3xl shadow-2xl p-8 transform lg:rotate-y-12 hover:rotate-0 transition-all duration-700 ease-out group">
                             
+                            {error && (
+                                <div className="absolute top-0 left-0 w-full bg-red-500/80 text-white text-xs p-2 text-center rounded-t-3xl z-10">
+                                    {error}
+                                </div>
+                            )}
+
                             {/* Card Header: Location & Time */}
                             <div className="flex justify-between items-start mb-8">
                                 <div>
@@ -328,35 +336,42 @@ export default function Hero() {
                             <div className="flex flex-col items-center justify-center py-4">
                                 {/* Animated Weather Icon */}
                                 {loading ? (
-                                    <div className="w-32 h-32 flex items-center justify-center">
-                                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
+                                    <div className="w-32 h-32 flex items-center justify-center mb-4">
+                                        <Skeleton variant="circular" className="w-24 h-24" />
                                     </div>
                                 ) : (
                                     weatherDetails.icon
                                 )}
                                 
-                                <div className="text-6xl font-bold text-gray-900 dark:text-white tracking-tighter">
-                                    {loading ? '--' : Math.round(weather?.temp)}<span className="text-4xl align-top text-brand-primary">°C</span>
+                                <div className="text-6xl font-bold text-gray-900 dark:text-white tracking-tighter flex items-center justify-center">
+                                    {loading ? (
+                                        <Skeleton className="w-32 h-16" />
+                                    ) : (
+                                        <>{Math.round(weather?.temp)}<span className="text-4xl align-top text-brand-primary">°C</span></>
+                                    )}
                                 </div>
-                                <p className="text-xl font-medium text-gray-600 dark:text-gray-300 mt-2 capitalize">
-                                    {loading ? 'Loading...' : weather?.description || weatherDetails.label}
-                                </p>
+                                <div className="text-xl font-medium text-gray-600 dark:text-gray-300 mt-2 capitalize w-full flex justify-center">
+                                    {loading ? (
+                                        <Skeleton className="w-24 h-6" />
+                                    ) : (
+                                        weather?.description || weatherDetails.label
+                                    )}
+                                </div>
                             </div>
 
                             {/* Card Footer: Mini Stats */}
                             <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
-                                <div className="text-center">
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Wind</p>
-                                    {/* Round wind speed to nearest integer for cleaner display (e.g., 6.63 km/h -> 7 km/h) */}
-                                    <p className="font-bold text-gray-900 dark:text-white">{loading ? '--' : Math.round(weather?.wind_speed)} km/h</p>
+                                <div className="text-center flex flex-col items-center">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">Wind</p>
+                                    {loading ? <Skeleton className="w-12 h-5" /> : <p className="font-bold text-gray-900 dark:text-white">{Math.round(weather?.wind_speed)} km/h</p>}
                                 </div>
-                                <div className="text-center border-l border-gray-100 dark:border-gray-700">
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Humidity</p>
-                                    <p className="font-bold text-gray-900 dark:text-white">{loading ? '--' : Math.round(weather?.humidity)}%</p>
+                                <div className="text-center border-l border-gray-100 dark:border-gray-700 flex flex-col items-center">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">Humidity</p>
+                                    {loading ? <Skeleton className="w-12 h-5" /> : <p className="font-bold text-gray-900 dark:text-white">{Math.round(weather?.humidity)}%</p>}
                                 </div>
-                                <div className="text-center border-l border-gray-100 dark:border-gray-700">
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">UV</p>
-                                    <p className="font-bold text-gray-900 dark:text-white">High</p>
+                                <div className="text-center border-l border-gray-100 dark:border-gray-700 flex flex-col items-center">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">UV</p>
+                                    {loading ? <Skeleton className="w-12 h-5" /> : <p className="font-bold text-gray-900 dark:text-white">High</p>}
                                 </div>
                             </div>
 
@@ -373,6 +388,7 @@ export default function Hero() {
                     </div>
                 </div>
             </div>
+            <AIAssistant weather={weather} />
         </div>
     );
 }

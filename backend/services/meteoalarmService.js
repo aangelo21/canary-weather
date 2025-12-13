@@ -202,6 +202,7 @@ export const notifyUsersAboutAlerts = async (newAlerts) => {
         
         console.log(`Sent notification for ${count} new alert(s)`);
     } catch (error) {
+        console.error("Error sending notifications:", error);
     }
 };
 

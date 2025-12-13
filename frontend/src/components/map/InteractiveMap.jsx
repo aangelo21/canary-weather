@@ -139,7 +139,7 @@ function MapControls({ setClickedPos, fetchWeather }) {
             {/* Search Bar */}
             <form
                 onSubmit={handleSearch}
-                className="flex items-center bg-white dark:bg-gray-800 rounded-lg shadow-md p-1 mb-2"
+                className="flex items-center bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-md p-1 mb-2"
             >
                 <input
                     type="text"
@@ -199,7 +199,7 @@ function MapControls({ setClickedPos, fetchWeather }) {
                         e.stopPropagation();
                         handleReset();
                     }}
-                    className="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    className="p-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                     title="Reset View"
                 >
                     <svg
@@ -222,7 +222,7 @@ function MapControls({ setClickedPos, fetchWeather }) {
                         e.stopPropagation();
                         handleLocate();
                     }}
-                    className="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    className="p-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                     title="My Location"
                 >
                     <svg
@@ -278,6 +278,11 @@ function InteractiveMap() {
     const [weather, setWeather] = useState(null);
 
     /**
+     * @type {[boolean, Function]} loading - State to indicate if weather data is being fetched.
+     */
+    const [loading, setLoading] = useState(false);
+
+    /**
      * @type {[Array<Object>, Function]} pois - State for the fetched Points of Interest.
      */
     const [pois, setPois] = useState([]);
@@ -298,6 +303,7 @@ function InteractiveMap() {
     }, []);
 
     const fetchWeather = async (lat, lng) => {
+        setLoading(true);
         setWeather(null);
         try {
             const res = await fetch(
@@ -318,6 +324,8 @@ function InteractiveMap() {
             });
         } catch {
             setWeather(null);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -334,7 +342,7 @@ function InteractiveMap() {
      * Effect hook to automatically open the popup when weather data is ready.
      */
     useEffect(() => {
-        if (markerRef.current && clickedPos && weather != null) {
+        if (markerRef.current && clickedPos) {
             markerRef.current.openPopup();
         }
     }, [clickedPos, weather]);
@@ -450,14 +458,13 @@ function InteractiveMap() {
                 <MapControls setClickedPos={setClickedPos} fetchWeather={fetchWeather} />
                 {clickedPos && (
                     <Marker position={clickedPos} ref={markerRef}>
-                        {weather != null && (
-                            <WeatherPopup
-                                position={clickedPos}
-                                weather={weather}
-                                markerRef={markerRef}
-                                onClose={handlePopupClose}
-                            />
-                        )}
+                        <WeatherPopup
+                            position={clickedPos}
+                            weather={weather}
+                            loading={loading}
+                            markerRef={markerRef}
+                            onClose={handlePopupClose}
+                        />
                     </Marker>
                 )}
             </MapContainer>

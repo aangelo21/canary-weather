@@ -54,7 +54,6 @@ export const en = {
     filters: "Filters",
     severity: "Severity",
     areas: "Areas",
-      islands: "Islands",
     phenomena: "Phenomena",
     resetFilters: "Reset Filters",
     noMatchingWarnings: "No warnings match the current filters.",
@@ -413,6 +412,11 @@ export const en = {
     },
 
     // Terms and Conditions
+    // AI Assistant
+    aiGreeting: "Hello! I am your AI Weather Assistant.",
+    aiSubtitle: "Ask me about the weather!",
+    aiPlaceholder: "Ask something...",
+    aiError: "Sorry, I could not process your request.",
     terms: {
       title: "Terms and Conditions",
       lastUpdated: "Last updated: December 1, 2025",

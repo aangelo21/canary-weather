@@ -22,8 +22,10 @@ import userRoutes from "./routes/userRoutes.js";
 import alertRoutes from "./routes/alertRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import userLocationRoutes from "./routes/userLocationRoutes.js";
+import locationRoutes from "./routes/locationRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import pushRoutes from "./routes/pushRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
 
 // Import Swagger for API documentation
 import swaggerUi from "swagger-ui-express";
@@ -133,6 +135,8 @@ app.use("/api/pois", pointOfInterestRoutes);
 
 app.use("/api/users", userRoutes);
 
+app.use("/api/locations", locationRoutes);
+
 app.use("/api/alerts", alertRoutes);
 
 app.use("/api/notifications", notificationRoutes);
@@ -141,6 +145,7 @@ app.use("/api/user-locations", userLocationRoutes);
 
 app.use("/admin", adminRoutes);
 app.use("/api/push", pushRoutes);
+app.use("/api/ai", aiRoutes);
 
 // Health check endpoint to verify server status
 app.get("/api/health", (req, res) => {

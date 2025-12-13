@@ -7,6 +7,7 @@ import {
 } from '../../services/poiService';
 import POIForm from './POIForm';
 import POICard from './POICard';
+import POICardSkeleton from './POICardSkeleton';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -93,6 +94,11 @@ export default function PointsOfInterestList() {
      * @type {[boolean, Function]} loading - State to indicate if an API operation is in progress.
      */
     const [loading, setLoading] = useState(false);
+
+    /**
+     * @type {[boolean, Function]} isFiltering - State to indicate if the list is being filtered/loaded.
+     */
+    const [isFiltering, setIsFiltering] = useState(true);
 
     /**
      * @type {[string, Function]} error - State to store error messages.
@@ -308,31 +314,36 @@ export default function PointsOfInterestList() {
      * Applies the selected filter to the list of POIs.
      */
     const applyFilter = async () => {
-        if (filter === 'all') {
-            const userPois = await fetchPersonalPoisData();
-            const allPois = [...pois, ...userPois];
-            const uniquePois = Array.from(
-                new Map(allPois.map((item) => [item.id, item])).values()
-            );
-            setFilteredPois(uniquePois);
-        } else if (filter === 'global') {
-            setFilteredPois(pois.filter((poi) => poi.type === 'global'));
-        } else if (filter === 'local') {
-            const userPois = await fetchPersonalPoisData();
-            const uniqueUserPois = Array.from(
-                new Map(userPois.map((item) => [item.id, item])).values()
-            );
-            setFilteredPois(
-                uniqueUserPois.filter((poi) => poi.type === 'local')
-            );
-        } else if (filter === 'personal') {
-            const userPois = await fetchPersonalPoisData();
-            const uniqueUserPois = Array.from(
-                new Map(userPois.map((item) => [item.id, item])).values()
-            );
-            setFilteredPois(
-                uniqueUserPois.filter((poi) => poi.type === 'personal')
-            );
+        setIsFiltering(true);
+        try {
+            if (filter === 'all') {
+                const userPois = await fetchPersonalPoisData();
+                const allPois = [...pois, ...userPois];
+                const uniquePois = Array.from(
+                    new Map(allPois.map((item) => [item.id, item])).values()
+                );
+                setFilteredPois(uniquePois);
+            } else if (filter === 'global') {
+                setFilteredPois(pois.filter((poi) => poi.type === 'global'));
+            } else if (filter === 'local') {
+                const userPois = await fetchPersonalPoisData();
+                const uniqueUserPois = Array.from(
+                    new Map(userPois.map((item) => [item.id, item])).values()
+                );
+                setFilteredPois(
+                    uniqueUserPois.filter((poi) => poi.type === 'local')
+                );
+            } else if (filter === 'personal') {
+                const userPois = await fetchPersonalPoisData();
+                const uniqueUserPois = Array.from(
+                    new Map(userPois.map((item) => [item.id, item])).values()
+                );
+                setFilteredPois(
+                    uniqueUserPois.filter((poi) => poi.type === 'personal')
+                );
+            }
+        } finally {
+            setIsFiltering(false);
         }
     };
 
@@ -417,7 +428,11 @@ export default function PointsOfInterestList() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredPois.length === 0 ? (
+                    {loading || isFiltering ? (
+                        Array.from({ length: 6 }).map((_, index) => (
+                            <POICardSkeleton key={index} />
+                        ))
+                    ) : filteredPois.length === 0 ? (
                         <div className="col-span-full text-center text-gray-500">
                             {t('noPois')}
                         </div>

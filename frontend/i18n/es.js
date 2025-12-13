@@ -54,7 +54,6 @@ export const es = {
     filters: "Filtros",
     severity: "Severidad",
     areas: "Áreas",
-      islands: "Islas",
     phenomena: "Fenómenos",
     resetFilters: "Resetear Filtros",
     noMatchingWarnings: "No hay alertas que coincidan con los filtros.",
@@ -166,72 +165,7 @@ export const es = {
     enabling: "Activando...",
     disabling: "Desactivando...",
 
-    // Map Legend
-    mapLegend: {
-      title: "Guía del Mapa",
-      description: "Entiende las capas meteorológicas y controles.",
-      tabs: {
-        layers: "Capas",
-        controls: "Controles",
-        interaction: "Interacción"
-      },
-      layers: {
-        temp: {
-          title: "Temperatura",
-          desc: "Muestra la temperatura actual en grados Celsius.",
-          scale: {
-            light: "Frío",
-            moderate: "Templado",
-            heavy: "Caliente"
-          }
-        },
-        precip: {
-          title: "Precipitación",
-          desc: "Intensidad de lluvia en mm/h.",
-          scale: {
-            light: "Ligera",
-            moderate: "Moderada",
-            heavy: "Intensa"
-          }
-        },
-        clouds: {
-          title: "Nubes",
-          desc: "Cobertura nubosa en porcentaje."
-        },
-        wind: {
-          title: "Viento",
-          desc: "Velocidad y dirección del viento."
-        }
-      },
-      controls: {
-        search: {
-          title: "Buscar",
-          desc: "Encuentra municipios y lugares."
-        },
-        location: {
-          title: "Mi Ubicación",
-          desc: "Centra el mapa en tu posición."
-        },
-        reset: {
-          title: "Reiniciar",
-          desc: "Vuelve a la vista inicial."
-        }
-      },
-      interaction: {
-        click: {
-          title: "Clic en el Mapa",
-          desc: "Haz clic en cualquier lugar para ver <strong>detalles del clima</strong>."
-        },
-        save: {
-          title: "Guardar Ubicación",
-          desc: "Guarda tus lugares favoritos."
-        },
-        layers: {
-          title: "Cambiar Capas",
-          desc: "Usa el menú para alternar entre <strong>Temperatura, Lluvia, Nubes y Viento</strong>."
-        }
-      }
-    },
+    // Map Legend (Removed duplicate)
     errorCreateUser: "Error al crear usuario",
     password: "Contraseña",
     confirmPassword: "Confirmar Contraseña",
@@ -336,7 +270,6 @@ export const es = {
     exploreMap: "Explora el Mapa",
     clickLocation: "Haz clic en una Ubicación para ver su pronóstico",
     mapDescription: "Navega por las islas y descubre las condiciones meteorológicas en tiempo real.",
-    ourHQ: "Nuestra Sede",
     // Testimonials
     testimonialsTitle: "Amado por Locales y Viajeros",
     testimonialsSubtitle: "Descubre cómo Canary Weather ayuda a miles de personas a planificar sus días perfectos en el archipiélago.",
@@ -485,6 +418,11 @@ export const es = {
     },
 
     // Términos y Condiciones
+    // Asistente IA
+    aiGreeting: "¡Hola! Soy tu Asistente Meteorológico IA.",
+    aiSubtitle: "¡Pregúntame sobre el tiempo!",
+    aiPlaceholder: "Pregunta algo...",
+    aiError: "Lo siento, no pude procesar tu solicitud.",
     terms: {
       title: "Términos y Condiciones",
       lastUpdated: "Última actualización: 1 de diciembre de 2025",

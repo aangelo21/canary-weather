@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { fetchAlerts, fetchWarnings } from '../services/alertService';
 import SEO from '../components/SEO';
+import WarningsSkeleton from '../components/warnings/WarningsSkeleton';
 
 /**
  * Warnings Page Component.
@@ -183,7 +184,7 @@ function Warnings() {
             case 'red':
                 return 'bg-red-50 border-red-500 text-red-700';
             case 'orange':
-                return 'bg-orange-50 border-orange-500 text-orange-700';
+                return 'bg-[#fff3e0] border-[#ff9800] text-[#e65100]'; // More distinct orange
             case 'yellow':
                 return 'bg-yellow-50 border-yellow-500 text-yellow-700';
             case 'green':
@@ -288,7 +289,7 @@ function Warnings() {
     const filteredActiveAlerts = applyFilters(activeAlerts);
     const filteredPastAlerts = applyFilters(pastAlerts);
 
-    if (loading) return <div className="text-center">{t('loading')}</div>;
+    if (loading) return <WarningsSkeleton />;
     if (error)
         return <div className="text-center text-red-500">{error}</div>;
 

@@ -1,5 +1,17 @@
 @import url("leaflet/dist/leaflet.css");
 
+/* Force override here as well to be safe */
+.leaflet-popup.custom-popup-clean .leaflet-popup-content-wrapper {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+.leaflet-popup.custom-popup-clean .leaflet-popup-tip {
+    display: none !important;
+}
+.leaflet-popup.custom-popup-clean .leaflet-popup-close-button {
+    display: none !important;
+}
+
 .leaflet-container {
   height: 80vh;
   width: 100%;
