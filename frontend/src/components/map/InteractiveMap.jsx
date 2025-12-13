@@ -134,19 +134,19 @@ function MapControls({ setClickedPos, fetchWeather }) {
     return (
         <div
             id="map-controls"
-            className="absolute top-4 right-4 z-1000 flex flex-col gap-2 items-end"
+            className="absolute top-4 right-4 z-[1000] flex flex-col gap-2 items-end"
         >
             {/* Search Bar */}
             <form
                 onSubmit={handleSearch}
-                className="flex items-center bg-white dark:bg-gray-800 rounded-lg shadow-md p-1 mb-2"
+                className="flex items-center bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-md p-1 mb-2"
             >
                 <input
                     type="text"
                     placeholder="Search location..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="px-2 py-1 bg-transparent border-none focus:outline-none text-gray-800 dark:text-white w-40 sm:w-60"
+                    className="px-2 py-1 bg-transparent border-none focus:outline-none text-gray-800 dark:text-white w-32 sm:w-60"
                 />
                 <button
                     type="submit"
@@ -199,7 +199,7 @@ function MapControls({ setClickedPos, fetchWeather }) {
                         e.stopPropagation();
                         handleReset();
                     }}
-                    className="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    className="p-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                     title="Reset View"
                 >
                     <svg
@@ -222,7 +222,7 @@ function MapControls({ setClickedPos, fetchWeather }) {
                         e.stopPropagation();
                         handleLocate();
                     }}
-                    className="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    className="p-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                     title="My Location"
                 >
                     <svg
@@ -278,6 +278,11 @@ function InteractiveMap() {
     const [weather, setWeather] = useState(null);
 
     /**
+     * @type {[boolean, Function]} loading - State to indicate if weather data is being fetched.
+     */
+    const [loading, setLoading] = useState(false);
+
+    /**
      * @type {[Array<Object>, Function]} pois - State for the fetched Points of Interest.
      */
     const [pois, setPois] = useState([]);
@@ -298,6 +303,7 @@ function InteractiveMap() {
     }, []);
 
     const fetchWeather = async (lat, lng) => {
+        setLoading(true);
         setWeather(null);
         try {
             const res = await fetch(
@@ -318,6 +324,8 @@ function InteractiveMap() {
             });
         } catch {
             setWeather(null);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -334,7 +342,7 @@ function InteractiveMap() {
      * Effect hook to automatically open the popup when weather data is ready.
      */
     useEffect(() => {
-        if (markerRef.current && clickedPos && weather != null) {
+        if (markerRef.current && clickedPos) {
             markerRef.current.openPopup();
         }
     }, [clickedPos, weather]);
@@ -353,7 +361,7 @@ function InteractiveMap() {
                 maxBounds={bounds}
                 maxBoundsViscosity={1.0}
                 scrollWheelZoom={true}
-                className="leaflet-container shadow-xl dark:shadow-black/50 border-2 border-gray-200 dark:border-gray-700 rounded-xl h-[600px] w-full"
+                className="leaflet-container shadow-xl dark:shadow-black/50 border-2 border-gray-200 dark:border-gray-700 rounded-xl h-[50vh] md:h-[600px] w-full"
             >
                 <LayersControl position="topleft">
                     {/* Base Layers */}
@@ -450,14 +458,13 @@ function InteractiveMap() {
                 <MapControls setClickedPos={setClickedPos} fetchWeather={fetchWeather} />
                 {clickedPos && (
                     <Marker position={clickedPos} ref={markerRef}>
-                        {weather != null && (
-                            <WeatherPopup
-                                position={clickedPos}
-                                weather={weather}
-                                markerRef={markerRef}
-                                onClose={handlePopupClose}
-                            />
-                        )}
+                        <WeatherPopup
+                            position={clickedPos}
+                            weather={weather}
+                            loading={loading}
+                            markerRef={markerRef}
+                            onClose={handlePopupClose}
+                        />
                     </Marker>
                 )}
             </MapContainer>

@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { fetchAlerts, fetchWarnings } from '../services/alertService';
 import SEO from '../components/SEO';
+import WarningsSkeleton from '../components/warnings/WarningsSkeleton';
 
 /**
  * Warnings Page Component.
@@ -183,7 +184,7 @@ function Warnings() {
             case 'red':
                 return 'bg-red-50 border-red-500 text-red-700';
             case 'orange':
-                return 'bg-orange-50 border-orange-500 text-orange-700';
+                return 'bg-[#fff3e0] border-[#ff9800] text-[#e65100]'; // More distinct orange
             case 'yellow':
                 return 'bg-yellow-50 border-yellow-500 text-yellow-700';
             case 'green':
@@ -288,7 +289,7 @@ function Warnings() {
     const filteredActiveAlerts = applyFilters(activeAlerts);
     const filteredPastAlerts = applyFilters(pastAlerts);
 
-    if (loading) return <div className="text-center">{t('loading')}</div>;
+    if (loading) return <WarningsSkeleton />;
     if (error)
         return <div className="text-center text-red-500">{error}</div>;
 
@@ -436,51 +437,91 @@ function Warnings() {
                             : (t('noMatchingWarnings') || 'No hay alertas que coincidan con los filtros.')}
                     </p>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full bg-white border border-gray-200">
-                            <thead>
-                                <tr className="bg-gray-100">
-                                    <th className="py-2 px-4 border-b text-left">
-                                        {t('phenomenon') || 'Phenomenon'}
-                                    </th>
-                                    <th className="py-2 px-4 border-b text-left">
-                                        {t('level') || 'Level'}
-                                    </th>
-                                    <th className="py-2 px-4 border-b text-left">
-                                        {t('start') || 'Start Date'}
-                                    </th>
-                                    <th className="py-2 px-4 border-b text-left">
-                                        {t('end') || 'End Date'}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredPastAlerts.map((alert) => (
-                                    <tr
-                                        key={alert.id}
-                                        className="hover:bg-gray-50"
-                                    >
-                                        <td className="py-2 px-4 border-b">
-                                            {translatePhenomenon(alert.phenomenon)}
-                                        </td>
-                                        <td className="py-2 px-4 border-b">
-                                            {translateSeverity(alert.level)}
-                                        </td>
-                                        <td className="py-2 px-4 border-b">
+                    <>
+                        {/* Mobile View: Cards */}
+                        <div className="md:hidden grid gap-4">
+                            {filteredPastAlerts.map((alert) => (
+                                <div
+                                    key={alert.id}
+                                    className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded shadow"
+                                >
+                                    <div className="font-bold mb-2 text-gray-900 dark:text-white">
+                                        {translatePhenomenon(alert.phenomenon)}
+                                    </div>
+                                    <div className="mb-2 text-sm text-gray-600 dark:text-gray-300">
+                                        {translateSeverity(alert.level)}
+                                    </div>
+                                    <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+                                        <div>
+                                            <span className="font-semibold">
+                                                {t('start')}:
+                                            </span>{' '}
                                             {new Date(
                                                 alert.start_date
                                             ).toLocaleString()}
-                                        </td>
-                                        <td className="py-2 px-4 border-b">
+                                        </div>
+                                        <div>
+                                            <span className="font-semibold">
+                                                {t('end')}:
+                                            </span>{' '}
                                             {new Date(
                                                 alert.end_date
                                             ).toLocaleString()}
-                                        </td>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Desktop View: Table */}
+                        <div className="hidden md:block overflow-x-auto">
+                            <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                                <thead>
+                                    <tr className="bg-gray-100 dark:bg-gray-700">
+                                        <th className="py-2 px-4 border-b dark:border-gray-600 text-left text-gray-900 dark:text-white">
+                                            {t('phenomenon') || 'Phenomenon'}
+                                        </th>
+                                        <th className="py-2 px-4 border-b dark:border-gray-600 text-left text-gray-900 dark:text-white">
+                                            {t('level') || 'Level'}
+                                        </th>
+                                        <th className="py-2 px-4 border-b dark:border-gray-600 text-left text-gray-900 dark:text-white">
+                                            {t('start') || 'Start Date'}
+                                        </th>
+                                        <th className="py-2 px-4 border-b dark:border-gray-600 text-left text-gray-900 dark:text-white">
+                                            {t('end') || 'End Date'}
+                                        </th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody>
+                                    {filteredPastAlerts.map((alert) => (
+                                        <tr
+                                            key={alert.id}
+                                            className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                                        >
+                                            <td className="py-2 px-4 border-b dark:border-gray-700 text-gray-800 dark:text-gray-200">
+                                                {translatePhenomenon(
+                                                    alert.phenomenon
+                                                )}
+                                            </td>
+                                            <td className="py-2 px-4 border-b dark:border-gray-700 text-gray-800 dark:text-gray-200">
+                                                {translateSeverity(alert.level)}
+                                            </td>
+                                            <td className="py-2 px-4 border-b dark:border-gray-700 text-gray-800 dark:text-gray-200">
+                                                {new Date(
+                                                    alert.start_date
+                                                ).toLocaleString()}
+                                            </td>
+                                            <td className="py-2 px-4 border-b dark:border-gray-700 text-gray-800 dark:text-gray-200">
+                                                {new Date(
+                                                    alert.end_date
+                                                ).toLocaleString()}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
                 )}
             </section>
         </div>

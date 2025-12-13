@@ -47,16 +47,22 @@ export const getAllPointsOfInterest = async (req, res) => {
       ];
 
       if (req.user) {
-        const userLocation = await UserLocation.findOne({
+        const userLocations = await UserLocation.findAll({
           where: { user_id: req.user.id },
           include: [Location]
         });
 
-        // Show all local POIs regardless of specific location matching
-        // This fixes the issue where some local POIs were hidden because their name didn't match "Municipio: ..."
-        orConditions.push({
-          type: 'local'
-        });
+        const locationNames = userLocations
+          .map(ul => ul.Location ? ul.Location.name : null)
+          .filter(name => name !== null);
+
+        if (locationNames.length > 0) {
+          const poiNames = locationNames.map(name => `Municipio: ${name}`);
+          orConditions.push({
+            type: 'local',
+            name: { [Op.in]: poiNames }
+          });
+        }
       }
 
       whereClause = {

@@ -211,31 +211,37 @@ body {
   background-color: #4a4a4a;
 }
 
-/* Custom Leaflet Popup Styles */
-.custom-popup-clean .leaflet-popup-content-wrapper {
-  background: transparent !important;
+/* Custom Leaflet Popup Styles - AGGRESSIVE OVERRIDE */
+div.leaflet-popup.custom-popup-clean .leaflet-popup-content-wrapper,
+div.leaflet-popup.custom-popup-clean .leaflet-popup-tip {
+  background: none !important;
+  background-color: transparent !important;
   box-shadow: none !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
+  border: none !important;
+  outline: none !important;
 }
 
-.custom-popup-clean .leaflet-popup-tip {
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-.custom-popup-clean .leaflet-popup-content {
+div.leaflet-popup.custom-popup-clean .leaflet-popup-content {
   margin: 0 !important;
   width: auto !important;
+  background: none !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
-.custom-popup-clean a.leaflet-popup-close-button {
-  color: white !important;
-  top: 10px !important;
-  right: 10px !important;
-  font-size: 20px !important;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-  z-index: 20;
+div.leaflet-popup.custom-popup-clean .leaflet-popup-tip-container {
+  display: none !important;
+}
+
+/* Hide the default Leaflet close button */
+div.leaflet-popup.custom-popup-clean a.leaflet-popup-close-button,
+div.leaflet-popup.custom-popup-clean .leaflet-popup-close-button {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 /* Dark mode map tiles filter - Apple Maps Dark Style approximation */
