@@ -63,10 +63,10 @@ function Home() {
             <HourlyForecast coords={coords} />
 
             {/* Stats Section: Key metrics display */}
-            <Stats />
+            <Stats coords={coords} />
 
             {/* Destination Carousel: Horizontal scroll of locations */}
-            <div className="pt-10 bg-white dark:bg-gray-900">
+            <div className="bg-white dark:bg-gray-900">
                 <DestinationCarousel />
             </div>
         </div>

@@ -460,5 +460,9 @@ export const en = {
     liveUpdates: "Updated just now",
     wind: "Wind",
     precipChance: "Rain",
+    humidity: "Humidity",
+    visibility: "Visibility",
+    pressure: "Pressure",
+    sunCycle: "Sun Cycle",
   },
 };

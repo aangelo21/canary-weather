@@ -210,23 +210,8 @@ export default function HourlyForecast({ coords }) {
                         </div>
                     </div>
 
-                    {/* Navigation Controls */}
-                    <div className="hidden md:flex gap-3">
-                        <button 
-                            onClick={scrollLeft}
-                            className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-all active:scale-95"
-                            aria-label="Scroll left"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                        </button>
-                        <button 
-                            onClick={scrollRight}
-                            className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-all active:scale-95"
-                            aria-label="Scroll right"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                        </button>
-                    </div>
+                    {/* Navigation Controls - Removed as per user request */}
+                    {/* <div className="hidden md:flex gap-3"> ... </div> */}
                 </div>
 
                 {/* Content Area */}
