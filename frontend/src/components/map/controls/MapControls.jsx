@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
+import MapLegend from './MapLegend';
 
 /**
  * MapControls Component.
@@ -151,13 +152,13 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
             </form>
 
             {/* Action Buttons */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
                         handleReset();
                     }}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-xl shadow-lg border border-white/20 dark:border-gray-700/30 hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 transition-all duration-200 hover:scale-105 active:scale-95 font-medium text-sm"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 dark:border-gray-700/30 hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 transition-all duration-200 hover:scale-105 active:scale-95 font-medium text-sm"
                     title="Reset View"
                 >
                     <svg
@@ -174,14 +175,14 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
                         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
                         <path d="M3 3v5h5" />
                     </svg>
-                    <span>Reset</span>
+                    <span className="hidden sm:inline">Reset</span>
                 </button>
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
                         handleLocate();
                     }}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600/90 backdrop-blur-md rounded-xl shadow-lg shadow-blue-500/20 border border-blue-500/20 hover:bg-blue-700 text-white transition-all duration-200 hover:scale-105 active:scale-95 font-medium text-sm"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600/90 backdrop-blur-md rounded-2xl shadow-lg shadow-blue-500/20 border border-blue-500/20 hover:bg-blue-700 text-white transition-all duration-200 hover:scale-105 active:scale-95 font-medium text-sm"
                     title="My Location"
                 >
                     <svg
@@ -198,8 +199,13 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                         <circle cx="12" cy="10" r="3" />
                     </svg>
-                    <span>Locate Me</span>
+                    <span className="hidden sm:inline">Locate</span>
                 </button>
+                
+                {/* Legend Button */}
+                <div onClick={(e) => e.stopPropagation()}>
+                    <MapLegend />
+                </div>
             </div>
         </div>
     );

@@ -20,6 +20,28 @@ export default function HourlyForecast({ coords, compact = false }) {
     const [error, setError] = useState(null);
     const scrollContainerRef = useRef(null);
     
+    // Scroll indicators for compact mode
+    const [showLeftScroll, setShowLeftScroll] = useState(false);
+    const [showRightScroll, setShowRightScroll] = useState(true);
+
+    const handleScroll = () => {
+        if (scrollContainerRef.current) {
+            const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+            setShowLeftScroll(scrollLeft > 0);
+            setShowRightScroll(scrollLeft < scrollWidth - clientWidth - 10);
+        }
+    };
+
+    useEffect(() => {
+        const el = scrollContainerRef.current;
+        if (el) {
+            el.addEventListener('scroll', handleScroll);
+            // Check initial state
+            handleScroll();
+            return () => el.removeEventListener('scroll', handleScroll);
+        }
+    }, [forecast]);
+
     const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
     const fetchForecast = async () => {
@@ -206,27 +228,45 @@ export default function HourlyForecast({ coords, compact = false }) {
                 {/* Header with Live Indicator - Hide in compact mode */}
                 {!compact && (
                     <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900">
-                    <div className="flex items-center gap-4">
-                        <div>
-                            <h3 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
-                                {t('hourlyForecastTitle') || '24h Forecast'}
-                            </h3>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-2 font-medium">
-                                <span className="relative flex h-2 w-2">
-                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                                </span>
-                                {t('liveUpdates') || 'Updated just now'}
-                            </p>
+                        <div className="flex items-center gap-4">
+                            <div>
+                                <h3 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
+                                    {t('hourlyForecastTitle') || '24h Forecast'}
+                                </h3>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-2 font-medium">
+                                    <span className="relative flex h-2 w-2">
+                                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                    </span>
+                                    {t('liveUpdates') || 'Updated just now'}
+                                </p>
+                            </div>
                         </div>
                     </div>
-
-                    {/* Navigation Controls - Removed as per user request */}
-                    {/* <div className="hidden md:flex gap-3"> ... </div> */}
-                </div>
                 )}
 
                 {/* Content Area */}
-                <div className={`relative ${compact ? 'h-48' : 'h-64'} ${!compact && 'bg-white dark:bg-gray-900'}`}>
+                <div className={`relative ${compact ? 'h-40' : 'h-64'} ${!compact && 'bg-white dark:bg-gray-900'} group/container`}>
+                    {/* Scroll Buttons for Compact Mode */}
+                    {compact && !loading && !error && (
+                        <>
+                            <button 
+                                onClick={scrollLeft}
+                                className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 p-1 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-md border border-gray-100 dark:border-gray-700 transition-all duration-300 ${showLeftScroll ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4 pointer-events-none'}`}
+                            >
+                                <svg className="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                            </button>
+                            <button 
+                                onClick={scrollRight}
+                                className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 p-1 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-md border border-gray-100 dark:border-gray-700 transition-all duration-300 ${showRightScroll ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'}`}
+                            >
+                                <svg className="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                            </button>
+                            {/* Gradient Masks */}
+                            <div className={`absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-gray-900 to-transparent z-10 pointer-events-none transition-opacity duration-300 ${showLeftScroll ? 'opacity-100' : 'opacity-0'}`} />
+                            <div className={`absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-gray-900 to-transparent z-10 pointer-events-none transition-opacity duration-300 ${showRightScroll ? 'opacity-100' : 'opacity-0'}`} />
+                        </>
+                    )}
+
                     {loading ? (
                         <div className="flex items-center gap-6 px-8 h-full overflow-hidden">
                             {[1, 2, 3, 4, 5, 6].map(i => (
@@ -249,11 +289,11 @@ export default function HourlyForecast({ coords, compact = false }) {
                             className="overflow-x-auto scrollbar-hide h-full flex items-stretch relative select-none cursor-grab active:cursor-grabbing scroll-smooth"
                         >
                             {/* SVG Graph Layer */}
-                            <div className={`absolute ${compact ? 'top-[70px]' : 'top-[90px]'} left-0 ${compact ? 'h-[80px]' : 'h-[100px]'} pointer-events-none z-0`} style={{ width: `${forecast.length * 120}px` }}>
+                            <div className={`absolute ${compact ? 'top-[60px]' : 'top-[90px]'} left-0 ${compact ? 'h-[60px]' : 'h-[100px]'} pointer-events-none z-0`} style={{ width: `${forecast.length * 120}px` }}>
                                 <svg className="w-full h-full overflow-visible">
                                     <defs>
                                         <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2" />
+                                            <stop offset="0%" stopColor="#3b82f6" stopOpacity={compact ? "0.1" : "0.2"} />
                                             <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
                                         </linearGradient>
                                         <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
@@ -279,7 +319,7 @@ export default function HourlyForecast({ coords, compact = false }) {
                                         d={graphData.linePath} 
                                         fill="none" 
                                         stroke="url(#lineGradient)" 
-                                        strokeWidth="3" 
+                                        strokeWidth={compact ? "2" : "3"} 
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
                                         filter="url(#glow)"
@@ -306,11 +346,11 @@ export default function HourlyForecast({ coords, compact = false }) {
                             {forecast.map((item, index) => (
                                 <div 
                                     key={item.dt}
-                                    className="group flex-none w-[120px] flex flex-col items-center justify-between py-6 relative z-10 hover:bg-white/40 dark:hover:bg-white/5 transition-colors duration-300"
+                                    className={`group flex-none w-[120px] flex flex-col items-center justify-between ${compact ? 'py-2' : 'py-6'} relative z-10 hover:bg-white/40 dark:hover:bg-white/5 transition-colors duration-300`}
                                 >
                                     {/* Top Section: Time & Icon */}
-                                    <div className="flex flex-col items-center gap-2">
-                                        <span className="text-sm font-semibold text-gray-500 dark:text-gray-400 group-hover:text-brand-primary dark:group-hover:text-blue-400 transition-colors">
+                                    <div className="flex flex-col items-center gap-1">
+                                        <span className={`font-semibold text-gray-500 dark:text-gray-400 group-hover:text-brand-primary dark:group-hover:text-blue-400 transition-colors ${compact ? 'text-xs' : 'text-sm'}`}>
                                             {item.time}
                                         </span>
                                         
@@ -327,22 +367,12 @@ export default function HourlyForecast({ coords, compact = false }) {
                                         </div>
                                     </div>
 
-                                    {/* Graph Point (Visual only, positioned absolutely by SVG logic, but we render a dot here for interaction) */}
-                                    {/* We use the calculated Y from graphData to position a dot if we wanted HTML dots, but SVG dots are cleaner. 
-                                        Instead, let's put the temperature text exactly where it belongs visually or at the bottom.
-                                        Current design: Temp at bottom.
-                                    */}
-
                                     {/* Bottom Section: Temperature & Wind */}
-                                    <div className="flex flex-col items-center mt-auto pt-12">
-                                        {/* The Dot on the line (SVG overlay handles the line, but we can add a marker here if we matched coordinates perfectly. 
-                                            Simpler: Just let the SVG handle the dot and we show data below) 
-                                        */}
-                                        
-                                        <span className="text-xl font-bold text-gray-800 dark:text-white group-hover:scale-110 transition-transform">
+                                    <div className="flex flex-col items-center mt-auto pt-8">
+                                        <span className={`${compact ? 'text-lg' : 'text-xl'} font-bold text-gray-800 dark:text-white group-hover:scale-110 transition-transform`}>
                                             {item.temp}°
                                         </span>
-                                        <div className="flex items-center gap-1 mt-1 text-xs text-gray-400 dark:text-gray-500">
+                                        <div className="flex items-center gap-1 mt-1 text-[10px] text-gray-400 dark:text-gray-500">
                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                             {item.wind} km/h
                                         </div>
