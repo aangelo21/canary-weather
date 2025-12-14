@@ -65,7 +65,7 @@ export const en = {
     searchPlaceholder: "Search location...",
     mapGuide: "Map Guide",
     clickAnywhereTitle: "Click Anywhere",
-    clickAnywhereDesc: "Click on any location to see detailed weather, forecast, and save it as a POI.",
+    clickAnywhereDesc: "Click on any location to see detailed weather, forecast, and save it as a point of interest.",
     mapLayersTitle: "Map Layers",
     mapLayersDesc: "Use the bottom-left controls to switch between Clouds, Rain, Temperature, and Wind layers.",
     searchLocateTitle: "Search & Locate",

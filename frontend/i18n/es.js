@@ -65,7 +65,7 @@ export const es = {
     searchPlaceholder: "Buscar ubicación...",
     mapGuide: "Guía del Mapa",
     clickAnywhereTitle: "Haz Clic",
-    clickAnywhereDesc: "Haz clic en cualquier ubicación para ver el clima detallado, pronóstico y guardarlo como POI.",
+    clickAnywhereDesc: "Haz clic en cualquier ubicación para ver el clima detallado, pronóstico y guardarlo como punto de interés.",
     mapLayersTitle: "Capas del Mapa",
     mapLayersDesc: "Usa los controles inferiores izquierdos para cambiar entre capas de Nubes, Lluvia, Temperatura y Viento.",
     searchLocateTitle: "Buscar y Ubicar",
