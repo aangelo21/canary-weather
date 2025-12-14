@@ -1,4 +1,4 @@
-# Deployment
+# CanaryWeather Deployment Guide
 
 ## DigitalOcean
 
@@ -114,24 +114,16 @@ pm2 start "node index.js" --name backend
 
 We have hosted our MySQL database on DigitalOcean as well. See the architecture and setup in [diagrams.md](./diagrams.md).
 
-## 4th sprint deployment
+## Sprint deployments
 
 ### Github
 
-Push the changes to the develop branch in github
+- Push the changes to the develop branch in github
+- Create a pull request to main and wait for aprovement
+- Once aproved, create a release with the name tag corresponding to the version of the deployment
 
 ### PM2 & droplet
 
-Install the dependencies ``npm i``
-
-create production build ``npm run build``
-
-restart the pm2 services ``restart ecosystem.config.js``
-
-In droplet, pull the changes from develop to main, put the command ``pm2 restart`` 
-
-start the backend
-
-```bash
-pm2 start "node index.js" --name backend
-```
+- Run ``git pull origin main`` to ensure the latest changes are downloaded
+- Install the dependencies with ``npm i`` (in both /frontend and /backend directories)
+- Restart the pm2 services ``pm2 restart all`` (inside the project root folder, since ecosystem.config.js handles the pm2 restart the intended way)

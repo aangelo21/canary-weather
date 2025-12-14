@@ -1,4 +1,4 @@
-#  Log Rotation and management
+#  CanaryWeather Logs Rotation Guide
 
 This document outlines the procedure for setting up professional logging and log rotation for the Canary Weather application (Frontend and Backend) using PM2.
 

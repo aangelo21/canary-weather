@@ -1,42 +1,62 @@
-# Authentication & Authorization
+# CanaryWeather Authentication Guide
 
-This document explains the authentication and authorization system used in CanaryWeather.
+This document explains how user authentication works in the CanaryWeather system, including login, registration, password management, and security measures.
+
+---
 
 ## Overview
 
-CanaryWeather uses a **hybrid authentication system**:
+Authentication is the process of verifying who a user is. CanaryWeather uses a combination of LDAP (for user credentials) and JWT tokens (for session management) to authenticate users.
 
-1.  **LDAP (Lightweight Directory Access Protocol)** for user identity and credential verification.
-2.  **JWT (JSON Web Tokens)** for API endpoints authorization.
-3.  **Express Sessions** for state management in some contexts.
+**Simple Explanation**: Authentication is like checking a person's ID card to verify they are who they claim to be.
 
-## LDAP Authentication
+---
 
-### How It Works
+## Authentication Methods
 
-1.  User submits credentials (username/password).
-2.  Server connects to the LDAP server.
-3.  Server binds as admin to search for the user DN (Distinguished Name).
-4.  Server attempts to bind as the user to verify the password.
-5.  Server checks group membership (`admins`, `normals`) to determine roles.
-6.  If successful, a JWT is generated and returned to the client.
+### Method 1: LDAP (User Credentials)
 
-### LDAP Service
+**What is LDAP?**
 
-The `LdapService` handles all interactions with the LDAP server:
+LDAP stands for Lightweight Directory Access Protocol. It is a separate system that stores and manages user login information.
 
--   **Authenticate**: Verifies credentials and retrieves user details.
--   **Create User**: Adds new users to LDAP and assigns them to the `normals` group.
--   **Update User**: Modifies email, password, or admin status.
--   **Delete User**: Removes user and their group memberships.
+**What does LDAP store?**
+- Usernames
+- Passwords (encrypted)
+- Email addresses
+- Admin status
 
-## JWT Authentication
+**Why use LDAP?**
+- Passwords are stored separately from application data
+- More secure than storing passwords in the database
+- Can manage multiple applications with one user directory
+- Follows enterprise security standards
 
-### Token Structure
+**LDAP Connection Details**:
+- Server: ldap://134.209.22.118
+- Base DN: dc=canaryweather,dc=xyz
+- Users OU: ou=users,dc=canaryweather,dc=xyz
 
-```javascript
+---
+
+### Method 2: JWT Tokens (Session Proof)
+
+**What is JWT?**
+
+JWT stands for JSON Web Token. After a user logs in, they receive a token that proves they are authenticated.
+
+**How JWT works**:
+1. User logs in with username and password
+2. LDAP verifies credentials
+3. Server creates a JWT token
+4. Token is given to user
+5. User includes token in every request
+6. Server verifies token is valid
+
+**Token Contents** (encoded):
+```
 {
-  "id": "username",       // LDAP username serves as ID
+  "id": "username",
   "username": "username",
   "is_admin": false,
   "iat": 1234567890,
@@ -44,335 +64,634 @@ The `LdapService` handles all interactions with the LDAP server:
 }
 ```
 
-### Implementation
+**Token Duration**:
+- Valid for 15 minutes
+- Must be refreshed after expiration
+- Cannot be reused after expiration
 
-#### Login Controller
+**Token Security**:
+- Tokens are signed (cannot be modified)
+- Tokens contain user information
+- Tokens expire automatically
+- Only valid for one user
 
-```javascript
-// backend/controllers/userController.js
-import { LdapService } from "../services/ldapService.js";
-import jwt from "jsonwebtoken";
+---
 
-export const loginUser = async (req, res) => {
-  const { username, password } = req.body;
+## User Registration Flow
 
-  // Authenticate against LDAP
-  const user = await LdapService.authenticate(username, password);
+### Step-by-Step Registration
 
-  if (!user) {
-    return res.status(401).json({ error: "Invalid username or password" });
-  }
+**Step 1: User Fills Registration Form**
+- Frontend displays registration form
+- User enters: email, username, password, location preferences
 
-  // Generate JWT
-  const token = jwt.sign(
-    { id: user.username, username: user.username, is_admin: user.isAdmin },
-    process.env.JWT_SECRET,
-    { expiresIn: "15m" }
-  );
+**Step 2: Frontend Sends Data**
+- Data sent to: POST /api/users
+- Request includes: email, username, password
 
-  return res.json({ user, token });
-};
-```
+**Step 3: Backend Validates**
+- Check if username already exists
+- Check if email already exists
+- Validate password strength
+- Validate email format
 
-#### Validating Tokens
+**Step 4: Create User in LDAP**
+- Backend connects to LDAP as admin
+- Creates new user entry in LDAP
+- Stores username and password (encrypted)
 
-```javascript
-// backend/middleware/authMiddleware.js
-export function authenticateToken(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
+**Step 5: Create User in Database**
+- Create entry in Users table
+- Create location preferences in UserLocations table
+- Create session in Sessions table
 
-  if (!token) {
-    return res.status(401).json({ error: "Token required" });
-  }
+**Step 6: Send Welcome Email**
+- Optional: Send email confirming registration
+- Email includes activation link or welcome message
 
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) {
-      return res.status(403).json({ error: "Invalid or expired token" });
-    }
-    req.user = user;
-    next();
-  });
-}
-```
+**Step 7: Return Success Response**
+- Backend sends user data back to frontend
+- Returns JWT token for immediate login
+- Frontend stores token and shows dashboard
 
-### Using JWT in Frontend
+**Step 8: User is Registered**
+- User can now login
+- User account is active
+- User can manage preferences
 
-```javascript
-// Store token after login
-localStorage.setItem("token", response.data.token);
+---
 
-// Include in API requests
-axios.get("/api/users/me", {
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  },
-});
-```
+## User Login Flow
 
-### Token Refresh
+### Step-by-Step Login
 
-```javascript
-// Refresh token using session
-export const refreshToken = async (req, res) => {
-  const user = req.user; // From session
+**Step 1: User Opens Login Page**
+- Frontend displays login form
+- User can enter: username or email
+- User enters: password
 
-  const token = jwt.sign(
-    { id: user.id, username: user.username, is_admin: user.is_admin },
-    JWT_SECRET,
-    { expiresIn: "15m" }
-  );
+**Step 2: Frontend Sends Credentials**
+- Data sent to: POST /api/users/login
+- Request includes: username/email and password
 
-  return res.json({ token });
-};
-```
+**Step 3: Backend Receives Request**
+- Backend receives login attempt
+- Backend validates input (not empty, etc.)
 
-## Session Authentication
+**Step 4: Check LDAP**
+- Backend connects to LDAP
+- Searches for user by username or email
+- Attempts to bind (login) with password
+- LDAP confirms or denies credentials
 
-### How It Works
+**Step 5: Check Admin Status**
+- If credentials valid, check user groups
+- Check if user is in "admins" group
+- Set is_admin flag to true or false
 
-1. User logs in
-2. Server creates session
-3. Session stored in database
-4. Session ID sent as cookie
-5. Cookie included in subsequent requests
-6. Server validates session on each request
+**Step 6: Create Session**
+- Create session in database
+- Set session to expire after 24 hours
+- Store user info in session
 
-### Configuration
+**Step 7: Generate JWT Token**
+- Create JWT token containing:
+  - Username
+  - Email
+  - Admin status
+  - Expiration time (15 minutes)
+- Sign token with secret key
 
-```javascript
-// backend/index.js
-import session from "express-session";
-import connectSessionSequelize from "connect-session-sequelize";
+**Step 8: Return Success Response**
+- Backend sends:
+  - User profile information
+  - JWT token
+- Frontend stores token in memory or local storage
 
-const SequelizeStore = connectSessionSequelize(session.Store);
-const sessionStore = new SequelizeStore({
-  db: sequelize,
-  tableName: "Sessions",
-});
+**Step 9: User is Logged In**
+- Frontend shows dashboard
+- User can access protected features
+- Token is sent with every API request
 
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "supersecretkey",
-    store: sessionStore,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: false, // Set to true for HTTPS
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    },
-  })
-);
-```
+---
 
-### Session Middleware
+## Protected Routes and Authorization
 
-```javascript
-// backend/middleware/authMiddleware.js
-export function authenticateSession(req, res, next) {
-  if (req.session && req.session.user) {
-    req.user = req.session.user;
-    return next();
-  }
-  return res.status(401).json({ error: "Session authentication required" });
-}
-```
+### What are Protected Routes?
 
-## Authorization
+Protected routes are API endpoints that require authentication. You must be logged in to access them.
 
-### User Roles
+**Public Routes** (No login needed):
+- POST /api/users/login (login)
+- POST /api/users (register)
+- GET /api/alerts (view alerts)
+- GET /api/locations (view cities)
+- GET /api/users/municipalities (view municipalities)
+- GET /api/health (health check)
 
-- **Regular User**: Can manage own data
-- **Admin**: Can manage all data and access admin dashboard
+**Protected Routes** (Login required):
+- GET /api/users/me (view my profile)
+- PUT /api/users/{id} (update profile)
+- DELETE /api/users/{id} (delete account)
+- POST /api/user-locations (add favorite city)
+- DELETE /api/user-locations/{id} (remove favorite city)
+- POST /api/pois (create POI)
+- PUT /api/pois/{id} (edit POI)
+- DELETE /api/pois/{id} (delete POI)
+- GET /api/notifications (view notifications)
 
-### Admin Check Middleware
+**Admin Routes** (Admin login required):
+- POST /api/alerts (create alert)
+- PUT /api/alerts/{id} (edit alert)
+- DELETE /api/alerts/{id} (delete alert)
+- POST /api/alerts/fetch (fetch external alerts)
 
-```javascript
-// backend/middleware/checkAdmin.js
-export function checkAdmin(req, res, next) {
-  if (!req.user || !req.user.is_admin) {
-    return res.status(403).json({ error: "Admin privileges required" });
-  }
-  next();
-}
-```
+### How Protection Works
 
-### Protected Routes
+**Step 1: User Makes Request**
+- Frontend sends request to protected endpoint
+- Includes JWT token in header: `Authorization: Bearer TOKEN`
 
-```javascript
-// JWT protected
-router.get("/api/users/me", authenticateToken, getCurrentUser);
+**Step 2: Backend Receives Request**
+- Backend checks for Authorization header
+- Extracts token from header
 
-// Admin only (session + admin check)
-router.get("/admin", authenticateSession, checkAdmin, getDashboard);
-```
+**Step 3: Verify Token**
+- Backend checks if token exists
+- Backend verifies token is valid (not tampered)
+- Backend checks if token is expired
 
-## Password Security
+**Step 4: Check Permissions**
+- Backend extracts user info from token
+- Checks if user is admin (for admin routes)
+- Verifies user owns the resource (if applicable)
 
-### LDAP Handling
+**Step 5: Process or Deny**
+- If authorized: process request normally
+- If not authorized: return error 401 or 403
 
-Password security is managed by the LDAP server. The application does not store password hashes in its own database.
+**Step 6: Return Response**
+- Backend sends response with data or error message
 
--   **Verification**: Done by attempting to bind to the LDAP server with the provided credentials.
--   **Storage**: Handled by the LDAP directory (e.g., OpenLDAP) using its configured hashing algorithms (e.g., SSHA).
+---
+
+## Token Refresh
+
+### Why Refresh Tokens?
+
+Tokens expire after 15 minutes for security. If a token is stolen, it can only be used for 15 minutes.
+
+**How to Refresh**:
+
+1. When token expires, user sees error message
+2. Frontend calls: POST /api/users/refresh-token
+3. Backend checks if session is still valid
+4. Backend creates new JWT token
+5. Frontend stores new token
+6. User continues working
+
+**Automatic Refresh**:
+- Frontend should automatically refresh before expiration
+- Or refresh when receiving 401 error
+- Should be transparent to user
+
+---
+
+## Logout
+
+### Logout Process
+
+**Step 1: User Clicks Logout**
+- User clicks "Logout" button in frontend
+- Frontend calls: POST /api/users/logout
+
+**Step 2: Backend Destroys Session**
+- Backend finds user's session
+- Marks session as expired
+- Removes session data
+
+**Step 3: Return Success**
+- Backend confirms logout
+- Frontend deletes token from storage
+- Frontend redirects to login page
+
+**Step 4: User is Logged Out**
+- User cannot access protected features
+- User must login again to continue
+
+---
+
+## Password Management
 
 ### Password Reset
 
-Password reset is handled via email verification:
+**Forgot Password Flow**:
 
-1.  User requests password reset.
-2.  System verifies email exists in LDAP.
-3.  System sends a reset link with a signed JWT.
-4.  User provides new password.
-5.  System updates the password in LDAP via `LdapService.updateUser`.
+**Step 1: User Clicks "Forgot Password"**
+- User goes to password reset page
+- User enters their email address
 
-## Security Best Practices
+**Step 2: Backend Sends Reset Email**
+- Backend receives email request
+- Searches LDAP for user with that email
+- Generates secure reset token
+- Sends email with reset link
 
-### Environment Variables
+**Step 3: User Clicks Reset Link**
+- User receives email
+- Email contains reset link with token
+- User clicks link
+- Link opens password reset page
 
-```env
-# Use strong, random secrets
-JWT_SECRET=your_super_secret_jwt_key_minimum_32_characters
-SESSION_SECRET=your_super_secret_session_key_minimum_32_characters
-```
+**Step 4: User Enters New Password**
+- User fills password reset form
+- User enters new password (twice)
+- Frontend validates password strength
 
-### Token Security
+**Step 5: Backend Updates Password**
+- User submits reset form with token
+- Backend verifies reset token is valid
+- Backend updates password in LDAP
+- Updates timestamp in database
 
-1. **Short Expiry**: Tokens expire in 15 minutes
-2. **HTTPS Only**: Use secure cookies in production
-3. **HttpOnly Cookies**: Prevent XSS attacks
-4. **No Sensitive Data**: Don't store sensitive data in tokens
+**Step 6: Password is Reset**
+- User can now login with new password
+- Old password no longer works
+
+### Change Password
+
+**For Logged-In Users**:
+
+**Step 1: User Opens Settings**
+- User goes to account settings
+- Finds "Change Password" option
+
+**Step 2: User Enters Passwords**
+- User enters current password
+- User enters new password (twice)
+- Frontend validates new password
+
+**Step 3: Backend Verifies**
+- Backend checks current password against LDAP
+- If correct, updates password in LDAP
+- If incorrect, returns error
+
+**Step 4: Password is Changed**
+- User must login again with new password
+- All sessions are invalidated
+
+---
+
+## Security Features
 
 ### Password Requirements
 
-Recommended requirements (implement in frontend):
+**Strong Passwords Must Have**:
+- At least 8 characters
+- At least one uppercase letter (A-Z)
+- At least one lowercase letter (a-z)
+- At least one number (0-9)
+- At least one special character (!@#$%^&*)
 
-- Minimum 8 characters
-- At least one uppercase letter
-- At least one lowercase letter
-- At least one number
-- At least one special character
+**Examples**:
+- Valid: MyPassword123!
+- Invalid: password (no uppercase, numbers, special chars)
+- Invalid: Pass123 (no special character)
 
-### Rate Limiting
+### Session Security
 
-Consider implementing rate limiting for authentication endpoints:
+**Session Timeouts**:
+- Sessions expire after 24 hours of inactivity
+- Logging out destroys session immediately
+- Sessions are browser/device specific
 
-```javascript
-import rateLimit from "express-rate-limit";
+**Session Storage**:
+- Stored in database (not in user browser)
+- Cannot be tampered with by users
+- Only session ID sent to user
 
-const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 requests per window
-  message: "Too many login attempts, please try again later",
-});
+### Token Security
 
-router.post("/login", loginLimiter, loginUser);
+**Token Protection**:
+- Tokens are cryptographically signed
+- Cannot be modified without invalidating
+- Expired tokens are rejected
+- Tokens include user information
+
+**Token Storage** (Best Practices):
+- Store in memory (while app running)
+- Or in secure HttpOnly cookies
+- Never in localStorage (vulnerable to XSS)
+- Never in plain text logs
+
+### HTTPS/SSL Encryption
+
+**All Communication Encrypted**:
+- All authentication happens over HTTPS
+- Passwords sent encrypted
+- Tokens sent encrypted
+- No plain text transmission
+
+---
+
+## Error Codes and Meanings
+
+### 200 OK
+- Request succeeded
+- User authenticated successfully
+
+### 201 Created
+- New user created successfully
+- Registration successful
+
+### 400 Bad Request
+- Missing required fields
+- Invalid email format
+- Password too weak
+- Invalid input data
+
+### 401 Unauthorized
+- Token missing
+- Token expired
+- Token invalid
+- Wrong password
+- User not found
+
+### 403 Forbidden
+- User not admin (for admin routes)
+- No permission to access resource
+- Account disabled
+
+### 409 Conflict
+- Email already registered
+- Username already exists
+- User already in group
+
+### 500 Server Error
+- LDAP connection failed
+- Database error
+- Unexpected server error
+
+---
+
+## Two-Factor Authentication (Future Enhancement)
+
+**Not Currently Implemented**
+
+Future versions may include:
+- SMS verification code
+- Email verification code
+- Authenticator app (Google Authenticator)
+- Backup codes
+
+This would add extra security layer beyond password.
+
+---
+
+## API Endpoints
+
+### Registration
+```
+POST /api/users
+Body: {
+  "email": "user@example.com",
+  "username": "username",
+  "password": "MyPassword123!",
+  "location_ids": [1, 2, 3]
+}
+Response: {
+  "user": {...},
+  "token": "JWT_TOKEN"
+}
 ```
 
-## Authentication Flow Diagrams
-
-### Login Flow
-
+### Login
 ```
-User → POST /api/users/login
-       ├── Validate credentials
-       ├── Generate JWT token
-       ├── Create session
-       └── Return { user, token }
-              ↓
-Client stores token
-              ↓
-Subsequent requests include:
-Authorization: Bearer <token>
+POST /api/users/login
+Body: {
+  "username": "username",
+  "password": "MyPassword123!"
+}
+Response: {
+  "user": {...},
+  "token": "JWT_TOKEN"
+}
 ```
 
-### Protected Endpoint Flow
-
+### Logout
 ```
-Client → GET /api/users/me
-         + Authorization: Bearer <token>
-              ↓
-Server → authenticateToken middleware
-         ├── Extract token
-         ├── Verify token
-         ├── Check expiry
-         └── Attach user to req.user
-              ↓
-Controller → Process request
-              ↓
-Response → User data
+POST /api/users/logout
+Response: {
+  "message": "Logged out successfully"
+}
 ```
 
-## Common Issues
-
-### Token Expired
-
-**Error**: `403 Invalid or expired token`
-
-**Solution**: Refresh token or re-login
-
-```javascript
-// Refresh token
-const response = await axios.post("/api/users/refresh-token");
-localStorage.setItem("token", response.data.token);
+### Get Current User
+```
+GET /api/users/me
+Headers: { "Authorization": "Bearer JWT_TOKEN" }
+Response: {
+  "id": "username",
+  "email": "user@example.com",
+  "is_admin": false
+}
 ```
 
-### CORS Issues
-
-**Error**: `CORS policy: No 'Access-Control-Allow-Origin' header`
-
-**Solution**: Configure CORS in backend
-
-```javascript
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+### Refresh Token
+```
+POST /api/users/refresh-token
+Response: {
+  "token": "NEW_JWT_TOKEN"
+}
 ```
 
-### Session Not Persisting
-
-**Error**: Session lost on page refresh
-
-**Solution**: Ensure cookies are enabled and CORS credentials are set
-
-```javascript
-// Frontend
-axios.defaults.withCredentials = true;
-
-// Backend
-app.use(cors({ credentials: true }));
+### Forgot Password
+```
+POST /api/users/forgot-password
+Body: {
+  "email": "user@example.com"
+}
+Response: {
+  "message": "Reset email sent"
+}
 ```
 
-## Testing Authentication
-
-### Using Swagger UI
-
-1. Go to http://localhost:85/api/docs
-2. Click "Authorize" button
-3. Enter: `Bearer <your-token>`
-4. Test protected endpoints
-
-### Using cURL
-
-```bash
-# Login
-curl -X POST http://localhost:85/api/users/login \
-  -H "Content-Type: application/json" \
-  -d '{"username":"test","password":"password"}'
-
-# Use token
-curl -X GET http://localhost:85/api/users/me \
-  -H "Authorization: Bearer <token>"
+### Reset Password
+```
+POST /api/users/reset-password
+Body: {
+  "token": "RESET_TOKEN",
+  "newPassword": "MyNewPassword123!"
+}
+Response: {
+  "message": "Password reset successful"
+}
 ```
 
 ---
 
-**Related Documentation**:
+## Best Practices for Users
 
-- [API Documentation](api.md)
-- [Security Policy](../SECURITY.md)
-- [Backend Documentation](BACKEND.md)
+### Protecting Your Account
+
+1. **Use Strong Passwords**
+   - Don't use common words or patterns
+   - Don't reuse passwords from other sites
+   - Don't share password with anyone
+
+2. **Logout on Shared Devices**
+   - Always logout when using public computers
+   - Don't leave browser logged in unattended
+
+3. **Check for HTTPS**
+   - Make sure URL shows https://
+   - Look for lock icon in browser
+   - Never login over non-HTTPS connection
+
+4. **Keep Token Private**
+   - Don't share your JWT token
+   - Don't paste token in emails or messages
+   - Token proves you are logged in
+
+5. **Report Suspicious Activity**
+   - If you see unfamiliar logins
+   - If someone has your password
+   - Contact support immediately
+
+---
+
+## Troubleshooting Authentication Issues
+
+### Problem: "Invalid Credentials"
+
+**Causes**:
+- Wrong username or password
+- Username/password have typos
+- Account hasn't been created yet
+- LDAP server is down
+
+**Solutions**:
+1. Check spelling of username and password
+2. Try resetting password
+3. Create new account if needed
+4. Contact support if LDAP is down
+
+---
+
+### Problem: "Token Expired"
+
+**Causes**:
+- Been logged in for more than 15 minutes
+- Made request after token expired
+- Token wasn't refreshed
+
+**Solutions**:
+1. Refresh token: POST /api/users/refresh-token
+2. Or login again
+3. Frontend should auto-refresh before expiration
+
+---
+
+### Problem: "Email Already Registered"
+
+**Causes**:
+- Email already used for another account
+- Registered before but forgot
+
+**Solutions**:
+1. Use different email address
+2. Try logging in with that email
+3. Reset password if you forgot it
+4. Contact support to unregister
+
+---
+
+### Problem: "Not Authorized"
+
+**Causes**:
+- Not logged in
+- Token missing or invalid
+- Don't have permission (admin only)
+- Session expired
+
+**Solutions**:
+1. Login if not logged in
+2. Include token in request header
+3. Refresh token if expired
+4. Contact admin if permission denied
+
+---
+
+## Admin Authentication
+
+### Admin Requirements
+
+To perform admin actions (create alerts, manage users):
+- Must be registered as admin user
+- Admin status set in LDAP
+- Token must include is_admin: true
+- Must be in admin group in LDAP
+
+### Admin Actions Require
+
+**Create Alert**:
+- Must be logged in
+- Must have is_admin: true
+- Must include valid JWT token
+
+**Delete Alert**:
+- Must be logged in
+- Must have is_admin: true
+- Alert must exist
+
+**Manage Users**:
+- Must be logged in
+- Must have is_admin: true
+- Cannot manage other admins (usually)
+
+---
+
+## Environment Variables
+
+**Required for Authentication**:
+
+```
+LDAP_ADMIN_DN=cn=admin,dc=canaryweather,dc=xyz
+LDAP_ADMIN_PASSWORD=your_secure_password
+JWT_SECRET=your_jwt_secret_key
+SESSION_SECRET=your_session_secret_key
+```
+
+**Never**:
+- Commit these to version control
+- Share with others
+- Use weak secrets
+- Log these values
+
+---
+
+## Summary
+
+CanaryWeather authentication uses:
+
+1. **LDAP** for storing and verifying passwords
+2. **JWT Tokens** for proving you're logged in
+3. **Sessions** for maintaining login state
+4. **HTTPS** for encrypting all communication
+
+**Login Process**:
+1. User enters username and password
+2. LDAP verifies credentials
+3. Server creates JWT token
+4. User receives token
+5. User includes token in every request
+
+**Security Measures**:
+- Passwords stored separately in LDAP
+- Tokens expire after 15 minutes
+- Sessions expire after 24 hours
+- All communication encrypted
+- Strong password requirements
+
+For more details about user management, see DATABASE.md.
+For API endpoint details, see API_TESTING_GUIDE.md.
