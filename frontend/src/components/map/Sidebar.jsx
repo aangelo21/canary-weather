@@ -26,8 +26,17 @@ const Sidebar = ({ isOpen, onClose, weather, loading, position }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
-        const user = localStorage.getItem('cw_user');
-        setIsAuthenticated(!!user);
+        const checkAuth = () => {
+            const user = localStorage.getItem('cw_user');
+            setIsAuthenticated(!!user);
+        };
+
+        checkAuth();
+        window.addEventListener('userLoggedIn', checkAuth);
+        
+        return () => {
+            window.removeEventListener('userLoggedIn', checkAuth);
+        };
     }, []);
 
     // Reset saved state when position changes
