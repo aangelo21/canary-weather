@@ -67,7 +67,7 @@ const Sidebar = ({ isOpen, onClose, weather, loading, position }) => {
             <div className="sticky top-0 z-20 flex items-center justify-between p-5 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800/50">
                 <div>
                     <h2 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-                        {loading ? t('loading') : t('locationDetails')}
+                        {loading ? t('loading') : t('locationDetailsTitle')}
                     </h2>
                     {position && (
                         <p className="text-xs text-gray-500 dark:text-gray-400 font-mono mt-1">
@@ -198,16 +198,16 @@ const Sidebar = ({ isOpen, onClose, weather, loading, position }) => {
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
-                                        <span>Location Saved</span>
+                                        <span>{t('locationSaved')}</span>
                                     </>
                                 ) : !isAuthenticated ? (
-                                    <span>Login to Save Location</span>
+                                    <span>{t('loginToSave')}</span>
                                 ) : (
                                     <>
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                             <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
                                         </svg>
-                                        <span>Save to My Locations</span>
+                                        <span>{t('savePointOfInterest')}</span>
                                     </>
                                 )}
                             </button>
@@ -218,8 +218,8 @@ const Sidebar = ({ isOpen, onClose, weather, loading, position }) => {
                         <svg className="w-20 h-20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0121 18.382V7.618a1 1 0 01-.553-.894L15 4m0 13V4m0 0L9 7" />
                         </svg>
-                        <p className="text-lg font-medium">Select a location on the map</p>
-                        <p className="text-sm">Click anywhere to see detailed weather info</p>
+                        <p className="text-lg font-medium">{t('selectLocation')}</p>
+                        <p className="text-sm">{t('clickAnywhere')}</p>
                     </div>
                 )}
             </div>

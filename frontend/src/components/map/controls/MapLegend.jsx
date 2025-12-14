@@ -59,9 +59,9 @@ const MapLegend = () => {
                                 </svg>
                             </div>
                             <div>
-                                <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Click Anywhere</h4>
+                                <h4 className="font-semibold text-gray-900 dark:text-white text-sm">{t('clickAnywhereTitle')}</h4>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                                    Click on any location to see detailed weather, forecast, and save it as a POI.
+                                    {t('clickAnywhereDesc')}
                                 </p>
                             </div>
                         </div>
@@ -74,9 +74,9 @@ const MapLegend = () => {
                                 </svg>
                             </div>
                             <div>
-                                <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Map Layers</h4>
+                                <h4 className="font-semibold text-gray-900 dark:text-white text-sm">{t('mapLayersTitle')}</h4>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                                    Use the bottom-left controls to switch between Clouds, Rain, Temperature, and Wind layers.
+                                    {t('mapLayersDesc')}
                                 </p>
                             </div>
                         </div>
@@ -89,9 +89,9 @@ const MapLegend = () => {
                                 </svg>
                             </div>
                             <div>
-                                <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Search & Locate</h4>
+                                <h4 className="font-semibold text-gray-900 dark:text-white text-sm">{t('searchLocateTitle')}</h4>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                                    Find specific cities or use the GPS button to jump to your current location.
+                                    {t('searchLocateDesc')}
                                 </p>
                             </div>
                         </div>
@@ -100,7 +100,7 @@ const MapLegend = () => {
                     {/* Footer Tip */}
                     <div className="mt-5 pt-4 border-t border-gray-100 dark:border-gray-800">
                         <p className="text-[10px] text-center text-gray-400 italic">
-                            Tip: You can save your favorite locations by logging in.
+                            {t('mapTip')}
                         </p>
                     </div>
                 </div>

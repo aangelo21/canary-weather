@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 import MapLegend from './MapLegend';
@@ -13,6 +14,7 @@ import MapLegend from './MapLegend';
  * @param {Function} props.fetchWeather - Function to fetch weather data for a location.
  */
 const MapControls = ({ setClickedPos, fetchWeather }) => {
+    const { t } = useTranslation();
     const map = useMap();
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearching, setIsSearching] = useState(false);
@@ -34,7 +36,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
 
     const handleLocate = () => {
         if (!navigator.geolocation) {
-            alert('Geolocation is not supported by your browser');
+            alert(t('geolocationNotSupported'));
             return;
         }
 
@@ -48,7 +50,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
                 fetchWeather(latitude, longitude);
             },
             () => {
-                alert('Unable to retrieve your location');
+                alert(t('locationRetrievalError'));
             },
             { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
         );
@@ -79,11 +81,11 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
                 fetchWeather(latitude, longitude);
                 setSearchQuery(''); // Clear search after successful find
             } else {
-                alert('Location not found in Canary Islands');
+                alert(t('locationNotFound'));
             }
         } catch (error) {
             console.error('Search failed:', error);
-            alert('Search failed. Please try again.');
+            alert(t('searchFailed'));
         } finally {
             setIsSearching(false);
         }
@@ -101,7 +103,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
             >
                 <input
                     type="text"
-                    placeholder="Search location..."
+                    placeholder={t('searchPlaceholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full px-4 py-3 bg-transparent border-none focus:outline-none text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm font-medium rounded-2xl"
@@ -159,7 +161,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
                         handleReset();
                     }}
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 dark:border-gray-700/30 hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 transition-all duration-200 hover:scale-105 active:scale-95 font-medium text-sm"
-                    title="Reset View"
+                    title={t('resetView')}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -175,7 +177,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
                         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
                         <path d="M3 3v5h5" />
                     </svg>
-                    <span className="hidden sm:inline">Reset</span>
+                    <span className="hidden sm:inline">{t('reset')}</span>
                 </button>
                 <button
                     onClick={(e) => {
@@ -183,7 +185,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
                         handleLocate();
                     }}
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600/90 backdrop-blur-md rounded-2xl shadow-lg shadow-blue-500/20 border border-blue-500/20 hover:bg-blue-700 text-white transition-all duration-200 hover:scale-105 active:scale-95 font-medium text-sm"
-                    title="My Location"
+                    title={t('myLocation')}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -199,7 +201,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                         <circle cx="12" cy="10" r="3" />
                     </svg>
-                    <span className="hidden sm:inline">Locate</span>
+                    <span className="hidden sm:inline">{t('locate')}</span>
                 </button>
                 
                 {/* Legend Button */}
