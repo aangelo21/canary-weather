@@ -13,7 +13,7 @@ import Skeleton from '../common/Skeleton';
  * - Day/Night visual distinction.
  * - Interactive hover effects.
  */
-export default function HourlyForecast({ coords }) {
+export default function HourlyForecast({ coords, compact = false }) {
     const { t } = useTranslation();
     const [forecast, setForecast] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -92,8 +92,8 @@ export default function HourlyForecast({ coords }) {
         const range = maxTemp - minTemp || 1;
 
         const width = 120; // Width of one column
-        const height = 80; // Height of graph area
-        const paddingY = 20; // Top/Bottom padding inside SVG
+        const height = compact ? 60 : 80; // Height of graph area
+        const paddingY = compact ? 10 : 20; // Top/Bottom padding inside SVG
 
         const points = forecast.map((f, i) => {
             const x = i * width + (width / 2);
@@ -119,7 +119,7 @@ export default function HourlyForecast({ coords }) {
         const areaPath = `${d} L ${points[points.length - 1].x} ${height + 50} L ${points[0].x} ${height + 50} Z`;
 
         return { linePath: d, areaPath, points };
-    }, [forecast]);
+    }, [forecast, compact]);
 
     if (!coords && !loading) return null;
 
@@ -130,22 +130,23 @@ export default function HourlyForecast({ coords }) {
     const getWeatherIcon = (code) => {
         const isDay = code.includes('d');
         const type = code.slice(0, 2);
+        const sizeClass = compact ? "w-8 h-8" : "w-12 h-12";
 
         switch (type) {
             case '01': // Clear
                 return isDay ? (
-                    <svg className="w-12 h-12 text-orange-400 animate-spin-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className={`${sizeClass} text-orange-400 animate-spin-slow`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <circle cx="12" cy="12" r="5" fill="currentColor" fillOpacity="0.2" />
                         <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
                     </svg>
                 ) : (
-                    <svg className="w-12 h-12 text-blue-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className={`${sizeClass} text-blue-200`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" fillOpacity="0.2" />
                     </svg>
                 );
             case '02': // Few Clouds
                 return (
-                    <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className={`${sizeClass}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M16.5 19a4.5 4.5 0 1 1-1.41-8.77A5.5 5.5 0 1 1 12.5 0a5.5 5.5 0 0 1 5.08 3.38" className="text-gray-400" fill="currentColor" fillOpacity="0.1" />
                         {isDay && <circle cx="18" cy="5" r="3" className="text-orange-400" fill="currentColor" />}
                     </svg>
@@ -153,7 +154,7 @@ export default function HourlyForecast({ coords }) {
             case '03': // Scattered Clouds
             case '04': // Broken Clouds
                 return (
-                    <svg className="w-12 h-12 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className={`${sizeClass} text-gray-400`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M17.5 19c0 2.5-2 4.5-4.5 4.5S8.5 21.5 8.5 19c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5z" fill="currentColor" fillOpacity="0.2" />
                         <path d="M17.5 19a4.5 4.5 0 0 0-1.41-8.77A5.5 5.5 0 0 0 12.5 0a5.5 5.5 0 0 0-5.08 3.38A4.5 4.5 0 0 0 3.5 10a4.5 4.5 0 0 0 4.5 4.5" />
                     </svg>
@@ -161,28 +162,28 @@ export default function HourlyForecast({ coords }) {
             case '09': // Shower Rain
             case '10': // Rain
                 return (
-                    <svg className="w-12 h-12 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className={`${sizeClass} text-blue-500`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M17.5 15a4.5 4.5 0 1 0-1.41-8.77A5.5 5.5 0 0 0 12.5 0a5.5 5.5 0 0 0-5.08 3.38A4.5 4.5 0 0 0 3.5 10a4.5 4.5 0 0 0 4.5 4.5" className="text-gray-400" fill="currentColor" fillOpacity="0.1" />
                         <path d="M8 17v2M12 17v2M16 17v2" className="animate-bounce" style={{ animationDuration: '1.5s' }} />
                     </svg>
                 );
             case '11': // Thunderstorm
                 return (
-                    <svg className="w-12 h-12 text-purple-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className={`${sizeClass} text-purple-500`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M17.5 15a4.5 4.5 0 1 0-1.41-8.77A5.5 5.5 0 0 0 12.5 0a5.5 5.5 0 0 0-5.08 3.38A4.5 4.5 0 0 0 3.5 10a4.5 4.5 0 0 0 4.5 4.5" className="text-gray-500" fill="currentColor" fillOpacity="0.1" />
                         <path d="M13 15l-2 4h3l-2 4" className="text-yellow-400 animate-pulse" fill="currentColor" />
                     </svg>
                 );
             case '13': // Snow
                 return (
-                    <svg className="w-12 h-12 text-cyan-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className={`${sizeClass} text-cyan-300`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01M16 19h.01" />
                         <path d="M17.5 13a4.5 4.5 0 1 0-1.41-8.77A5.5 5.5 0 0 0 12.5 0a5.5 5.5 0 0 0-5.08 3.38A4.5 4.5 0 0 0 3.5 8a4.5 4.5 0 0 0 4.5 4.5" className="text-gray-300" fill="currentColor" fillOpacity="0.1" />
                     </svg>
                 );
             default: // Mist/Fog/Default
                 return (
-                    <svg className="w-12 h-12 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className={`${sizeClass} text-gray-400`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M5 12h14M5 16h14M5 20h14" />
                         {isDay && <circle cx="12" cy="6" r="2" className="text-orange-300" fill="currentColor" />}
                     </svg>
@@ -190,12 +191,21 @@ export default function HourlyForecast({ coords }) {
         }
     };
 
+    const containerClasses = compact 
+        ? "w-full relative z-10" 
+        : "w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 relative z-20 mb-16";
+
+    const cardClasses = compact
+        ? "bg-transparent"
+        : "bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-lg rounded-3xl overflow-hidden";
+
     return (
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 relative z-20 mb-16">
-            <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-lg rounded-3xl overflow-hidden">
+        <div className={containerClasses}>
+            <div className={cardClasses}>
                 
-                {/* Header with Live Indicator */}
-                <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900">
+                {/* Header with Live Indicator - Hide in compact mode */}
+                {!compact && (
+                    <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900">
                     <div className="flex items-center gap-4">
                         <div>
                             <h3 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
@@ -213,9 +223,10 @@ export default function HourlyForecast({ coords }) {
                     {/* Navigation Controls - Removed as per user request */}
                     {/* <div className="hidden md:flex gap-3"> ... </div> */}
                 </div>
+                )}
 
                 {/* Content Area */}
-                <div className="relative h-64 bg-white dark:bg-gray-900">
+                <div className={`relative ${compact ? 'h-48' : 'h-64'} ${!compact && 'bg-white dark:bg-gray-900'}`}>
                     {loading ? (
                         <div className="flex items-center gap-6 px-8 h-full overflow-hidden">
                             {[1, 2, 3, 4, 5, 6].map(i => (
@@ -238,7 +249,7 @@ export default function HourlyForecast({ coords }) {
                             className="overflow-x-auto scrollbar-hide h-full flex items-stretch relative select-none cursor-grab active:cursor-grabbing scroll-smooth"
                         >
                             {/* SVG Graph Layer */}
-                            <div className="absolute top-[90px] left-0 h-[100px] pointer-events-none z-0" style={{ width: `${forecast.length * 120}px` }}>
+                            <div className={`absolute ${compact ? 'top-[70px]' : 'top-[90px]'} left-0 ${compact ? 'h-[80px]' : 'h-[100px]'} pointer-events-none z-0`} style={{ width: `${forecast.length * 120}px` }}>
                                 <svg className="w-full h-full overflow-visible">
                                     <defs>
                                         <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
