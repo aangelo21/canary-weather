@@ -1,18 +1,29 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAccessToken } from '../services/api';
+import Skeleton from './common/Skeleton';
 
 const NotificationToggle = () => {
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [checking, setChecking] = useState(true);
     const { t } = useTranslation();
     const API_BASE = import.meta.env.VITE_API_BASE;
 
     useEffect(() => {
         const checkSubscriptionStatus = async () => {
+            setChecking(true);
             if ('serviceWorker' in navigator && 'PushManager' in window) {
                 try {
-                    const registration = await navigator.serviceWorker.ready;
+                    // Use getRegistration() instead of ready to avoid hanging if no SW is registered
+                    const registration = await navigator.serviceWorker.getRegistration();
+                    
+                    if (!registration) {
+                        setIsSubscribed(false);
+                        setChecking(false);
+                        return;
+                    }
+
                     const subscription = await registration.pushManager.getSubscription();
                     
                     if (subscription) {
@@ -43,6 +54,7 @@ const NotificationToggle = () => {
                     setIsSubscribed(false);
                 }
             }
+            setChecking(false);
         };
 
         checkSubscriptionStatus();
@@ -181,6 +193,15 @@ const NotificationToggle = () => {
 
     if (!('serviceWorker' in navigator)) {
         return null;
+    }
+
+    if (checking) {
+        return (
+            <div className="w-full px-5 py-4 border-b border-neutral-100 dark:border-neutral-700 flex items-center gap-3">
+                <Skeleton variant="circular" className="w-5 h-5" />
+                <Skeleton className="w-32 h-4" />
+            </div>
+        );
     }
 
     return (

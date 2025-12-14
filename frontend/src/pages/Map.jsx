@@ -21,19 +21,12 @@ import SEO from '../components/SEO';
 function Map() {
     const { t } = useTranslation();
     return (
-        <div className="flex flex-col gap-10 px-4 sm:px-6 lg:px-8 py-8">
+        <div className="w-full h-full relative">
             <SEO 
                 title="Interactive Map" 
                 description="Explore weather conditions, wind patterns, and wave heights across the Canary Islands with our interactive map."
             />
-            <h2 className="text-4xl font-bold text-center text-gray-900 dark:text-white">
-                {t('exploreMap')}
-            </h2>
-            <h3 className="text-xl text-center text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                {t('mapDescription')}
-            </h3>
             <InteractiveMap />
-            <MapLegend />
         </div>
     );
 }

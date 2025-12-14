@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, memo } from 'react';
 import { useTranslation } from 'react-i18next';
+import Skeleton from '../common/Skeleton';
 
 /**
  * Helper function to determine the appropriate weather emoji based on the condition string.
@@ -256,8 +257,28 @@ const POICard = memo(function POICard({ poi, onEdit, onDelete }) {
                         </div>
                     </div>
                 ) : (
-                    <div className="mb-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 text-center text-sm text-gray-500 dark:text-gray-400">
-                        {t('loading')}
+                    <div className="mb-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3">
+                        <div className="flex justify-between items-center mb-3">
+                            <div className="flex flex-col gap-1">
+                                <Skeleton className="w-16 h-4" />
+                                <Skeleton className="w-12 h-6" />
+                            </div>
+                            <Skeleton variant="circular" className="w-10 h-10" />
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                            <div className="flex flex-col items-center gap-1">
+                                <Skeleton className="w-8 h-3" />
+                                <Skeleton className="w-10 h-4" />
+                            </div>
+                            <div className="flex flex-col items-center gap-1">
+                                <Skeleton className="w-8 h-3" />
+                                <Skeleton className="w-10 h-4" />
+                            </div>
+                            <div className="flex flex-col items-center gap-1">
+                                <Skeleton className="w-8 h-3" />
+                                <Skeleton className="w-10 h-4" />
+                            </div>
+                        </div>
                     </div>
                 )}
 

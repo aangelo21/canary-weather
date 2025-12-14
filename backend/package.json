@@ -15,6 +15,7 @@
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
+    "groq-sdk": "^0.37.0",
     "jsonwebtoken": "^9.0.2",
     "ldapjs": "^3.0.7",
     "multer": "^2.0.2",
@@ -29,12 +30,15 @@
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
-    "sequelize-cli": "^6.6.0"
+    "cross-env": "^10.1.0",
+    "jest": "^30.2.0",
+    "sequelize-cli": "^6.6.0",
+    "supertest": "^7.1.4"
   },
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
     "seed:pois": "node seeders/seed_pois_canarias.js",
     "seed:users": "node seeders/seed_users.js",
     "seed:alerts": "node seeders/20251120161943-seed-alerts.js",

@@ -3,7 +3,6 @@ import {
   Location,
   Forecast,
   Alert,
-  Tide,
   PointOfInterest,
 } from "../models/index.js";
 
@@ -48,7 +47,7 @@ export const getLocationById = async (req, res) => {
     // Find location by ID and include associated forecasts, alerts, tides, and POIs
     // Using plain objects for performance since we are just reading data
     const location = await Location.findByPk(id, {
-      include: [Forecast, Alert, Tide, PointOfInterest],
+      include: [Forecast, Alert, PointOfInterest],
       // Note: 'raw: true' with 'include' can sometimes duplicate rows or flatten structure in unexpected ways depending on Sequelize version.
       // For complex includes, it's often safer to use default instances or careful 'nest: true'.
       // Here we keep it standard for safety with includes, but could optimize further if needed.

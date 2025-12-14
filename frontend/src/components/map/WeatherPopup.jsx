@@ -3,6 +3,7 @@ import { Popup } from 'react-leaflet';
 import { createOrUpdatePoi } from '../../services/poiService';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
+import Skeleton from '../common/Skeleton';
 
 /**
  * WeatherPopup Component.
@@ -19,11 +20,12 @@ import { useTheme } from '../../context/ThemeContext';
  * @param {Object} props - The component props.
  * @param {Array<number>} props.position - The [latitude, longitude] coordinates where the popup is anchored.
  * @param {Object} props.weather - The weather data object fetched from the API.
+ * @param {boolean} props.loading - Whether the weather data is loading.
  * @param {Object} props.markerRef - Reference to the Leaflet marker associated with this popup.
  * @param {Function} props.onClose - Callback function executed when the popup is closed.
  * @returns {JSX.Element|null} The rendered WeatherPopup component or null if position or weather data is missing.
  */
-function WeatherPopup({ position, weather, markerRef, onClose }) {
+function WeatherPopup({ position, weather, loading, markerRef, onClose }) {
     const { t } = useTranslation();
     const { isDarkMode } = useTheme();
     const popupRef = useRef(null);
@@ -45,12 +47,16 @@ function WeatherPopup({ position, weather, markerRef, onClose }) {
 
     /**
      * Effect hook to open the popup when the marker reference is available.
+     * Uses a timeout to ensure the marker is fully initialized on the map.
      */
     useEffect(() => {
-        if (popupRef.current && markerRef?.current) {
-            markerRef.current.openPopup();
+        if (markerRef?.current) {
+            const timer = setTimeout(() => {
+                markerRef.current.openPopup();
+            }, 100);
+            return () => clearTimeout(timer);
         }
-    }, [position, weather, markerRef]);
+    }, [position, weather, loading, markerRef]);
 
     /**
      * Effect hook to check authentication status on mount.
@@ -59,6 +65,24 @@ function WeatherPopup({ position, weather, markerRef, onClose }) {
         const user = localStorage.getItem('cw_user');
         setIsAuthenticated(!!user);
     }, []);
+
+    if (loading) {
+        return (
+            <Popup ref={popupRef}>
+                <div className="p-2 min-w-[200px]">
+                    <div className="flex justify-between items-center mb-3">
+                        <Skeleton className="h-6 w-24" />
+                        <Skeleton variant="circular" className="h-8 w-8" />
+                    </div>
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-3/4" />
+                        <Skeleton className="h-4 w-5/6" />
+                    </div>
+                </div>
+            </Popup>
+        );
+    }
 
     if (!position || !weather) return null;
 
@@ -183,21 +207,53 @@ function WeatherPopup({ position, weather, markerRef, onClose }) {
     };
 
     return (
-        <Popup
-            position={position}
-            ref={popupRef}
-            className="custom-popup-clean"
-            autoPanPadding={[50, 50]}
-            eventHandlers={{
-                remove: () => {
-                    if (onClose) onClose();
-                },
-            }}
-        >
-            <div
-                className={`w-72 p-6 rounded-3xl shadow-2xl ${themeClass} font-sans overflow-hidden relative select-none`}
+        <>
+            <style>
+                {`
+                    .custom-popup-clean .leaflet-popup-content-wrapper,
+                    .custom-popup-clean .leaflet-popup-tip {
+                        background: transparent !important;
+                        box-shadow: none !important;
+                        border: none !important;
+                    }
+                    .custom-popup-clean .leaflet-popup-content {
+                        margin: 0 !important;
+                        background: transparent !important;
+                        box-shadow: none !important;
+                    }
+                    .custom-popup-clean .leaflet-popup-close-button {
+                        display: none !important;
+                    }
+                `}
+            </style>
+            <Popup
+                position={position}
+                ref={popupRef}
+                className="custom-popup-clean"
+                autoPanPadding={[50, 50]}
+                closeButton={false}
+                eventHandlers={{
+                    remove: () => {
+                        if (onClose) onClose();
+                    },
+                }}
             >
-                <div className="flex justify-between items-center mb-8 relative z-10">
+                <div
+                    className={`w-72 p-6 rounded-3xl shadow-2xl ${themeClass} font-sans overflow-hidden relative select-none`}
+                >
+                    <button 
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            markerRef.current.closePopup();
+                        }}
+                        className={`absolute top-4 right-4 transition-colors z-50 ${isDarkTheme ? 'text-white/70 hover:text-white' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+
+                    <div className="flex justify-between items-center mb-8 relative z-10">
                     <div className="w-24 h-24 filter drop-shadow-xl transform -translate-x-2 flex items-center justify-center">
                         {getIcon()}
                     </div>
@@ -267,6 +323,7 @@ function WeatherPopup({ position, weather, markerRef, onClose }) {
                 </button>
             </div>
         </Popup>
+        </>
     );
 }
 

@@ -136,7 +136,8 @@ export const sendPushNotificationToAll = async (payload) => {
             // Subscription is no longer valid, remove it
             console.log(`Subscription expired, deleting...`);
             return sub.destroy();
-          }nsole.error("Error sending push notification:", err);
+          }
+          console.error("Error sending push notification:", err);
         });
     });
 

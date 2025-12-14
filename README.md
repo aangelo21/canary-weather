@@ -1,268 +1,395 @@
-# CanaryWeather 🌤️
+# CanaryWeather
 
-![CanaryWeather Banner](frontend/public/logo.webp)
+Accurate weather forecasts, tide charts, and activity guides for the Canary Islands.
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](license)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](contributing.md)
-
-> A comprehensive weather application providing real-time forecasts, alerts, and points of interest for the Canary Islands.
-
-## 📋 Table of Contents
-
-- [🌟 Overview](#-overview)
-- [✨ Features](#-features)
-- [🛠️ Technology Stack](#-technology-stack)
-- [🚀 Quick Start](#-quick-start)
-- [📦 Installation](#-installation)
-- [📚 API Documentation](#-api-documentation)
-- [📁 Project Structure](#-project-structure)
-- [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
-- [🚀 Deployment](#-deployment)
-- [📖 Additional Documentation](#-additional-documentation)
-   - [API Documentation](https://github.com/aangelo21/canary_weather/blob/main/docs/API.md)
-   - [Architecture Overview](https://github.com/aangelo21/canary_weather/blob/main/docs/ARCHITECTURE.md)
-   - [Authentication Guide](https://github.com/aangelo21/canary_weather/blob/main/docs/AUTHENTICATION.md)
-   - [Database Schema](https://github.com/aangelo21/canary_weather/blob/main/docs/DATABASE.md)
-   - [Deployment Guide](https://github.com/aangelo21/canary_weather/blob/main/docs/DEPLOYMENT.md)
-   - [Diagrams](https://github.com/aangelo21/canary_weather/blob/main/docs/DIAGRAMS.md)
-   - [Domain Configuration](https://github.com/aangelo21/canary_weather/blob/main/docs/DOMAIN_CONFIG.md)
-   - [LDAP Guide](https://github.com/aangelo21/canary_weather/blob/main/docs/LDAP.md)
-   - [Packages](https://github.com/aangelo21/canary_weather/blob/main/docs/PACKAGES.md)
-- [🙏 Acknowledgements](#-acknowledgements)
-
-## 🌟 Overview
-
-CanaryWeather is a full-stack web application designed specifically for the Canary Islands, providing comprehensive weather information, coastal alerts, tide predictions, and a community-driven platform for discovering and sharing points of interest across the archipelago.
-
-The application integrates with AEMET (Spanish Meteorological Agency) API to provide accurate, real-time weather data tailored to the unique microclimates of the Canary Islands.
-
-## ✨ Features
-
-### Weather & Alerts
-
-- 🌡️ **Real-time Weather Forecasts** - Detailed predictions for all Canary Islands locations
-- 🌊 **Tide Information** - Accurate tide tables and predictions for coastal areas
-- ⚠️ **Weather Alerts** - Real-time notifications for severe weather conditions
-- 📊 **Historical Data** - Access to past weather patterns and trends
-
-### User Features
-
-- 👤 **User Management** - Secure registration and authentication with JWT
-- ⭐ **Favorite Locations** - Save and manage your preferred locations
-- 📍 **Personal POIs** - Create and share custom points of interest
-- 🔔 **Notifications** - Receive alerts for your saved locations
-- 🖼️ **Profile Customization** - Upload profile pictures and personalize your account
-
-### Interactive Experience
-
-- 🗺️ **Interactive Map** - Visualize weather data and POIs using Leaflet
-- 🔍 **Location Search** - Find weather information for any municipality
-- 📱 **Responsive Design** - Optimized for desktop, tablet, and mobile devices
-- 🌐 **Multilingual Support** - Available in multiple languages
-
-### Admin Features
-
-- 🛠️ **Admin Dashboard** - Manage users and global points of interest
-- 📝 **Content Management** - Create and moderate community content
-- 📈 **Analytics** - Monitor application usage and performance
-
-## 🛠️ Technology Stack
-
-For a detailed list of all packages and dependencies, please refer to [Packages Documentation](https://github.com/aangelo21/canary_weather/blob/main/docs/PACKAGES.md).
-
-For architecture details and technology decisions, see [Architecture Documentation](https://github.com/aangelo21/canary_weather/blob/main/docs/ARCHITECTURE.md).
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-Before you begin, ensure you have the following installed:
-
-- **Node.js** v18.0.0 or higher ([Download](https://nodejs.org/))
-- **npm** v9.0.0 or higher (comes with Node.js)
-- **MySQL** v8.0 or higher ([Download](https://dev.mysql.com/downloads/))
-- **Git** ([Download](https://git-scm.com/downloads))
-
-### Clone the Repository
-
-```bash
-git clone https://github.com/aangelo21/canary_weather.git
-cd canary_weather
-```
-
-### Environment Setup
-
-
-
-#### Backend Environment Variables
-
-Create a `.env` file in the `backend` directory:
-
-```env
-# Database Configuration
-DB_HOST=db-mysql-lon1-75034-do-user-27863084-0.j.db.ondigitalocean.com
-DB_USER=doadmin
-DB_PASSWORD=
-DB_NAME=defaultdb
-DB_DIALECT=mysql
-DB_PORT=25060
-DB_SSL=REQUIRED
-
-# Authentication
-JWT_SECRET=
-
-# Frontend URL
-FRONTEND_URL=canaryweather.xyz
-
-# LDAP Configuration
-LDAP_ADMIN_DN=cn=admin,dc=canaryweather,dc=xyz
-LDAP_ADMIN_PASSWORD=
-
-# Email Service
-RESEND_API_KEY=
-
-#Vapid
-VAPID_PUBLIC_KEY=your_public_key
-VAPID_PRIVATE_KEY=your_private_key
-VAPID_SUBJECT=mailto:admin@canaryweather.xyz 
-```
-
-> **Note:** Empty fields are intentionally left blank for security reasons. Please provide your own values for `DB_PASSWORD`, `JWT_SECRET`, `LDAP_ADMIN_PASSWORD`, and `RESEND_API_KEY` in your local environment.
-
-#### Frontend Environment Variables
-
-Create a `.env` file in the `frontend` directory:
-
-```env
-# API Configuration
-VITE_API_BASE=/api 
-
-# Weather API
-VITE_OPENWEATHER_API_KEY=
-```
-
-> **Note:** Empty fields are intentionally left blank for security reasons. Please provide your own value for `VITE_OPENWEATHER_API_KEY` in your local environment.
-
-## 📦 Installation
-
-### Backend Setup
-
-1. Navigate to the backend directory:
-
-   ```bash
-   cd backend
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Create the MySQL database:
-
-   ```sql
-   CREATE DATABASE canary_weather;
-   ```
-
-4. Run database migrations:
-
-   ```bash
-   npm run migrate
-   ```
-
-5. (Optional) Seed the database with sample data:
-
-   ```bash
-   npm run seed:all
-   ```
-
-   Or seed specific data:
-
-   ```bash
-   npm run seed:users      # Seed sample users
-   npm run seed:pois       # Seed points of interest
-   npm run seed:alerts     # Seed weather alerts
-   ```
-
-6. Start the backend server:
-   ```bash
-   npm run dev    # Development mode with auto-reload
-   # or
-   npm start      # Production mode
-   ```
-
-The backend server will start on `http://localhost:85`
-
-### Frontend Setup
-
-1. Open a new terminal and navigate to the frontend directory:
-
-   ```bash
-   cd frontend
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-The frontend application will be available at `http://localhost:5173`
-
-## 📚 API Documentation
-
-Interactive API documentation is available at: **http://localhost:85/api/docs**
-
-For complete documentation including authentication, endpoints, and schemas, see the [API Documentation](https://github.com/aangelo21/canary_weather/blob/main/docs/API.md).
-
-## 📁 Project Structure
-
-See [Architecture Documentation](https://github.com/aangelo21/canary_weather/blob/main/docs/ARCHITECTURE.md) for detailed project structure and design patterns.
-
-## 🤝 Contributing
-
-We welcome contributions from the community! Please read our [Contributing Guidelines](contributing.md) for details on:
-
-- Setting up the development environment
-- Code style and conventions
-- Submitting pull requests
-- Reporting issues
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [license](license) file for details.
-
-## 🚀 Deployment
-
-For production deployment instructions, including DigitalOcean setup, PM2 configuration, and database hosting, see [docs/deployment.md](https://github.com/aangelo21/canary_weather/blob/main/docs/DEPLOYMENT.md).
-
-## 📖 Additional Documentation
-
-- [API Documentation](https://github.com/aangelo21/canary_weather/blob/main/docs/API.md)
-- [Architecture Overview](https://github.com/aangelo21/canary_weather/blob/main/docs/ARCHITECTURE.md)
-- [Authentication Guide](https://github.com/aangelo21/canary_weather/blob/main/docs/AUTHENTICATION.md)
-- [Database Schema](https://github.com/aangelo21/canary_weather/blob/main/docs/DATABASE.md)
-- [Deployment Guide](https://github.com/aangelo21/canary_weather/blob/main/docs/DEPLOYMENT.md)
-- [Diagrams](https://github.com/aangelo21/canary_weather/blob/main/docs/DIAGRAMS.md)
-- [Domain Configuration](https://github.com/aangelo21/canary_weather/blob/main/docs/DOMAIN_CONFIG.md)
-- [LDAP Guide](https://github.com/aangelo21/canary_weather/blob/main/docs/LDAP.md)
-- [Packages](https://github.com/aangelo21/canary_weather/blob/main/docs/PACKAGES.md)
-
-## 🙏 Acknowledgements
-
-- **Samuel Ponce** ([@s-pl](https://github.com/s-pl)) - Project collaborator
-- **AEMET** - Weather data provider
-- **OpenStreetMap** - Map data
-- **Leaflet** - Interactive mapping library
+Visit us at: **https://canaryweather.xyz**
 
 ---
 
-**Made with ❤️ for the Canary Islands**
+## Table of Contents
+
+- [What is Canary Weather](#what-is-canary-weather)
+- [Key Features](#key-features)
+- [Getting Started](#getting-started)
+- [How to Use](#how-to-use)
+- [Documentation](#documentation)
+- [Support](#support)
+
+---
+
+## What is Canary Weather
+
+Canary Weather is a modern web application that provides comprehensive weather information for the Canary Islands. Whether you are planning a beach day, a hiking trip, or just want to know what the weather will be like, Canary Weather gives you accurate forecasts and useful activity recommendations.
+
+The application is designed for everyone, from tourists planning their vacation to locals who want to stay informed about weather conditions in their area.
+
+### Features Available to All Users
+
+- View weather forecasts for multiple locations
+- Check tide information for planning water activities
+- Get activity recommendations based on current weather
+- Save your favorite locations
+- Create custom weather alerts
+- Receive notifications when alerts are triggered
+
+### Admin Features
+
+Administrators can manage the entire system, including user accounts, alert rules, and system monitoring.
+
+---
+
+## Key Features
+
+### Weather Information
+- Real-time weather forecasts for Canary Islands locations
+- Current weather conditions
+- Historical weather data
+- Tide charts and predictions
+- Wind and humidity information
+
+### Location Management
+- Save favorite cities and locations
+- Save points of interest (beaches, parks, landmarks)
+- Quick access to saved locations
+- Weather information for each saved location
+
+### Weather Alerts
+- Create custom weather alerts
+- Set conditions that trigger alerts (temperature, wind speed, etc.)
+- Receive notifications when conditions are met
+- Manage and delete alerts
+
+### Notifications
+- Real-time weather alerts
+- Browser notifications
+- Push notifications to your devices
+- Mark notifications as read
+
+### Multi-Language Support
+- Interface available in multiple languages
+- Switch languages anytime
+- All weather information in your preferred language
+
+---
+
+## Getting Started
+
+### Accessing the Application
+
+Simply visit **https://canaryweather.xyz** in your web browser. No installation is required.
+
+### Creating an Account
+
+1. Visit https://canaryweather.xyz
+2. Look for the login or registration button
+3. Enter your credentials (provided by your organization for LDAP authentication)
+4. You will be logged in and can start using the application
+
+### First Steps
+
+1. **Find Your Location**: Use the search bar or map to find a location
+2. **Save Locations**: Click the save button to add locations to your favorites
+3. **Create Alerts**: Set up weather alerts for your saved locations
+4. **Enable Notifications**: Allow browser notifications to receive alerts
+5. **Explore Points of Interest**: Add beaches, parks, and landmarks you care about
+
+---
+
+## How to Use
+
+### Viewing Weather Information
+
+1. Navigate to a location using the map or search
+2. View current weather conditions
+3. Check the forecast for the next days
+4. Read activity recommendations based on current conditions
+
+### Managing Locations
+
+**Save a Location:**
+- Find a location on the map or search for it
+- Click the save button
+- The location is added to your favorites
+
+**View Saved Locations:**
+- Go to your locations section
+- Click any location to view its weather
+- Delete locations you no longer need
+
+### Creating Weather Alerts
+
+1. Go to the alerts section
+2. Click "Create New Alert"
+3. Select a location
+4. Set the condition (example: temperature below 10°C)
+5. Choose how you want to be notified
+6. Save the alert
+
+When your alert condition is met, you will receive a notification.
+
+### Managing Alerts
+
+**View All Alerts:**
+- Go to the alerts section
+- See all your active alerts
+- View alert history
+
+**Update an Alert:**
+- Click on an alert to edit it
+- Change the condition or notification settings
+- Save changes
+
+**Delete an Alert:**
+- Click the delete button on any alert
+- Confirm deletion
+- The alert is removed
+
+### Enabling Notifications
+
+**Browser Notifications:**
+1. When prompted by the browser, click "Allow" for notifications
+2. You will receive notifications in your browser
+
+**Push Notifications:**
+1. Go to your settings
+2. Look for notification preferences
+3. Enable push notifications
+4. Allow the app to send notifications to your device
+
+---
+
+## Documentation
+
+For more detailed information, refer to our documentation:
+
+### User Guide
+- **[API Testing Guide](./docs/API_TESTING_GUIDE.md)** - Learn about the available API endpoints
+
+### For Developers and Administrators
+- **[Architecture Overview](./docs/ARCHITECTURE.md)** - How the system is built
+- **[System Diagrams](./docs/DIAGRAMS.md)** - Visual representations of the system
+- **[Database Schema](./docs/DATABASE.md)** - Data structure and relationships
+- **[Authentication](./docs/AUTHENTICATION.md)** - Login and security details
+- **[LDAP Configuration](./docs/LDAP.md)** - User authentication setup
+- **[Environment Variables](./docs/ENVIRONMENT_VARIABLES.md)** - Configuration settings and secrets management
+- **[Testing Guide](./docs/TESTS.md)** - Testing the application
+- **[Packages and Dependencies](./docs/PACKAGES.md)** - Technology stack details
+- **[Deployment Guide](./docs/DEPLOYMENT.md)** - How the application is deployed
+- **[Domain Configuration](./docs/DOMAIN_CONFIG.md)** - Domain and SSL setup
+- **[Logs and Monitoring](./docs/LOGS.md)** - System monitoring
+- **[Cookies](./docs/COOKIES.md)** - Browser cookies and sessions
+
+---
+
+## Browser Requirements
+
+Canary Weather works best with modern web browsers:
+
+- Google Chrome (latest version)
+- Mozilla Firefox (latest version)
+- Safari (latest version)
+- Microsoft Edge (latest version)
+
+### Mobile Browsers
+- iOS Safari (iOS 12 or higher)
+- Chrome for Android (latest version)
+- Firefox for Android (latest version)
+
+### Browser Features Required
+- JavaScript enabled
+- Cookies enabled
+- Location services (optional, for map features)
+
+---
+
+## Common Questions
+
+### Do I need to install anything?
+No. Canary Weather is a web application. Simply visit https://canaryweather.xyz and start using it. No installation is required.
+
+### What information do you collect?
+We collect:
+- Your login information
+- Locations and points of interest you save
+- Weather alerts you create
+- Notification preferences
+
+We do not collect unnecessary personal information. Your data is secure.
+
+### Can I use Canary Weather on my phone?
+Yes. Canary Weather is fully responsive and works on smartphones and tablets. You can also install it as an app on your device for easier access.
+
+### How do I reset my password?
+Use the "Forgot Password" link on the login page. Follow the instructions to reset your password.
+
+### What should I do if I forgot my username?
+Contact your system administrator for help recovering your account.
+
+### Why am I not receiving notifications?
+Check the following:
+1. Make sure notifications are enabled in your settings
+2. Check that your browser allows notifications
+3. Make sure your device is connected to the internet
+4. Check that alerts are active (not paused)
+
+### Can I export my data?
+Contact your system administrator to request a data export.
+
+### How often is the weather data updated?
+Weather forecasts are updated regularly throughout the day. Current conditions are refreshed frequently.
+
+---
+
+## Troubleshooting
+
+### I cannot log in
+- Check that you are using the correct username and password
+- Make sure Caps Lock is not on
+- Try clearing your browser cookies and try again
+- Contact your system administrator if the problem persists
+
+### The map is not loading
+- Check your internet connection
+- Try refreshing the page (press F5)
+- Clear your browser cache
+- Try a different browser
+
+### Alerts are not working
+- Check that alerts are enabled in your settings
+- Make sure you have allowed browser notifications
+- Verify that alert conditions are set correctly
+- Check that your saved location is correct
+
+### The website is slow
+- Check your internet connection speed
+- Close other browser tabs to free up memory
+- Clear your browser cache
+- Try accessing during off-peak hours
+
+### I see an error message
+- Take note of the error message
+- Refresh the page
+- Try using a different browser
+- Contact support with the error message details
+
+---
+
+## Support and Help
+
+### Getting Help
+
+If you encounter any issues:
+
+1. Check this documentation first
+2. Try the troubleshooting steps above
+3. Clear your browser cache and cookies
+4. Try using a different browser
+5. Contact your system administrator
+
+### Reporting Issues
+
+If you find a bug or have a suggestion:
+
+1. Note what happened and when
+2. Include any error messages
+3. Describe the steps to reproduce the problem
+4. Contact your system administrator with this information
+
+### Contact Information
+
+For support and assistance, contact your system administrator or the development team.
+
+---
+
+## About This Application
+
+**Application Name:** Canary Weather  
+**Version:** 1.0.0  
+**Production URL:** https://canaryweather.xyz  
+**Last Updated:** December 2024  
+
+This application is built and maintained by our development team.
+
+---
+
+## Privacy and Security
+
+Your data is important to us. We take security seriously:
+
+- All data is encrypted during transmission (HTTPS)
+- User authentication is secure (LDAP)
+- Your password is never stored in plain text
+- Your session is secure and expires after a period of inactivity
+- You can log out anytime to end your session
+
+For more information about how your data is handled, contact your system administrator.
+
+---
+
+## Accessibility
+
+We are committed to making Canary Weather accessible to everyone:
+
+- The interface supports keyboard navigation
+- Screen readers are compatible with the application
+- High contrast mode is available
+- Text can be resized in your browser
+- Mobile and tablet access is fully supported
+
+If you have accessibility requirements, contact your system administrator.
+
+---
+
+## Mobile App Installation
+
+### Install as Web App (Recommended)
+
+**On Android:**
+1. Open https://canaryweather.xyz in Chrome
+2. Tap the menu button (three dots)
+3. Select "Install app" or "Add to Home screen"
+4. Follow the prompts
+
+**On iPhone:**
+1. Open https://canaryweather.xyz in Safari
+2. Tap the Share button
+3. Select "Add to Home Screen"
+4. Name the app and tap "Add"
+
+Once installed, you can open Canary Weather like any other app on your device.
+
+---
+
+## Tips for Best Experience
+
+1. **Enable Notifications**: Turn on notifications to receive weather alerts in real-time
+2. **Save Locations**: Save your favorite locations for quick access
+3. **Create Alerts**: Set up alerts for important weather conditions
+4. **Update Browser**: Keep your browser updated for best performance
+5. **Use Mobile App**: Install the web app on your phone for easier access
+
+---
+
+## Version History
+
+### Version 1.0.0 (December 2024)
+- Initial release
+- Weather forecasts for Canary Islands
+- Location and point of interest management
+- Weather alerts system
+- Real-time notifications
+- Multi-language support
+
+---
+
+## License
+
+This project is licensed under the ISC License.
+
+---
+
+## Thank You
+
+Thank you for using Canary Weather. We hope it helps you plan your activities and stay informed about weather in the Canary Islands.
+
+Enjoy your experience, and stay safe!

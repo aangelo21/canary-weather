@@ -1,13 +1,19 @@
 @import url("leaflet/dist/leaflet.css");
 
-.leaflet-container {
-  height: 80vh;
-  width: 100%;
+/* Force override here as well to be safe */
+.leaflet-popup.custom-popup-clean .leaflet-popup-content-wrapper {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+.leaflet-popup.custom-popup-clean .leaflet-popup-tip {
+    display: none !important;
+}
+.leaflet-popup.custom-popup-clean .leaflet-popup-close-button {
+    display: none !important;
+}
 
-  @media (min-width: 1024px) {
-    width: 100% !important;
-    max-width: 1200px !important;
-    height: 500px !important;
-    border-radius: 20px !important;
-  }
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  z-index: 0;
 }

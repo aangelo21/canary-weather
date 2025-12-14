@@ -1,4 +1,4 @@
-# Domain, DNS & SSL Configuration Guide
+# CanaryWeather Domain, DNS & SSL Configuration Guide
 
 This document details the technical process for domain acquisition, DNS record configuration, Nginx reverse proxy setup, and SSL certificate implementation for the **CanaryWeather** project.
 

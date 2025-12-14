@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useCallback } from 'react';
+import Skeleton from '../common/Skeleton';
+import AIAssistant from './AIAssistant';
 
 /**
  * Hero Component.
@@ -15,7 +17,7 @@ import { useState, useEffect, useCallback } from 'react';
  * - **Dynamic Icons**: Displays different animated icons based on weather conditions.
  * - **Responsive Design**: Maintains the original responsive layout.
  */
-export default function Hero() {
+export default function Hero({ coords }) {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
@@ -25,8 +27,6 @@ export default function Hero() {
     const [locationName, setLocationName] = useState({ city: 'Locating...', region: '' });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    // Store coordinates to enable auto-refresh
-    const [coords, setCoords] = useState(null);
 
     /**
      * Fetches weather data from OpenWeatherMap API.
@@ -80,38 +80,15 @@ export default function Hero() {
     }, []);
 
     /**
-     * Effect to fetch user's location on component mount.
-     * If successful, it triggers weather and location name fetching.
-     * If it fails, it falls back to a default location (Tenerife).
+     * Effect to fetch weather when coords prop changes.
+     * Coords are now managed by the parent Home component.
      */
     useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    setCoords({ lat: latitude, lon: longitude });
-                    fetchWeatherData(latitude, longitude);
-                    fetchLocationName(latitude, longitude);
-                },
-                (err) => {
-                    console.warn("Geolocation access denied or failed:", err);
-                    setError("Location access denied. Showing default.");
-                    // Fallback to Tenerife coordinates
-                    const fallback = { lat: 28.4636, lon: -16.2518 };
-                    setCoords(fallback);
-                    fetchWeatherData(fallback.lat, fallback.lon);
-                    setLocationName({ city: 'Tenerife', region: 'Canary Islands' });
-                }
-            );
-        } else {
-            setError("Geolocation not supported.");
-            // Fallback to Tenerife coordinates
-            const fallback = { lat: 28.4636, lon: -16.2518 };
-            setCoords(fallback);
-            fetchWeatherData(fallback.lat, fallback.lon);
-            setLocationName({ city: 'Tenerife', region: 'Canary Islands' });
+        if (coords) {
+            fetchWeatherData(coords.lat, coords.lon);
+            fetchLocationName(coords.lat, coords.lon);
         }
-    }, [fetchWeatherData, fetchLocationName]);
+    }, [coords, fetchWeatherData, fetchLocationName]);
 
     /**
      * Effect to auto-refresh weather data every 5 minutes.
@@ -166,7 +143,7 @@ export default function Hero() {
                     <div className="absolute inset-0 bg-blue-400 rounded-full blur-xl opacity-20 animate-pulse"></div>
                     <svg className="w-full h-full text-blue-500 animate-bounce" style={{ animationDuration: '3s' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 16.2A4.5 4.5 0 0017.5 8h-1.832A4.5 4.5 0 009.355 8H7.5a4.5 4.5 0 00-1.3 8.8" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 22v-2m-4 2v-4m-4 4v-2" className="animate-ping" style={{ animationDuration: '3s' }} />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 18v-2m-4 2v-4m-4 4v-2" className="animate-ping" style={{ animationDuration: '5s' }} />
                     </svg>
                 </div>
             );
@@ -307,6 +284,12 @@ export default function Hero() {
                          */}
                         <div className="relative w-full max-w-sm bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-white/50 dark:border-gray-700/50 rounded-3xl shadow-2xl p-8 transform lg:rotate-y-12 hover:rotate-0 transition-all duration-700 ease-out group">
                             
+                            {error && (
+                                <div className="absolute top-0 left-0 w-full bg-red-500/80 text-white text-xs p-2 text-center rounded-t-3xl z-10">
+                                    {error}
+                                </div>
+                            )}
+
                             {/* Card Header: Location & Time */}
                             <div className="flex justify-between items-start mb-8">
                                 <div>
@@ -328,35 +311,42 @@ export default function Hero() {
                             <div className="flex flex-col items-center justify-center py-4">
                                 {/* Animated Weather Icon */}
                                 {loading ? (
-                                    <div className="w-32 h-32 flex items-center justify-center">
-                                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
+                                    <div className="w-32 h-32 flex items-center justify-center mb-4">
+                                        <Skeleton variant="circular" className="w-24 h-24" />
                                     </div>
                                 ) : (
                                     weatherDetails.icon
                                 )}
                                 
-                                <div className="text-6xl font-bold text-gray-900 dark:text-white tracking-tighter">
-                                    {loading ? '--' : Math.round(weather?.temp)}<span className="text-4xl align-top text-brand-primary">°C</span>
+                                <div className="text-6xl font-bold text-gray-900 dark:text-white tracking-tighter flex items-center justify-center">
+                                    {loading ? (
+                                        <Skeleton className="w-32 h-16" />
+                                    ) : (
+                                        <>{Math.round(weather?.temp)}<span className="text-4xl align-top text-brand-primary">°C</span></>
+                                    )}
                                 </div>
-                                <p className="text-xl font-medium text-gray-600 dark:text-gray-300 mt-2 capitalize">
-                                    {loading ? 'Loading...' : weather?.description || weatherDetails.label}
-                                </p>
+                                <div className="text-xl font-medium text-gray-600 dark:text-gray-300 mt-2 capitalize w-full flex justify-center">
+                                    {loading ? (
+                                        <Skeleton className="w-24 h-6" />
+                                    ) : (
+                                        weather?.description || weatherDetails.label
+                                    )}
+                                </div>
                             </div>
 
                             {/* Card Footer: Mini Stats */}
                             <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
-                                <div className="text-center">
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Wind</p>
-                                    {/* Round wind speed to nearest integer for cleaner display (e.g., 6.63 km/h -> 7 km/h) */}
-                                    <p className="font-bold text-gray-900 dark:text-white">{loading ? '--' : Math.round(weather?.wind_speed)} km/h</p>
+                                <div className="text-center flex flex-col items-center">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">Wind</p>
+                                    {loading ? <Skeleton className="w-12 h-5" /> : <p className="font-bold text-gray-900 dark:text-white">{Math.round(weather?.wind_speed)} km/h</p>}
                                 </div>
-                                <div className="text-center border-l border-gray-100 dark:border-gray-700">
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Humidity</p>
-                                    <p className="font-bold text-gray-900 dark:text-white">{loading ? '--' : Math.round(weather?.humidity)}%</p>
+                                <div className="text-center border-l border-gray-100 dark:border-gray-700 flex flex-col items-center">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">Humidity</p>
+                                    {loading ? <Skeleton className="w-12 h-5" /> : <p className="font-bold text-gray-900 dark:text-white">{Math.round(weather?.humidity)}%</p>}
                                 </div>
-                                <div className="text-center border-l border-gray-100 dark:border-gray-700">
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">UV</p>
-                                    <p className="font-bold text-gray-900 dark:text-white">High</p>
+                                <div className="text-center border-l border-gray-100 dark:border-gray-700 flex flex-col items-center">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">UV</p>
+                                    {loading ? <Skeleton className="w-12 h-5" /> : <p className="font-bold text-gray-900 dark:text-white">High</p>}
                                 </div>
                             </div>
 
@@ -373,6 +363,7 @@ export default function Hero() {
                     </div>
                 </div>
             </div>
+            <AIAssistant weather={weather} />
         </div>
     );
 }

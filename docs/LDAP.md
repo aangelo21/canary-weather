@@ -1,4 +1,4 @@
-# LDAP
+# CanaryWeather LDAP Configuration Guide
 
 LDAP (Lightweight Directory Access Protocol) is an open, vendor-neutral protocol used for accessing and managing directory information services over an IP network. It enables applications to query and modify user, group, and organizational data stored in a centralized directory, commonly used for authentication, authorization, and user management in enterprise environments.
 
