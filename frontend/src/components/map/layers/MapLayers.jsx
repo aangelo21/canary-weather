@@ -14,7 +14,7 @@ const MapLayers = ({ apiKey }) => {
     const { isDarkMode } = useTheme();
 
     return (
-        <LayersControl position="topright">
+        <LayersControl position="bottomleft">
             {/* Base Layers */}
             <LayersControl.BaseLayer checked name="Terrain (Google)">
                 <TileLayer

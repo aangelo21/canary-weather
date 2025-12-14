@@ -91,7 +91,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
     return (
         <div
             id="map-controls"
-            className="absolute top-4 right-4 z-[1000] flex flex-col gap-3 w-full max-w-xs items-end"
+            className="absolute top-4 left-4 z-[1000] flex flex-col gap-3 w-full max-w-xs items-start"
         >
             {/* Search Bar */}
             <form

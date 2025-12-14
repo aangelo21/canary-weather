@@ -1,4 +1,4 @@
-import { MapContainer, Marker } from 'react-leaflet';
+import { MapContainer, Marker, ZoomControl } from 'react-leaflet';
 import { useState, useRef, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import { fetchPois } from '../../services/poiService';
@@ -128,6 +128,7 @@ function InteractiveMap() {
                 className="w-full h-full z-0"
                 zoomControl={false}
             >
+                <ZoomControl position="bottomleft" />
                 {/* Map Layers (Base & Weather) */}
                 <MapLayers apiKey={OPENWEATHER_API_KEY} />
 
