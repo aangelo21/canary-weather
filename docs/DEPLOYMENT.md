@@ -1,4 +1,4 @@
-# Deployment
+# CanaryWeather Deployment Guide
 
 ## DigitalOcean
 

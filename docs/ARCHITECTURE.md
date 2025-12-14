@@ -1,374 +1,505 @@
-# CanaryWeather Architecture
+# CanaryWeather System Architecture
 
-This document provides an overview of the CanaryWeather application architecture, design patterns, and technical decisions.
+This document describes the overall structure and design of the CanaryWeather application, how different parts work together, and how data flows through the system.
 
-## Table of Contents
+---
 
-- [High-Level Architecture](#high-level-architecture)
-- [Technology Stack](#technology-stack)
-- [Design Patterns](#design-patterns)
-- [Project Structure](#project-structure)
-- [Data Flow](#data-flow)
-- [External Integrations](#external-integrations)
+## Overview
 
-## High-Level Architecture
+CanaryWeather is a full-stack web application designed to provide weather alerts and points of interest information for the Canary Islands. The system consists of three main parts:
 
-CanaryWeather follows a **client-server architecture** with a clear separation between frontend and backend:
+1. Frontend (User Interface)
+2. Backend (API Server)
+3. Database (Data Storage)
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                      Client Layer                        │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │         React Frontend (Vite)                     │  │
-│  │  - Components  - Pages  - Services  - State      │  │
-│  └──────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────┘
-                          │
-                    HTTP/HTTPS (REST API)
-                          │
-┌─────────────────────────────────────────────────────────┐
-│                     Server Layer                         │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │      Express.js Backend (Node.js)                 │  │
-│  │  - Routes  - Controllers  - Middleware  - Models │  │
-│  └──────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────┘
-                          │
-                   Sequelize ORM
-                          │
-┌─────────────────────────────────────────────────────────┐
-│                    Data Layer                            │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │              MySQL Database                       │  │
-│  │  - Users  - POIs  - Alerts  - Notifications      │  │
-│  └──────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────┘
-                          │
-                   External APIs
-                          │
-                  ┌───────┴───────┐
-                  │               │
-              Meteoalarm      OpenStreetMap
-```
+---
 
-## Technology Stack
+## System Layers
 
-### Backend
+### Layer 1: Frontend (User Interface)
 
-- **Runtime**: Node.js v18+
-- **Framework**: Express.js v5
-- **ORM**: Sequelize v6
-- **Database**: MySQL 8.0+
-- **Authentication**: JWT + Express Session
-- **File Upload**: Multer
-- **API Documentation**: Swagger/OpenAPI 3.0
-- **Password Hashing**: bcrypt
-- **External Data Parsing**: xml2js (Meteoalarm feeds)
-- **Templating**: EJS (Admin Dashboard)
+**Technology**: Vue.js with Vite
 
-### Frontend
+The frontend is the visual part of the application that users interact with. It runs in the web browser.
 
-- **Framework**: React 18
-- **Build Tool**: Vite
-- **HTTP Client**: Axios
-- **Mapping**: Leaflet (via react-leaflet)
-- **Routing**: React Router
-- **Internationalization**: i18next
-- **Styling**: Tailwind CSS
+**Responsibilities**:
+- Display weather information
+- Show weather alerts
+- Display points of interest on maps
+- Allow users to manage their profile
+- Provide user login and registration
 
-### DevOps
+**How it works**:
+1. Users open the application in their browser
+2. The application loads from the web server
+3. Users interact with the interface (click buttons, fill forms)
+4. Frontend sends requests to the backend API
+5. Backend responds with data
+6. Frontend displays the data to users
 
-- **Process Manager**: PM2
-- **Version Control**: Git
-- **Hosting**: DigitalOcean Droplets
-- **Database Hosting**: DigitalOcean Managed MySQL
+**Location**: `frontend/` directory
 
-## Design Patterns
+---
 
-### Backend Patterns
+### Layer 2: Backend (API Server)
 
-#### 1. MVC (Model-View-Controller)
+**Technology**: Node.js with Express
 
-The backend follows a modified MVC pattern:
+The backend is the server that processes requests and manages the business logic.
 
-- **Models**: Sequelize models define database schema
-- **Controllers**: Handle business logic and request processing
-- **Routes**: Define API endpoints and map to controllers
-- **Views**: EJS templates for admin dashboard
+**Responsibilities**:
+- Handle user authentication and authorization
+- Manage user accounts and profiles
+- Store and retrieve weather alerts
+- Manage points of interest
+- Send notifications to users
+- Connect to the database
+- Connect to LDAP for user management
 
-#### 2. Middleware Pattern
+**How it works**:
+1. Frontend sends an HTTP request to the backend
+2. Backend receives the request
+3. Backend processes the request (check permissions, validate data)
+4. Backend queries the database or LDAP
+5. Backend sends response back to frontend
 
-Middleware functions handle cross-cutting concerns:
+**Main Components**:
 
-- **Authentication**: `authenticateToken`, `authenticateSession`
-- **Authorization**: `checkAdmin`
-- **File Upload**: `upload`, `uploadPOI`
-- **Error Handling**: Centralized error handling
+**Routes**: Define which URLs the API responds to
+- `userRoutes.js`: Handle user login, registration, profile
+- `alertRoutes.js`: Handle weather alerts
+- `pointOfInterestRoutes.js`: Handle special places
+- `notificationRoutes.js`: Handle notifications
+- `locationRoutes.js`: Handle cities/municipalities
 
-#### 3. Repository Pattern
+**Controllers**: Process the business logic
+- `userController.js`: User-related operations
+- `alertController.js`: Alert-related operations
+- `pointOfInterestController.js`: POI-related operations
+- `notificationController.js`: Notification operations
 
-Sequelize ORM acts as a repository layer, abstracting database operations.
+**Models**: Define the structure of data
+- Represent tables in the database
+- Define relationships between data
 
-### Frontend Patterns
+**Services**: Handle special operations
+- `ldapService.js`: User authentication via LDAP
+- `websocketService.js`: Real-time communication
+- `alertScheduler.js`: Automatic alert management
+- `emailService.js`: Send emails to users
 
-#### 1. Component-Based Architecture
+**Location**: `backend/` directory
 
-React components are organized by feature and reusability:
+---
 
-- **Pages**: Top-level route components
-- **Components**: Reusable UI components
-- **Services**: API communication layer
+### Layer 3: Database
 
-#### 2. Service Layer
+**Technology**: MySQL
 
-API calls are centralized in service modules:
+The database stores all the application data.
 
-- `userService.js`
-- `poiService.js`
-- `alertService.js`
-- etc.
+**What it stores**:
+- User accounts (linked to LDAP)
+- User preferences (which cities to monitor)
+- Weather alerts
+- Points of interest
+- Notifications
+- User sessions
 
-## Project Structure
+**How it relates to other parts**:
+- Frontend never talks directly to the database
+- Only the backend can access the database
+- This keeps data secure
 
-### Backend Structure
+**Location**: Cloud-hosted MySQL database
+
+---
+
+## How the Parts Work Together
+
+### Example 1: User Login
 
 ```
-backend/
-├── config/
-│   ├── database.js          # Database configuration
-│   └── swagger.config.js    # Swagger/OpenAPI configuration
-├── controllers/
-│   ├── userController.js    # User business logic
-│   ├── poiController.js     # POI business logic
-│   ├── alertController.js   # Alert business logic
-│   └── ...
-├── middleware/
-│   ├── authMiddleware.js    # Authentication middleware
-│   ├── uploadMiddleware.js  # File upload middleware
-│   └── checkAdmin.js        # Admin authorization
-├── models/
-│   ├── index.js             # Model associations
-│   ├── user.js              # User model
-│   ├── pointOfInterest.js   # POI model
-│   └── ...
-├── routes/
-│   ├── userRoutes.js        # User API routes
-│   ├── poiRoutes.js         # POI API routes
-│   └── ...
-├── migrations/              # Database migrations
-├── seeders/                 # Database seeders
-├── uploads/                 # Uploaded files
-└── index.js                 # Application entry point
+1. User enters username and password in frontend
+2. Frontend sends request to: POST /api/users/login
+3. Backend receives request
+4. Backend checks LDAP (user authentication system)
+5. If valid, backend creates JWT token and session
+6. Backend responds with user data and token
+7. Frontend stores token and shows dashboard
+8. User is now logged in
 ```
 
-### Frontend Structure
+### Example 2: Viewing Weather Alerts
 
 ```
-frontend/
-├── public/                  # Static assets
-├── src/
-│   ├── components/          # Reusable components
-│   ├── pages/               # Page components
-│   ├── services/            # API services
-│   ├── i18n/                # Internationalization
-│   ├── App.jsx              # Main app component
-│   └── main.jsx             # Entry point
-└── index.html               # HTML template
+1. User clicks "View Alerts" button in frontend
+2. Frontend sends request to: GET /api/alerts
+3. Backend receives request
+4. Backend checks if user is authenticated (has valid token)
+5. Backend queries database for all alerts
+6. Backend responds with alert data
+7. Frontend displays alerts on the screen
+8. User can see all weather warnings
 ```
 
-## Data Flow
-
-### Authentication Flow
+### Example 3: Creating a Weather Alert
 
 ```
-1. User submits credentials
-   ↓
-2. Backend validates credentials
-   ↓
-3. Generate JWT token (15min expiry)
-   ↓
-4. Return token + user data
-   ↓
-5. Frontend stores token
-   ↓
-6. Include token in subsequent requests
-   ↓
-7. Backend validates token on each request
+1. Admin user fills form with alert details
+2. Frontend sends request to: POST /api/alerts (with alert data)
+3. Backend receives request
+4. Backend checks if user is admin
+5. Backend validates the data
+6. Backend saves alert to database
+7. Backend notifies all affected users
+8. Frontend shows success message
+9. Users receive notifications about new alert
 ```
 
-### Data Fetching Flow
+---
+
+## Authentication and Authorization
+
+### Authentication (Who are you?)
+
+**LDAP System**: Checks if username and password are correct
+
+- LDAP is a separate system that stores user credentials
+- Backend checks credentials with LDAP
+- If credentials are valid, LDAP confirms
+- Backend creates a JWT token
+
+### JWT Token (Proof of Identity)
+
+After login, users receive a token that proves they are logged in.
+
+**How it works**:
+- Token contains user information (encrypted)
+- Token expires after 15 minutes
+- Token must be included in every request to protected endpoints
+- Backend verifies token is real and not expired
+
+### Authorization (What can you do?)
+
+After authentication, the system checks what the user is allowed to do.
+
+**Permission Levels**:
+- Regular User: Can view alerts, create personal POIs, manage profile
+- Admin User: Can create/edit/delete official alerts and manage system
+
+**How it works**:
+- Token includes `is_admin` flag
+- Backend checks this flag before allowing admin operations
+- If user is not admin, request is denied
+
+---
+
+## Data Flow Diagram
 
 ```
-1. Component mounts
-   ↓
-2. Call service function (e.g., getAlerts())
-   ↓
-3. Service makes HTTP request with Axios
-   ↓
-4. Backend route receives request
-   ↓
-5. Middleware validates authentication
-   ↓
-6. Controller processes request
-   ↓
-7. Model queries database via Sequelize
-   ↓
-8. Data returned through layers
-   ↓
-9. Component updates state and renders
+User (Browser)
+    |
+    | HTTP Requests
+    | (with JWT Token)
+    v
+Nginx (Reverse Proxy)
+    |
+    | Forwards requests
+    v
+Frontend Application (Vite)
+    |
+    | API Calls
+    v
+Backend API (Express)
+    |
+    +---> LDAP (User Authentication)
+    |     (Checks passwords)
+    |
+    +---> MySQL Database
+    |     (Stores all application data)
+    |
+    +---> WebSocket
+          (Real-time updates to frontend)
 ```
 
-## External Integrations
+---
 
-### AEMET API
+## Communication Between Components
 
-- **Purpose**: Weather data and alerts for Spain
-- **Usage**: Fetch real-time weather forecasts and alerts
-- **Authentication**: API key required
-- **Endpoints Used**:
-  - Weather forecasts
-  - Weather alerts
-  - Coastal warnings
+### Frontend to Backend
 
-### OpenStreetMap / Leaflet
+**HTTP Requests** (REST API):
+- Request type: GET, POST, PUT, DELETE
+- Contains URL path and data
+- Includes authentication token
+- Backend responds with JSON data
 
-- **Purpose**: Interactive mapping
-- **Usage**: Display POIs and weather data on map
-- **No authentication required**
+**WebSocket** (Real-time):
+- Direct connection between frontend and backend
+- Used for instant notifications
+- Updates happen immediately (no need to refresh)
+
+### Backend to Database
+
+**SQL Queries**:
+- SELECT: Get data from database
+- INSERT: Add new data
+- UPDATE: Modify existing data
+- DELETE: Remove data
+
+### Backend to LDAP
+
+**LDAP Operations**:
+- Bind: Connect as admin
+- Search: Find users
+- Modify: Update user information
+- Add: Create new user
+- Delete: Remove user
+
+---
+
+## Key Technologies
+
+### Frontend Stack
+- Vue.js: JavaScript framework for user interface
+- Vite: Build tool for fast development
+- JavaScript: Programming language
+- HTML/CSS: For layout and styling
+
+### Backend Stack
+- Node.js: JavaScript runtime on server
+- Express: Web framework for routing and handling requests
+- Sequelize: Tool for database operations
+- Socket.IO: Library for WebSocket communication
+- LDAP Client: Tool to communicate with LDAP server
+
+### Database Stack
+- MySQL: Relational database management system
+- Sequelize ORM: Maps database tables to JavaScript objects
+
+### Infrastructure
+- Nginx: Web server and reverse proxy
+- PM2: Process manager (keeps applications running)
+- DigitalOcean: Cloud hosting provider
+- Let's Encrypt: Provides free SSL certificates for HTTPS
+
+---
+
+## System Flows
+
+### User Registration Flow
+
+```
+User fills registration form
+        |
+        v
+Frontend sends registration data
+        |
+        v
+Backend receives request
+        |
+        v
+Backend checks if username/email exists
+        |
+        v (if doesn't exist)
+Backend creates user in LDAP
+        |
+        v
+Backend creates user preferences in database
+        |
+        v
+Frontend shows success message
+        |
+        v
+User can now login
+```
+
+### Alert Creation Flow
+
+```
+Admin fills alert form
+        |
+        v
+Frontend sends alert data
+        |
+        v
+Backend receives request
+        |
+        v
+Backend verifies user is admin
+        |
+        v (if admin)
+Backend validates alert data
+        |
+        v
+Backend saves alert to database
+        |
+        v
+Backend finds users affected by alert
+        |
+        v
+Backend creates notifications for those users
+        |
+        v
+WebSocket sends real-time update to connected users
+        |
+        v
+Users see alert immediately
+```
+
+### WebSocket Communication
+
+```
+Frontend connects to WebSocket
+        |
+        v
+Backend establishes connection
+        |
+        v
+When data changes:
+        |
+        +-- Backend detects change
+        |
+        +-- Backend sends update through WebSocket
+        |
+        v
+Frontend receives update without page refresh
+        |
+        v
+User sees new data instantly
+```
+
+---
 
 ## Security Architecture
 
-### Authentication Layers
+### Password Storage
+- Passwords NOT stored in our database
+- Stored in LDAP (separate secure system)
+- Never transmitted in plain text
 
-1. **JWT Tokens** (API endpoints)
+### Session Management
+- Sessions stored in database
+- Expires after 24 hours of inactivity
+- Sessions are tied to specific devices/browsers
 
-   - Short-lived (15 minutes)
-   - Stateless
-   - Bearer token in Authorization header
+### Token Security
+- JWT tokens are signed (cannot be modified)
+- Expire after 15 minutes
+- Must be refreshed for continued access
+- Tokens are only valid for one user
 
-2. **Express Sessions** (Admin dashboard)
-   - Server-side session storage
-   - Cookie-based
-   - Longer duration (24 hours)
+### HTTPS/SSL
+- All traffic is encrypted
+- Certificate from Let's Encrypt
+- Automatic renewal
 
-### Authorization Levels
+### Database Security
+- Database not exposed to internet
+- Only backend can access database
+- Credentials stored in environment variables
 
-- **Public**: No authentication required
-- **Authenticated**: Valid JWT token required
-- **Admin**: Session authentication + admin flag
-
-### Data Protection
-
-- **Password Hashing**: bcrypt with salt rounds
-- **SQL Injection**: Sequelize parameterized queries
-- **XSS Protection**: React's built-in escaping
-- **CORS**: Configured for specific origins
-
-## Database Architecture
-
-### Entity Relationships
-
-```
-User ──┬── UserLocation ── Location
-       ├── UserPOI ── PointOfInterest ── Forecast
-       └── Notification ── Alert
-```
-
-### Key Tables
-
-- **Users**: User accounts and authentication
-- **Locations**: Geographic locations (municipalities)
-- **PointsOfInterest**: User and global POIs
-- **Alerts**: Weather alerts and warnings
-- **Notifications**: User notifications
-- **Forecasts**: Weather forecast data
-
-For detailed schema information, see [DATABASE.md](DATABASE.md).
+---
 
 ## Scalability Considerations
 
 ### Current Architecture
+- Single server (DigitalOcean Droplet)
+- One database
+- One frontend application
+- One backend application
 
-- Single server deployment
-- Managed database (DigitalOcean)
-- PM2 for process management
-
-### Future Scalability
-
-- **Horizontal Scaling**: Load balancer + multiple app servers
-- **Caching**: Redis for session storage and API caching
-- **CDN**: Static asset delivery
-- **Database**: Read replicas for query optimization
-
-## Performance Optimizations
-
-1. **Database Indexing**: Indexes on frequently queried fields
-2. **Eager Loading**: Sequelize includes to reduce N+1 queries
-3. **Frontend Code Splitting**: Vite's automatic code splitting
-4. **Image Optimization**: Compressed uploads
-5. **API Response Caching**: Potential for Redis integration
-
-## Monitoring and Logging
-
-### Current Setup
-
-- PM2 process monitoring
-- Console logging
-- Error tracking in application
-
-### Recommended Additions
-
-- **Application Monitoring**: PM2 Plus or New Relic
-- **Log Aggregation**: Winston + Elasticsearch
-- **Error Tracking**: Sentry
-- **Performance Monitoring**: Application Performance Monitoring (APM)
-
-## Deployment Architecture
-
-```
-┌─────────────────────────────────────┐
-│     DigitalOcean Droplet            │
-│  ┌──────────────────────────────┐  │
-│  │  PM2 Process Manager          │  │
-│  │  ├── Frontend (Vite dev)      │  │
-│  │  └── Backend (Node.js)        │  │
-│  └──────────────────────────────┘  │
-└─────────────────────────────────────┘
-              │
-              ├── Port 85 (Backend API)
-              └── Port 5173 (Frontend)
-
-┌─────────────────────────────────────┐
-│  DigitalOcean Managed MySQL         │
-│  - Automated backups                │
-│  - High availability                │
-└─────────────────────────────────────┘
-```
-
-For deployment details, see [deployment.md](deployment.md).
-
-## Development Workflow
-
-1. **Local Development**: npm run dev (both frontend and backend)
-2. **Database Migrations**: Sequelize CLI
-3. **API Testing**: Swagger UI at /api/docs
-4. **Version Control**: Git with feature branches
-5. **Code Review**: Pull requests on GitHub
-
-## Future Architecture Improvements
-
-1. **Microservices**: Separate weather service, notification service
-2. **Message Queue**: RabbitMQ or Redis for async tasks
-3. **WebSockets**: Real-time weather updates
-4. **GraphQL**: Alternative to REST API
-5. **Docker**: Containerization for easier deployment
-6. **CI/CD**: Automated testing and deployment pipeline
+### Future Improvements
+- Load balancing (multiple backend servers)
+- Database replication
+- Caching layer (Redis)
+- Content delivery network (CDN) for static files
+- Microservices (separate services for different features)
 
 ---
 
-For more detailed information on specific components:
+## Error Handling
 
-- [Database Schema](DATABASE.md)
-- [Authentication System](AUTHENTICATION.md)
-- [Backend API](BACKEND.md)
-- [Frontend Components](FRONTEND.md)
+### Frontend Errors
+- Display user-friendly error messages
+- Log technical details for debugging
+- Automatically retry failed requests
+
+### Backend Errors
+- Validate all input data
+- Return appropriate HTTP status codes
+- Log errors for monitoring
+- Never expose sensitive system information
+
+### Database Errors
+- Connection retry logic
+- Transaction rollback on failure
+- Data consistency checks
+
+---
+
+## Monitoring and Logging
+
+### What Gets Logged
+- User login/logout events
+- API requests and responses
+- Database queries
+- Errors and exceptions
+- System performance metrics
+
+### Log Files
+- Backend logs: `logs/backend/`
+- Frontend logs: `logs/frontend/`
+- System logs: `/var/log/` (server logs)
+- Nginx logs: `/var/log/nginx/`
+
+### PM2 Log Management
+- Logs rotated daily
+- Compressed after rotation
+- Kept for 30 days
+- Prevents disk space issues
+
+---
+
+## Development Environment vs Production
+
+### Development
+- Frontend runs on: `http://localhost:5173`
+- Backend runs on: `http://localhost:85`
+- Database: Local or test database
+- LDAP: Test LDAP server
+- No SSL/HTTPS
+
+### Production
+- Frontend runs on: `https://canaryweather.xyz`
+- Backend runs on: `https://canaryweather.xyz/api`
+- Database: Production database
+- LDAP: Production LDAP server
+- Full SSL/HTTPS encryption
+- Behind Nginx reverse proxy
+- Managed by PM2
+
+---
+
+## Summary
+
+CanaryWeather uses a three-layer architecture:
+
+1. Frontend: Vue.js application for user interface
+2. Backend: Node.js/Express server for business logic
+3. Database: MySQL for data storage
+
+The parts communicate through:
+- HTTP REST API: For normal requests
+- WebSocket: For real-time updates
+- SQL Queries: For database operations
+- LDAP: For user authentication
+
+This architecture provides:
+- Separation of concerns (each part has clear responsibilities)
+- Security (database never exposed to users)
+- Scalability (parts can be expanded independently)
+- Maintainability (easier to find and fix issues)
+
+For more detailed information about specific components, see the other documentation files in this directory.
