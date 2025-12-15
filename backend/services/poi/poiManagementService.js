@@ -24,6 +24,8 @@ export const createPoi = async (poiData, userId) => {
         payload.type = payload.is_global ? 'global' : 'personal';
     }
 
+    payload.created_by = userId;
+
     const item = await PointOfInterest.create(payload);
 
     await UserPointOfInterest.create({

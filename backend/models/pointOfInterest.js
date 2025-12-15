@@ -1,8 +1,6 @@
-
 import sequelize from '../controllers/dbController.js';
 
 import { DataTypes } from 'sequelize';
-
 
 const PointOfInterest = sequelize.define(
     'PointOfInterest',
@@ -41,9 +39,16 @@ const PointOfInterest = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
+        created_by: {
+            type: DataTypes.UUID,
+            allowNull: true,
+            references: {
+                model: 'User',
+                key: 'id',
+            },
+        },
     },
     { timestamps: true },
 );
-
 
 export default PointOfInterest;
