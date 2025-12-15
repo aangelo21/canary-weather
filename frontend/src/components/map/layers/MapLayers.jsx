@@ -21,7 +21,7 @@ const MapLayers = ({ apiKey }) => {
                     key={isDarkMode ? 'dark-terrain' : 'light-terrain'}
                     className={
                         isDarkMode
-                            ? 'dark-map-tiles filter grayscale-[20%] contrast-[1.1]'
+                            ? 'dark-map-tiles filter grayscale-20 contrast-[1.1]'
                             : ''
                     }
                     attribution='&copy; <a href="https://www.google.com/permissions/geoguidelines/">Google</a>'

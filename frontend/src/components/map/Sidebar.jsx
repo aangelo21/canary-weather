@@ -72,12 +72,12 @@ const Sidebar = ({ isOpen, onClose, weather, loading, position }) => {
 
     return (
         <div
-            className={`absolute top-0 right-0 h-full w-full sm:w-[450px] bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl shadow-2xl z-[2000] transform transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) ${isOpen ? 'translate-x-0' : 'translate-x-full'} overflow-y-auto border-l border-white/20 dark:border-gray-700/30`}
+            className={`absolute top-0 right-0 h-full w-full sm:w-[450px] bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl shadow-2xl z-2000 transform transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) ${isOpen ? 'translate-x-0' : 'translate-x-full'} overflow-y-auto border-l border-white/20 dark:border-gray-700/30`}
         >
             {/* Header with Glassmorphism */}
             <div className="sticky top-0 z-20 flex items-center justify-between p-5 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800/50">
                 <div>
-                    <h2 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                    <h2 className="text-xl font-bold bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
                         {loading ? t('loading') : t('locationDetailsTitle')}
                     </h2>
                     {position && (
@@ -122,7 +122,7 @@ const Sidebar = ({ isOpen, onClose, weather, loading, position }) => {
                 ) : weather ? (
                     <>
                         {/* Main Weather Card */}
-                        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 text-white shadow-xl shadow-blue-500/20 p-6 group hover:shadow-2xl hover:shadow-blue-500/30 transition-all duration-300">
+                        <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-blue-500 via-blue-600 to-indigo-700 text-white shadow-xl shadow-blue-500/20 p-6 group hover:shadow-2xl hover:shadow-blue-500/30 transition-all duration-300">
                             {/* Background Decoration */}
                             <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
                             <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-cyan-400/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
@@ -276,7 +276,7 @@ const Sidebar = ({ isOpen, onClose, weather, loading, position }) => {
                                         ? 'bg-green-500 text-white shadow-lg shadow-green-500/30 cursor-default'
                                         : !isAuthenticated
                                           ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
-                                          : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-xl shadow-blue-500/30'
+                                          : 'bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-xl shadow-blue-500/30'
                                 }`}
                             >
                                 {saving ? (

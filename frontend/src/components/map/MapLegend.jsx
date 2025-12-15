@@ -32,7 +32,7 @@ function MapLegend() {
     return (
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden max-w-5xl mx-auto mt-6 md:mt-12 transition-all duration-300">
             {/* Header Section */}
-            <div className="bg-gradient-to-r from-brand-primary to-blue-600 p-4 md:p-6 text-white">
+            <div className="bg-linear-to-r from-brand-primary to-blue-600 p-4 md:p-6 text-white">
                 <h3 className="text-xl md:text-2xl font-bold flex items-center gap-3">
                     <svg
                         className="w-6 h-6 md:w-8 md:h-8"
@@ -60,7 +60,7 @@ function MapLegend() {
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`flex-1 py-3 px-4 md:py-4 md:px-6 text-sm font-semibold transition-all duration-200 flex items-center justify-center sm:justify-center justify-start gap-3 md:gap-2
+                        className={`flex-1 py-3 px-4 md:py-4 md:px-6 text-sm font-semibold transition-all duration-200 flex items-center justify-s sm:justify-center gap-3 md:gap-2
                             ${
                                 activeTab === tab.id
                                     ? 'text-brand-primary border-l-4 sm:border-l-0 sm:border-b-2 border-brand-primary bg-white dark:bg-gray-800 dark:text-blue-400'
@@ -105,7 +105,7 @@ function MapLegend() {
                                     {t('mapLegend.layers.temp.desc')}
                                 </p>
                                 {/* Color Scale Visualization */}
-                                <div className="h-4 rounded-full bg-gradient-to-r from-blue-500 via-green-400 to-red-500 w-full mb-1"></div>
+                                <div className="h-4 rounded-full bg-linear-to-r from-blue-500 via-green-400 to-red-500 w-full mb-1"></div>
                                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 font-mono">
                                     <span>
                                         {t('mapLegend.layers.temp.scale.light')}
@@ -147,7 +147,7 @@ function MapLegend() {
                                     {t('mapLegend.layers.precip.desc')}
                                 </p>
                                 {/* Color Scale Visualization */}
-                                <div className="h-4 rounded-full bg-gradient-to-r from-transparent via-blue-400 to-purple-600 w-full mb-1 border border-gray-200 dark:border-gray-600"></div>
+                                <div className="h-4 rounded-full bg-linear-to-r from-transparent via-blue-400 to-purple-600 w-full mb-1 border border-gray-200 dark:border-gray-600"></div>
                                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 font-mono">
                                     <span>
                                         {t(

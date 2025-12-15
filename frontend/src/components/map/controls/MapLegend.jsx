@@ -15,7 +15,7 @@ const MapLegend = () => {
     }, [isOpen]);
 
     return (
-        <div id="map-legend-container" className="relative z-[1000]">
+        <div id="map-legend-container" className="relative z-1000">
             {/* Toggle Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
@@ -68,7 +68,7 @@ const MapLegend = () => {
                 }`}
             >
                 <div className="p-5">
-                    <h3 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent mb-4">
+                    <h3 className="text-lg font-bold bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent mb-4">
                         {t('howToUseMap') || 'Map Guide'}
                     </h3>
 

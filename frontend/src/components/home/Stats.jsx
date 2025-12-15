@@ -240,7 +240,7 @@ export default function Stats({ coords }) {
                 </div>
 
                 {/* Sun Cycle Utility - The "Cool Feature" */}
-                <div className="bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-gray-800 dark:to-gray-900 p-6 rounded-3xl border border-orange-100 dark:border-gray-700 shadow-sm relative overflow-hidden">
+                <div className="bg-linear-to-br from-orange-50 to-yellow-50 dark:from-gray-800 dark:to-gray-900 p-6 rounded-3xl border border-orange-100 dark:border-gray-700 shadow-sm relative overflow-hidden">
                     <div className="flex justify-between items-center mb-2 relative z-10">
                         <span className="text-sm font-medium text-orange-800 dark:text-orange-300">
                             {t('sunCycle') || 'Sun Cycle'}
