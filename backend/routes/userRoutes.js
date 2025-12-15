@@ -1,7 +1,7 @@
-// Import Express framework for routing
+
 import express from 'express';
 
-// Import controller functions for user operations
+
 import {
     getAllUsers,
     getUserById,
@@ -21,28 +21,20 @@ import {
     resetPassword,
 } from '../controllers/authController.js';
 
-// Import multer middleware for profile picture uploads
+
 import { upload } from '../middleware/uploadMiddleware.js';
 import { optimizeImage } from '../middleware/imageOptimizationMiddleware.js';
 
-// Create Express router instance
+
 const router = express.Router();
 
-// Import authentication middleware
+
 import {
     authenticateSession,
     authenticateToken,
 } from '../middleware/authMiddleware.js';
 
-/**
- * User Routes
- *
- * Defines routes for user authentication and management.
- * Includes login, logout, registration, profile updates, and retrieval.
- * Also handles token refreshing and fetching available municipalities.
- *
- * Base Path: /api/users
- */
+
 
 /**
  * @swagger
@@ -537,5 +529,5 @@ router.delete('/:id', authenticateToken, deleteUser);
  */
 router.post('/contact', authenticateToken, contactSupport);
 
-// Export the router for use in the main app
+
 export default router;

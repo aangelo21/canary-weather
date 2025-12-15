@@ -11,16 +11,16 @@ const cleanAndSeed = async () => {
         await sequelize.authenticate();
         console.log('Database connected.');
 
-        // 1. Clean Tables
+        
         console.log('Cleaning tables...');
-        await Forecast.destroy({ where: {}, truncate: false }); // Truncate might fail with FKs
+        await Forecast.destroy({ where: {}, truncate: false }); 
         await PointOfInterest.destroy({ where: {}, truncate: false });
-        // We keep Locations and Alerts for now, or we can clean them too if needed.
-        // Let's assume Locations are fine or we can re-seed them if we want.
+        
+        
 
         console.log('Tables cleaned.');
 
-        // 2. Seed POIs (Manually importing the logic from seed_pois_canarias.js to ensure it runs here)
+        
         const poisData = [
             {
                 name: 'Teide National Park',
@@ -111,7 +111,7 @@ const cleanAndSeed = async () => {
         const createdPois = await PointOfInterest.bulkCreate(poisData);
         console.log(`Seeded ${createdPois.length} POIs.`);
 
-        // 3. Seed Forecasts
+        
         const forecasts = [];
         const conditions = [
             'Sunny ☀️',
@@ -122,8 +122,8 @@ const cleanAndSeed = async () => {
         ];
 
         for (const poi of createdPois) {
-            // Create a realistic forecast
-            const temp = Math.floor(Math.random() * (28 - 18) + 18); // 18-28°C
+            
+            const temp = Math.floor(Math.random() * (28 - 18) + 18); 
             const wind = Math.floor(Math.random() * 30 + 5);
             const condition =
                 conditions[Math.floor(Math.random() * conditions.length)];

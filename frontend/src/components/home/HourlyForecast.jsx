@@ -2,17 +2,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import Skeleton from '../common/Skeleton';
 
-/**
- * HourlyForecast Component.
- *
- * Displays a premium horizontal scrollable timeline of the weather forecast.
- * Features:
- * - Auto-updating data.
- * - Smooth Bezier curve temperature graph with area fill.
- * - Precipitation probability indicators.
- * - Day/Night visual distinction.
- * - Interactive hover effects.
- */
+
 export default function HourlyForecast({ coords, compact = false }) {
     const { t } = useTranslation();
     const [forecast, setForecast] = useState([]);
@@ -20,7 +10,7 @@ export default function HourlyForecast({ coords, compact = false }) {
     const [error, setError] = useState(null);
     const scrollContainerRef = useRef(null);
 
-    // Scroll indicators for compact mode
+    
     const [showLeftScroll, setShowLeftScroll] = useState(false);
     const [showRightScroll, setShowRightScroll] = useState(true);
 
@@ -37,7 +27,7 @@ export default function HourlyForecast({ coords, compact = false }) {
         const el = scrollContainerRef.current;
         if (el) {
             el.addEventListener('scroll', handleScroll);
-            // Check initial state
+            
             handleScroll();
             return () => el.removeEventListener('scroll', handleScroll);
         }
@@ -47,7 +37,7 @@ export default function HourlyForecast({ coords, compact = false }) {
 
     const fetchForecast = async () => {
         if (!coords) return;
-        // Keep loading true only on first load to avoid flickering on updates
+        
         if (forecast.length === 0) setLoading(true);
 
         try {
@@ -59,20 +49,20 @@ export default function HourlyForecast({ coords, compact = false }) {
 
             const data = await response.json();
 
-            // Process next 24h (8 segments of 3h = 24h)
-            // We take 10 to ensure the graph flows out of view smoothly
+            
+            
             const next24Hours = data.list.slice(0, 10).map((item) => ({
                 dt: item.dt,
                 temp: Math.round(item.main.temp),
                 icon: item.weather[0].icon,
                 description: item.weather[0].main,
-                // Format time: 14:00
+                
                 time: new Date(item.dt * 1000).toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit',
                 }),
                 isDay: item.sys.pod === 'd',
-                pop: Math.round(item.pop * 100), // Probability of precipitation %
+                pop: Math.round(item.pop * 100), 
                 wind: Math.round(item.wind.speed),
             }));
 
@@ -86,14 +76,14 @@ export default function HourlyForecast({ coords, compact = false }) {
         }
     };
 
-    // Initial fetch and Auto-Refresh interval (every 30 mins)
+    
     useEffect(() => {
         fetchForecast();
         const interval = setInterval(fetchForecast, 30 * 60 * 1000);
         return () => clearInterval(interval);
     }, [coords, OPENWEATHER_API_KEY]);
 
-    // Scroll handlers
+    
     const scrollLeft = () => {
         if (scrollContainerRef.current) {
             scrollContainerRef.current.scrollLeft -= 300;
@@ -106,9 +96,7 @@ export default function HourlyForecast({ coords, compact = false }) {
         }
     };
 
-    /**
-     * Generates SVG paths for Line and Area chart.
-     */
+    
     const graphData = useMemo(() => {
         if (forecast.length < 2)
             return { linePath: '', areaPath: '', points: [] };
@@ -118,14 +106,14 @@ export default function HourlyForecast({ coords, compact = false }) {
         const minTemp = Math.min(...temps) - 2;
         const range = maxTemp - minTemp || 1;
 
-        const width = 120; // Width of one column
-        const height = compact ? 60 : 80; // Height of graph area
-        const paddingY = compact ? 10 : 20; // Top/Bottom padding inside SVG
+        const width = 120; 
+        const height = compact ? 60 : 80; 
+        const paddingY = compact ? 10 : 20; 
 
         const points = forecast.map((f, i) => {
             const x = i * width + width / 2;
             const normalizedTemp = (f.temp - minTemp) / range;
-            // Invert Y (SVG 0 is top)
+            
             const y =
                 height -
                 paddingY -
@@ -134,7 +122,7 @@ export default function HourlyForecast({ coords, compact = false }) {
             return { x, y, temp: f.temp };
         });
 
-        // Generate Smooth Bezier Curve
+        
         let d = `M ${points[0].x} ${points[0].y}`;
         for (let i = 0; i < points.length - 1; i++) {
             const p0 = points[i];
@@ -146,7 +134,7 @@ export default function HourlyForecast({ coords, compact = false }) {
             d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p1.x} ${p1.y}`;
         }
 
-        // Close the path for the Area fill
+        
         const areaPath = `${d} L ${points[points.length - 1].x} ${height + 50} L ${points[0].x} ${height + 50} Z`;
 
         return { linePath: d, areaPath, points };
@@ -154,17 +142,14 @@ export default function HourlyForecast({ coords, compact = false }) {
 
     if (!coords && !loading) return null;
 
-    /**
-     * Returns a custom SVG icon based on the OpenWeatherMap icon code.
-     * Replaces the default low-res PNGs with crisp, colorful SVGs.
-     */
+    
     const getWeatherIcon = (code) => {
         const isDay = code.includes('d');
         const type = code.slice(0, 2);
         const sizeClass = compact ? 'w-8 h-8' : 'w-12 h-12';
 
         switch (type) {
-            case '01': // Clear
+            case '01': 
                 return isDay ? (
                     <svg
                         className={`${sizeClass} text-orange-400 animate-spin-slow`}
@@ -201,7 +186,7 @@ export default function HourlyForecast({ coords, compact = false }) {
                         />
                     </svg>
                 );
-            case '02': // Few Clouds
+            case '02': 
                 return (
                     <svg
                         className={`${sizeClass}`}
@@ -229,8 +214,8 @@ export default function HourlyForecast({ coords, compact = false }) {
                         )}
                     </svg>
                 );
-            case '03': // Scattered Clouds
-            case '04': // Broken Clouds
+            case '03': 
+            case '04': 
                 return (
                     <svg
                         className={`${sizeClass} text-gray-400`}
@@ -249,8 +234,8 @@ export default function HourlyForecast({ coords, compact = false }) {
                         <path d="M17.5 19a4.5 4.5 0 0 0-1.41-8.77A5.5 5.5 0 0 0 12.5 0a5.5 5.5 0 0 0-5.08 3.38A4.5 4.5 0 0 0 3.5 10a4.5 4.5 0 0 0 4.5 4.5" />
                     </svg>
                 );
-            case '09': // Shower Rain
-            case '10': // Rain
+            case '09': 
+            case '10': 
                 return (
                     <svg
                         className={`${sizeClass} text-blue-500`}
@@ -274,7 +259,7 @@ export default function HourlyForecast({ coords, compact = false }) {
                         />
                     </svg>
                 );
-            case '11': // Thunderstorm
+            case '11': 
                 return (
                     <svg
                         className={`${sizeClass} text-purple-500`}
@@ -298,7 +283,7 @@ export default function HourlyForecast({ coords, compact = false }) {
                         />
                     </svg>
                 );
-            case '13': // Snow
+            case '13': 
                 return (
                     <svg
                         className={`${sizeClass} text-cyan-300`}
@@ -318,7 +303,7 @@ export default function HourlyForecast({ coords, compact = false }) {
                         />
                     </svg>
                 );
-            default: // Mist/Fog/Default
+            default: 
                 return (
                     <svg
                         className={`${sizeClass} text-gray-400`}
@@ -355,7 +340,7 @@ export default function HourlyForecast({ coords, compact = false }) {
     return (
         <div className={containerClasses}>
             <div className={cardClasses}>
-                {/* Header with Live Indicator - Hide in compact mode */}
+                {}
                 {!compact && (
                     <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900">
                         <div className="flex items-center gap-4">
@@ -374,11 +359,11 @@ export default function HourlyForecast({ coords, compact = false }) {
                     </div>
                 )}
 
-                {/* Content Area */}
+                {}
                 <div
                     className={`relative ${compact ? 'h-40' : 'h-64'} ${!compact && 'bg-white dark:bg-gray-900'} group/container`}
                 >
-                    {/* Scroll Buttons for Compact Mode */}
+                    {}
                     {compact && !loading && !error && (
                         <>
                             <button
@@ -417,7 +402,7 @@ export default function HourlyForecast({ coords, compact = false }) {
                                     />
                                 </svg>
                             </button>
-                            {/* Gradient Masks */}
+                            {}
                             <div
                                 className={`absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-gray-900 to-transparent z-10 pointer-events-none transition-opacity duration-300 ${showLeftScroll ? 'opacity-100' : 'opacity-0'}`}
                             />
@@ -471,7 +456,7 @@ export default function HourlyForecast({ coords, compact = false }) {
                             ref={scrollContainerRef}
                             className="overflow-x-auto scrollbar-hide h-full flex items-stretch relative select-none cursor-grab active:cursor-grabbing scroll-smooth"
                         >
-                            {/* SVG Graph Layer */}
+                            {}
                             <div
                                 className={`absolute ${compact ? 'top-[60px]' : 'top-[90px]'} left-0 ${compact ? 'h-[60px]' : 'h-[100px]'} pointer-events-none z-0`}
                                 style={{ width: `${forecast.length * 120}px` }}
@@ -537,14 +522,14 @@ export default function HourlyForecast({ coords, compact = false }) {
                                         </filter>
                                     </defs>
 
-                                    {/* Area Fill */}
+                                    {}
                                     <path
                                         d={graphData.areaPath}
                                         fill="url(#areaGradient)"
                                         className="transition-all duration-1000 ease-out"
                                     />
 
-                                    {/* Line Stroke */}
+                                    {}
                                     <path
                                         d={graphData.linePath}
                                         fill="none"
@@ -556,7 +541,7 @@ export default function HourlyForecast({ coords, compact = false }) {
                                         className="transition-all duration-1000 ease-out"
                                     />
 
-                                    {/* Connecting Lines (Vertical dashed lines) */}
+                                    {}
                                     {graphData.points.map((p, i) => (
                                         <line
                                             key={`line-${i}`}
@@ -572,13 +557,13 @@ export default function HourlyForecast({ coords, compact = false }) {
                                 </svg>
                             </div>
 
-                            {/* Data Columns */}
+                            {}
                             {forecast.map((item, index) => (
                                 <div
                                     key={item.dt}
                                     className={`group flex-none w-[120px] flex flex-col items-center justify-between ${compact ? 'py-2' : 'py-6'} relative z-10 hover:bg-white/40 dark:hover:bg-white/5 transition-colors duration-300`}
                                 >
-                                    {/* Top Section: Time & Icon */}
+                                    {}
                                     <div className="flex flex-col items-center gap-1">
                                         <span
                                             className={`font-semibold text-gray-500 dark:text-gray-400 group-hover:text-brand-primary dark:group-hover:text-blue-400 transition-colors ${compact ? 'text-xs' : 'text-sm'}`}
@@ -589,7 +574,7 @@ export default function HourlyForecast({ coords, compact = false }) {
                                         <div className="relative transform group-hover:scale-110 group-hover:-translate-y-1 transition-transform duration-300">
                                             {getWeatherIcon(item.icon)}
 
-                                            {/* Rain Probability Badge */}
+                                            {}
                                             {item.pop > 0 && (
                                                 <div className="absolute -bottom-2 -right-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-[10px] font-bold px-1.5 py-0.5 rounded-full flex items-center shadow-sm border border-blue-200 dark:border-blue-700 z-10">
                                                     <svg
@@ -611,7 +596,7 @@ export default function HourlyForecast({ coords, compact = false }) {
                                         </div>
                                     </div>
 
-                                    {/* Bottom Section: Temperature & Wind */}
+                                    {}
                                     <div className="flex flex-col items-center mt-auto pt-8">
                                         <span
                                             className={`${compact ? 'text-lg' : 'text-xl'} font-bold text-gray-800 dark:text-white group-hover:scale-110 transition-transform`}
@@ -636,7 +621,7 @@ export default function HourlyForecast({ coords, compact = false }) {
                                         </div>
                                     </div>
 
-                                    {/* Hover Line Indicator (Visual vertical highlight) */}
+                                    {}
                                     <div className="absolute inset-y-4 left-1/2 w-px bg-gradient-to-b from-transparent via-blue-200 dark:via-blue-800 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                 </div>
                             ))}

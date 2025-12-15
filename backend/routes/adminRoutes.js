@@ -14,14 +14,7 @@ import {
 
 const router = express.Router();
 
-/**
- * Admin Routes
- *
- * Defines routes for administrative tasks.
- * All routes in this file require authentication and admin privileges.
- *
- * Base Path: /admin
- */
+
 
 /**
  * @swagger

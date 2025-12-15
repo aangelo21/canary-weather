@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 describe('API Service', () => {
@@ -8,7 +8,7 @@ describe('API Service', () => {
         vi.resetModules();
         vi.stubGlobal('fetch', vi.fn());
 
-        // Dynamically import the module
+        
         apiService = await import('../api');
         apiService.setAccessToken(null);
     });
@@ -57,14 +57,14 @@ describe('API Service', () => {
     });
 
     it('should handle 401 and attempt refresh', async () => {
-        // First call fails with 401
+        
         global.fetch.mockResolvedValueOnce({ status: 401, ok: false });
-        // Refresh call succeeds
+        
         global.fetch.mockResolvedValueOnce({
             ok: true,
             json: async () => ({ accessToken: 'new-token' }),
         });
-        // Retry original call succeeds
+        
         global.fetch.mockResolvedValueOnce({
             ok: true,
             json: async () => ({ success: true }),

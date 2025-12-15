@@ -2,9 +2,7 @@
 
 module.exports = {
     async up(queryInterface, Sequelize) {
-        // Helper to find and drop FK
         const dropForeignKey = async (tableName, columnName) => {
-            // Try to find constraint by column usage
             const [results] = await queryInterface.sequelize.query(
                 `SELECT CONSTRAINT_NAME
          FROM information_schema.KEY_COLUMN_USAGE
@@ -34,12 +32,11 @@ module.exports = {
                 console.log(
                     `No foreign key found for ${tableName}.${columnName}`,
                 );
-                // Fallback: try to remove common names
                 const commonNames = [
                     `${tableName}_${columnName}_foreign_idx`,
                     `${tableName}_ibfk_1`,
                     `${tableName}_ibfk_2`,
-                    `${tableName}_ibfk_321`, // The one we saw
+                    `${tableName}_ibfk_321`,
                 ];
                 for (const name of commonNames) {
                     try {
@@ -49,16 +46,12 @@ module.exports = {
             }
         };
 
-        // 1. UserLocation
         await dropForeignKey('UserLocation', 'user_id');
 
-        // 2. UserPointOfInterest
         await dropForeignKey('UserPointOfInterest', 'user_id');
 
-        // 3. Notification
         await dropForeignKey('Notification', 'user_id');
 
-        // Now change columns
         const changeCol = async (tableName) => {
             try {
                 await queryInterface.changeColumn(tableName, 'user_id', {
@@ -79,7 +72,5 @@ module.exports = {
         await changeCol('Notification');
     },
 
-    async down(queryInterface, Sequelize) {
-        // Revert logic
-    },
+    async down(queryInterface, Sequelize) {},
 };

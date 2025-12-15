@@ -1,9 +1,6 @@
 import { apiFetch } from './api';
 
-/**
- * AI Service for generating natural language weather summaries and handling user queries.
- * Now powered by Groq via the backend.
- */
+
 
 export const askAI = async (question, weather, lang = 'en', history = []) => {
     try {
@@ -37,7 +34,7 @@ export const askAI = async (question, weather, lang = 'en', history = []) => {
     }
 };
 
-// Deprecated helper functions (kept for reference if needed, but unused)
+
 export const generateWeatherSummary = (weather, lang = 'en') => {
     return '';
 };

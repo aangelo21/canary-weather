@@ -3,12 +3,12 @@ import Skeleton from '../common/Skeleton';
 export default function WarningsSkeleton() {
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {/* Title */}
+            {}
             <div className="flex justify-center mb-8">
                 <Skeleton className="h-10 w-64" />
             </div>
 
-            {/* Filters */}
+            {}
             <div className="mb-6">
                 <div className="flex gap-2 flex-wrap mb-4">
                     <Skeleton className="w-24 h-10 rounded-md" />
@@ -17,7 +17,7 @@ export default function WarningsSkeleton() {
                 </div>
             </div>
 
-            {/* Active Alerts Section */}
+            {}
             <section className="mb-12">
                 <Skeleton className="h-8 w-48 mb-4" />
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -41,11 +41,11 @@ export default function WarningsSkeleton() {
                 </div>
             </section>
 
-            {/* Past Alerts Section */}
+            {}
             <section>
                 <Skeleton className="h-8 w-48 mb-4" />
 
-                {/* Desktop Table Skeleton */}
+                {}
                 <div className="hidden md:block">
                     <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
                         <div className="bg-gray-100 dark:bg-gray-700 p-4 grid grid-cols-4 gap-4">
@@ -68,7 +68,7 @@ export default function WarningsSkeleton() {
                     </div>
                 </div>
 
-                {/* Mobile Cards Skeleton */}
+                {}
                 <div className="md:hidden grid gap-4">
                     {[1, 2, 3].map((i) => (
                         <div

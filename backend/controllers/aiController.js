@@ -1,14 +1,9 @@
 import Groq from 'groq-sdk';
 import { Location, Alert, Forecast, PointOfInterest } from '../models/index.js';
 
-/**
- * AI Controller
- *
- * Handles interactions with the Groq AI API to provide natural language responses
- * about weather and alerts in the Canary Islands.
- */
 
-// Helper to fetch real-time weather from Open-Meteo (Free API, no key required)
+
+
 const fetchRealTimeWeather = async (latitude, longitude) => {
     try {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m&timezone=auto`;
@@ -24,7 +19,7 @@ const fetchRealTimeWeather = async (latitude, longitude) => {
     }
 };
 
-// WMO Weather Code mapping
+
 const getWeatherDescription = (code) => {
     const codes = {
         0: 'Clear sky ☀️',
@@ -60,20 +55,20 @@ export const chatWithAI = async (req, res) => {
                 .json({ error: 'AI service not configured (missing API key)' });
         }
 
-        // --- 1. GATHER CONTEXT ---
+        
 
-        // Fetch active alerts
+        
         const alerts = await Alert.findAll({
             include: [{ model: Location, attributes: ['name'] }],
         });
 
-        // Fetch POIs to get coordinates
+        
         const pois = await PointOfInterest.findAll({
             attributes: ['name', 'latitude', 'longitude'],
-            limit: 15, // Limit to main locations to keep it fast
+            limit: 15, 
         });
 
-        // Fetch Real-Time Weather for each POI in parallel
+        
         const weatherPromises = pois.map(async (poi) => {
             if (!poi.latitude || !poi.longitude) return null;
             const weather = await fetchRealTimeWeather(
@@ -95,7 +90,7 @@ export const chatWithAI = async (req, res) => {
             await Promise.all(weatherPromises)
         ).filter((w) => w !== null);
 
-        // Format Alerts Context
+        
         const alertContext =
             alerts.length > 0
                 ? alerts
@@ -106,7 +101,7 @@ export const chatWithAI = async (req, res) => {
                       .join('\n')
                 : 'No active alerts.';
 
-        // Format Weather Context
+        
         const weatherContext = realTimeWeatherResults
             .map(
                 (w) =>
@@ -114,7 +109,7 @@ export const chatWithAI = async (req, res) => {
             )
             .join('\n');
 
-        // --- 2. CONSTRUCT SYSTEM PROMPT ---
+        
 
         const systemInstruction = `
         You are Canary Weather AI.
@@ -144,7 +139,7 @@ export const chatWithAI = async (req, res) => {
         UV index is moderate."
         `;
 
-        // --- 3. CALL GROQ API ---
+        
 
         const groq = new Groq({ apiKey });
 
@@ -162,7 +157,7 @@ export const chatWithAI = async (req, res) => {
         const completion = await groq.chat.completions.create({
             messages: messages,
             model: 'llama-3.3-70b-versatile',
-            temperature: 0.3, // Lower temperature for more factual/concise responses
+            temperature: 0.3, 
             max_tokens: 512,
         });
 

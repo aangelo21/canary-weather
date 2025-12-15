@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-// Mock dependencies using unstable_mockModule for ESM support
+
 jest.unstable_mockModule('../../services/ldapService.js', () => ({
     LdapService: {
         getAllUsers: jest.fn(),
@@ -17,7 +17,7 @@ jest.unstable_mockModule('jsonwebtoken', () => ({
     },
 }));
 
-// Import modules after mocking
+
 const authController = await import('../../controllers/authController.js');
 const { LdapService } = await import('../../services/ldapService.js');
 const { sendPasswordResetEmail } =
@@ -88,7 +88,7 @@ describe('Auth Controller - Forgot Password', () => {
         const error = new Error('LDAP Error');
         LdapService.getAllUsers.mockRejectedValue(error);
 
-        // Mock console.error to avoid cluttering test output
+        
         const consoleSpy = jest
             .spyOn(console, 'error')
             .mockImplementation(() => {});

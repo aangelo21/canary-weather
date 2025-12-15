@@ -7,76 +7,33 @@ import { useTranslation } from 'react-i18next';
 import ThemeSwitch from '../common/ThemeSwitch';
 import NotificationToggle from '../NotificationToggle';
 
-/**
- * Header Component.
- *
- * A sleek, minimalist, and highly responsive navigation header.
- * This design focuses on clarity, typography, and subtle interactions.
- * It uses a full-width sticky layout with a refined backdrop blur.
- *
- * Key Design Features:
- * - **Minimalist Aesthetic**: Clean lines, ample whitespace, and a focus on content.
- * - **Interactive Navigation**: Animated underlines for links and smooth hover states.
- * - **Sticky Positioning**: Stays at the top of the viewport for easy access.
- * - **Refined Dropdowns**: clean, shadow-based dropdown menus for settings and user profile.
- * - **Accessibility**: High contrast text and clear focus states.
- *
- * Functionality:
- * - Manages user authentication state (login/logout).
- * - Displays real-time weather alerts with visual indicators.
- * - Provides internationalization (i18n) and theme switching.
- * - **Transparent Mode**: Supports a transparent overlay mode for immersive pages like "About Us".
- *
- * @component
- * @param {Object} props - Component props.
- * @param {boolean} [props.isTransparent=false] - Whether the header should start as transparent (overlay).
- * @returns {JSX.Element} The rendered Header component.
- */
+
 function Header({ isTransparent = false }) {
-    /**
-     * @type {[boolean, Function]} isOpen - State for mobile menu visibility.
-     */
+    
     const [isOpen, setIsOpen] = useState(false);
 
-    /**
-     * @type {[boolean, Function]} showMobileSettings - State for mobile settings dropdown visibility.
-     */
+    
     const [showMobileSettings, setShowMobileSettings] = useState(false);
 
-    /**
-     * @type {[boolean, Function]} showMobileUserDropdown - State for mobile user menu visibility.
-     */
+    
     const [showMobileUserDropdown, setShowMobileUserDropdown] = useState(false);
 
-    /**
-     * @type {[boolean, Function]} showLogin - State for LoginModal visibility.
-     */
+    
     const [showLogin, setShowLogin] = useState(false);
 
-    /**
-     * @type {[Object|null, Function]} user - State for the currently logged-in user.
-     */
+    
     const [user, setUser] = useState(null);
 
-    /**
-     * @type {[boolean, Function]} showLanguageDropdown - State for desktop language dropdown visibility.
-     */
+    
     const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
 
-    /**
-     * @type {[boolean, Function]} showUserDropdown - State for desktop user profile dropdown visibility.
-     */
+    
     const [showUserDropdown, setShowUserDropdown] = useState(false);
 
-    /**
-     * @type {[Array<Object>, Function]} alerts - State for active weather alerts.
-     */
+    
     const [alerts, setAlerts] = useState([]);
 
-    /**
-     * @type {[boolean, Function]} isScrolled - State to track if the page has been scrolled.
-     * Used to toggle the background of the transparent header.
-     */
+    
     const [isScrolled, setIsScrolled] = useState(false);
 
     const userDropdownRef = useRef(null);
@@ -85,14 +42,7 @@ function Header({ isTransparent = false }) {
     const navigate = useNavigate();
     const location = useLocation();
 
-    /**
-     * Handles navigation clicks.
-     * If the user is already on the target page, scrolls to the top.
-     * Otherwise, allows normal navigation.
-     *
-     * @param {Event} e - The click event.
-     * @param {string} path - The target path.
-     */
+    
     const handleNavigationClick = (e, path) => {
         if (location.pathname === path) {
             e.preventDefault();
@@ -100,10 +50,7 @@ function Header({ isTransparent = false }) {
         }
     };
 
-    /**
-     * Effect hook to handle scroll events.
-     * Toggles the `isScrolled` state based on the scroll position.
-     */
+    
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 20);
@@ -112,9 +59,7 @@ function Header({ isTransparent = false }) {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    /**
-     * Effect hook to initialize user state from local storage on mount.
-     */
+    
     useEffect(() => {
         const storedUser = localStorage.getItem('cw_user');
         if (storedUser) {
@@ -127,9 +72,7 @@ function Header({ isTransparent = false }) {
         }
     }, []);
 
-    /**
-     * Effect hook to handle clicks outside of dropdowns to close them.
-     */
+    
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (
@@ -157,9 +100,7 @@ function Header({ isTransparent = false }) {
             document.removeEventListener('mousedown', handleClickOutside);
     }, [showLanguageDropdown, showUserDropdown, showMobileSettings]);
 
-    /**
-     * Effect hook to fetch active alerts on mount and periodically refresh.
-     */
+    
     useEffect(() => {
         const loadAlerts = async () => {
             try {
@@ -172,18 +113,13 @@ function Header({ isTransparent = false }) {
 
         loadAlerts();
 
-        // Refresh alerts every 5 minutes
+        
         const intervalId = setInterval(loadAlerts, 5 * 60 * 1000);
 
         return () => clearInterval(intervalId);
     }, []);
 
-    /**
-     * Handles successful user login.
-     * Updates local storage, component state, and dispatches a global event.
-     *
-     * @param {Object} userObj - The logged-in user object.
-     */
+    
     const handleLogin = (userObj) => {
         localStorage.setItem('cw_user', JSON.stringify(userObj));
         setUser(userObj);
@@ -191,10 +127,7 @@ function Header({ isTransparent = false }) {
         window.dispatchEvent(new Event('userLoggedIn'));
     };
 
-    /**
-     * Handles user logout.
-     * Calls the logout service, clears local storage, and updates component state.
-     */
+    
     const handleLogout = async () => {
         try {
             await logoutUser();
@@ -209,10 +142,7 @@ function Header({ isTransparent = false }) {
         window.location.reload();
     };
 
-    /**
-     * Constructs the full URL for the user's profile picture.
-     * @returns {string|null} The profile image URL or null.
-     */
+    
     const getProfileImageUrl = () => {
         if (user?.profile_picture_url) {
             const baseUrl = API_BASE.replace('/api', '');
@@ -221,11 +151,7 @@ function Header({ isTransparent = false }) {
         return null;
     };
 
-    /**
-     * Determines the color indicator based on the highest alert level.
-     * Filters only active or upcoming alerts (not ended).
-     * @returns {string} The CSS class for the background color.
-     */
+    
     const getAlertColor = () => {
         const now = new Date();
         const activeOrUpcoming = alerts.filter((alert) => {
@@ -246,19 +172,14 @@ function Header({ isTransparent = false }) {
         setIsOpen(!isOpen);
     };
 
-    /**
-     * Determines the header classes based on transparency mode and scroll state.
-     */
+    
     const headerClasses = isTransparent
         ? isScrolled
             ? 'fixed top-0 left-0 w-full z-[2000] bg-[#0B1120]/80 backdrop-blur-md border-b border-white/10 transition-all duration-300 shadow-lg shadow-black/20'
             : 'absolute top-0 left-0 w-full z-[2000] bg-transparent border-b border-transparent transition-all duration-300'
         : 'sticky top-0 z-[2000] w-full bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm border-b border-neutral-200 dark:border-neutral-800 transition-colors duration-300';
 
-    /**
-     * Determines text colors based on transparency mode.
-     * In transparent mode, text is always white/light unless scrolled (though we keep it light for the dark theme).
-     */
+    
     const navLinkClasses = (isActive) =>
         `relative group flex items-center text-sm font-semibold tracking-wide transition-colors duration-300 ${
             isActive
@@ -272,20 +193,11 @@ function Header({ isTransparent = false }) {
 
     return (
         <>
-            {/*
-             * Main Header Container
-             * Sticky positioning ensures the header is always accessible.
-             * Uses a high-contrast background with a subtle border for separation.
-             */}
+            {}
             <header className={headerClasses}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16 md:h-20">
-                        {/*
-                         * Logo Section
-                         * Clean and simple branding.
-                         * Updated text color to match the brand blue from the design reference.
-                         * Added gradient text effect as requested.
-                         */}
+                        {}
                         <div className="shrink-0 flex items-center gap-3">
                             <img
                                 src="logo.webp"
@@ -310,11 +222,7 @@ function Header({ isTransparent = false }) {
                             </span>
                         </div>
 
-                        {/*
-                         * Desktop Navigation
-                         * Uses an animated underline effect for a modern, interactive feel.
-                         * Reordered links: Warnings is now the last item.
-                         */}
+                        {}
                         <nav className="hidden lg:flex items-center gap-8">
                             {[
                                 { to: '/', label: t('home') },
@@ -343,7 +251,7 @@ function Header({ isTransparent = false }) {
                                 >
                                     {link.icon}
                                     {link.label}
-                                    {/* Animated Underline */}
+                                    {}
                                     <span
                                         className={`absolute -bottom-1 left-0 w-full h-0.5 transform scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100 ${isTransparent ? 'bg-cyan-400' : 'bg-blue-600 dark:bg-blue-400'}`}
                                     ></span>
@@ -351,24 +259,21 @@ function Header({ isTransparent = false }) {
                             ))}
                         </nav>
 
-                        {/*
-                         * Right Side Actions (Desktop)
-                         * Minimalist controls for settings and user profile.
-                         */}
+                        {}
                         <div className="hidden lg:flex items-center gap-4">
-                            {/* Theme Switcher - Hidden on transparent pages (About Us) */}
+                            {}
                             {!isTransparent && (
                                 <>
                                     <div className="text-neutral-700 hover:text-black dark:text-neutral-300 dark:hover:text-white transition-colors">
                                         <ThemeSwitch />
                                     </div>
 
-                                    {/* Divider */}
+                                    {}
                                     <div className="h-6 w-px bg-neutral-200 dark:bg-neutral-700"></div>
                                 </>
                             )}
 
-                            {/* Language Selector */}
+                            {}
                             <div className="relative language-dropdown">
                                 <button
                                     onClick={() =>
@@ -442,7 +347,7 @@ function Header({ isTransparent = false }) {
                                 )}
                             </div>
 
-                            {/* User Profile / Login Button */}
+                            {}
                             {user ? (
                                 <div
                                     className="relative ml-2"
@@ -575,12 +480,9 @@ function Header({ isTransparent = false }) {
                             )}
                         </div>
 
-                        {/*
-                         * Mobile Controls
-                         * Simplified controls for smaller screens.
-                         */}
+                        {}
                         <div className="lg:hidden flex items-center gap-4">
-                            {/* Mobile Settings Toggle */}
+                            {}
                             <div className="relative mobile-settings-dropdown">
                                 <button
                                     onClick={() =>
@@ -667,7 +569,7 @@ function Header({ isTransparent = false }) {
                                 )}
                             </div>
 
-                            {/* Mobile Menu Toggle */}
+                            {}
                             <button
                                 className={`p-2 rounded-lg transition-colors ${isTransparent ? 'text-slate-300 hover:bg-white/10 hover:text-white' : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'}`}
                                 onClick={toggleMenu}
@@ -705,10 +607,7 @@ function Header({ isTransparent = false }) {
                         </div>
                     </div>
 
-                    {/*
-                     * Mobile Menu Content
-                     * A clean, slide-down menu for mobile devices.
-                     */}
+                    {}
                     {isOpen && (
                         <div
                             className={`lg:hidden py-4 border-t border-neutral-100 dark:border-neutral-800 animate-in slide-in-from-top-2 fade-in duration-200 shadow-xl rounded-b-2xl ${isTransparent ? 'bg-[#0B1120]/95 backdrop-blur-md' : 'bg-white dark:bg-neutral-900'}`}
@@ -760,7 +659,7 @@ function Header({ isTransparent = false }) {
                                     </li>
                                 ))}
 
-                                {/* Mobile User Section */}
+                                {}
                                 <li className="pt-4 mt-2 border-t border-neutral-100 dark:border-neutral-800">
                                     {user ? (
                                         <div className="space-y-2">
@@ -911,7 +810,7 @@ function Header({ isTransparent = false }) {
                 </div>
             </header>
 
-            {/* Login Modal */}
+            {}
             <LoginModal
                 isOpen={showLogin}
                 onClose={() => setShowLogin(false)}

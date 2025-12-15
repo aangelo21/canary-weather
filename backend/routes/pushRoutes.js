@@ -34,7 +34,7 @@ const router = express.Router();
 router.post('/subscribe', authenticateToken, async (req, res) => {
     try {
         const subscription = req.body;
-        const userId = req.user.username; // Assuming username is the ID
+        const userId = req.user.username; 
 
         await saveSubscription(userId, subscription);
         res.status(201).json({ message: 'Subscription saved' });
@@ -145,9 +145,7 @@ router.post('/send-test', authenticateToken, async (req, res) => {
     }
 });
 
-/**
- * Endpoint to get the VAPID Public Key
- */
+
 router.get('/vapid-public-key', (req, res) => {
     res.json({ publicKey: process.env.VAPID_PUBLIC_KEY });
 });

@@ -130,7 +130,7 @@ async function seed() {
         });
 
         if (!created) {
-            // ensure description and flags are up to date
+            
             await poi.update({
                 latitude: p.latitude,
                 longitude: p.longitude,

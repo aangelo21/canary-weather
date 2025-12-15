@@ -3,11 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { apiFetch } from '../services/api';
 import SEO from '../components/SEO';
 
-/**
- * @component HeroSection
- * @description Renders the primary visual entry point of the page.
- * Uses large typography and atmospheric lighting to establish the "Deep Ocean" theme.
- */
+
 const HeroSection = ({ t }) => (
     <div className="relative z-10 flex flex-col lg:flex-row items-end justify-between mb-24 gap-12 animate-fade-in-up">
         <div className="max-w-4xl">
@@ -31,14 +27,10 @@ const HeroSection = ({ t }) => (
     </div>
 );
 
-/**
- * @component BentoGridSection
- * @description Displays core values, team members, and key metrics in a responsive grid layout.
- * Utilizes glassmorphism and hover effects for interactivity.
- */
+
 const BentoGridSection = ({ t }) => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[minmax(180px,auto)] mb-32">
-        {/* Philosophy Card */}
+        {}
         <div className="col-span-1 md:col-span-2 row-span-2 bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-4xl p-10 flex flex-col justify-between group hover:bg-slate-900/60 transition-all duration-500 hover:border-cyan-500/30 relative overflow-hidden">
             <div className="absolute inset-0 bg-linear-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div className="relative z-10">
@@ -73,7 +65,7 @@ const BentoGridSection = ({ t }) => (
             </div>
         </div>
 
-        {/* Metric Card 1 */}
+        {}
         <div className="col-span-1 bg-linear-to-b from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/5 rounded-4xl p-8 flex flex-col justify-center items-center text-center group hover:-translate-y-1 transition-transform duration-300">
             <div className="relative mb-4">
                 <div className="absolute inset-0 bg-amber-400/20 blur-xl rounded-full animate-pulse"></div>
@@ -97,7 +89,7 @@ const BentoGridSection = ({ t }) => (
             </span>
         </div>
 
-        {/* Metric Card 2 */}
+        {}
         <div className="col-span-1 bg-linear-to-b from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/5 rounded-4xl p-8 flex flex-col justify-center items-center text-center group hover:-translate-y-1 transition-transform duration-300">
             <div className="relative mb-4">
                 <div className="absolute inset-0 bg-emerald-400/20 blur-xl rounded-full animate-pulse delay-75"></div>
@@ -121,7 +113,7 @@ const BentoGridSection = ({ t }) => (
             </span>
         </div>
 
-        {/* Team Member: Angelo */}
+        {}
         <div className="col-span-1 row-span-2 bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-4xl p-8 flex flex-col items-center text-center hover:border-blue-500/30 transition-colors duration-300 group">
             <div className="w-32 h-32 rounded-full p-0.5 bg-linear-to-b from-blue-500 to-transparent mb-6 group-hover:rotate-180 transition-transform duration-700">
                 <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden group-hover:rotate-180 transition-transform duration-700">
@@ -138,7 +130,7 @@ const BentoGridSection = ({ t }) => (
             </p>
         </div>
 
-        {/* Team Member: Gabriel */}
+        {}
         <div className="col-span-1 row-span-2 bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-4xl p-8 flex flex-col items-center text-center hover:border-teal-500/30 transition-colors duration-300 group">
             <div className="w-32 h-32 rounded-full p-0.5 bg-linear-to-b from-teal-500 to-transparent mb-6 group-hover:rotate-180 transition-transform duration-700">
                 <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden group-hover:rotate-180 transition-transform duration-700">
@@ -157,11 +149,7 @@ const BentoGridSection = ({ t }) => (
     </div>
 );
 
-/**
- * @component TechStackSection
- * @description Visualizes the technology stack used in the application.
- * Adds credibility and technical depth to the About page.
- */
+
 const TechStackSection = ({ t }) => (
     <div className="mb-32 relative">
         <div className="absolute -left-20 top-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl"></div>
@@ -198,11 +186,7 @@ const TechStackSection = ({ t }) => (
     </div>
 );
 
-/**
- * @component RoadmapSection
- * @description Displays the future trajectory of the project.
- * Uses a vertical timeline layout.
- */
+
 const RoadmapSection = ({ t }) => (
     <div className="mb-32 max-w-4xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-16">
@@ -255,18 +239,7 @@ const RoadmapSection = ({ t }) => (
     </div>
 );
 
-/**
- * @component ContactSection
- * @description A premium, glassmorphic contact interface.
- * Replaces the standard two-column layout with a unified, atmospheric design
- * that blends seamlessly into the "Deep Ocean" theme.
- *
- * Design Features:
- * - **Glassmorphism**: Heavy backdrop blur and semi-transparent layers.
- * - **Mesh linear**: A subtle, animated linear on the info side.
- * - **Floating Inputs**: Modern form fields with smooth focus transitions.
- * - **Neon Accents**: Cyan glows to guide user attention.
- */
+
 const ContactSection = ({ t }) => {
     const [formState, setFormState] = useState({
         name: '',
@@ -318,20 +291,14 @@ const ContactSection = ({ t }) => {
         }
     };
 
-    /**
-     * Generates dynamic classes for input fields based on focus state.
-     * @param {string} fieldName - The name of the field (name, email, message).
-     */
+    
     const inputClasses = (fieldName) => `
         w-full bg-slate-900/50 border rounded-xl px-4 py-4 text-white placeholder-transparent
         transition-all duration-300 outline-none
         ${focusedField === fieldName ? 'border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.15)] bg-slate-900/80' : 'border-white/10 hover:border-white/20'}
     `;
 
-    /**
-     * Generates dynamic classes for floating labels.
-     * @param {string} fieldName - The name of the field.
-     */
+    
     const labelClasses = (fieldName) => `
         absolute left-4 transition-all duration-300 pointer-events-none
         ${
@@ -343,21 +310,18 @@ const ContactSection = ({ t }) => {
 
     return (
         <div className="max-w-6xl mx-auto relative group mb-24">
-            {/* Ambient Glow Effect behind the card */}
+            {}
             <div className="absolute -inset-1 bg-linear-to-r from-cyan-500 to-blue-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
 
             <div className="relative bg-[#0B1120] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl">
                 <div className="grid grid-cols-1 lg:grid-cols-5 min-h-[600px]">
-                    {/*
-                     * Left Column: Contact Info & Atmosphere
-                     * Uses a rich linear overlay to create visual weight.
-                     */}
+                    {}
                     <div className="lg:col-span-2 relative p-12 flex flex-col justify-between overflow-hidden">
-                        {/* Background linears */}
+                        {}
                         <div className="absolute inset-0 bg-linear-to-br from-blue-900/90 via-slate-900/90 to-slate-900/90 z-0"></div>
                         <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 z-0"></div>
 
-                        {/* Decorative Circle */}
+                        {}
                         <div className="absolute -top-24 -left-24 w-64 h-64 bg-cyan-500/20 rounded-full blur-3xl"></div>
                         <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl"></div>
 
@@ -435,10 +399,7 @@ const ContactSection = ({ t }) => {
                         </div>
                     </div>
 
-                    {/*
-                     * Right Column: Interactive Form
-                     * Clean, spacious, and focused.
-                     */}
+                    {}
                     <div className="lg:col-span-3 p-12 bg-slate-900/30 backdrop-blur-sm">
                         {status === 'success' ? (
                             <div className="h-full flex flex-col items-center justify-center text-center space-y-6 animate-fade-in">
@@ -610,22 +571,7 @@ const ContactSection = ({ t }) => {
     );
 };
 
-/**
- * AboutUs Page Component (Main).
- *
- * A premium, highly-polished "Bento Grid" layout designed to reflect the atmospheric depth of the Canary Islands.
- * This iteration focuses on a "Deep Ocean & Volcanic Earth" color palette, moving away from generic dark modes
- * to a specific brand identity that feels organic yet technological.
- *
- * Design System & Architecture:
- * - **Palette**: Deep Slate (#0f172a) as base, accented with Cyan (Ocean), Amber (Sun), and Emerald (Flora).
- * - **Layout**: Modular sections (Hero, Bento, Tech, Roadmap, Contact).
- * - **Typography**: Variable font weights to create hierarchy without clutter.
- * - **Micro-interactions**: Hover states that reveal depth (Z-axis translation) and glow effects.
- *
- * @component
- * @returns {JSX.Element} The rendered AboutUs page.
- */
+
 function AboutUs() {
     const { t } = useTranslation();
 
@@ -636,22 +582,16 @@ function AboutUs() {
                 description="Learn about the team behind Canary Weather and our mission to provide the most accurate weather data for the Canary Islands."
             />
 
-            {/*
-             * ==================================================================================
-             * AMBIENT ATMOSPHERE LAYERS
-             * ==================================================================================
-             * Multi-layered background linears to simulate weather patterns and depth.
-             * Uses mix-blend-modes to create organic color intersections.
-             */}
+            {}
             <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-                {/* Deep Ocean Glow */}
+                {}
                 <div className="absolute top-[-20%] left-[-10%] w-[70vw] h-[70vw] bg-blue-900/20 rounded-full blur-[120px] mix-blend-screen animate-pulse duration-8000"></div>
-                {/* Volcanic Heat Glow */}
+                {}
                 <div className="absolute bottom-[-20%] right-[-10%] w-[60vw] h-[60vw] bg-indigo-900/20 rounded-full blur-[100px] mix-blend-screen animate-pulse duration-12000"></div>
-                {/* Sunlight Accent */}
+                {}
                 <div className="absolute top-[20%] right-[10%] w-[30vw] h-[30vw] bg-cyan-500/10 rounded-full blur-[80px] mix-blend-overlay"></div>
 
-                {/* Noise Texture Overlay for "Film Grain" feel */}
+                {}
                 <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
             </div>
 
@@ -662,7 +602,7 @@ function AboutUs() {
                 <RoadmapSection t={t} />
                 <ContactSection t={t} />
 
-                {/* Footer removed as per design requirements */}
+                {}
             </div>
         </div>
     );

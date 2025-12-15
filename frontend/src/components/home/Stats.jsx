@@ -1,15 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-/**
- * Stats Component (Enhanced).
- *
- * Displays detailed environmental metrics for the current location.
- * Replaces the static stats with live data: Wind, Humidity, Visibility, Pressure, and Sun Cycle.
- *
- * @param {Object} props
- * @param {Object} props.coords - { lat, lon } coordinates.
- */
+
 export default function Stats({ coords }) {
     const { t } = useTranslation();
     const [weather, setWeather] = useState(null);
@@ -38,7 +30,7 @@ export default function Stats({ coords }) {
 
     if (loading || !weather) return null;
 
-    // Helper to format time
+    
     const formatTime = (timestamp) => {
         return new Date(timestamp * 1000).toLocaleTimeString([], {
             hour: '2-digit',
@@ -46,12 +38,12 @@ export default function Stats({ coords }) {
         });
     };
 
-    // Sun Cycle Calculation
+    
     const sunrise = weather.sys.sunrise;
     const sunset = weather.sys.sunset;
     const now = Date.now() / 1000;
 
-    // Calculate progress (0 to 1)
+    
     let progress = 0;
     if (now > sunrise && now < sunset) {
         progress = (now - sunrise) / (sunset - sunrise);
@@ -59,25 +51,25 @@ export default function Stats({ coords }) {
         progress = 1;
     }
 
-    // SVG Arc Logic
-    // Semi-circle from 180 deg to 0 deg (left to right)
-    // We map progress 0..1 to angle -180..0 (degrees) for standard trig,
-    // but for SVG path drawing we need coordinates.
-    // Center (60, 60), Radius 40.
-    // Angle: Start at PI (left), End at 0 (right).
-    // Current Angle = PI - (progress * PI)
+    
+    
+    
+    
+    
+    
+    
 
     const r = 40;
     const cx = 60;
     const cy = 60;
     const currentAngle = Math.PI - progress * Math.PI;
     const sunX = cx + r * Math.cos(currentAngle);
-    const sunY = cy - r * Math.sin(currentAngle); // Subtract because SVG Y is down
+    const sunY = cy - r * Math.sin(currentAngle); 
 
     return (
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {/* Wind Card */}
+                {}
                 <div className="bg-white dark:bg-gray-900 p-6 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-blue-500">
@@ -108,7 +100,7 @@ export default function Stats({ coords }) {
                                 km/h
                             </span>
                         </div>
-                        {/* Wind Direction Compass */}
+                        {}
                         <div className="relative w-12 h-12 border-2 border-gray-100 dark:border-gray-700 rounded-full flex items-center justify-center">
                             <div className="absolute top-0 text-[8px] text-gray-400">
                                 N
@@ -127,7 +119,7 @@ export default function Stats({ coords }) {
                     </div>
                 </div>
 
-                {/* Humidity Card */}
+                {}
                 <div className="bg-white dark:bg-gray-900 p-6 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-blue-500">
@@ -175,7 +167,7 @@ export default function Stats({ coords }) {
                     </div>
                 </div>
 
-                {/* Visibility & Pressure Split Card */}
+                {}
                 <div className="flex flex-col gap-4">
                     <div className="flex-1 bg-white dark:bg-gray-900 p-4 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -239,13 +231,13 @@ export default function Stats({ coords }) {
                     </div>
                 </div>
 
-                {/* Sun Cycle Utility - The "Cool Feature" */}
+                {}
                 <div className="bg-linear-to-br from-orange-50 to-yellow-50 dark:from-gray-800 dark:to-gray-900 p-6 rounded-3xl border border-orange-100 dark:border-gray-700 shadow-sm relative overflow-hidden">
                     <div className="flex justify-between items-center mb-2 relative z-10">
                         <span className="text-sm font-medium text-orange-800 dark:text-orange-300">
                             {t('sunCycle') || 'Sun Cycle'}
                         </span>
-                        {/* Live Time Badge */}
+                        {}
                         <span className="text-xs font-mono bg-white/50 dark:bg-black/20 px-2 py-1 rounded-md text-orange-700 dark:text-orange-400">
                             {new Date().toLocaleTimeString([], {
                                 hour: '2-digit',
@@ -259,7 +251,7 @@ export default function Stats({ coords }) {
                             className="w-full h-full overflow-visible"
                             viewBox="0 0 120 60"
                         >
-                            {/* Arc Path */}
+                            {}
                             <path
                                 d="M 10 60 A 50 50 0 0 1 110 60"
                                 fill="none"
@@ -269,7 +261,7 @@ export default function Stats({ coords }) {
                                 strokeDasharray="4 4"
                             />
 
-                            {/* Sun Icon moving along path */}
+                            {}
                             <g transform={`translate(${sunX}, ${sunY})`}>
                                 <circle
                                     r="6"
@@ -285,7 +277,7 @@ export default function Stats({ coords }) {
                             </g>
                         </svg>
 
-                        {/* Horizon Line */}
+                        {}
                         <div className="absolute bottom-0 w-full h-px bg-orange-200 dark:bg-gray-600"></div>
                     </div>
 

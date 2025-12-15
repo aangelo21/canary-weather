@@ -42,7 +42,7 @@ const ResetPassword = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ token, newPassword: password }),
-                credentials: 'include', // Important for cookies
+                credentials: 'include', 
             });
 
             const data = await response.json();
@@ -50,13 +50,13 @@ const ResetPassword = () => {
             if (response.ok) {
                 setMessage(t('passwordResetSuccess'));
 
-                // Auto-login if token and user are returned
+                
                 if (data.token && data.user) {
                     localStorage.setItem('cw_user', JSON.stringify(data.user));
-                    // If your app uses a separate token storage or relies on the cookie set by backend
-                    // The backend sets a cookie, so subsequent requests should be authenticated.
-                    // However, the frontend might need to know it's logged in immediately.
-                    // We can force a reload to home to pick up the session.
+                    
+                    
+                    
+                    
                     setTimeout(() => {
                         window.location.href = '/';
                     }, 1500);

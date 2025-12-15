@@ -3,7 +3,7 @@ import { initReactI18next } from "react-i18next";
 import { en } from "./en";
 import { es } from "./es";
 
-// Get the language from localStorage or default to 'es'
+
 const savedLanguage = localStorage.getItem('i18nextLng') || 'es';
 
 i18n

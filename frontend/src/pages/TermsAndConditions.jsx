@@ -2,19 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import SEO from '../components/SEO';
 
-/**
- * TermsAndConditions Page.
- *
- * Displays the Terms and Conditions for the Canary Weather application.
- * This page outlines the rules and regulations for using the website.
- *
- * Features:
- * - **Responsive Layout**: Adapts to different screen sizes.
- * - **Dark Mode Support**: Uses Tailwind CSS dark mode classes.
- * - **Internationalization**: Uses `useTranslation` for localized content (placeholders used for now).
- *
- * @returns {JSX.Element} The rendered Terms and Conditions page.
- */
+
 const TermsAndConditions = () => {
     const { t } = useTranslation();
 

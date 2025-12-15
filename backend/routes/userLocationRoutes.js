@@ -8,15 +8,7 @@ import { authenticateToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-/**
- * User Location Routes
- *
- * Defines routes for managing a user's selected locations.
- * Allows users to get, add, and remove their favorite locations.
- * All routes require authentication via JWT token.
- *
- * Base Path: /api/user-locations
- */
+
 
 /**
  * @swagger

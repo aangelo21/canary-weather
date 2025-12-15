@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import HourlyForecast from '../HourlyForecast';
 
-// Mock dependencies
+
 vi.mock('react-i18next', () => ({
     useTranslation: () => ({
         t: (key) => key,
@@ -20,12 +20,12 @@ describe('HourlyForecast', () => {
         list: Array(10)
             .fill(null)
             .map((_, index) => ({
-                dt: 1700000000 + index * 3600 * 3, // 3 hour intervals
+                dt: 1700000000 + index * 3600 * 3, 
                 main: { temp: 20 + index },
                 weather: [{ icon: '01d', main: 'Clear' }],
                 sys: { pod: 'd' },
                 pop: 0.1,
-                wind: { speed: 5 + index }, // Unique wind speed
+                wind: { speed: 5 + index }, 
             })),
     };
 
@@ -48,7 +48,7 @@ describe('HourlyForecast', () => {
     });
 
     it('should show loading skeleton initially', async () => {
-        // Return a promise that never resolves immediately to test loading state
+        
         global.fetch.mockImplementation(() => new Promise(() => {}));
 
         render(<HourlyForecast coords={mockCoords} />);
@@ -68,10 +68,10 @@ describe('HourlyForecast', () => {
             expect(screen.queryByTestId('skeleton')).not.toBeInTheDocument();
         });
 
-        // Check for temperature rendering (20° ... 29°)
+        
         expect(screen.getByText('20°')).toBeInTheDocument();
 
-        // Check for wind speed (first item has speed 5)
+        
         expect(screen.getByText('5 km/h')).toBeInTheDocument();
     });
 

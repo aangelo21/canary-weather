@@ -2,19 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import SEO from '../components/SEO';
 
-/**
- * PrivacyPolicy Page.
- *
- * Displays the Privacy Policy for the Canary Weather application.
- * This page outlines how user data is collected, used, and protected.
- *
- * Features:
- * - **Responsive Layout**: Adapts to different screen sizes.
- * - **Dark Mode Support**: Uses Tailwind CSS dark mode classes.
- * - **Internationalization**: Uses `useTranslation` for localized content (placeholders used for now).
- *
- * @returns {JSX.Element} The rendered Privacy Policy page.
- */
+
 const PrivacyPolicy = () => {
     const { t } = useTranslation();
 

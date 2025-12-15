@@ -29,7 +29,7 @@ body {
         color 0.3s ease;
 }
 
-/* Dark mode styles */
+
 .dark {
     color-scheme: dark;
 }
@@ -39,12 +39,12 @@ body {
     color: #e2e8f0;
 }
 
-/* Header styles */
-/* Removed to allow default dark mode styles (bg-white -> #1a1a1a) and shadow-sm to apply */
 
-/* Header navigation links - Handled by Tailwind classes in Header.jsx */
 
-/* Text colors */
+
+
+
+
 .dark .text-gray-700 {
     color: #cbd5e1 !important;
 }
@@ -65,7 +65,7 @@ body {
     color: #cbd5e1 !important;
 }
 
-/* Background colors */
+
 .dark .bg-white {
     background-color: #1a1a1a !important;
 }
@@ -86,7 +86,7 @@ body {
     background-color: #4a4a4a !important;
 }
 
-/* Hover states */
+
 .dark .hover\:bg-gray-50:hover {
     background-color: #2a2a2a !important;
 }
@@ -107,7 +107,7 @@ body {
     color: #f1f5f9 !important;
 }
 
-/* Borders */
+
 .dark .border-gray-100 {
     border-color: #2a2a2a !important;
 }
@@ -124,7 +124,7 @@ body {
     border-color: #3b82f6 !important;
 }
 
-/* Shadows */
+
 .dark .shadow-lg {
     box-shadow:
         0 10px 15px -3px rgba(0, 0, 0, 0.7),
@@ -141,7 +141,7 @@ body {
         0 1px 2px 0 rgba(0, 0, 0, 0.3) !important;
 }
 
-/* Cards and containers */
+
 .dark .bg-blue-50 {
     background-color: #1a2332 !important;
 }
@@ -150,7 +150,7 @@ body {
     color: #60a5fa !important;
 }
 
-/* Input and form elements */
+
 .dark input,
 .dark textarea,
 .dark select {
@@ -164,7 +164,7 @@ body {
     color: #6a6a6a !important;
 }
 
-/* Buttons - preserve brand colors but adjust hover states */
+
 .dark .bg-blue-600:not(.hover\:bg-blue-700) {
     background-color: #2563eb !important;
 }
@@ -173,14 +173,14 @@ body {
     background-color: #1d4ed8 !important;
 }
 
-/* Modals and dropdowns */
+
 .dark [role='dialog'],
 .dark .modal {
     background-color: #1a1a1a !important;
     border-color: #3a3a3a !important;
 }
 
-/* Tables */
+
 .dark table {
     background-color: #1a1a1a !important;
 }
@@ -195,7 +195,7 @@ body {
     color: #e2e8f0 !important;
 }
 
-/* Links - excluding header links which are handled separately */
+
 .dark main a:not(.bg-brand-primary):not(.bg-blue-600) {
     color: #60a5fa !important;
 }
@@ -204,7 +204,7 @@ body {
     color: #93c5fd !important;
 }
 
-/* Scrollbar */
+
 .dark ::-webkit-scrollbar {
     background-color: #0a0a0a;
 }
@@ -217,7 +217,7 @@ body {
     background-color: #4a4a4a;
 }
 
-/* Custom Leaflet Popup Styles - AGGRESSIVE OVERRIDE */
+
 div.leaflet-popup.custom-popup-clean .leaflet-popup-content-wrapper,
 div.leaflet-popup.custom-popup-clean .leaflet-popup-tip {
     background: none !important;
@@ -241,7 +241,7 @@ div.leaflet-popup.custom-popup-clean .leaflet-popup-tip-container {
     display: none !important;
 }
 
-/* Hide the default Leaflet close button */
+
 div.leaflet-popup.custom-popup-clean a.leaflet-popup-close-button,
 div.leaflet-popup.custom-popup-clean .leaflet-popup-close-button {
     display: none !important;
@@ -250,7 +250,7 @@ div.leaflet-popup.custom-popup-clean .leaflet-popup-close-button {
     pointer-events: none !important;
 }
 
-/* Dark mode map tiles filter - Apple Maps Dark Style approximation */
+
 .dark .dark-map-tiles {
     filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }

@@ -51,25 +51,22 @@ const checkGroups = (client, userDN, username, email, resolve, reject) => {
     });
 };
 
-// Helper to create a client
+
 const createClient = () => {
     return ldap.createClient({
         url: LDAP_URL,
-        // timeout: 5000,
-        // connectTimeout: 10000
+        
+        
     });
 };
 
 export const LdapService = {
-    /**
-     * Authenticate a user against the LDAP server.
-     * Returns user info including isAdmin status if successful, null otherwise.
-     */
+    
     authenticate: (identifier, password) => {
         return new Promise((resolve, reject) => {
             const client = createClient();
 
-            // Admin credentials to search for the user DN
+            
             const ADMIN_DN = process.env.LDAP_ADMIN_DN;
             const ADMIN_PASSWORD = process.env.LDAP_ADMIN_PASSWORD;
 
@@ -79,7 +76,7 @@ export const LdapService = {
                 resolve(null);
             });
 
-            // 1. Bind as Admin to search for the user
+            
             client.bind(ADMIN_DN, ADMIN_PASSWORD, (err) => {
                 if (err) {
                     console.error('LDAP Admin Bind Error (Auth):', err.message);
@@ -87,7 +84,7 @@ export const LdapService = {
                     return resolve(null);
                 }
 
-                // 2. Search for user by cn (username) or mail (email)
+                
                 const searchOpts = {
                     filter: `(|(cn=${identifier})(mail=${identifier}))`,
                     scope: 'sub',
@@ -109,14 +106,14 @@ export const LdapService = {
 
                     res.on('end', async (result) => {
                         if (!userEntry) {
-                            // User not found
+                            
                             client.unbind();
                             return resolve(null);
                         }
 
                         const userDN = userEntry.objectName.toString();
 
-                        // Get username and email from the entry if possible
+                        
                         let username = identifier;
                         let email = null;
                         let storedPassword = null;
@@ -163,7 +160,7 @@ export const LdapService = {
                             }
                         }
 
-                        // 3. Verify password using bcrypt
+                        
                         if (!storedPassword) {
                             console.error(
                                 'LDAP Auth Error: No password stored for user',
@@ -172,7 +169,7 @@ export const LdapService = {
                             return resolve(null);
                         }
 
-                        // storedPassword might be a Buffer
+                        
                         const hash = Buffer.isBuffer(storedPassword)
                             ? storedPassword.toString('utf8')
                             : storedPassword;
@@ -187,8 +184,8 @@ export const LdapService = {
                                 return resolve(null);
                             }
                         } catch (bcryptErr) {
-                            // Fallback: Try simple bind if bcrypt fails (legacy users or plain text)
-                            // Or if the stored password is not a bcrypt hash
+                            
+                            
                             console.warn(
                                 'LDAP Auth Warning: Bcrypt compare failed, trying simple bind...',
                                 bcryptErr.message,
@@ -204,7 +201,7 @@ export const LdapService = {
                                         client.unbind();
                                         return resolve(null);
                                     }
-                                    // Bind success, continue to groups
+                                    
                                     checkGroups(
                                         client,
                                         userDN,
@@ -217,7 +214,7 @@ export const LdapService = {
                             });
                         }
 
-                        // 4. Check groups
+                        
                         checkGroups(
                             client,
                             userDN,
@@ -238,10 +235,7 @@ export const LdapService = {
         });
     },
 
-    /**
-     * Create a new user in LDAP and add them to the 'normals' group.
-     * Optionally add to 'admins' group.
-     */
+    
     createUser: (username, email, password, isAdmin = false) => {
         return new Promise(async (resolve, reject) => {
             const client = createClient();
@@ -249,7 +243,7 @@ export const LdapService = {
             const ADMIN_DN = process.env.LDAP_ADMIN_DN;
             const ADMIN_PASSWORD = process.env.LDAP_ADMIN_PASSWORD;
 
-            // Hash password
+            
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -264,7 +258,7 @@ export const LdapService = {
 
                 const entry = {
                     cn: username,
-                    sn: username, // Surname is mandatory in inetOrgPerson
+                    sn: username, 
                     mail: email,
                     objectClass: ['inetOrgPerson', 'top'],
                     userPassword: hashedPassword,
@@ -277,7 +271,7 @@ export const LdapService = {
                         return reject(err);
                     }
 
-                    // Add to normals group
+                    
                     const addToNormals = new Promise((resolve, reject) => {
                         const change = new ldap.Change({
                             operation: 'add',
@@ -292,7 +286,7 @@ export const LdapService = {
                         });
                     });
 
-                    // Add to admins group if requested
+                    
                     const addToAdmins = isAdmin
                         ? new Promise((resolve, reject) => {
                               const change = new ldap.Change({
@@ -317,7 +311,7 @@ export const LdapService = {
                         .catch((err) => {
                             client.unbind();
                             console.error('LDAP Group Add Error:', err);
-                            // User created but group add failed
+                            
                             resolve({
                                 username,
                                 email,
@@ -330,9 +324,7 @@ export const LdapService = {
         });
     },
 
-    /**
-     * Check if a user exists
-     */
+    
     userExists: (username) => {
         return new Promise((resolve, reject) => {
             const client = createClient();
@@ -366,9 +358,7 @@ export const LdapService = {
         });
     },
 
-    /**
-     * Get all users from LDAP
-     */
+    
     getAllUsers: () => {
         return new Promise((resolve, reject) => {
             const client = createClient();
@@ -416,7 +406,7 @@ export const LdapService = {
                     });
 
                     res.on('end', () => {
-                        // Check admin status for each user
+                        
                         const promises = users.map((user) => {
                             return new Promise((resolve) => {
                                 const groupOpts = {
@@ -480,9 +470,7 @@ export const LdapService = {
         });
     },
 
-    /**
-     * Update a user in LDAP (email, password, admin status)
-     */
+    
     updateUser: (username, { email, password, is_admin }) => {
         return new Promise(async (resolve, reject) => {
             const client = createClient();
@@ -490,7 +478,7 @@ export const LdapService = {
             const ADMIN_DN = process.env.LDAP_ADMIN_DN;
             const ADMIN_PASSWORD = process.env.LDAP_ADMIN_PASSWORD;
 
-            // Hash password if provided
+            
             let hashedPassword = null;
             if (password) {
                 const salt = await bcrypt.genSalt(10);
@@ -507,7 +495,7 @@ export const LdapService = {
                 const userDN = `cn=${username},${USERS_DN}`;
                 const modifications = [];
 
-                // Update email if provided
+                
                 if (email) {
                     modifications.push(
                         new ldap.Change({
@@ -520,7 +508,7 @@ export const LdapService = {
                     );
                 }
 
-                // Update password if provided
+                
                 if (hashedPassword) {
                     modifications.push(
                         new ldap.Change({
@@ -533,15 +521,15 @@ export const LdapService = {
                     );
                 }
 
-                // Function to apply user attribute changes
+                
                 const applyUserChanges = () => {
                     if (modifications.length === 0) return Promise.resolve();
 
-                    // Apply modifications sequentially or all at once?
-                    // ldapjs client.modify takes one Change or array of Changes?
-                    // Usually it takes one Change object or an array of Change objects.
-                    // Let's try passing the array if supported, or loop.
-                    // Documentation says: client.modify(dn, change, callback) where change can be an array.
+                    
+                    
+                    
+                    
+                    
 
                     return new Promise((resolve, reject) => {
                         client.modify(userDN, modifications, (err) => {
@@ -551,12 +539,12 @@ export const LdapService = {
                     });
                 };
 
-                // Function to update admin group membership
+                
                 const updateAdminGroup = () => {
                     if (is_admin === undefined) return Promise.resolve();
 
                     return new Promise((resolve, reject) => {
-                        // Check if user is currently in admin group
+                        
                         const groupOpts = {
                             filter: `(uniqueMember=${userDN})`,
                             scope: 'sub',
@@ -576,7 +564,7 @@ export const LdapService = {
 
                                 res.on('end', () => {
                                     if (is_admin && !isCurrentlyAdmin) {
-                                        // Add to admins
+                                        
                                         const change = new ldap.Change({
                                             operation: 'add',
                                             modification: {
@@ -593,7 +581,7 @@ export const LdapService = {
                                             },
                                         );
                                     } else if (!is_admin && isCurrentlyAdmin) {
-                                        // Remove from admins
+                                        
                                         const change = new ldap.Change({
                                             operation: 'delete',
                                             modification: {
@@ -633,9 +621,7 @@ export const LdapService = {
         });
     },
 
-    /**
-     * Delete a user from LDAP
-     */
+    
     deleteUser: (username) => {
         return new Promise((resolve, reject) => {
             const client = createClient();
@@ -652,7 +638,7 @@ export const LdapService = {
 
                 const userDN = `cn=${username},${USERS_DN}`;
 
-                // First, remove from groups
+                
                 const groupOpts = {
                     filter: `(uniqueMember=${userDN})`,
                     scope: 'sub',
@@ -681,7 +667,7 @@ export const LdapService = {
                     });
 
                     res.on('end', () => {
-                        // Apply changes to remove from groups
+                        
                         const promises = changes.map(({ dn, change }) => {
                             return new Promise((resolve, reject) => {
                                 client.modify(dn, change, (err) => {
@@ -693,7 +679,7 @@ export const LdapService = {
 
                         Promise.all(promises)
                             .then(() => {
-                                // Now delete the user
+                                
                                 client.del(userDN, (err) => {
                                     client.unbind();
                                     if (err) reject(err);

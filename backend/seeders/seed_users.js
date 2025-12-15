@@ -41,7 +41,7 @@ async function seed() {
 
     for (const userData of users) {
         try {
-            // Remove password from userData for DB insertion
+            
             const { password, ...userDataForDb } = userData;
 
             const [user, created] = await User.findOrCreate({

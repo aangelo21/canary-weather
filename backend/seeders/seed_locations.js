@@ -1,6 +1,6 @@
 import sequelize from '../controllers/dbController.js';
 import Location from '../models/location.js';
-// Seeder for Location table. Idempotent: uses findOrCreate.
+
 async function seed() {
     console.log('Starting Location seeder...');
     await sequelize.sync();

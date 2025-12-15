@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Marker, Popup, LayersControl, LayerGroup } from 'react-leaflet';
 import L from 'leaflet';
 
-// Fix for default marker icon in React Leaflet
+
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl:
@@ -13,14 +13,7 @@ L.Icon.Default.mergeOptions({
         'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-/**
- * MapMarkers Component.
- *
- * Renders Points of Interest (POIs) on the map.
- *
- * @param {Object} props - Component props.
- * @param {Array} props.pois - List of Points of Interest.
- */
+
 const MapMarkers = ({ pois }) => {
     const markers = useMemo(() => {
         return pois.map((poi) => (

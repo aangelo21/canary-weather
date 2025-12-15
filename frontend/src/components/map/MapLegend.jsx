@@ -1,20 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 
-/**
- * MapLegend Component.
- *
- * A comprehensive, interactive guide for the Canary Weather Map.
- * It provides detailed information about weather layers, map controls, and interaction modes.
- *
- * Features:
- * - **Interactive Tabs**: Users can switch between 'Layers', 'Controls', and 'Interactions' for focused information.
- * - **Visual Color Scales**: Represents temperature and precipitation gradients visually.
- * - **Professional UI**: Uses glassmorphism, gradients, and refined typography for a polished look.
- *
- * @component
- * @returns {JSX.Element} The rendered MapLegend component.
- */
+
 function MapLegend() {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState('layers');
@@ -31,7 +18,7 @@ function MapLegend() {
 
     return (
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden max-w-5xl mx-auto mt-6 md:mt-12 transition-all duration-300">
-            {/* Header Section */}
+            {}
             <div className="bg-linear-to-r from-brand-primary to-blue-600 p-4 md:p-6 text-white">
                 <h3 className="text-xl md:text-2xl font-bold flex items-center gap-3">
                     <svg
@@ -54,7 +41,7 @@ function MapLegend() {
                 </p>
             </div>
 
-            {/* Navigation Tabs */}
+            {}
             <div className="flex flex-col sm:flex-row border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
                 {tabs.map((tab) => (
                     <button
@@ -73,13 +60,13 @@ function MapLegend() {
                 ))}
             </div>
 
-            {/* Content Area */}
+            {}
             <div className="p-4 md:p-8 min-h-[300px] md:min-h-[400px]">
-                {/* LAYERS TAB */}
+                {}
                 {activeTab === 'layers' && (
                     <div className="space-y-8 animate-fadeIn">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {/* Temperature Layer */}
+                            {}
                             <div className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-5 border border-gray-100 dark:border-gray-700">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg text-red-600 dark:text-red-400">
@@ -104,7 +91,7 @@ function MapLegend() {
                                 <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                                     {t('mapLegend.layers.temp.desc')}
                                 </p>
-                                {/* Color Scale Visualization */}
+                                {}
                                 <div className="h-4 rounded-full bg-linear-to-r from-blue-500 via-green-400 to-red-500 w-full mb-1"></div>
                                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 font-mono">
                                     <span>
@@ -121,7 +108,7 @@ function MapLegend() {
                                 </div>
                             </div>
 
-                            {/* Precipitation Layer */}
+                            {}
                             <div className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-5 border border-gray-100 dark:border-gray-700">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
@@ -146,7 +133,7 @@ function MapLegend() {
                                 <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                                     {t('mapLegend.layers.precip.desc')}
                                 </p>
-                                {/* Color Scale Visualization */}
+                                {}
                                 <div className="h-4 rounded-full bg-linear-to-r from-transparent via-blue-400 to-purple-600 w-full mb-1 border border-gray-200 dark:border-gray-600"></div>
                                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 font-mono">
                                     <span>
@@ -167,7 +154,7 @@ function MapLegend() {
                                 </div>
                             </div>
 
-                            {/* Clouds Layer */}
+                            {}
                             <div className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-5 border border-gray-100 dark:border-gray-700">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="p-2 bg-gray-200 dark:bg-gray-600 rounded-lg text-gray-600 dark:text-gray-300">
@@ -194,7 +181,7 @@ function MapLegend() {
                                 </p>
                             </div>
 
-                            {/* Wind Layer */}
+                            {}
                             <div className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-5 border border-gray-100 dark:border-gray-700">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="p-2 bg-teal-100 dark:bg-teal-900/30 rounded-lg text-teal-600 dark:text-teal-400">
@@ -224,7 +211,7 @@ function MapLegend() {
                     </div>
                 )}
 
-                {/* CONTROLS TAB */}
+                {}
                 {activeTab === 'controls' && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fadeIn">
                         <div className="flex flex-col items-center text-center p-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
@@ -307,7 +294,7 @@ function MapLegend() {
                     </div>
                 )}
 
-                {/* INTERACTIONS TAB */}
+                {}
                 {activeTab === 'interaction' && (
                     <div className="space-y-6 animate-fadeIn">
                         <div className="flex items-start gap-4 p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800">

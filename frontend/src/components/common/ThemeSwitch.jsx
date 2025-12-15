@@ -2,17 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTheme } from '../../context/ThemeContext';
 
-/**
- * ThemeSwitch Component.
- *
- * Renders a toggle switch that allows the user to switch between light and dark themes.
- * It utilizes the `useTheme` hook to access and modify the current theme state.
- * The visual representation is a highly customized toggle switch with animated sun/moon and background elements (clouds/stars),
- * implemented using `styled-components`.
- *
- * @component
- * @returns {JSX.Element} The rendered ThemeSwitch component.
- */
+
 const ThemeSwitch = () => {
     const { isDarkMode, toggleTheme } = useTheme();
 
@@ -57,10 +47,7 @@ const ThemeSwitch = () => {
     );
 };
 
-/**
- * Styled wrapper for the ThemeSwitch component.
- * Contains all the CSS logic for the animated switch.
- */
+
 const StyledWrapper = styled.div`
     .theme-switch {
         --toggle-size: 12px;

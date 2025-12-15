@@ -2,12 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useMap } from 'react-leaflet';
 import { useLocation } from 'react-router-dom';
 
-/**
- * Custom hook to update the map view based on the router location state.
- *
- * @param {Function} setClickedPos - Function to update the clicked position state.
- * @param {Function} fetchWeather - Function to fetch weather data.
- */
+
 const useMapUpdater = (setClickedPos, fetchWeather) => {
     const map = useMap();
     const location = useLocation();

@@ -4,22 +4,14 @@ import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 import MapLegend from './MapLegend';
 
-/**
- * MapControls Component.
- *
- * Renders custom map controls for reset, locate, and search with a modern glassmorphism design.
- *
- * @param {Object} props - Component props.
- * @param {Function} props.setClickedPos - Function to update the clicked position state.
- * @param {Function} props.fetchWeather - Function to fetch weather data for a location.
- */
+
 const MapControls = ({ setClickedPos, fetchWeather }) => {
     const { t } = useTranslation();
     const map = useMap();
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearching, setIsSearching] = useState(false);
 
-    // Disable click propagation to prevent map clicks when interacting with controls
+    
     useEffect(() => {
         const controls = document.getElementById('map-controls');
         if (controls) {
@@ -62,7 +54,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
 
         setIsSearching(true);
         try {
-            // Use Nominatim for search, bounded to Canary Islands
+            
             const response = await fetch(
                 `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
                     searchQuery,
@@ -79,7 +71,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
                 });
                 setClickedPos([latitude, longitude]);
                 fetchWeather(latitude, longitude);
-                setSearchQuery(''); // Clear search after successful find
+                setSearchQuery(''); 
             } else {
                 alert(t('locationNotFound'));
             }
@@ -96,7 +88,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
             id="map-controls"
             className="absolute top-4 left-4 z-1000 flex flex-col gap-3 w-full max-w-xs items-start"
         >
-            {/* Search Bar */}
+            {}
             <form
                 onSubmit={handleSearch}
                 className="relative flex items-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 dark:border-gray-700/30 transition-all duration-300 hover:shadow-xl focus-within:ring-2 focus-within:ring-blue-500/50 w-full"
@@ -153,7 +145,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
                 </button>
             </form>
 
-            {/* Action Buttons */}
+            {}
             <div className="flex gap-2 items-center">
                 <button
                     onClick={(e) => {
@@ -204,7 +196,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
                     <span className="hidden sm:inline">{t('locate')}</span>
                 </button>
 
-                {/* Legend Button */}
+                {}
                 <div onClick={(e) => e.stopPropagation()}>
                     <MapLegend />
                 </div>

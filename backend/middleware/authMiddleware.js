@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
-// Middleware function to authenticate sessions (Used for Refresh Token)
+
 export function authenticateSession(req, res, next) {
     if (req.session && req.session.user) {
         req.user = req.session.user;
@@ -11,10 +11,10 @@ export function authenticateSession(req, res, next) {
     return res.status(401).json({ error: 'Session authentication required' });
 }
 
-// Middleware function to authenticate JWT (Used for API protection)
+
 export function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+    const token = authHeader && authHeader.split(' ')[1]; 
 
     if (!token) {
         return res.status(401).json({ error: 'Token required' });
@@ -29,7 +29,7 @@ export function authenticateToken(req, res, next) {
     });
 }
 
-// Optional authentication middleware - checks for token but doesn't fail
+
 export function optionalAuthenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -49,7 +49,7 @@ export function optionalAuthenticateToken(req, res, next) {
     }
 }
 
-// Optional authentication middleware - doesn't fail if no session (Legacy/Session based)
+
 export function optionalAuthenticateSession(req, res, next) {
     if (req.session && req.session.user) {
         req.user = req.session.user;

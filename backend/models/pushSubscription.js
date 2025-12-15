@@ -1,12 +1,7 @@
 import sequelize from '../controllers/dbController.js';
 import { DataTypes } from 'sequelize';
 
-/**
- * PushSubscription Model
- *
- * Stores Web Push subscriptions for users.
- * Allows the server to send push notifications to specific browsers/devices.
- */
+
 const PushSubscription = sequelize.define(
     'PushSubscription',
     {
@@ -16,7 +11,7 @@ const PushSubscription = sequelize.define(
             autoIncrement: true,
         },
         user_id: {
-            type: DataTypes.STRING, // Matches User.username (LDAP)
+            type: DataTypes.STRING, 
             allowNull: false,
         },
         endpoint: {

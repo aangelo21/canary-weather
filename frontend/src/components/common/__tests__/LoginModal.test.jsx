@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import LoginModal from '../LoginModal';
 import * as userService from '../../../services/userService';
 
-// Mock dependencies
+
 vi.mock('react-i18next', () => ({
     useTranslation: () => ({
         t: (key) => key,

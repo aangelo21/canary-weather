@@ -15,7 +15,7 @@ const NotificationToggle = () => {
             setChecking(true);
             if ('serviceWorker' in navigator && 'PushManager' in window) {
                 try {
-                    // Use getRegistration() instead of ready to avoid hanging if no SW is registered
+                    
                     const registration =
                         await navigator.serviceWorker.getRegistration();
 
@@ -29,7 +29,7 @@ const NotificationToggle = () => {
                         await registration.pushManager.getSubscription();
 
                     if (subscription) {
-                        // Verify with backend if this subscription belongs to current user
+                        
                         const token = getAccessToken();
                         if (token) {
                             const response = await fetch(
@@ -85,17 +85,17 @@ const NotificationToggle = () => {
     const subscribeUser = async () => {
         setLoading(true);
         try {
-            // Ensure SW is registered
+            
             let registration = await navigator.serviceWorker.getRegistration();
             if (!registration) {
                 console.log('No SW found, registering...');
                 registration = await navigator.serviceWorker.register('/sw.js');
             }
 
-            // Wait for it to be ready
+            
             await navigator.serviceWorker.ready;
 
-            // Get VAPID key from backend
+            
             const response = await fetch(`${API_BASE}/push/vapid-public-key`);
             if (!response.ok) {
                 throw new Error('Failed to fetch VAPID key');
@@ -107,7 +107,7 @@ const NotificationToggle = () => {
             console.log('VAPID Key received:', publicKey);
             const convertedVapidKey = urlBase64ToUint8Array(publicKey.trim());
 
-            // Check existing subscription
+            
             let subscription = await registration.pushManager.getSubscription();
 
             if (subscription) {
@@ -122,7 +122,7 @@ const NotificationToggle = () => {
                 });
             }
 
-            // Send subscription to backend
+            
             const token = getAccessToken();
             if (!token) {
                 throw new Error('User not authenticated');
@@ -143,7 +143,7 @@ const NotificationToggle = () => {
 
             setIsSubscribed(true);
 
-            // Send test notification
+            
             await fetch(`${API_BASE}/push/send-test`, {
                 method: 'POST',
                 headers: {
@@ -166,7 +166,7 @@ const NotificationToggle = () => {
                 await registration.pushManager.getSubscription();
 
             if (subscription) {
-                // Remove from backend first
+                
                 const token = getAccessToken();
                 if (token) {
                     await fetch(`${API_BASE}/push/unsubscribe`, {
@@ -181,16 +181,16 @@ const NotificationToggle = () => {
                     });
                 }
 
-                // We do NOT unsubscribe from the browser pushManager here
-                // because that would kill notifications for ALL users on this device.
-                // We only remove the link between this user and this subscription in the DB.
-                // However, if the user explicitly clicks "Disable", they might expect
-                // no notifications at all on this device.
-                // But since we want multi-user support, we just remove the backend record.
+                
+                
+                
+                
+                
+                
 
-                // UPDATE: If we don't unsubscribe from browser, the browser still thinks it has a subscription.
-                // But our UI check (useEffect) now verifies with backend.
-                // So if we remove from backend, isSubscribed will be false next time.
+                
+                
+                
 
                 setIsSubscribed(false);
             }

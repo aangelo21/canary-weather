@@ -6,7 +6,7 @@ const MapLegend = () => {
     const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
 
-    // Disable click propagation to prevent map clicks
+    
     useEffect(() => {
         const legend = document.getElementById('map-legend-container');
         if (legend) {
@@ -16,7 +16,7 @@ const MapLegend = () => {
 
     return (
         <div id="map-legend-container" className="relative z-1000">
-            {/* Toggle Button */}
+            {}
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={`w-12 h-12 rounded-full shadow-lg backdrop-blur-md border transition-all duration-300 flex items-center justify-center group ${
@@ -59,7 +59,7 @@ const MapLegend = () => {
                 )}
             </button>
 
-            {/* Legend Panel */}
+            {}
             <div
                 className={`absolute top-16 left-0 w-72 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden transition-all duration-300 origin-top-left ${
                     isOpen
@@ -73,7 +73,7 @@ const MapLegend = () => {
                     </h3>
 
                     <div className="space-y-4">
-                        {/* Interaction */}
+                        {}
                         <div className="flex items-start gap-3">
                             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-xl text-blue-600 dark:text-blue-400">
                                 <svg
@@ -100,7 +100,7 @@ const MapLegend = () => {
                             </div>
                         </div>
 
-                        {/* Layers */}
+                        {}
                         <div className="flex items-start gap-3">
                             <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-xl text-purple-600 dark:text-purple-400">
                                 <svg
@@ -127,7 +127,7 @@ const MapLegend = () => {
                             </div>
                         </div>
 
-                        {/* Search */}
+                        {}
                         <div className="flex items-start gap-3">
                             <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-xl text-green-600 dark:text-green-400">
                                 <svg
@@ -155,7 +155,7 @@ const MapLegend = () => {
                         </div>
                     </div>
 
-                    {/* Footer Tip */}
+                    {}
                     <div className="mt-5 pt-4 border-t border-gray-100 dark:border-gray-800">
                         <p className="text-[10px] text-center text-gray-400 italic">
                             {t('mapTip')}

@@ -1,30 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-/**
- * POIForm Component.
- *
- * A reusable form component for creating and editing Points of Interest (POIs).
- *
- * Features:
- * - **Input Fields**: Name (text), Description (textarea), and Image (file input).
- * - **Image Preview**: Displays a preview of the selected image before upload.
- * - **Validation**: Basic HTML5 validation (required fields).
- * - **Loading State**: Disables the submit button while the request is processing.
- * - **Internationalization**: Uses `useTranslation` for all labels and button text.
- *
- * @component
- * @param {Object} props - The component props.
- * @param {Object} props.formData - The current state of the form fields.
- * @param {string} props.formData.name - The name of the POI.
- * @param {string} props.formData.description - The description of the POI.
- * @param {Function} props.onChange - Callback function to handle text input changes.
- * @param {Function} props.onSubmit - Callback function to handle form submission.
- * @param {boolean} props.loading - Boolean indicating if a submission is in progress.
- * @param {Function} props.onCancel - Callback function to handle the cancel action.
- * @param {Function} props.onImageChange - Callback function to handle file input changes.
- * @param {string|null} props.imagePreview - URL of the image to preview (either a local object URL or a remote URL).
- * @returns {JSX.Element} The rendered POIForm component.
- */
+
 export default function POIForm({
     formData,
     onChange,

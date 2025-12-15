@@ -1,6 +1,6 @@
 @import url('leaflet/dist/leaflet.css');
 
-/* Force override here as well to be safe */
+
 .leaflet-popup.custom-popup-clean .leaflet-popup-content-wrapper {
     background: transparent !important;
     box-shadow: none !important;

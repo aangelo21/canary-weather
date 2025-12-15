@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load .env from parent directory (backend root)
+
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const PORT = process.env.PORT || 85;
@@ -250,7 +250,7 @@ const options = {
             },
         ],
     },
-    apis: ['./routes/*.js'], // Path to the API routes
+    apis: ['./routes/*.js'], 
 };
 
 const swaggerSpec = swaggerJsdoc(options);

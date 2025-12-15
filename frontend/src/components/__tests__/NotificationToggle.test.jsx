@@ -1,11 +1,11 @@
-/* eslint-disable no-undef */
+
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import NotificationToggle from '../NotificationToggle';
 import * as apiService from '../../services/api';
 
-// Mock dependencies
+
 vi.mock('react-i18next', () => ({
     useTranslation: () => ({
         t: (key) => key,
@@ -32,19 +32,19 @@ describe('NotificationToggle', () => {
     };
 
     beforeEach(() => {
-        // Mock global objects
+        
         global.navigator.serviceWorker = mockServiceWorker;
         global.window.PushManager = {};
         global.fetch = vi.fn();
 
-        // Default mocks
+        
         apiService.getAccessToken.mockReturnValue('mock-token');
         mockServiceWorker.getRegistration.mockResolvedValue({
             pushManager: mockPushManager,
         });
         mockPushManager.getSubscription.mockResolvedValue(null);
 
-        // Mock environment variable
+        
         vi.stubGlobal('import.meta', {
             env: {
                 VITE_API_BASE: 'http://localhost:3000',
@@ -59,7 +59,7 @@ describe('NotificationToggle', () => {
     });
 
     it('should render skeleton while checking subscription', async () => {
-        // Delay the check to allow checking state to be true initially
+        
         mockServiceWorker.getRegistration.mockImplementation(
             () =>
                 new Promise((resolve) => setTimeout(() => resolve(null), 100)),
@@ -128,7 +128,7 @@ describe('NotificationToggle', () => {
                     json: async () => ({}),
                 });
             }
-            // Default for check-subscription or others
+            
             return Promise.resolve({
                 ok: true,
                 json: async () => ({ exists: false }),

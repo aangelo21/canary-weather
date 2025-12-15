@@ -5,50 +5,22 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 import Skeleton from '../common/Skeleton';
 
-/**
- * WeatherPopup Component.
- *
- * Displays detailed weather information in a popup on the map.
- *
- * Features:
- * - **Weather Data**: Shows temperature, humidity, pressure, wind speed, and cloud cover.
- * - **Dynamic Styling**: Changes appearance based on weather conditions (e.g., thunderstorm) and time of day (day/night), as well as the global theme.
- * - **POI Saving**: Allows authenticated users to save the current location as a personal Point of Interest (POI).
- * - **Authentication Check**: Disables the save functionality for guest users.
- *
- * @component
- * @param {Object} props - The component props.
- * @param {Array<number>} props.position - The [latitude, longitude] coordinates where the popup is anchored.
- * @param {Object} props.weather - The weather data object fetched from the API.
- * @param {boolean} props.loading - Whether the weather data is loading.
- * @param {Object} props.markerRef - Reference to the Leaflet marker associated with this popup.
- * @param {Function} props.onClose - Callback function executed when the popup is closed.
- * @returns {JSX.Element|null} The rendered WeatherPopup component or null if position or weather data is missing.
- */
+
 function WeatherPopup({ position, weather, loading, markerRef, onClose }) {
     const { t } = useTranslation();
     const { isDarkMode } = useTheme();
     const popupRef = useRef(null);
 
-    /**
-     * @type {[boolean, Function]} saved - State to indicate if the POI has been successfully saved.
-     */
+    
     const [saved, setSaved] = useState(false);
 
-    /**
-     * @type {[boolean, Function]} saving - State to indicate if the save operation is in progress.
-     */
+    
     const [saving, setSaving] = useState(false);
 
-    /**
-     * @type {[boolean, Function]} isAuthenticated - State to check if the current user is logged in.
-     */
+    
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    /**
-     * Effect hook to open the popup when the marker reference is available.
-     * Uses a timeout to ensure the marker is fully initialized on the map.
-     */
+    
     useEffect(() => {
         if (markerRef?.current) {
             const timer = setTimeout(() => {
@@ -58,9 +30,7 @@ function WeatherPopup({ position, weather, loading, markerRef, onClose }) {
         }
     }, [position, weather, loading, markerRef]);
 
-    /**
-     * Effect hook to check authentication status on mount.
-     */
+    
     useEffect(() => {
         const user = localStorage.getItem('cw_user');
         setIsAuthenticated(!!user);
@@ -86,11 +56,7 @@ function WeatherPopup({ position, weather, loading, markerRef, onClose }) {
 
     if (!position || !weather) return null;
 
-    /**
-     * Handles the action of saving the current location as a Point of Interest.
-     * Checks for authentication, calls the API, and updates the UI state.
-     * Dispatches a 'poiCreated' event upon success to notify other components.
-     */
+    
     const handleSavePoi = async () => {
         if (!isAuthenticated) {
             alert(t('loginRequired'));
@@ -121,11 +87,7 @@ function WeatherPopup({ position, weather, loading, markerRef, onClose }) {
             ? currentTime < weather.sunrise || currentTime > weather.sunset
             : false;
 
-    /**
-     * Determines the CSS classes for the popup's theme based on weather conditions, time of day, and global theme.
-     *
-     * @returns {string} A string of Tailwind CSS classes.
-     */
+    
     const getTheme = () => {
         const main = (weather.main || '').toLowerCase();
 
@@ -148,11 +110,7 @@ function WeatherPopup({ position, weather, loading, markerRef, onClose }) {
         isNight ||
         (weather.main || '').toLowerCase().includes('thunder');
 
-    /**
-     * Returns the appropriate weather icon based on conditions.
-     *
-     * @returns {JSX.Element} The weather icon element.
-     */
+    
     const getIcon = () => {
         const main = (weather.main || '').toLowerCase();
         const description = (weather.description || '').toLowerCase();

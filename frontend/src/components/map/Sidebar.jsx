@@ -5,19 +5,7 @@ import { createOrUpdatePoi } from '../../services/poiService';
 import Skeleton from '../common/Skeleton';
 import HourlyForecast from '../home/HourlyForecast';
 
-/**
- * Sidebar Component.
- *
- * Displays detailed weather information and POI actions in a sliding sidebar.
- * Replaces the traditional popup for a more immersive experience similar to OpenStreetMap.
- *
- * @param {Object} props - Component props.
- * @param {boolean} props.isOpen - Whether the sidebar is open.
- * @param {Function} props.onClose - Function to close the sidebar.
- * @param {Object} props.weather - Weather data object.
- * @param {boolean} props.loading - Whether weather data is loading.
- * @param {Array<number>} props.position - The [lat, lng] coordinates.
- */
+
 const Sidebar = ({ isOpen, onClose, weather, loading, position }) => {
     const { t } = useTranslation();
     const { isDarkMode } = useTheme();
@@ -39,7 +27,7 @@ const Sidebar = ({ isOpen, onClose, weather, loading, position }) => {
         };
     }, []);
 
-    // Reset saved state when position changes
+    
     useEffect(() => {
         setSaved(false);
     }, [position]);
@@ -74,7 +62,7 @@ const Sidebar = ({ isOpen, onClose, weather, loading, position }) => {
         <div
             className={`absolute top-0 right-0 h-full w-full sm:w-[450px] bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl shadow-2xl z-2000 transform transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) ${isOpen ? 'translate-x-0' : 'translate-x-full'} overflow-y-auto border-l border-white/20 dark:border-gray-700/30`}
         >
-            {/* Header with Glassmorphism */}
+            {}
             <div className="sticky top-0 z-20 flex items-center justify-between p-5 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800/50">
                 <div>
                     <h2 className="text-xl font-bold bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
@@ -108,7 +96,7 @@ const Sidebar = ({ isOpen, onClose, weather, loading, position }) => {
                 </button>
             </div>
 
-            {/* Content */}
+            {}
             <div className="p-6 space-y-8">
                 {loading ? (
                     <div className="space-y-6 animate-pulse">
@@ -121,9 +109,9 @@ const Sidebar = ({ isOpen, onClose, weather, loading, position }) => {
                     </div>
                 ) : weather ? (
                     <>
-                        {/* Main Weather Card */}
+                        {}
                         <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-blue-500 via-blue-600 to-indigo-700 text-white shadow-xl shadow-blue-500/20 p-6 group hover:shadow-2xl hover:shadow-blue-500/30 transition-all duration-300">
-                            {/* Background Decoration */}
+                            {}
                             <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
                             <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-cyan-400/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
 
@@ -198,7 +186,7 @@ const Sidebar = ({ isOpen, onClose, weather, loading, position }) => {
                             </div>
                         </div>
 
-                        {/* Weather Details Grid */}
+                        {}
                         <div className="grid grid-cols-2 gap-4">
                             {[
                                 {
@@ -247,7 +235,7 @@ const Sidebar = ({ isOpen, onClose, weather, loading, position }) => {
                             ))}
                         </div>
 
-                        {/* Hourly Forecast Section */}
+                        {}
                         <div className="bg-white dark:bg-gray-800/30 rounded-3xl border border-gray-100 dark:border-gray-700/50 overflow-hidden">
                             <div className="p-4 border-b border-gray-100 dark:border-gray-700/50">
                                 <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
@@ -266,7 +254,7 @@ const Sidebar = ({ isOpen, onClose, weather, loading, position }) => {
                             </div>
                         </div>
 
-                        {/* Actions */}
+                        {}
                         <div className="pt-2">
                             <button
                                 onClick={handleSavePoi}

@@ -7,53 +7,28 @@ import MapLayers from './layers/MapLayers';
 import MapMarkers from './layers/MapMarkers';
 import MapEvents from './components/MapEvents';
 
-/**
- * InteractiveMap Component.
- *
- * Renders a highly interactive Leaflet map centered on the Canary Islands.
- *
- * Features:
- * - **Multi-Layer Support**: Switch between different base maps and weather overlays.
- * - **Points of Interest**: Displays markers for key locations.
- * - **Interactive Clicking**: Captures click events to fetch real-time weather data.
- * - **Search Functionality**: Allows users to search for specific locations.
- * - **Sidebar**: Displays custom weather data or POI details in a sliding sidebar.
- * - **Modern UI**: Glassmorphism controls and responsive design.
- *
- * @component
- * @returns {JSX.Element} The rendered InteractiveMap component.
- */
+
 function InteractiveMap() {
     const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
-    /**
-     * @type {[Array<number>|null, Function]} clickedPos - State for the [latitude, longitude] of the last click.
-     */
+    
     const [clickedPos, setClickedPos] = useState(null);
 
-    /**
-     * @type {[Object|null, Function]} weather - State for the fetched weather data.
-     */
+    
     const [weather, setWeather] = useState(null);
 
-    /**
-     * @type {[boolean, Function]} loading - State to indicate if weather data is being fetched.
-     */
+    
     const [loading, setLoading] = useState(false);
 
-    /**
-     * @type {[Array<Object>, Function]} pois - State for the fetched Points of Interest.
-     */
+    
     const [pois, setPois] = useState([]);
 
-    /**
-     * @type {[boolean, Function]} isSidebarOpen - State to control sidebar visibility.
-     */
+    
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const markerRef = useRef(null);
 
-    // Fetch POIs on mount
+    
     useEffect(() => {
         const loadPois = async () => {
             try {
@@ -69,7 +44,7 @@ function InteractiveMap() {
     const fetchWeather = async (lat, lng) => {
         setLoading(true);
         setWeather(null);
-        setIsSidebarOpen(true); // Open sidebar when fetching starts
+        setIsSidebarOpen(true); 
         try {
             const res = await fetch(
                 `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${OPENWEATHER_API_KEY}&units=metric`,
@@ -94,9 +69,7 @@ function InteractiveMap() {
         }
     };
 
-    /**
-     * Handles the closing of the sidebar.
-     */
+    
     const handleSidebarClose = () => {
         setIsSidebarOpen(false);
         setClickedPos(null);
@@ -129,25 +102,25 @@ function InteractiveMap() {
                 zoomControl={false}
             >
                 <ZoomControl position="bottomleft" />
-                {/* Map Layers (Base & Weather) */}
+                {}
                 <MapLayers apiKey={OPENWEATHER_API_KEY} />
 
-                {/* Points of Interest Markers */}
+                {}
                 <MapMarkers pois={pois} />
 
-                {/* Event Handlers */}
+                {}
                 <MapEvents
                     setClickedPos={setClickedPos}
                     fetchWeather={fetchWeather}
                 />
 
-                {/* Custom Controls */}
+                {}
                 <MapControls
                     setClickedPos={setClickedPos}
                     fetchWeather={fetchWeather}
                 />
 
-                {/* Marker for clicked position */}
+                {}
                 {clickedPos && <Marker position={clickedPos} ref={markerRef} />}
             </MapContainer>
         </div>

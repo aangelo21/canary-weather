@@ -4,25 +4,13 @@ import { useState, useEffect, useCallback } from 'react';
 import Skeleton from '../common/Skeleton';
 import AIAssistant from './AIAssistant';
 
-/**
- * Hero Component.
- *
- * This component renders the "Hero" section of the Home page.
- * It now includes a real-time weather card that fetches data based on the user's location.
- *
- * Features:
- * - **Real-time Weather**: Fetches weather data from OpenWeatherMap API.
- * - **Auto-Refresh**: Updates weather data every 5 minutes to keep it current.
- * - **Geolocation**: Uses the browser's Geolocation API to get the user's position.
- * - **Dynamic Icons**: Displays different animated icons based on weather conditions.
- * - **Responsive Design**: Maintains the original responsive layout.
- */
+
 export default function Hero({ coords }) {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
-    // State for weather data, location name, loading status, and errors
+    
     const [weather, setWeather] = useState(null);
     const [locationName, setLocationName] = useState({
         city: 'Locating...',
@@ -31,12 +19,7 @@ export default function Hero({ coords }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    /**
-     * Fetches weather data from OpenWeatherMap API.
-     * Switched from OpenMeteo to OpenWeatherMap to ensure data consistency with other app components.
-     * @param {number} lat - Latitude
-     * @param {number} lon - Longitude
-     */
+    
     const fetchWeatherData = useCallback(
         async (lat, lon) => {
             try {
@@ -45,11 +28,11 @@ export default function Hero({ coords }) {
                 );
                 const data = await response.json();
 
-                // Map OpenWeatherMap response to our internal structure
+                
                 setWeather({
                     temp: data.main.temp,
                     humidity: data.main.humidity,
-                    wind_speed: data.wind.speed, // Note: OWM returns m/s by default with metric units
+                    wind_speed: data.wind.speed, 
                     weather_id: data.weather[0].id,
                     is_day:
                         data.dt > data.sys.sunrise && data.dt < data.sys.sunset
@@ -67,11 +50,7 @@ export default function Hero({ coords }) {
         [OPENWEATHER_API_KEY],
     );
 
-    /**
-     * Fetches location name using a reverse geocoding API.
-     * @param {number} lat - Latitude
-     * @param {number} lon - Longitude
-     */
+    
     const fetchLocationName = useCallback(async (lat, lon) => {
         try {
             const response = await fetch(
@@ -88,10 +67,7 @@ export default function Hero({ coords }) {
         }
     }, []);
 
-    /**
-     * Effect to fetch weather when coords prop changes.
-     * Coords are now managed by the parent Home component.
-     */
+    
     useEffect(() => {
         if (coords) {
             fetchWeatherData(coords.lat, coords.lon);
@@ -99,28 +75,20 @@ export default function Hero({ coords }) {
         }
     }, [coords, fetchWeatherData, fetchLocationName]);
 
-    /**
-     * Effect to auto-refresh weather data every 5 minutes.
-     * This ensures the wind speed and other metrics stay up-to-date.
-     */
+    
     useEffect(() => {
         if (!coords) return;
 
         const intervalId = setInterval(() => {
             fetchWeatherData(coords.lat, coords.lon);
-        }, 300000); // 300,000 ms = 5 minutes
+        }, 300000); 
 
         return () => clearInterval(intervalId);
     }, [coords, fetchWeatherData]);
 
-    /**
-     * Helper function to get the weather description and icon based on OWM weather ID.
-     * @param {number} id - OpenWeatherMap weather condition ID
-     * @param {number} isDay - 1 for day, 0 for night
-     * @returns {Object} - Contains label (description) and icon (JSX)
-     */
+    
     const getWeatherDetails = (id, isDay) => {
-        // Default to Sunny/Clear
+        
         let label = 'Sunny & Clear';
         let icon = (
             <div className="relative w-32 h-32 mb-4">
@@ -141,8 +109,8 @@ export default function Hero({ coords }) {
             </div>
         );
 
-        // Map OWM IDs to descriptions and icons
-        // Group 2xx: Thunderstorm
+        
+        
         if (id >= 200 && id < 300) {
             label = 'Thunderstorm';
             icon = (
@@ -164,7 +132,7 @@ export default function Hero({ coords }) {
                 </div>
             );
         }
-        // Group 3xx: Drizzle & Group 5xx: Rain
+        
         else if ((id >= 300 && id < 400) || (id >= 500 && id < 600)) {
             label = 'Rainy';
             icon = (
@@ -195,7 +163,7 @@ export default function Hero({ coords }) {
                 </div>
             );
         }
-        // Group 6xx: Snow
+        
         else if (id >= 600 && id < 700) {
             label = 'Snowy';
             icon = (
@@ -218,7 +186,7 @@ export default function Hero({ coords }) {
                 </div>
             );
         }
-        // Group 7xx: Atmosphere (Fog, Mist, etc.)
+        
         else if (id >= 700 && id < 800) {
             label = 'Foggy';
             icon = (
@@ -240,12 +208,12 @@ export default function Hero({ coords }) {
                 </div>
             );
         }
-        // Group 800: Clear
+        
         else if (id === 800) {
             label = 'Sunny & Clear';
-            // Icon is already default
+            
         }
-        // Group 80x: Clouds
+        
         else if (id > 800) {
             label = 'Partly Cloudy';
             icon = (
@@ -287,16 +255,13 @@ export default function Hero({ coords }) {
 
     return (
         <div className="relative overflow-hidden">
-            {/*
-             * Main Container
-             * Centers content and handles padding for different screen sizes.
-             */}
+            {}
             <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-8 pb-10 lg:pt-10 xl:pt-12 lg:pb-12 relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center">
-                    {/* Left Column: Text Content and CTAs */}
+                    {}
                     <div className="flex flex-col justify-center text-center lg:text-left lg:-mt-8 xl:-mt-16">
                         <div className="space-y-6">
-                            {/* Badge: Small highlight text */}
+                            {}
                             <div className="inline-flex items-center justify-center lg:justify-start">
                                 <span className="px-4 py-1.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 text-sm font-semibold tracking-wide uppercase">
                                     {t('weatherApp') ||
@@ -304,7 +269,7 @@ export default function Hero({ coords }) {
                                 </span>
                             </div>
 
-                            {/* Main Heading: Large, bold text with gradient effect */}
+                            {}
                             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-gray-900 dark:text-white leading-tight tracking-tight">
                                 {t('welcomeTo')} <br />
                                 <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-primary to-accent-blue-300 dark:from-blue-400 dark:to-teal-300">
@@ -312,14 +277,14 @@ export default function Hero({ coords }) {
                                 </span>
                             </h1>
 
-                            {/* Description: Subtext explaining the value proposition */}
+                            {}
                             <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
                                 {t('discoverWeather')}
                             </p>
 
-                            {/* Action Buttons: Navigation links */}
+                            {}
                             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
-                                {/* Map Button: Primary action */}
+                                {}
                                 <button
                                     onClick={() => navigate('/map')}
                                     className="group relative px-8 py-4 bg-brand-primary hover:bg-blue-700 text-white rounded-full font-bold shadow-lg hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex justify-center items-center"
@@ -327,7 +292,7 @@ export default function Hero({ coords }) {
                                 >
                                     <span className="relative z-10 flex items-center gap-2">
                                         {t('maps')}
-                                        {/* Icon: Arrow/Map icon */}
+                                        {}
                                         <svg
                                             className="w-5 h-5 group-hover:translate-x-1 transition-transform"
                                             fill="none"
@@ -350,7 +315,7 @@ export default function Hero({ coords }) {
                                     </span>
                                 </button>
 
-                                {/* About Us Button: Secondary action */}
+                                {}
                                 <button
                                     onClick={() => navigate('/aboutus')}
                                     className="px-8 py-4 bg-white dark:bg-gray-800 text-gray-800 dark:text-white border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-full font-bold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
@@ -362,16 +327,12 @@ export default function Hero({ coords }) {
                         </div>
                     </div>
 
-                    {/* Right Column: Dynamic Weather Composition */}
+                    {}
                     <div className="flex justify-center lg:justify-end relative perspective-1000">
-                        {/* Decorative Background Blob */}
+                        {}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-blue-200/40 to-cyan-200/40 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
 
-                        {/*
-                         * Main Weather Card
-                         * A glassmorphism-style card representing a live weather dashboard.
-                         * Now displays real-time data.
-                         */}
+                        {}
                         <div className="relative w-full max-w-sm bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-white/50 dark:border-gray-700/50 rounded-3xl shadow-2xl p-8 transform lg:rotate-y-12 hover:rotate-0 transition-all duration-700 ease-out group">
                             {error && (
                                 <div className="absolute top-0 left-0 w-full bg-red-500/80 text-white text-xs p-2 text-center rounded-t-3xl z-10">
@@ -379,7 +340,7 @@ export default function Hero({ coords }) {
                                 </div>
                             )}
 
-                            {/* Card Header: Location & Time */}
+                            {}
                             <div className="flex justify-between items-start mb-8">
                                 <div>
                                     <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
@@ -413,9 +374,9 @@ export default function Hero({ coords }) {
                                 </span>
                             </div>
 
-                            {/* Card Body: Main Weather Icon & Temp */}
+                            {}
                             <div className="flex flex-col items-center justify-center py-4">
-                                {/* Animated Weather Icon */}
+                                {}
                                 {loading ? (
                                     <div className="w-32 h-32 flex items-center justify-center mb-4">
                                         <Skeleton
@@ -449,7 +410,7 @@ export default function Hero({ coords }) {
                                 </div>
                             </div>
 
-                            {/* Card Footer: Mini Stats */}
+                            {}
                             <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
                                 <div className="text-center flex flex-col items-center">
                                     <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">
@@ -490,7 +451,7 @@ export default function Hero({ coords }) {
                                 </div>
                             </div>
 
-                            {/* Floating Elements (Decorations) */}
+                            {}
                             <div
                                 className="absolute -right-12 top-1/4 bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-xl animate-bounce hidden lg:block"
                                 style={{ animationDuration: '3s' }}

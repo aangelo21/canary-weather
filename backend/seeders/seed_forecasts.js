@@ -22,11 +22,11 @@ const seedForecasts = async () => {
         ];
 
         for (const poi of pois) {
-            // Generate 3 forecasts per POI (current, +1h, +2h)
+            
             for (let i = 0; i < 3; i++) {
                 forecasts.push({
                     poi_id: poi.id,
-                    temperature: Math.floor(Math.random() * (30 - 15) + 15), // 15-30°C
+                    temperature: Math.floor(Math.random() * (30 - 15) + 15), 
                     condition:
                         conditions[
                             Math.floor(Math.random() * conditions.length)
@@ -34,7 +34,7 @@ const seedForecasts = async () => {
                     humidity: Math.floor(Math.random() * 100),
                     wind_speed: Math.floor(Math.random() * 40),
                     air_pressure: 1013 + Math.floor(Math.random() * 20 - 10),
-                    createdAt: new Date(Date.now() - i * 3600000), // Past timestamps
+                    createdAt: new Date(Date.now() - i * 3600000), 
                     updatedAt: new Date(),
                 });
             }

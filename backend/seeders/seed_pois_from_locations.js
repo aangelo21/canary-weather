@@ -27,7 +27,7 @@ async function seed() {
             if (created) {
                 console.log(`Created POI: ${poiName}`);
             } else {
-                // Update existing POI to ensure it matches location data and is local
+                
                 await poi.update({
                     latitude: location.latitude,
                     longitude: location.longitude,

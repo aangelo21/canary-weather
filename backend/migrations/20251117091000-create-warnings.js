@@ -1,6 +1,6 @@
 'use strict';
 
-// Migration: create the Alert (warnings) table to match the Alert model
+
 module.exports = {
     async up(queryInterface, Sequelize) {
         await queryInterface.createTable('Alert', {
