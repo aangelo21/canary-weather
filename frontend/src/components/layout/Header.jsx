@@ -228,7 +228,6 @@ function Header({ isTransparent = false }) {
                                 { to: '/', label: t('home') },
                                 { to: '/map', label: t('map') },
                                 { to: '/pois', label: t('pointsOfInterest') },
-                                { to: '/aboutus', label: t('aboutUs') },
                                 {
                                     to: '/warnings',
                                     label: t('warnings'),
@@ -238,6 +237,8 @@ function Header({ isTransparent = false }) {
                                         ></span>
                                     ),
                                 },
+                                { to: '/aboutus', label: t('aboutUs') },
+                                
                             ].map((link) => (
                                 <NavLink
                                     key={link.to}
