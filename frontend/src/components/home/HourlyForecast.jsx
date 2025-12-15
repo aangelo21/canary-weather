@@ -148,182 +148,70 @@ export default function HourlyForecast({ coords, compact = false }) {
         const type = code.slice(0, 2);
         const sizeClass = compact ? 'w-8 h-8' : 'w-12 h-12';
 
+        // Common cloud path for reuse
+        const cloudPath = "M17.5,19c0,2.17-1.79,3.94-4,4c-0.08,0-0.17,0-0.25,0H8c-2.21,0-4-1.79-4-4c0-2.05,1.54-3.74,3.53-3.96 c0.11-1.67,1.5-3.04,3.22-3.04c0.94,0,1.79,0.41,2.39,1.06c0.4-0.67,1.13-1.12,1.97-1.12c1.29,0,2.33,1.04,2.33,2.33 c0,0.17-0.02,0.34-0.06,0.5C17.41,15.46,17.5,16.22,17.5,19z";
+
         switch (type) {
-            case '01': 
+            case '01': // Clear sky
                 return isDay ? (
-                    <svg
-                        className={`${sizeClass} text-orange-400 animate-spin-slow`}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
-                        <circle
-                            cx="12"
-                            cy="12"
-                            r="5"
-                            fill="currentColor"
-                            fillOpacity="0.2"
-                        />
-                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                    <svg className={`${sizeClass} text-orange-500 animate-spin-slow`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="4" fill="currentColor" fillOpacity="0.2" />
+                        <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
                     </svg>
                 ) : (
-                    <svg
-                        className={`${sizeClass} text-blue-200`}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
-                        <path
-                            d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
-                            fill="currentColor"
-                            fillOpacity="0.2"
-                        />
+                    <svg className={`${sizeClass} text-blue-300`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" fillOpacity="0.2" />
                     </svg>
                 );
-            case '02': 
+            case '02': // Few clouds
                 return (
-                    <svg
-                        className={`${sizeClass}`}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
-                        <path
-                            d="M16.5 19a4.5 4.5 0 1 1-1.41-8.77A5.5 5.5 0 1 1 12.5 0a5.5 5.5 0 0 1 5.08 3.38"
-                            className="text-gray-400"
-                            fill="currentColor"
-                            fillOpacity="0.1"
-                        />
-                        {isDay && (
-                            <circle
-                                cx="18"
-                                cy="5"
-                                r="3"
-                                className="text-orange-400"
-                                fill="currentColor"
-                            />
+                    <svg className={`${sizeClass}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        {isDay ? (
+                            <g>
+                                <circle cx="16" cy="8" r="3" className="text-orange-400" fill="currentColor" fillOpacity="0.2" />
+                                <path d="M16 2v1m0 10v1m-4.24-7.76l.7.7m6.38 6.38l.7.7M10 8h1m10 0h1m-7.76 4.24l-.7.7m6.38-6.38l-.7.7" className="text-orange-400" />
+                            </g>
+                        ) : (
+                            <path d="M19.5 10.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5a1.5 1.5 0 0 1-1.5-1.5c0-.83.67-1.5 1.5-1.5z" className="text-blue-200" fill="currentColor" />
                         )}
+                        <path d="M17 19a3 3 0 0 1-3 3H7a4 4 0 1 1 0-8 2.5 2.5 0 0 1 2.5 2.5c0 .16-.02.32-.06.48a3 3 0 0 1 2.56-1.48 3 3 0 0 1 2.94 2.5" className="text-gray-400 dark:text-gray-300" fill="currentColor" fillOpacity="0.1" />
                     </svg>
                 );
-            case '03': 
-            case '04': 
+            case '03': // Scattered clouds
+            case '04': // Broken clouds
                 return (
-                    <svg
-                        className={`${sizeClass} text-gray-400`}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
-                        <path
-                            d="M17.5 19c0 2.5-2 4.5-4.5 4.5S8.5 21.5 8.5 19c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5z"
-                            fill="currentColor"
-                            fillOpacity="0.2"
-                        />
-                        <path d="M17.5 19a4.5 4.5 0 0 0-1.41-8.77A5.5 5.5 0 0 0 12.5 0a5.5 5.5 0 0 0-5.08 3.38A4.5 4.5 0 0 0 3.5 10a4.5 4.5 0 0 0 4.5 4.5" />
+                    <svg className={`${sizeClass} text-gray-400 dark:text-gray-300`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 19a3 3 0 0 1-3 3H7a4 4 0 1 1 0-8 2.5 2.5 0 0 1 2.5 2.5c0 .16-.02.32-.06.48a3 3 0 0 1 2.56-1.48 3 3 0 0 1 2.94 2.5" fill="currentColor" fillOpacity="0.1" />
+                        <path d="M19 12a3 3 0 0 1-3 3h-1" strokeDasharray="2 2" className="opacity-50" />
                     </svg>
                 );
-            case '09': 
-            case '10': 
+            case '09': // Shower rain
+            case '10': // Rain
                 return (
-                    <svg
-                        className={`${sizeClass} text-blue-500`}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
-                        <path
-                            d="M17.5 15a4.5 4.5 0 1 0-1.41-8.77A5.5 5.5 0 0 0 12.5 0a5.5 5.5 0 0 0-5.08 3.38A4.5 4.5 0 0 0 3.5 10a4.5 4.5 0 0 0 4.5 4.5"
-                            className="text-gray-400"
-                            fill="currentColor"
-                            fillOpacity="0.1"
-                        />
-                        <path
-                            d="M8 17v2M12 17v2M16 17v2"
-                            className="animate-bounce"
-                            style={{ animationDuration: '1.5s' }}
-                        />
+                    <svg className={`${sizeClass} text-blue-500`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 16a3 3 0 0 1-3 3H7a4 4 0 1 1 0-8 2.5 2.5 0 0 1 2.5 2.5c0 .16-.02.32-.06.48a3 3 0 0 1 2.56-1.48 3 3 0 0 1 2.94 2.5" className="text-gray-400 dark:text-gray-300" fill="currentColor" fillOpacity="0.1" />
+                        <path d="M8 20v2M12 20v2M16 20v2" className="animate-bounce" style={{ animationDuration: '1s' }} />
                     </svg>
                 );
-            case '11': 
+            case '11': // Thunderstorm
                 return (
-                    <svg
-                        className={`${sizeClass} text-purple-500`}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
-                        <path
-                            d="M17.5 15a4.5 4.5 0 1 0-1.41-8.77A5.5 5.5 0 0 0 12.5 0a5.5 5.5 0 0 0-5.08 3.38A4.5 4.5 0 0 0 3.5 10a4.5 4.5 0 0 0 4.5 4.5"
-                            className="text-gray-500"
-                            fill="currentColor"
-                            fillOpacity="0.1"
-                        />
-                        <path
-                            d="M13 15l-2 4h3l-2 4"
-                            className="text-yellow-400 animate-pulse"
-                            fill="currentColor"
-                        />
+                    <svg className={`${sizeClass} text-purple-500`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 16a3 3 0 0 1-3 3H7a4 4 0 1 1 0-8 2.5 2.5 0 0 1 2.5 2.5c0 .16-.02.32-.06.48a3 3 0 0 1 2.56-1.48 3 3 0 0 1 2.94 2.5" className="text-gray-500" fill="currentColor" fillOpacity="0.1" />
+                        <path d="M13 16l-2 3h3l-2 3" className="text-yellow-400 animate-pulse" fill="currentColor" />
                     </svg>
                 );
-            case '13': 
+            case '13': // Snow
                 return (
-                    <svg
-                        className={`${sizeClass} text-cyan-300`}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
-                        <path d="M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01M16 19h.01" />
-                        <path
-                            d="M17.5 13a4.5 4.5 0 1 0-1.41-8.77A5.5 5.5 0 0 0 12.5 0a5.5 5.5 0 0 0-5.08 3.38A4.5 4.5 0 0 0 3.5 8a4.5 4.5 0 0 0 4.5 4.5"
-                            className="text-gray-300"
-                            fill="currentColor"
-                            fillOpacity="0.1"
-                        />
+                    <svg className={`${sizeClass} text-cyan-300`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 16a3 3 0 0 1-3 3H7a4 4 0 1 1 0-8 2.5 2.5 0 0 1 2.5 2.5c0 .16-.02.32-.06.48a3 3 0 0 1 2.56-1.48 3 3 0 0 1 2.94 2.5" className="text-gray-300" fill="currentColor" fillOpacity="0.1" />
+                        <path d="M8 20h.01M12 20h.01M16 20h.01M10 22h.01M14 22h.01" strokeWidth="3" />
                     </svg>
                 );
-            default: 
+            default: // Mist/Fog/Other
                 return (
-                    <svg
-                        className={`${sizeClass} text-gray-400`}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
+                    <svg className={`${sizeClass} text-gray-400`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M5 12h14M5 16h14M5 20h14" />
-                        {isDay && (
-                            <circle
-                                cx="12"
-                                cy="6"
-                                r="2"
-                                className="text-orange-300"
-                                fill="currentColor"
-                            />
-                        )}
+                        {isDay && <circle cx="12" cy="6" r="2" className="text-orange-300" fill="currentColor" />}
                     </svg>
                 );
         }
@@ -603,7 +491,7 @@ export default function HourlyForecast({ coords, compact = false }) {
                                         >
                                             {item.temp}°
                                         </span>
-                                        <div className="flex items-center gap-1 mt-1 text-[10px] text-gray-400 dark:text-gray-500">
+                                        <div className="flex items-center gap-1 mt-1 text-xs text-gray-600 dark:text-gray-400 font-medium">
                                             <svg
                                                 className="w-3 h-3"
                                                 fill="none"
