@@ -47,7 +47,7 @@ export const en = {
     upcoming: "Upcoming",
     errorFetchingExternal: "Could not update warnings from external source. Showing cached data.",
     
-    // Map & Sidebar
+    
     locationDetailsTitle: "Location Details",
     savePointOfInterest: "Save Point of Interest",
     locationSaved: "Location Saved",
@@ -74,7 +74,7 @@ export const en = {
     howToUseMap: "Map Guide",
     mapTip: "Tip: You can save your favorite locations by logging in.",
 
-    // Alert severity levels
+    
     severityModerate: "Yellow",
     severitySevere: "Orange",
     severityExtreme: "Red",
@@ -85,7 +85,7 @@ export const en = {
     resetFilters: "Reset Filters",
     noMatchingWarnings: "No warnings match the current filters.",
     
-    // Weather phenomena (keeping English as default)
+    
     "Severe wind warning": "Severe wind warning",
     "Severe rain warning": "Severe rain warning",
     "Severe thunderstorm warning": "Severe thunderstorm warning",
@@ -103,11 +103,11 @@ export const en = {
     "Extreme low-temperature warning": "Extreme low-temperature warning",
     "Extreme fog warning": "Extreme fog warning",
     
-    // Footer
+    
     copyright: "©CanaryWeather |",
     website: "canaryweather.xyz",
 
-    // About Us
+    
     est: "EST. 2025 • CANARY ISLANDS",
     aboutTitlePrefix: "Forecasting",
     theUnpredictable: "The Unpredictable.",
@@ -148,7 +148,7 @@ export const en = {
     },
     contactPrompt: "Have feedback or feature requests?",
     
-    // Notifications
+    
     enableNotifications: "Enable Notifications",
     disableNotifications: "Disable Notifications",
     enabling: "Enabling...",
@@ -167,7 +167,7 @@ export const en = {
     loginDesc: "Enter your email below to login to your account",
     createAccountTitle: "Create an account",
     createAccountDesc: "Enter your details below to create your account",
-    // LoginModal
+    
     deleteAccount: "Delete Account",
     confirmDeleteAccount:
       "Are you sure you want to delete your account? This action cannot be undone.",
@@ -194,7 +194,7 @@ export const en = {
     noTokenReceived: "No token received",
     selectMunicipality: "Select Municipality",
     add: "Add",
-    // WeatherPopup
+    
     condition: "Condition:",
     temperature: "Temperature:",
     humidity: "Humidity:",
@@ -208,7 +208,7 @@ export const en = {
     loginRequired: "Please log in to save POIs",
     errorSavingPoi: "Error saving POI",
     loginToSave: "Login to Save",
-    // Home
+    
     welcomeTo: "Welcome to",
     canaryWeather: "Canary Weather",
     weatherApp: "Weather App",
@@ -271,7 +271,7 @@ export const en = {
     sunHours: "Sunshine Hours",
     islands: "Islands",
     reliable: "Reliable",
-    // User Profile
+    
     userProfile: "User Profile",
     clickToChangePhoto: "Click on the photo to change it",
     uploadingPhoto: "Uploading photo...",
@@ -286,12 +286,12 @@ export const en = {
     contact: "Contact",
     profile: "Profile",
     errorDeleteUser: "Error deleting user",
-    // Map
+    
     exploreMap: "Explore the Map",
     clickLocation: "Click on a Location to see its forecast",
     mapDescription: "Navigate through the islands and discover real-time weather conditions.",
     ourHQ: "Our Basement",
-    // Testimonials
+    
     testimonialsTitle: "Loved by Locals & Travelers",
     testimonialsSubtitle: "See how Canary Weather helps thousands of people plan their perfect days in the archipelago.",
     testimonial1: "I used to check three different apps before heading out to surf. Now, Canary Weather is the only one I need. The wind and tide accuracy is unmatched, and the real-time alerts have saved me from wasted trips more than once.",
@@ -300,7 +300,7 @@ export const en = {
     testimonial2Highlight: "The microclimate warnings are a game-changer",
     testimonial3: "Planning a family trip to Tenerife was stressful until I found this. We could find the sunny spots easily even when the north was cloudy. The interface is beautiful and so easy to use, even my kids love checking the map.",
     testimonial3Highlight: "We could find the sunny spots easily",
-    // Forgot Password & Reset
+    
     forgotPassword: "Forgot Password?",
     resetPasswordTitle: "Reset your password",
     resetPasswordDesc: "Enter your email address and we'll send you a link to reset your password.",
@@ -326,11 +326,11 @@ export const en = {
     usernamePlaceholder: "Username",
     emailOrUsernamePlaceholder: "m@example.com or username",
     
-    // Admin Dashboard
+    
     adminDashboard: "Admin Dashboard",
     redirectingToServer: "Redirecting to server-side dashboard...",
 
-    // Map Legend
+    
     mapLegend: {
       title: "Interactive Map Guide",
       description: "Master the map features to get the most precise weather insights for the Canary Islands. Switch tabs below to explore different functionalities.",
@@ -397,7 +397,7 @@ export const en = {
       }
     },
 
-    // Privacy Policy
+    
     privacyPolicyPage: {
       title: "Privacy Policy",
       lastUpdated: "Last updated: December 1, 2025",
@@ -438,8 +438,8 @@ export const en = {
       }
     },
 
-    // Terms and Conditions
-    // AI Assistant
+    
+    
     aiGreeting: "Hello! I am your AI Weather Assistant.",
     aiSubtitle: "Ask me about the weather!",
     aiPlaceholder: "Ask something...",
@@ -482,7 +482,7 @@ export const en = {
         content: "In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at:"
       }
     },
-    // Hourly Forecast
+    
     hourlyForecastTitle: "24h Forecast",
     liveUpdates: "Updated just now",
     wind: "Wind",

@@ -47,7 +47,7 @@ export const es = {
     upcoming: "Próximo",
     errorFetchingExternal: "No se pudieron actualizar los avisos de la fuente externa. Mostrando datos en caché.",
     
-    // Map & Sidebar
+    
     locationDetailsTitle: "Detalles de Ubicación",
     savePointOfInterest: "Guardar Punto de Interés",
     locationSaved: "Ubicación Guardada",
@@ -74,7 +74,7 @@ export const es = {
     howToUseMap: "Guía del Mapa",
     mapTip: "Consejo: Puedes guardar tus ubicaciones favoritas iniciando sesión.",
 
-    // Alert severity levels
+    
     severityModerate: "Amarillo",
     severitySevere: "Naranja",
     severityExtreme: "Rojo",
@@ -85,7 +85,7 @@ export const es = {
     resetFilters: "Resetear Filtros",
     noMatchingWarnings: "No hay alertas que coincidan con los filtros.",
     
-    // Weather phenomena
+    
     "Severe wind warning": "Aviso de viento severo",
     "Severe rain warning": "Aviso de lluvia severa",
     "Severe thunderstorm warning": "Aviso de tormenta severa",
@@ -103,11 +103,11 @@ export const es = {
     "Extreme low-temperature warning": "Aviso extremo de temperatura baja",
     "Extreme fog warning": "Aviso extremo de niebla",
     
-    // Footer
+    
     copyright: "©CanaryWeather |",
     website: "canaryweather.xyz",
 
-    // About Us
+    
     est: "EST. 2025 • ISLAS CANARIAS",
     aboutTitlePrefix: "Pronosticando",
     theUnpredictable: "Lo Impredecible.",
@@ -120,7 +120,7 @@ export const es = {
     underTheHood: "Bajo el Capó",
     techDesc: "Construido con tecnologías de vanguardia para garantizar velocidad, fiabilidad y escalabilidad. Aprovechamos el poder de la web moderna.",
     
-    // Roadmap
+    
     roadmapTitle: "Horizontes Futuros",
     roadmap: {
       q4_2025: {
@@ -137,7 +137,7 @@ export const es = {
       }
     },
 
-    // Contact
+    
     getInTouch: "Contáctanos",
     contactDesc: "Construir el futuro del pronóstico del tiempo requiere comunidad. Ya sea que tengas una solicitud de función, un informe de error o simplemente quieras hablar de meteorología, somos todo oídos.",
     ourHQ: "Nuestra Sede",
@@ -166,7 +166,7 @@ export const es = {
     loginDesc: "Introduce tu correo electrónico para iniciar sesión",
     createAccountTitle: "Crea una cuenta",
     createAccountDesc: "Introduce tus datos para crear tu cuenta",
-    // LoginModal
+    
     deleteAccount: "Eliminar Cuenta",
     confirmDeleteAccount:
       "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.",
@@ -186,13 +186,13 @@ export const es = {
     processing: "Procesando...",
     allFieldsRequired: "Todos los campos son obligatorios",
     
-    // Notifications
+    
     enableNotifications: "Activar Notificaciones",
     disableNotifications: "Desactivar Notificaciones",
     enabling: "Activando...",
     disabling: "Desactivando...",
 
-    // Map Legend (Removed duplicate)
+    
     errorCreateUser: "Error al crear usuario",
     password: "Contraseña",
     confirmPassword: "Confirmar Contraseña",
@@ -201,7 +201,7 @@ export const es = {
     noTokenReceived: "No se recibió token",
     selectMunicipality: "Seleccionar Municipio",
     add: "Añadir",
-    // WeatherPopup
+    
     condition: "Condición:",
     temperature: "Temperatura:",
     humidity: "Humedad:",
@@ -215,7 +215,7 @@ export const es = {
     loginRequired: "Por favor inicia sesión para guardar POIs",
     errorSavingPoi: "Error al guardar POI",
     loginToSave: "Inicia Sesión para Guardar",
-    // Home
+    
     welcomeTo: "Bienvenido a",
     canaryWeather: "Canary Weather",
     weatherApp: "Aplicación del Tiempo",
@@ -278,7 +278,7 @@ export const es = {
     sunHours: "Horas de Sol",
     islands: "Islas",
     reliable: "Fiable",
-    // User Profile
+    
     userProfile: "Perfil de Usuario",
     clickToChangePhoto: "Haz clic en la foto para cambiarla",
     uploadingPhoto: "Subiendo foto...",
@@ -293,11 +293,11 @@ export const es = {
     contact: "Contacto",
     profile: "Perfil",
     errorDeleteUser: "Error al eliminar usuario",
-    // Map
+    
     exploreMap: "Explora el Mapa",
     clickLocation: "Haz clic en una Ubicación para ver su pronóstico",
     mapDescription: "Navega por las islas y descubre las condiciones meteorológicas en tiempo real.",
-    // Testimonials
+    
     testimonialsTitle: "Amado por Locales y Viajeros",
     testimonialsSubtitle: "Descubre cómo Canary Weather ayuda a miles de personas a planificar sus días perfectos en el archipiélago.",
     testimonial1: "Solía consultar tres aplicaciones diferentes antes de salir a surfear. Ahora, Canary Weather es la única que necesito. La precisión del viento y las mareas es inigualable, y las alertas en tiempo real me han ahorrado viajes en balde más de una vez.",
@@ -306,7 +306,7 @@ export const es = {
     testimonial2Highlight: "Las advertencias de microclimas cambian las reglas del juego",
     testimonial3: "Planificar un viaje familiar a Tenerife era estresante hasta que encontré esto. Podíamos encontrar los lugares soleados fácilmente incluso cuando el norte estaba nublado. La interfaz es hermosa y tan fácil de usar que incluso a mis hijos les encanta consultar el mapa.",
     testimonial3Highlight: "Podíamos encontrar los lugares soleados fácilmente",
-    // Forgot Password & Reset
+    
     forgotPassword: "¿Olvidaste tu contraseña?",
     resetPasswordTitle: "Restablecer tu contraseña",
     resetPasswordDesc: "Introduce tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
@@ -332,11 +332,11 @@ export const es = {
     usernamePlaceholder: "Nombre de usuario",
     emailOrUsernamePlaceholder: "ejemplo@correo.com o usuario",
 
-    // Admin Dashboard
+    
     adminDashboard: "Panel de Administración",
     redirectingToServer: "Redirigiendo al panel del servidor...",
 
-    // Leyenda del Mapa
+    
     mapLegend: {
       title: "Guía del Mapa Interactivo",
       description: "Domina las funciones del mapa para obtener la información meteorológica más precisa de las Islas Canarias. Cambia de pestaña a continuación para explorar diferentes funcionalidades.",
@@ -403,7 +403,7 @@ export const es = {
       }
     },
 
-    // Política de Privacidad
+    
     privacyPolicyPage: {
       title: "Política de Privacidad",
       lastUpdated: "Última actualización: 1 de diciembre de 2025",
@@ -444,8 +444,8 @@ export const es = {
       }
     },
 
-    // Términos y Condiciones
-    // Asistente IA
+    
+    
     aiGreeting: "¡Hola! Soy tu Asistente Meteorológico IA.",
     aiSubtitle: "¡Pregúntame sobre el tiempo!",
     aiPlaceholder: "Pregunta algo...",
@@ -488,7 +488,7 @@ export const es = {
         content: "Para resolver una queja relacionada con el Sitio o para recibir más información sobre el uso del Sitio, contáctenos en:"
       }
     },
-    // Hourly Forecast
+    
     hourlyForecastTitle: "Predicción 24h",
     liveUpdates: "Actualizado ahora mismo",
     wind: "Viento",

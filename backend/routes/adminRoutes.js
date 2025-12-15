@@ -1,27 +1,20 @@
-import express from "express";
-import { authenticateSession } from "../middleware/authMiddleware.js";
-import { checkAdmin } from "../middleware/checkAdmin.js";
-import { ensureAdminAuthenticated } from "../middleware/adminAuthMiddleware.js";
+import express from 'express';
+import { authenticateSession } from '../middleware/authMiddleware.js';
+import { checkAdmin } from '../middleware/checkAdmin.js';
+import { ensureAdminAuthenticated } from '../middleware/adminAuthMiddleware.js';
 import {
-  getDashboard,
-  createGlobalPOI,
-  updatePOI,
-  deletePOI,
-  createUser,
-  updateUser,
-  deleteUser,
-} from "../controllers/adminController.js";
+    getDashboard,
+    createGlobalPOI,
+    updatePOI,
+    deletePOI,
+    createUser,
+    updateUser,
+    deleteUser,
+} from '../controllers/adminController.js';
 
 const router = express.Router();
 
-/**
- * Admin Routes
- * 
- * Defines routes for administrative tasks.
- * All routes in this file require authentication and admin privileges.
- * 
- * Base Path: /admin
- */
+
 
 /**
  * @swagger
@@ -42,7 +35,7 @@ const router = express.Router();
  *       403:
  *         description: Admin privileges required
  */
-router.get("/", ensureAdminAuthenticated, getDashboard);
+router.get('/', ensureAdminAuthenticated, getDashboard);
 
 /**
  * @swagger
@@ -82,7 +75,7 @@ router.get("/", ensureAdminAuthenticated, getDashboard);
  *       403:
  *         description: Admin privileges required
  */
-router.post("/poi", authenticateSession, checkAdmin, createGlobalPOI);
+router.post('/poi', authenticateSession, checkAdmin, createGlobalPOI);
 
 /**
  * @swagger
@@ -128,7 +121,7 @@ router.post("/poi", authenticateSession, checkAdmin, createGlobalPOI);
  *       404:
  *         description: POI not found
  */
-router.post("/poi/:id/update", authenticateSession, checkAdmin, updatePOI);
+router.post('/poi/:id/update', authenticateSession, checkAdmin, updatePOI);
 
 /**
  * @swagger
@@ -155,7 +148,7 @@ router.post("/poi/:id/update", authenticateSession, checkAdmin, updatePOI);
  *       404:
  *         description: POI not found
  */
-router.post("/poi/:id/delete", authenticateSession, checkAdmin, deletePOI);
+router.post('/poi/:id/delete', authenticateSession, checkAdmin, deletePOI);
 
 /**
  * @swagger
@@ -193,7 +186,7 @@ router.post("/poi/:id/delete", authenticateSession, checkAdmin, deletePOI);
  *       403:
  *         description: Admin privileges required
  */
-router.post("/users", authenticateSession, checkAdmin, createUser);
+router.post('/users', authenticateSession, checkAdmin, createUser);
 
 /**
  * @swagger
@@ -237,7 +230,7 @@ router.post("/users", authenticateSession, checkAdmin, createUser);
  *       404:
  *         description: User not found
  */
-router.post("/users/:id/update", authenticateSession, checkAdmin, updateUser);
+router.post('/users/:id/update', authenticateSession, checkAdmin, updateUser);
 
 /**
  * @swagger
@@ -264,6 +257,6 @@ router.post("/users/:id/update", authenticateSession, checkAdmin, updateUser);
  *       404:
  *         description: User not found
  */
-router.post("/users/:id/delete", authenticateSession, checkAdmin, deleteUser);
+router.post('/users/:id/delete', authenticateSession, checkAdmin, deleteUser);
 
 export default router;

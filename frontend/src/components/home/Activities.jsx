@@ -1,16 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-/**
- * Activities Component.
- *
- * This component displays a grid of activity cards on the Home page.
- * Each card represents a specific activity (Surfing, Hiking, Stargazing) relevant to the Canary Islands.
- * It uses images and icons to visually represent each activity and provides a brief description.
- * The content is internationalized using `react-i18next`.
- *
- * @component
- * @returns {JSX.Element} The rendered Activities component containing a grid of activity cards.
- */
+
 export default function Activities() {
     const { t } = useTranslation();
 
@@ -28,23 +18,20 @@ export default function Activities() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {/* 
-                     * Surfing Card 
-                     * Displays surfing activity with an image background, gradient overlay, and bottom-aligned text.
-                     */}
+                    {}
                     <div className="group relative overflow-hidden rounded-3xl h-80 cursor-pointer shadow-xl">
-                        {/* Background Image with Zoom Effect on Hover */}
+                        {}
                         <img
                             src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=800&q=80"
                             alt={t('surfing') || 'Surfing & Water Sports'}
                             loading="lazy"
                             className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                         />
-                        
-                        {/* Gradient Overlay for Text Readability */}
+
+                        {}
                         <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent"></div>
-                        
-                        {/* Content Container - Positioned at bottom left with z-index to sit above image/linear */}
+
+                        {}
                         <div className="absolute bottom-0 left-0 p-8 z-10">
                             <div className="text-white mb-2">
                                 <svg
@@ -71,10 +58,7 @@ export default function Activities() {
                         </div>
                     </div>
 
-                    {/* 
-                     * Hiking Card 
-                     * Displays hiking activity with similar styling.
-                     */}
+                    {}
                     <div className="group relative overflow-hidden rounded-3xl h-80 cursor-pointer shadow-xl">
                         <img
                             src="https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80"
@@ -109,10 +93,7 @@ export default function Activities() {
                         </div>
                     </div>
 
-                    {/* 
-                     * Stargazing Card 
-                     * Displays stargazing activity with similar styling.
-                     */}
+                    {}
                     <div className="group relative overflow-hidden rounded-3xl h-80 cursor-pointer shadow-xl">
                         <img
                             src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80"

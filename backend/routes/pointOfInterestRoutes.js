@@ -1,30 +1,22 @@
-import express from "express";
+import express from 'express';
 import {
-  getAllPointsOfInterest,
-  getPersonalPointsOfInterest,
-  getPointOfInterestById,
-  createPointOfInterest,
-  updatePointOfInterest,
-  deletePointOfInterest,
-} from "../controllers/pointOfInterestController.js";
-import { uploadPOI } from "../middleware/uploadMiddleware.js";
-import { optimizeImage } from "../middleware/imageOptimizationMiddleware.js";
+    getAllPointsOfInterest,
+    getPersonalPointsOfInterest,
+    getPointOfInterestById,
+    createPointOfInterest,
+    updatePointOfInterest,
+    deletePointOfInterest,
+} from '../controllers/pointOfInterestController.js';
+import { uploadPOI } from '../middleware/uploadMiddleware.js';
+import { optimizeImage } from '../middleware/imageOptimizationMiddleware.js';
 import {
-  authenticateToken,
-  optionalAuthenticateToken,
-} from "../middleware/authMiddleware.js";
+    authenticateToken,
+    optionalAuthenticateToken,
+} from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-/**
- * Point of Interest Routes
- * 
- * Defines routes for managing Points of Interest (POIs).
- * Supports retrieving global, local, and personal POIs.
- * Includes routes for creating, updating, and deleting POIs, with image upload support.
- * 
- * Base Path: /api/pois
- */
+
 
 /**
  * @swagger
@@ -51,7 +43,7 @@ const router = express.Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/", optionalAuthenticateToken, getAllPointsOfInterest);
+router.get('/', optionalAuthenticateToken, getAllPointsOfInterest);
 
 /**
  * @swagger
@@ -78,7 +70,7 @@ router.get("/", optionalAuthenticateToken, getAllPointsOfInterest);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/personal", authenticateToken, getPersonalPointsOfInterest);
+router.get('/personal', authenticateToken, getPersonalPointsOfInterest);
 
 /**
  * @swagger
@@ -109,7 +101,7 @@ router.get("/personal", authenticateToken, getPersonalPointsOfInterest);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/:id", getPointOfInterestById);
+router.get('/:id', getPointOfInterestById);
 
 /**
  * @swagger
@@ -173,7 +165,7 @@ router.get("/:id", getPointOfInterestById);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/", authenticateToken, createPointOfInterest);
+router.post('/', authenticateToken, createPointOfInterest);
 
 /**
  * @swagger
@@ -272,12 +264,12 @@ router.post("/", authenticateToken, createPointOfInterest);
  *               $ref: '#/components/schemas/Error'
  */
 router.put(
-  "/:id",
-  authenticateToken,
-  uploadPOI.single("poi_image"),
-  optimizeImage,
-  updatePointOfInterest
+    '/:id',
+    authenticateToken,
+    uploadPOI.single('poi_image'),
+    optimizeImage,
+    updatePointOfInterest,
 );
-router.delete("/:id", authenticateToken, deletePointOfInterest);
+router.delete('/:id', authenticateToken, deletePointOfInterest);
 
 export default router;

@@ -10,53 +10,26 @@ import POICard from './POICard';
 import POICardSkeleton from './POICardSkeleton';
 import { useTranslation } from 'react-i18next';
 
-/**
- * PointsOfInterestList Component.
- *
- * The main container for managing and displaying Points of Interest (POIs).
- *
- * Features:
- * - **Listing**: Fetches and displays a list of POIs (Global, Local, and Personal).
- * - **Filtering**: Allows users to filter POIs by type (All, Global, Local, Personal).
- * - **CRUD Operations**: Provides functionality to Create, Read, Update, and Delete POIs.
- * - **Authentication Integration**: Checks user roles (Admin/User) to determine permissions for editing/deleting global vs. personal POIs.
- * - **Modal Management**: Handles UI state for Edit and Delete confirmation modals.
- * - **Image Handling**: Manages image selection and preview during POI creation/editing.
- *
- * @component
- * @returns {JSX.Element} The rendered PointsOfInterestList component.
- */
+
 export default function PointsOfInterestList() {
     const { t } = useTranslation();
+
     
-    /**
-     * @type {[boolean, Function]} isAuthenticated - State to check if the user is logged in.
-     */
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    /**
-     * @type {[boolean, Function]} isAdmin - State to check if the logged-in user is an admin.
-     */
+    
     const [isAdmin, setIsAdmin] = useState(false);
 
-    /**
-     * @type {[Array<Object>, Function]} pois - State to store the full list of fetched POIs.
-     */
+    
     const [pois, setPois] = useState([]);
 
-    /**
-     * @type {[Array<Object>, Function]} filteredPois - State to store the list of POIs currently displayed based on the filter.
-     */
+    
     const [filteredPois, setFilteredPois] = useState([]);
 
-    /**
-     * @type {[string, Function]} filter - State for the current filter criteria ('all', 'global', 'local', 'personal').
-     */
+    
     const [filter, setFilter] = useState('all');
 
-    /**
-     * @type {[Object, Function]} formData - State for the POI form data.
-     */
+    
     const [formData, setFormData] = useState({
         name: '',
         latitude: '',
@@ -65,60 +38,37 @@ export default function PointsOfInterestList() {
         is_global: false,
     });
 
-    /**
-     * @type {[boolean, Function]} showEditForm - State to toggle the visibility of the inline edit form (legacy/unused?).
-     */
+    
     const [showEditForm, setShowEditForm] = useState(false);
 
-    /**
-     * @type {[boolean, Function]} showEditModal - State to toggle the visibility of the Edit Modal.
-     */
+    
     const [showEditModal, setShowEditModal] = useState(false);
 
-    /**
-     * @type {[boolean, Function]} showDeleteModal - State to toggle the visibility of the Delete Confirmation Modal.
-     */
+    
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    /**
-     * @type {[number|null, Function]} editingId - State to store the ID of the POI currently being edited.
-     */
+    
     const [editingId, setEditingId] = useState(null);
 
-    /**
-     * @type {[number|null, Function]} deletingId - State to store the ID of the POI currently being deleted.
-     */
+    
     const [deletingId, setDeletingId] = useState(null);
 
-    /**
-     * @type {[boolean, Function]} loading - State to indicate if an API operation is in progress.
-     */
+    
     const [loading, setLoading] = useState(false);
 
-    /**
-     * @type {[boolean, Function]} isFiltering - State to indicate if the list is being filtered/loaded.
-     */
+    
     const [isFiltering, setIsFiltering] = useState(true);
 
-    /**
-     * @type {[string, Function]} error - State to store error messages.
-     */
+    
     const [error, setError] = useState('');
 
-    /**
-     * @type {[File|null, Function]} selectedImage - State to store the selected image file for upload.
-     */
+    
     const [selectedImage, setSelectedImage] = useState(null);
 
-    /**
-     * @type {[string|null, Function]} imagePreview - State to store the preview URL of the selected image.
-     */
+    
     const [imagePreview, setImagePreview] = useState(null);
 
-    /**
-     * Fetches all available POIs from the backend service.
-     * Updates the `pois` state and handles loading/error states.
-     */
+    
     const fetchPois = async () => {
         try {
             setLoading(true);
@@ -131,11 +81,7 @@ export default function PointsOfInterestList() {
         }
     };
 
-    /**
-     * Fetches personal POIs for the currently logged-in user.
-     *
-     * @returns {Promise<Array<Object>>} An array of personal POI objects, or an empty array if not logged in or on error.
-     */
+    
     const fetchPersonalPoisData = async () => {
         try {
             const user = localStorage.getItem('cw_user');
@@ -147,12 +93,7 @@ export default function PointsOfInterestList() {
         }
     };
 
-    /**
-     * Handles the form submission for creating or updating a POI.
-     * Calls the `createOrUpdatePoi` service and refreshes the list upon success.
-     *
-     * @param {Event} e - The form submission event.
-     */
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -171,19 +112,13 @@ export default function PointsOfInterestList() {
         }
     };
 
-    /**
-     * Opens the delete confirmation modal for a specific POI.
-     *
-     * @param {number} id - The ID of the POI to delete.
-     */
+    
     const handleDeleteClick = (id) => {
         setDeletingId(id);
         setShowDeleteModal(true);
     };
 
-    /**
-     * Confirms and executes the deletion of the selected POI.
-     */
+    
     const confirmDelete = async () => {
         if (!deletingId) return;
         try {
@@ -199,10 +134,7 @@ export default function PointsOfInterestList() {
         }
     };
 
-    /**
-     * Prepares the form for editing a specific POI.
-     * @param {Object} poi - The POI object to edit.
-     */
+    
     const handleEdit = (poi) => {
         setFormData({
             name: poi.name,
@@ -223,9 +155,7 @@ export default function PointsOfInterestList() {
         setSelectedImage(null);
     };
 
-    /**
-     * Resets the form data and state.
-     */
+    
     const resetForm = () => {
         setFormData({
             name: '',
@@ -239,10 +169,7 @@ export default function PointsOfInterestList() {
         setImagePreview(null);
     };
 
-    /**
-     * Handles changes in form input fields.
-     * @param {Event} e - The input change event.
-     */
+    
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData((prev) => ({
@@ -251,10 +178,7 @@ export default function PointsOfInterestList() {
         }));
     };
 
-    /**
-     * Handles the selection of an image file.
-     * @param {Event} e - The file input change event.
-     */
+    
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -310,9 +234,7 @@ export default function PointsOfInterestList() {
         applyFilter();
     }, [pois, filter]);
 
-    /**
-     * Applies the selected filter to the list of POIs.
-     */
+    
     const applyFilter = async () => {
         setIsFiltering(true);
         try {
@@ -320,7 +242,7 @@ export default function PointsOfInterestList() {
                 const userPois = await fetchPersonalPoisData();
                 const allPois = [...pois, ...userPois];
                 const uniquePois = Array.from(
-                    new Map(allPois.map((item) => [item.id, item])).values()
+                    new Map(allPois.map((item) => [item.id, item])).values(),
                 );
                 setFilteredPois(uniquePois);
             } else if (filter === 'global') {
@@ -328,18 +250,18 @@ export default function PointsOfInterestList() {
             } else if (filter === 'local') {
                 const userPois = await fetchPersonalPoisData();
                 const uniqueUserPois = Array.from(
-                    new Map(userPois.map((item) => [item.id, item])).values()
+                    new Map(userPois.map((item) => [item.id, item])).values(),
                 );
                 setFilteredPois(
-                    uniqueUserPois.filter((poi) => poi.type === 'local')
+                    uniqueUserPois.filter((poi) => poi.type === 'local'),
                 );
             } else if (filter === 'personal') {
                 const userPois = await fetchPersonalPoisData();
                 const uniqueUserPois = Array.from(
-                    new Map(userPois.map((item) => [item.id, item])).values()
+                    new Map(userPois.map((item) => [item.id, item])).values(),
                 );
                 setFilteredPois(
-                    uniqueUserPois.filter((poi) => poi.type === 'personal')
+                    uniqueUserPois.filter((poi) => poi.type === 'personal'),
                 );
             }
         } finally {
@@ -454,7 +376,8 @@ export default function PointsOfInterestList() {
                                         }
                                         onDelete={
                                             canEdit
-                                                ? () => handleDeleteClick(poi.id)
+                                                ? () =>
+                                                      handleDeleteClick(poi.id)
                                                 : undefined
                                         }
                                     />

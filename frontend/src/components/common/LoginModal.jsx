@@ -9,28 +9,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
-/**
- * LoginModal Component.
- *
- * This component provides a modal interface for user authentication and profile management.
- * It handles:
- * - User Login: Allows users to sign in with email/username and password.
- * - User Registration: Allows new users to create an account with email, username, password, and preferred locations.
- * - Profile Editing: Allows logged-in users to update their username, email, password, and profile picture.
- * - Account Deletion: Provides a confirmation flow for users to permanently delete their account.
- *
- * The component manages its own state for form inputs, loading status, errors, and visibility of sub-modals (like delete confirmation).
- * It interacts with the `userService` to perform API operations.
- *
- * @component
- * @param {Object} props - The component props.
- * @param {boolean} props.isOpen - Controls the visibility of the modal. If false, the component returns null.
- * @param {Function} props.onClose - Callback function to close the modal.
- * @param {Function} props.onLogin - Callback function executed upon successful login or profile update. Receives the user object.
- * @param {Object} [props.user] - The currently logged-in user object. If present, the modal shows the "Edit Profile" view.
- * @param {Function} props.onLogout - Callback function executed when the user logs out or deletes their account.
- * @returns {JSX.Element|null} The rendered LoginModal component or null if `isOpen` is false.
- */
+
 export default function LoginModal({
     isOpen,
     onClose,
@@ -39,26 +18,14 @@ export default function LoginModal({
     onLogout,
 }) {
     const { t } = useTranslation();
+
     
-    /**
-     * @type {[boolean, Function]} isSignUp - State to toggle between Login and Sign Up forms.
-     */
     const [isSignUp, setIsSignUp] = useState(false);
 
-    /**
-     * @type {[boolean, Function]} showDeleteConfirm - State to control the visibility of the delete account confirmation dialog.
-     */
+    
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-    /**
-     * @type {[Object, Function]} input - State to hold form input values.
-     * @property {string} emailOrUsername - Input for login (email or username).
-     * @property {string} password - Input for password.
-     * @property {string} username - Input for new username (signup/edit).
-     * @property {string} email - Input for new email (signup/edit).
-     * @property {string} confirm - Input for password confirmation (signup/edit).
-     * @property {Array<number>} location_ids - Array of selected location IDs (signup/edit).
-     */
+    
     const [input, setInput] = useState({
         emailOrUsername: '',
         password: '',
@@ -68,43 +35,27 @@ export default function LoginModal({
         location_ids: [],
     });
 
-    /**
-     * @type {[string, Function]} selectedLocationToAdd - State for the currently selected location in the dropdown to be added.
-     */
+    
     const [selectedLocationToAdd, setSelectedLocationToAdd] = useState('');
 
-    /**
-     * @type {[string, Function]} error - State to hold error messages to display to the user.
-     */
+    
     const [error, setError] = useState('');
 
-    /**
-     * @type {[boolean, Function]} loading - State to indicate if an API request is in progress.
-     */
+    
     const [loading, setLoading] = useState(false);
 
-    /**
-     * @type {[Array<Object>, Function]} municipalities - State to store the list of available municipalities for location selection.
-     */
+    
     const [municipalities, setMunicipalities] = useState([]);
 
-    /**
-     * @type {[boolean, Function]} uploading - State to indicate if a profile picture upload is in progress.
-     */
+    
     const [uploading, setUploading] = useState(false);
 
-    /**
-     * @type {React.RefObject<HTMLInputElement>} fileInputRef - Reference to the hidden file input element for image upload.
-     */
-    const fileInputRef = useRef(null);
     
+    const fileInputRef = useRef(null);
+
     const API_BASE = import.meta.env.VITE_API_BASE;
 
-    /**
-     * Effect hook to initialize form state when the modal opens or the user prop changes.
-     * If a user is logged in, it pre-fills the form with user data for editing.
-     * It also fetches the latest user data to ensure location preferences are up-to-date.
-     */
+    
     useEffect(() => {
         if (user && isOpen) {
             setInput({
@@ -129,42 +80,30 @@ export default function LoginModal({
                     localStorage.setItem('cw_user', JSON.stringify(freshUser));
                 })
                 .catch((err) =>
-                    console.error('Error refreshing user data:', err)
+                    console.error('Error refreshing user data:', err),
                 );
         }
     }, [user, isOpen]);
 
-    /**
-     * Effect hook to fetch the list of municipalities when the modal is opened.
-     * This data is used for the location selection dropdown.
-     */
+    
     useEffect(() => {
         if (isOpen) {
             fetchMunicipalities()
                 .then(setMunicipalities)
                 .catch((err) =>
-                    console.error('Error loading municipalities:', err)
+                    console.error('Error loading municipalities:', err),
                 );
         }
     }, [isOpen]);
 
-    /**
-     * Triggers the hidden file input click event to open the file selection dialog.
-     * This allows the user to select a new profile picture.
-     */
+    
     const handleImageClick = () => {
         if (user && fileInputRef.current) {
             fileInputRef.current.click();
         }
     };
 
-    /**
-     * Handles the selection of a new profile picture.
-     * Uploads the selected file to the server and updates the user's profile.
-     *
-     * @param {Event} e - The change event from the file input.
-     * @returns {Promise<void>}
-     */
+    
     const handleImageChange = async (e) => {
         const file = e.target.files?.[0];
         if (!file || !user) return;
@@ -189,11 +128,7 @@ export default function LoginModal({
         }
     };
 
-    /**
-     * Constructs the full URL for the user's profile picture.
-     *
-     * @returns {string|null} The full URL of the profile picture, or null if the user has no profile picture.
-     */
+    
     const getProfileImageUrl = () => {
         if (user?.profile_picture_url) {
             const baseUrl = API_BASE.replace('/api', '');
@@ -202,13 +137,7 @@ export default function LoginModal({
         return null;
     };
 
-    /**
-     * Handles the form submission for login, signup, or profile update.
-     * Validates input fields and calls the appropriate service function.
-     *
-     * @param {Event} e - The form submission event.
-     * @returns {Promise<void>}
-     */
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -336,7 +265,7 @@ export default function LoginModal({
                                     } catch (err) {
                                         setLoading(false);
                                         setError(
-                                            err.message || t('errorDeleteUser')
+                                            err.message || t('errorDeleteUser'),
                                         );
                                     }
                                 }}
@@ -357,7 +286,10 @@ export default function LoginModal({
     if (user) {
         return (
             <>
-                <div className="fixed inset-0 z-9998 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
+                <div
+                    className="fixed inset-0 z-9998 bg-black/50 backdrop-blur-sm"
+                    onClick={onClose}
+                ></div>
                 <div
                     className="fixed inset-0 flex items-center justify-center z-9999 p-4"
                     onClick={onClose}
@@ -495,7 +427,7 @@ export default function LoginModal({
                                             input.location_ids;
                                     const result = await createOrUpdateUser(
                                         updateData,
-                                        user.id
+                                        user.id,
                                     );
                                     setLoading(false);
                                     if (result) {
@@ -505,7 +437,7 @@ export default function LoginModal({
                                 } catch (err) {
                                     setLoading(false);
                                     setError(
-                                        err.message || t('errorUpdateUser')
+                                        err.message || t('errorUpdateUser'),
                                     );
                                 }
                             }}
@@ -565,7 +497,7 @@ export default function LoginModal({
                                         if (
                                             selectedLocationToAdd &&
                                             !input.location_ids.includes(
-                                                selectedLocationToAdd
+                                                selectedLocationToAdd,
                                             )
                                         ) {
                                             setInput((prev) => ({
@@ -587,7 +519,7 @@ export default function LoginModal({
                                 {input.location_ids &&
                                     input.location_ids.map((locId) => {
                                         const loc = municipalities.find(
-                                            (m) => m.id == locId
+                                            (m) => m.id == locId,
                                         );
                                         return loc ? (
                                             <span
@@ -598,7 +530,9 @@ export default function LoginModal({
                                                 <button
                                                     type="button"
                                                     className="hover:text-blue-900 font-bold"
-                                                    aria-label={t('remove') || 'Remove'}
+                                                    aria-label={
+                                                        t('remove') || 'Remove'
+                                                    }
                                                     onClick={() => {
                                                         setInput((prev) => ({
                                                             ...prev,
@@ -606,7 +540,7 @@ export default function LoginModal({
                                                                 prev.location_ids.filter(
                                                                     (id) =>
                                                                         id !==
-                                                                        locId
+                                                                        locId,
                                                                 ),
                                                         }));
                                                     }}
@@ -700,7 +634,9 @@ export default function LoginModal({
                                             <input
                                                 id="email"
                                                 type="email"
-                                                placeholder={t('emailPlaceholder')}
+                                                placeholder={t(
+                                                    'emailPlaceholder',
+                                                )}
                                                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:placeholder-gray-400"
                                                 value={input.email}
                                                 onChange={(e) =>
@@ -721,13 +657,16 @@ export default function LoginModal({
                                             <input
                                                 id="username"
                                                 type="text"
-                                                placeholder={t('usernamePlaceholder')}
+                                                placeholder={t(
+                                                    'usernamePlaceholder',
+                                                )}
                                                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:placeholder-gray-400"
                                                 value={input.username}
                                                 onChange={(e) =>
                                                     setInput((i) => ({
                                                         ...i,
-                                                        username: e.target.value,
+                                                        username:
+                                                            e.target.value,
                                                     }))
                                                 }
                                             />
@@ -747,7 +686,8 @@ export default function LoginModal({
                                                 onChange={(e) =>
                                                     setInput((i) => ({
                                                         ...i,
-                                                        password: e.target.value,
+                                                        password:
+                                                            e.target.value,
                                                     }))
                                                 }
                                             />
@@ -773,7 +713,7 @@ export default function LoginModal({
                                             />
                                         </div>
                                         <div className="flex flex-col space-y-1.5">
-                                            <label 
+                                            <label
                                                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-900 dark:text-white"
                                                 htmlFor="municipality-select"
                                             >
@@ -783,15 +723,19 @@ export default function LoginModal({
                                                 <select
                                                     id="municipality-select"
                                                     className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:bg-gray-800 flex-1 min-w-0"
-                                                    value={selectedLocationToAdd}
+                                                    value={
+                                                        selectedLocationToAdd
+                                                    }
                                                     onChange={(e) =>
                                                         setSelectedLocationToAdd(
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                 >
                                                     <option value="">
-                                                        {t('selectMunicipality')}
+                                                        {t(
+                                                            'selectMunicipality',
+                                                        )}
                                                     </option>
                                                     {municipalities.map(
                                                         (municipality) => (
@@ -807,7 +751,7 @@ export default function LoginModal({
                                                                     municipality.name
                                                                 }
                                                             </option>
-                                                        )
+                                                        ),
                                                     )}
                                                 </select>
                                                 <button
@@ -820,7 +764,7 @@ export default function LoginModal({
                                                         if (
                                                             selectedLocationToAdd &&
                                                             !input.location_ids.includes(
-                                                                selectedLocationToAdd
+                                                                selectedLocationToAdd,
                                                             )
                                                         ) {
                                                             setInput(
@@ -831,10 +775,10 @@ export default function LoginModal({
                                                                             ...prev.location_ids,
                                                                             selectedLocationToAdd,
                                                                         ],
-                                                                })
+                                                                }),
                                                             );
                                                             setSelectedLocationToAdd(
-                                                                ''
+                                                                '',
                                                             );
                                                         }
                                                     }}
@@ -850,7 +794,7 @@ export default function LoginModal({
                                                                 municipalities.find(
                                                                     (m) =>
                                                                         m.id ==
-                                                                        locId
+                                                                        locId,
                                                                 );
                                                             return loc ? (
                                                                 <span
@@ -861,22 +805,27 @@ export default function LoginModal({
                                                                     <button
                                                                         type="button"
                                                                         className="hover:text-blue-900 font-bold"
-                                                                        aria-label={t('remove') || 'Remove'}
+                                                                        aria-label={
+                                                                            t(
+                                                                                'remove',
+                                                                            ) ||
+                                                                            'Remove'
+                                                                        }
                                                                         onClick={() => {
                                                                             setInput(
                                                                                 (
-                                                                                    prev
+                                                                                    prev,
                                                                                 ) => ({
                                                                                     ...prev,
                                                                                     location_ids:
                                                                                         prev.location_ids.filter(
                                                                                             (
-                                                                                                id
+                                                                                                id,
                                                                                             ) =>
                                                                                                 id !==
-                                                                                                locId
+                                                                                                locId,
                                                                                         ),
-                                                                                })
+                                                                                }),
                                                                             );
                                                                         }}
                                                                     >
@@ -884,7 +833,7 @@ export default function LoginModal({
                                                                     </button>
                                                                 </span>
                                                             ) : null;
-                                                        }
+                                                        },
                                                     )}
                                             </div>
                                         </div>
@@ -901,7 +850,9 @@ export default function LoginModal({
                                             <input
                                                 id="emailOrUsername"
                                                 type="text"
-                                                placeholder={t('emailOrUsernamePlaceholder')}
+                                                placeholder={t(
+                                                    'emailOrUsernamePlaceholder',
+                                                )}
                                                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:placeholder-gray-400"
                                                 value={input.emailOrUsername}
                                                 onChange={(e) =>
@@ -928,14 +879,15 @@ export default function LoginModal({
                                                 onChange={(e) =>
                                                     setInput((i) => ({
                                                         ...i,
-                                                        password: e.target.value,
+                                                        password:
+                                                            e.target.value,
                                                     }))
                                                 }
                                             />
                                         </div>
                                         <div className="text-right">
-                                            <Link 
-                                                to="/forgot-password" 
+                                            <Link
+                                                to="/forgot-password"
                                                 className="text-xs text-brand-primary hover:underline dark:text-blue-400"
                                                 onClick={onClose}
                                             >

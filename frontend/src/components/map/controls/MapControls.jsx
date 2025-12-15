@@ -4,22 +4,14 @@ import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 import MapLegend from './MapLegend';
 
-/**
- * MapControls Component.
- *
- * Renders custom map controls for reset, locate, and search with a modern glassmorphism design.
- *
- * @param {Object} props - Component props.
- * @param {Function} props.setClickedPos - Function to update the clicked position state.
- * @param {Function} props.fetchWeather - Function to fetch weather data for a location.
- */
+
 const MapControls = ({ setClickedPos, fetchWeather }) => {
     const { t } = useTranslation();
     const map = useMap();
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearching, setIsSearching] = useState(false);
 
-    // Disable click propagation to prevent map clicks when interacting with controls
+    
     useEffect(() => {
         const controls = document.getElementById('map-controls');
         if (controls) {
@@ -30,7 +22,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
     const handleReset = () => {
         map.flyTo([28.5, -16], 8, {
             duration: 1.5,
-            easeLinearity: 0.25
+            easeLinearity: 0.25,
         });
     };
 
@@ -44,7 +36,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
             (position) => {
                 const { latitude, longitude } = position.coords;
                 map.flyTo([latitude, longitude], 13, {
-                    duration: 1.5
+                    duration: 1.5,
                 });
                 setClickedPos([latitude, longitude]);
                 fetchWeather(latitude, longitude);
@@ -52,7 +44,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
             () => {
                 alert(t('locationRetrievalError'));
             },
-            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 },
         );
     };
 
@@ -62,11 +54,11 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
 
         setIsSearching(true);
         try {
-            // Use Nominatim for search, bounded to Canary Islands
+            
             const response = await fetch(
                 `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-                    searchQuery
-                )}&viewbox=-19.5,26.5,-12.5,30.5&bounded=1`
+                    searchQuery,
+                )}&viewbox=-19.5,26.5,-12.5,30.5&bounded=1`,
             );
             const results = await response.json();
 
@@ -75,11 +67,11 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
                 const latitude = parseFloat(lat);
                 const longitude = parseFloat(lon);
                 map.flyTo([latitude, longitude], 13, {
-                    duration: 1.5
+                    duration: 1.5,
                 });
                 setClickedPos([latitude, longitude]);
                 fetchWeather(latitude, longitude);
-                setSearchQuery(''); // Clear search after successful find
+                setSearchQuery(''); 
             } else {
                 alert(t('locationNotFound'));
             }
@@ -94,9 +86,9 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
     return (
         <div
             id="map-controls"
-            className="absolute top-4 left-4 z-[1000] flex flex-col gap-3 w-full max-w-xs items-start"
+            className="absolute top-4 left-4 z-1000 flex flex-col gap-3 w-full max-w-xs items-start"
         >
-            {/* Search Bar */}
+            {}
             <form
                 onSubmit={handleSearch}
                 className="relative flex items-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 dark:border-gray-700/30 transition-all duration-300 hover:shadow-xl focus-within:ring-2 focus-within:ring-blue-500/50 w-full"
@@ -153,7 +145,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
                 </button>
             </form>
 
-            {/* Action Buttons */}
+            {}
             <div className="flex gap-2 items-center">
                 <button
                     onClick={(e) => {
@@ -203,8 +195,8 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
                     </svg>
                     <span className="hidden sm:inline">{t('locate')}</span>
                 </button>
-                
-                {/* Legend Button */}
+
+                {}
                 <div onClick={(e) => e.stopPropagation()}>
                     <MapLegend />
                 </div>

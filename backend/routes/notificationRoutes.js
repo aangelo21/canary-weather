@@ -1,24 +1,17 @@
-import express from "express";
+import express from 'express';
 import {
-  getAllNotifications,
-  getNotificationById,
-  getNotificationsByUser,
-  createNotification,
-  updateNotification,
-  deleteNotification,
-} from "../controllers/notificationController.js";
-import { authenticateToken } from "../middleware/authMiddleware.js";
+    getAllNotifications,
+    getNotificationById,
+    getNotificationsByUser,
+    createNotification,
+    updateNotification,
+    deleteNotification,
+} from '../controllers/notificationController.js';
+import { authenticateToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-/**
- * Notification Routes
- * 
- * Defines routes for managing user notifications.
- * All routes require authentication via JWT token.
- * 
- * Base Path: /api/notifications
- */
+
 
 /**
  * @swagger
@@ -45,7 +38,7 @@ const router = express.Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/", authenticateToken, getAllNotifications);
+router.get('/', authenticateToken, getAllNotifications);
 
 /**
  * @swagger
@@ -84,7 +77,7 @@ router.get("/", authenticateToken, getAllNotifications);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/:id", authenticateToken, getNotificationById);
+router.get('/:id', authenticateToken, getNotificationById);
 
 /**
  * @swagger
@@ -119,7 +112,7 @@ router.get("/:id", authenticateToken, getNotificationById);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/user/:userId", authenticateToken, getNotificationsByUser);
+router.get('/user/:userId', authenticateToken, getNotificationsByUser);
 
 /**
  * @swagger
@@ -169,7 +162,7 @@ router.get("/user/:userId", authenticateToken, getNotificationsByUser);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/", authenticateToken, createNotification);
+router.post('/', authenticateToken, createNotification);
 
 /**
  * @swagger
@@ -254,7 +247,7 @@ router.post("/", authenticateToken, createNotification);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.put("/:id", authenticateToken, updateNotification);
-router.delete("/:id", authenticateToken, deleteNotification);
+router.put('/:id', authenticateToken, updateNotification);
+router.delete('/:id', authenticateToken, deleteNotification);
 
 export default router;

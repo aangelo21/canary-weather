@@ -1,6 +1,6 @@
-@import url("leaflet/dist/leaflet.css");
+@import url('leaflet/dist/leaflet.css');
 
-/* Force override here as well to be safe */
+
 .leaflet-popup.custom-popup-clean .leaflet-popup-content-wrapper {
     background: transparent !important;
     box-shadow: none !important;
@@ -13,7 +13,7 @@
 }
 
 .leaflet-container {
-  width: 100%;
-  height: 100%;
-  z-index: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
 }

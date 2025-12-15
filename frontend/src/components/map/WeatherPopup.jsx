@@ -5,50 +5,22 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 import Skeleton from '../common/Skeleton';
 
-/**
- * WeatherPopup Component.
- *
- * Displays detailed weather information in a popup on the map.
- *
- * Features:
- * - **Weather Data**: Shows temperature, humidity, pressure, wind speed, and cloud cover.
- * - **Dynamic Styling**: Changes appearance based on weather conditions (e.g., thunderstorm) and time of day (day/night), as well as the global theme.
- * - **POI Saving**: Allows authenticated users to save the current location as a personal Point of Interest (POI).
- * - **Authentication Check**: Disables the save functionality for guest users.
- *
- * @component
- * @param {Object} props - The component props.
- * @param {Array<number>} props.position - The [latitude, longitude] coordinates where the popup is anchored.
- * @param {Object} props.weather - The weather data object fetched from the API.
- * @param {boolean} props.loading - Whether the weather data is loading.
- * @param {Object} props.markerRef - Reference to the Leaflet marker associated with this popup.
- * @param {Function} props.onClose - Callback function executed when the popup is closed.
- * @returns {JSX.Element|null} The rendered WeatherPopup component or null if position or weather data is missing.
- */
+
 function WeatherPopup({ position, weather, loading, markerRef, onClose }) {
     const { t } = useTranslation();
     const { isDarkMode } = useTheme();
     const popupRef = useRef(null);
+
     
-    /**
-     * @type {[boolean, Function]} saved - State to indicate if the POI has been successfully saved.
-     */
     const [saved, setSaved] = useState(false);
 
-    /**
-     * @type {[boolean, Function]} saving - State to indicate if the save operation is in progress.
-     */
+    
     const [saving, setSaving] = useState(false);
 
-    /**
-     * @type {[boolean, Function]} isAuthenticated - State to check if the current user is logged in.
-     */
+    
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    /**
-     * Effect hook to open the popup when the marker reference is available.
-     * Uses a timeout to ensure the marker is fully initialized on the map.
-     */
+    
     useEffect(() => {
         if (markerRef?.current) {
             const timer = setTimeout(() => {
@@ -58,9 +30,7 @@ function WeatherPopup({ position, weather, loading, markerRef, onClose }) {
         }
     }, [position, weather, loading, markerRef]);
 
-    /**
-     * Effect hook to check authentication status on mount.
-     */
+    
     useEffect(() => {
         const user = localStorage.getItem('cw_user');
         setIsAuthenticated(!!user);
@@ -86,11 +56,7 @@ function WeatherPopup({ position, weather, loading, markerRef, onClose }) {
 
     if (!position || !weather) return null;
 
-    /**
-     * Handles the action of saving the current location as a Point of Interest.
-     * Checks for authentication, calls the API, and updates the UI state.
-     * Dispatches a 'poiCreated' event upon success to notify other components.
-     */
+    
     const handleSavePoi = async () => {
         if (!isAuthenticated) {
             alert(t('loginRequired'));
@@ -121,11 +87,7 @@ function WeatherPopup({ position, weather, loading, markerRef, onClose }) {
             ? currentTime < weather.sunrise || currentTime > weather.sunset
             : false;
 
-    /**
-     * Determines the CSS classes for the popup's theme based on weather conditions, time of day, and global theme.
-     *
-     * @returns {string} A string of Tailwind CSS classes.
-     */
+    
     const getTheme = () => {
         const main = (weather.main || '').toLowerCase();
 
@@ -148,11 +110,7 @@ function WeatherPopup({ position, weather, loading, markerRef, onClose }) {
         isNight ||
         (weather.main || '').toLowerCase().includes('thunder');
 
-    /**
-     * Returns the appropriate weather icon based on conditions.
-     *
-     * @returns {JSX.Element} The weather icon element.
-     */
+    
     const getIcon = () => {
         const main = (weather.main || '').toLowerCase();
         const description = (weather.description || '').toLowerCase();
@@ -241,88 +199,103 @@ function WeatherPopup({ position, weather, loading, markerRef, onClose }) {
                 <div
                     className={`w-72 p-6 rounded-3xl shadow-2xl ${themeClass} font-sans overflow-hidden relative select-none`}
                 >
-                    <button 
+                    <button
                         onClick={(e) => {
                             e.stopPropagation();
                             markerRef.current.closePopup();
                         }}
                         className={`absolute top-4 right-4 transition-colors z-50 ${isDarkTheme ? 'text-white/70 hover:text-white' : 'text-slate-400 hover:text-slate-600'}`}
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M6 18L18 6M6 6l12 12"
+                            />
                         </svg>
                     </button>
 
                     <div className="flex justify-between items-center mb-8 relative z-10">
-                    <div className="w-24 h-24 filter drop-shadow-xl transform -translate-x-2 flex items-center justify-center">
-                        {getIcon()}
-                    </div>
-
-                    <div className="text-right flex flex-col justify-center">
-                        <div className="text-5xl font-bold tracking-tighter leading-none">
-                            {Math.round(weather.temp)}
-                            <span className="text-3xl align-top">°</span>
+                        <div className="w-24 h-24 filter drop-shadow-xl transform -translate-x-2 flex items-center justify-center">
+                            {getIcon()}
                         </div>
-                        <div
-                            className={`text-sm font-medium mt-1 capitalize ${isDarkTheme ? 'text-blue-200' : 'text-blue-500'}`}
-                        >
-                            {weather.description}
+
+                        <div className="text-right flex flex-col justify-center">
+                            <div className="text-5xl font-bold tracking-tighter leading-none">
+                                {Math.round(weather.temp)}
+                                <span className="text-3xl align-top">°</span>
+                            </div>
+                            <div
+                                className={`text-sm font-medium mt-1 capitalize ${isDarkTheme ? 'text-blue-200' : 'text-blue-500'}`}
+                            >
+                                {weather.description}
+                            </div>
                         </div>
                     </div>
+
+                    <div
+                        className={`flex justify-between items-center px-2 relative z-10 ${isDarkTheme ? 'text-gray-300' : 'text-slate-500'}`}
+                    >
+                        <div className="flex flex-col items-center gap-1">
+                            <span className="text-2xl mb-1">💨</span>
+                            <span className="text-xs font-semibold">
+                                {weather.wind} km/h
+                            </span>
+                            <span className="text-[10px] opacity-60">Wind</span>
+                        </div>
+
+                        <div className="flex flex-col items-center gap-1">
+                            <span className="text-2xl mb-1">💧</span>
+                            <span className="text-xs font-semibold">
+                                {weather.humidity}%
+                            </span>
+                            <span className="text-[10px] opacity-60">
+                                Humidity
+                            </span>
+                        </div>
+
+                        <div className="flex flex-col items-center gap-1">
+                            <span className="text-2xl mb-1">☁️</span>
+                            <span className="text-xs font-semibold">
+                                {weather.clouds}%
+                            </span>
+                            <span className="text-[10px] opacity-60">
+                                Clouds
+                            </span>
+                        </div>
+                    </div>
+
+                    <button
+                        className={`mt-6 w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 relative z-10 flex items-center justify-center gap-2 ${
+                            isDarkTheme
+                                ? 'bg-white/10 hover:bg-white/20 text-white border border-white/5'
+                                : 'bg-white/60 hover:bg-white/80 text-blue-600 shadow-sm'
+                        }`}
+                        onClick={handleSavePoi}
+                        disabled={saved || saving || !isAuthenticated}
+                    >
+                        {saving ? (
+                            <span>{t('savingPoi')}...</span>
+                        ) : saved ? (
+                            <>
+                                <span className="text-base">✔️</span>
+                                <span>{t('saved')}</span>
+                            </>
+                        ) : !isAuthenticated ? (
+                            <span>{t('loginToSave')}</span>
+                        ) : (
+                            <span>{t('saveAsPoi')}</span>
+                        )}
+                    </button>
                 </div>
-
-                <div
-                    className={`flex justify-between items-center px-2 relative z-10 ${isDarkTheme ? 'text-gray-300' : 'text-slate-500'}`}
-                >
-                    <div className="flex flex-col items-center gap-1">
-                        <span className="text-2xl mb-1">💨</span>
-                        <span className="text-xs font-semibold">
-                            {weather.wind} km/h
-                        </span>
-                        <span className="text-[10px] opacity-60">Wind</span>
-                    </div>
-
-                    <div className="flex flex-col items-center gap-1">
-                        <span className="text-2xl mb-1">💧</span>
-                        <span className="text-xs font-semibold">
-                            {weather.humidity}%
-                        </span>
-                        <span className="text-[10px] opacity-60">Humidity</span>
-                    </div>
-
-                    <div className="flex flex-col items-center gap-1">
-                        <span className="text-2xl mb-1">☁️</span>
-                        <span className="text-xs font-semibold">
-                            {weather.clouds}%
-                        </span>
-                        <span className="text-[10px] opacity-60">Clouds</span>
-                    </div>
-                </div>
-
-                <button
-                    className={`mt-6 w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 relative z-10 flex items-center justify-center gap-2 ${
-                        isDarkTheme
-                            ? 'bg-white/10 hover:bg-white/20 text-white border border-white/5'
-                            : 'bg-white/60 hover:bg-white/80 text-blue-600 shadow-sm'
-                    }`}
-                    onClick={handleSavePoi}
-                    disabled={saved || saving || !isAuthenticated}
-                >
-                    {saving ? (
-                        <span>{t('savingPoi')}...</span>
-                    ) : saved ? (
-                        <>
-                            <span className="text-base">✔️</span>
-                            <span>{t('saved')}</span>
-                        </>
-                    ) : !isAuthenticated ? (
-                        <span>{t('loginToSave')}</span>
-                    ) : (
-                        <span>{t('saveAsPoi')}</span>
-                    )}
-                </button>
-            </div>
-        </Popup>
+            </Popup>
         </>
     );
 }

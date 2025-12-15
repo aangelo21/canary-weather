@@ -1,22 +1,14 @@
-import express from "express";
+import express from 'express';
 import {
-  getUserLocations,
-  addUserLocation,
-  removeUserLocation,
-} from "../controllers/userLocationController.js";
-import { authenticateToken } from "../middleware/authMiddleware.js";
+    getUserLocations,
+    addUserLocation,
+    removeUserLocation,
+} from '../controllers/userLocationController.js';
+import { authenticateToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-/**
- * User Location Routes
- * 
- * Defines routes for managing a user's selected locations.
- * Allows users to get, add, and remove their favorite locations.
- * All routes require authentication via JWT token.
- * 
- * Base Path: /api/user-locations
- */
+
 
 /**
  * @swagger
@@ -105,8 +97,8 @@ const router = express.Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/:userId", authenticateToken, getUserLocations);
-router.post("/:userId", authenticateToken, addUserLocation);
+router.get('/:userId', authenticateToken, getUserLocations);
+router.post('/:userId', authenticateToken, addUserLocation);
 
 /**
  * @swagger
@@ -147,6 +139,6 @@ router.post("/:userId", authenticateToken, addUserLocation);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.delete("/:userId/:locationId", authenticateToken, removeUserLocation);
+router.delete('/:userId/:locationId', authenticateToken, removeUserLocation);
 
 export default router;
