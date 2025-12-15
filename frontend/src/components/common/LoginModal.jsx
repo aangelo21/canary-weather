@@ -25,7 +25,7 @@ export default function LoginModal({
 }) {
     const { t } = useTranslation();
 
-    const [isSignUp, setIsSignUp] = useState(false);
+    const [view, setView] = useState('login');
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [input, setInput] = useState({
         emailOrUsername: '',
@@ -54,6 +54,14 @@ export default function LoginModal({
 
     const fileInputRef = useRef(null);
     const API_BASE = import.meta.env.VITE_API_BASE;
+
+    const handleGoogleLogin = () => {
+        window.location.href = '/api/auth/google';
+    };
+
+    const handleGithubLogin = () => {
+        window.location.href = '/api/auth/github';
+    };
 
     useEffect(() => {
         if (user && isOpen) {
@@ -137,7 +145,7 @@ export default function LoginModal({
         setError('');
         setValidationErrors({});
 
-        if (isSignUp) {
+        if (view === 'signup') {
             const errors = {};
             const emailValidation = validateEmail(input.email);
             if (!emailValidation.isValid) errors.email = emailValidation.error;
@@ -223,7 +231,7 @@ export default function LoginModal({
     const handlePasswordChange = (e) => {
         const newPassword = e.target.value;
         setInput((prev) => ({ ...prev, password: newPassword }));
-        if (isSignUp || user) {
+        if (view === 'signup' || user) {
             const strength = getPasswordStrength(newPassword);
             setPasswordStrength(strength);
             if (validationErrors.password) {
@@ -657,203 +665,269 @@ export default function LoginModal({
             onClick={onClose}
         >
             <div
-                className="w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl border border-neutral-200 dark:border-neutral-800 overflow-hidden transform transition-all scale-100"
+                className="w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl border border-neutral-200 dark:border-neutral-800 overflow-hidden transform transition-all scale-100 relative"
                 onClick={(e) => e.stopPropagation()}
             >
+                <button
+                    className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition-colors z-10"
+                    onClick={onClose}
+                >
+                    <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                    </svg>
+                </button>
+
                 <div className="p-8">
-                    <div className="text-center mb-6">
-                        <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
-                            {isSignUp ? t('createAccountTitle') : t('loginTitle')}
-                        </h2>
-                        <p className="text-neutral-500 dark:text-neutral-400 text-sm">
-                            {isSignUp ? t('createAccountDesc') : t('loginDesc')}
-                        </p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3 mb-6">
-                        <button type="button" className="flex items-center justify-center gap-2 px-4 py-2.5 border border-neutral-200 dark:border-neutral-700 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 font-medium text-sm">
-                            <svg className="w-5 h-5" viewBox="0 0 24 24">
-                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.84.81-.09z" fill="#FBBC05" />
-                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                            </svg>
-                            Google
-                        </button>
-                        <button type="button" className="flex items-center justify-center gap-2 px-4 py-2.5 border border-neutral-200 dark:border-neutral-700 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 font-medium text-sm">
-                            <svg className="w-5 h-5 dark:fill-white fill-black" viewBox="0 0 24 24">
-                                <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.74 1.18 0 2.48-1.23 3.96-1.14 1.57.1 2.94.8 3.67 1.85-3.26 1.92-2.72 6.5 1.27 8.23-.65 1.73-1.6 3.33-2.98 4.29z M12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
-                            </svg>
-                            Apple
-                        </button>
-                    </div>
-
-                    <div className="relative mb-6">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-neutral-200 dark:border-neutral-800"></div>
-                        </div>
-                        <div className="relative flex justify-center text-sm">
-                            <span className="px-2 bg-white dark:bg-neutral-900 text-neutral-500">Or continue with</span>
-                        </div>
-                    </div>
-
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        {isSignUp ? (
-                            <>
+                    {view === 'forgotPassword' ? (
+                        <>
+                            <div className="text-center mb-6">
+                                <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
+                                    {t('resetPassword')}
+                                </h2>
+                                <p className="text-neutral-500 dark:text-neutral-400 text-sm">
+                                    {t('enterEmailReset')}
+                                </p>
+                            </div>
+                            <form className="space-y-4">
                                 <div className="space-y-1.5">
                                     <div className="relative">
-                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">
-                                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                                        </div>
                                         <input
                                             type="email"
-                                            placeholder={t('emailPlaceholder')}
-                                            className={`w-full pl-11 pr-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all dark:text-white ${validationErrors.email ? 'border-red-500' : ''}`}
-                                            value={input.email}
-                                            onChange={(e) => handleInputChange('email', e.target.value)}
+                                            placeholder={t('emailAddress')}
+                                            className="w-full px-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all dark:text-white"
                                         />
                                     </div>
-                                    {validationErrors.email && <p className="text-xs text-red-500 ml-1">{validationErrors.email}</p>}
                                 </div>
+                                <button
+                                    type="button"
+                                    className="w-full py-3.5 bg-[#0056b3] hover:bg-[#004494] text-white rounded-xl font-bold shadow-lg transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+                                >
+                                    {t('sendResetLink')}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setView('login')}
+                                    className="w-full py-2 text-[#0056b3] hover:text-[#004494] dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors"
+                                >
+                                    {t('backToHome')}
+                                </button>
+                            </form>
+                        </>
+                    ) : (
+                        <>
+                            <div className="text-center mb-6">
+                                <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
+                                    {view === 'signup' ? t('createAccountTitle') : t('loginTitle')}
+                                </h2>
+                                <p className="text-neutral-500 dark:text-neutral-400 text-sm">
+                                    {view === 'signup' ? t('createAccountDesc') : t('loginDesc')}
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3 mb-6">
+                                <button
+                                    type="button"
+                                    onClick={handleGoogleLogin}
+                                    className="flex items-center justify-center gap-2 px-4 py-2.5 border border-neutral-200 dark:border-neutral-700 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 font-medium text-sm"
+                                >
+                                    <svg className="w-5 h-5" viewBox="0 0 24 24">
+                                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.84.81-.09z" fill="#FBBC05" />
+                                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                                    </svg>
+                                    Google
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleGithubLogin}
+                                    className="flex items-center justify-center gap-2 px-4 py-2.5 border border-neutral-200 dark:border-neutral-700 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 font-medium text-sm"
+                                >
+                                    <svg className="w-5 h-5 dark:fill-white fill-black" viewBox="0 0 24 24">
+                                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                                    </svg>
+                                    GitHub
+                                </button>
+                            </div>
+
+                            <div className="relative mb-6">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-neutral-200 dark:border-neutral-800"></div>
+                                </div>
+                                <div className="relative flex justify-center text-sm">
+                                    <span className="px-2 bg-white dark:bg-neutral-900 text-neutral-500">Or continue with</span>
+                                </div>
+                            </div>
+
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                {view === 'signup' ? (
+                                    <>
+                                        <div className="space-y-1.5">
+                                            <div className="relative">
+                                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">
+                                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                                </div>
+                                                <input
+                                                    type="email"
+                                                    placeholder={t('emailPlaceholder')}
+                                                    className={`w-full pl-11 pr-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all dark:text-white ${validationErrors.email ? 'border-red-500' : ''}`}
+                                                    value={input.email}
+                                                    onChange={(e) => handleInputChange('email', e.target.value)}
+                                                />
+                                            </div>
+                                            {validationErrors.email && <p className="text-xs text-red-500 ml-1">{validationErrors.email}</p>}
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <div className="relative">
+                                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">
+                                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                                </div>
+                                                <input
+                                                    type="text"
+                                                    placeholder={t('usernamePlaceholder')}
+                                                    className={`w-full pl-11 pr-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all dark:text-white ${validationErrors.username ? 'border-red-500' : ''}`}
+                                                    value={input.username}
+                                                    onChange={(e) => handleInputChange('username', e.target.value)}
+                                                />
+                                            </div>
+                                            {validationErrors.username && <p className="text-xs text-red-500 ml-1">{validationErrors.username}</p>}
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="space-y-1.5">
+                                        <div className="relative">
+                                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">
+                                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                            </div>
+                                            <input
+                                                type="text"
+                                                placeholder={t('emailOrUsernamePlaceholder')}
+                                                className="w-full pl-11 pr-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all dark:text-white"
+                                                value={input.emailOrUsername}
+                                                onChange={(e) => setInput(i => ({ ...i, emailOrUsername: e.target.value }))}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div className="space-y-1.5">
                                     <div className="relative">
                                         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">
-                                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                         </div>
                                         <input
-                                            type="text"
-                                            placeholder={t('usernamePlaceholder')}
-                                            className={`w-full pl-11 pr-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all dark:text-white ${validationErrors.username ? 'border-red-500' : ''}`}
-                                            value={input.username}
-                                            onChange={(e) => handleInputChange('username', e.target.value)}
+                                            type={showPassword ? 'text' : 'password'}
+                                            placeholder={t('password')}
+                                            className={`w-full pl-11 pr-12 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all dark:text-white ${validationErrors.password ? 'border-red-500' : ''}`}
+                                            value={input.password}
+                                            onChange={handlePasswordChange}
                                         />
+                                        <button
+                                            type="button"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                        >
+                                            {showPassword ? (
+                                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+                                            ) : (
+                                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                            )}
+                                        </button>
                                     </div>
-                                    {validationErrors.username && <p className="text-xs text-red-500 ml-1">{validationErrors.username}</p>}
+                                    {validationErrors.password && <p className="text-xs text-red-500 ml-1">{validationErrors.password}</p>}
                                 </div>
-                            </>
-                        ) : (
-                            <div className="space-y-1.5">
-                                <div className="relative">
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">
-                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        placeholder={t('emailOrUsernamePlaceholder')}
-                                        className="w-full pl-11 pr-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all dark:text-white"
-                                        value={input.emailOrUsername}
-                                        onChange={(e) => setInput(i => ({ ...i, emailOrUsername: e.target.value }))}
-                                    />
-                                </div>
-                            </div>
-                        )}
 
-                        <div className="space-y-1.5">
-                            <div className="relative">
-                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">
-                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                                </div>
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    placeholder={t('password')}
-                                    className={`w-full pl-11 pr-12 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all dark:text-white ${validationErrors.password ? 'border-red-500' : ''}`}
-                                    value={input.password}
-                                    onChange={handlePasswordChange}
-                                />
+                                {view === 'signup' && (
+                                    <div className="space-y-1.5">
+                                        <div className="relative">
+                                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">
+                                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                            </div>
+                                            <input
+                                                type={showConfirmPassword ? 'text' : 'password'}
+                                                placeholder={t('confirmPassword')}
+                                                className={`w-full pl-11 pr-12 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all dark:text-white ${validationErrors.confirm ? 'border-red-500' : ''}`}
+                                                value={input.confirm}
+                                                onChange={(e) => handleInputChange('confirm', e.target.value)}
+                                            />
+                                            <button
+                                                type="button"
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
+                                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            >
+                                                {showConfirmPassword ? (
+                                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+                                                ) : (
+                                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                                )}
+                                            </button>
+                                        </div>
+                                        {validationErrors.confirm && <p className="text-xs text-red-500 ml-1">{validationErrors.confirm}</p>}
+                                    </div>
+                                )}
+
+                                {view === 'signup' && input.password && passwordStrength.strength !== 'none' && (
+                                    <div className="space-y-1">
+                                        <div className="h-1.5 w-full bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
+                                            <div
+                                                className={`h-full transition-all duration-300 ${passwordStrength.color === 'red' ? 'bg-red-500' : passwordStrength.color === 'yellow' ? 'bg-yellow-500' : 'bg-green-500'}`}
+                                                style={{ width: `${passwordStrength.percentage}%` }}
+                                            ></div>
+                                        </div>
+                                        <p className="text-xs text-right text-neutral-500">{passwordStrength.strength}</p>
+                                    </div>
+                                )}
+
+                                {view === 'login' && (
+                                    <div className="text-right">
+                                        <button
+                                            type="button"
+                                            className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium"
+                                            onClick={() => setView('forgotPassword')}
+                                        >
+                                            {t('forgotPassword')}
+                                        </button>
+                                    </div>
+                                )}
+
+                                {error && <div className="p-3 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm text-center">{error}</div>}
+
                                 <button
-                                    type="button"
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
-                                    onClick={() => setShowPassword(!showPassword)}
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
                                 >
-                                    {showPassword ? (
-                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
-                                    ) : (
-                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                    )}
+                                    {loading ? t('processing') : view === 'signup' ? t('signUp') : t('signIn')}
                                 </button>
-                            </div>
-                            {validationErrors.password && <p className="text-xs text-red-500 ml-1">{validationErrors.password}</p>}
-                        </div>
+                            </form>
 
-                        {isSignUp && (
-                            <div className="space-y-1.5">
-                                <div className="relative">
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">
-                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                                    </div>
-                                    <input
-                                        type={showConfirmPassword ? 'text' : 'password'}
-                                        placeholder={t('confirmPassword')}
-                                        className={`w-full pl-11 pr-12 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all dark:text-white ${validationErrors.confirm ? 'border-red-500' : ''}`}
-                                        value={input.confirm}
-                                        onChange={(e) => handleInputChange('confirm', e.target.value)}
-                                    />
+                            <div className="mt-8 text-center">
+                                <p className="text-neutral-500 dark:text-neutral-400">
+                                    {view === 'signup' ? t('haveAccount') : t('noAccount')}{' '}
                                     <button
-                                        type="button"
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
-                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        onClick={() => {
+                                            setView(view === 'signup' ? 'login' : 'signup');
+                                            setError('');
+                                            setValidationErrors({});
+                                        }}
+                                        className="text-blue-600 dark:text-blue-400 font-bold hover:underline"
                                     >
-                                        {showConfirmPassword ? (
-                                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
-                                        ) : (
-                                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                        )}
+                                        {view === 'signup' ? t('signIn') : t('signUp')}
                                     </button>
-                                </div>
-                                {validationErrors.confirm && <p className="text-xs text-red-500 ml-1">{validationErrors.confirm}</p>}
+                                </p>
                             </div>
-                        )}
-
-                        {isSignUp && input.password && passwordStrength.strength !== 'none' && (
-                            <div className="space-y-1">
-                                <div className="h-1.5 w-full bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
-                                    <div
-                                        className={`h-full transition-all duration-300 ${passwordStrength.color === 'red' ? 'bg-red-500' : passwordStrength.color === 'yellow' ? 'bg-yellow-500' : 'bg-green-500'}`}
-                                        style={{ width: `${passwordStrength.percentage}%` }}
-                                    ></div>
-                                </div>
-                                <p className="text-xs text-right text-neutral-500">{passwordStrength.strength}</p>
-                            </div>
-                        )}
-
-                        {!isSignUp && (
-                            <div className="text-right">
-                                <Link
-                                    to="/forgot-password"
-                                    className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium"
-                                    onClick={onClose}
-                                >
-                                    {t('forgotPassword')}
-                                </Link>
-                            </div>
-                        )}
-
-                        {error && <div className="p-3 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm text-center">{error}</div>}
-
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
-                        >
-                            {loading ? t('processing') : isSignUp ? t('signUp') : t('signIn')}
-                        </button>
-                    </form>
-
-                    <div className="mt-8 text-center">
-                        <p className="text-neutral-500 dark:text-neutral-400">
-                            {isSignUp ? t('haveAccount') : t('noAccount')}{' '}
-                            <button
-                                onClick={() => {
-                                    setIsSignUp(!isSignUp);
-                                    setError('');
-                                    setValidationErrors({});
-                                }}
-                                className="text-blue-600 dark:text-blue-400 font-bold hover:underline"
-                            >
-                                {isSignUp ? t('signIn') : t('signUp')}
-                            </button>
-                        </p>
-                    </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
