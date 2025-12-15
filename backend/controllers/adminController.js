@@ -28,6 +28,13 @@ export const getDashboard = async (req, res) => {
         const pois = await PointOfInterest.findAll({
             where,
             order: [['createdAt', 'DESC']],
+            include: [
+                {
+                    model: User,
+                    as: 'creator',
+                    attributes: ['id', 'email', 'username'],
+                },
+            ],
         });
 
         const userWhere = {};
@@ -110,6 +117,7 @@ export const getDashboard = async (req, res) => {
 export const createGlobalPOI = async (req, res) => {
     try {
         const { name, latitude, longitude, description, token } = req.body;
+        const userId = req.user?.id;
 
         await PointOfInterest.create({
             name,
@@ -118,6 +126,7 @@ export const createGlobalPOI = async (req, res) => {
             description: description || null,
             is_global: true,
             type: 'global',
+            created_by: userId,
         });
 
         return res.redirect(`/admin?token=${token}`);
@@ -131,6 +140,12 @@ export const updatePOI = async (req, res) => {
         const { id } = req.params;
         const { name, latitude, longitude, type, description, token } =
             req.body;
+        const userId = req.user?.id;
+
+        const poi = await PointOfInterest.findByPk(id);
+        if (!poi) {
+            return res.status(404).send('POI not found');
+        }
 
         await PointOfInterest.update(
             {
@@ -140,6 +155,7 @@ export const updatePOI = async (req, res) => {
                 description: description || null,
                 is_global: type === 'global',
                 type: type,
+                created_by: poi.created_by || userId,
             },
             {
                 where: { id },
@@ -171,7 +187,12 @@ export const createUser = async (req, res) => {
     try {
         const { username, email, password, is_admin } = req.body;
 
-        await LdapService.createUser(username, email, password);
+        await LdapService.createUser(
+            username,
+            email,
+            password,
+            is_admin === 'on',
+        );
 
         await User.create({
             username,
