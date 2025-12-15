@@ -1,8 +1,15 @@
-import { User, Location, UserLocation, UserPointOfInterest, PointOfInterest, UserProfile } from "../../models/index.js";
-import { LdapService } from "../ldapService.js";
-import { sendWelcomeEmail, sendContactEmail } from "../emailService.js";
-import { generateAccessToken } from "../auth/tokenService.js";
-import { Op } from "sequelize";
+import {
+    User,
+    Location,
+    UserLocation,
+    UserPointOfInterest,
+    PointOfInterest,
+    UserProfile,
+} from '../../models/index.js';
+import { LdapService } from '../ldapService.js';
+import { sendWelcomeEmail, sendContactEmail } from '../emailService.js';
+import { generateAccessToken } from '../auth/tokenService.js';
+import { Op } from 'sequelize';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -12,16 +19,16 @@ const __dirname = path.dirname(__filename);
 
 export const getUserProfile = async (userId) => {
     const user = await User.findByPk(userId, {
-        include: [
-            { model: UserLocation, include: [Location] }
-        ]
+        include: [{ model: UserLocation, include: [Location] }],
     });
 
     if (!user) {
-        throw new Error("User not found");
+        throw new Error('User not found');
     }
 
-    const locations = user.UserLocations ? user.UserLocations.map(ul => ul.Location) : [];
+    const locations = user.UserLocations
+        ? user.UserLocations.map((ul) => ul.Location)
+        : [];
     const userProfileData = await UserProfile.findByPk(userId);
 
     return {
@@ -30,7 +37,7 @@ export const getUserProfile = async (userId) => {
         email: user.email,
         profile_picture_url: user.profile_picture_url,
         is_admin: user.is_admin,
-        Locations: locations
+        Locations: locations,
     };
 };
 
@@ -38,20 +45,32 @@ export const registerUser = async (userData) => {
     const { email, username, password, location_ids } = userData;
 
     if (!email || !username || !password) {
-        throw new Error("Faltan campos obligatorios");
+        throw new Error('Faltan campos obligatorios');
     }
 
+    // Check for duplicate email in database
+    const existingEmail = await User.findOne({ where: { email } });
+    if (existingEmail) {
+        throw new Error('El email ya está registrado');
+    }
+
+    // Check for duplicate username in LDAP and database
     const exists = await LdapService.userExists(username);
 
     if (exists) {
         const dbUser = await User.findOne({ where: { username } });
         if (!dbUser) {
-            const authenticated = await LdapService.authenticate(username, password);
+            const authenticated = await LdapService.authenticate(
+                username,
+                password,
+            );
             if (!authenticated) {
-                throw new Error("El usuario ya existe en LDAP (contraseña incorrecta)");
+                throw new Error(
+                    'El usuario ya existe en LDAP (contraseña incorrecta)',
+                );
             }
         } else {
-            throw new Error("El usuario ya existe");
+            throw new Error('El usuario ya existe');
         }
     } else {
         await LdapService.createUser(username, email, password);
@@ -63,7 +82,7 @@ export const registerUser = async (userData) => {
         user = await User.create({
             username,
             email,
-            is_admin: false
+            is_admin: false,
         });
     }
 
@@ -81,9 +100,9 @@ export const registerUser = async (userData) => {
             username: user.username,
             email: user.email,
             profile_picture_url: user.profile_picture_url,
-            is_admin: user.is_admin
+            is_admin: user.is_admin,
         },
-        token
+        token,
     };
 };
 
@@ -91,33 +110,47 @@ export const updateUserProfile = async (userId, updateData, uploadedFile) => {
     const user = await User.findByPk(userId);
 
     if (!user) {
-        throw new Error("User not found");
+        throw new Error('User not found');
     }
 
-    if (uploadedFile || updateData.profile_picture_url === '' || updateData.profile_picture_url === null) {
-        if (user.profile_picture_url && user.profile_picture_url.startsWith('/uploads/')) {
-            const relativePath = user.profile_picture_url.startsWith('/') ? user.profile_picture_url.substring(1) : user.profile_picture_url;
+    if (
+        uploadedFile ||
+        updateData.profile_picture_url === '' ||
+        updateData.profile_picture_url === null
+    ) {
+        if (
+            user.profile_picture_url &&
+            user.profile_picture_url.startsWith('/uploads/')
+        ) {
+            const relativePath = user.profile_picture_url.startsWith('/')
+                ? user.profile_picture_url.substring(1)
+                : user.profile_picture_url;
             const oldPath = path.join(__dirname, '../..', relativePath);
             try {
                 if (fs.existsSync(oldPath)) {
                     fs.unlinkSync(oldPath);
                 }
             } catch (err) {
-                console.error("Failed to delete old profile picture:", err);
+                console.error('Failed to delete old profile picture:', err);
             }
         }
     }
 
     if (uploadedFile) {
         user.profile_picture_url = `/uploads/profile-pictures/${uploadedFile.filename}`;
-    } else if (updateData.profile_picture_url === '' || updateData.profile_picture_url === null) {
+    } else if (
+        updateData.profile_picture_url === '' ||
+        updateData.profile_picture_url === null
+    ) {
         user.profile_picture_url = null;
     } else if (updateData.profile_picture_url) {
         user.profile_picture_url = updateData.profile_picture_url;
     }
 
     if (updateData.password) {
-        await LdapService.updateUser(user.username, { password: updateData.password });
+        await LdapService.updateUser(user.username, {
+            password: updateData.password,
+        });
     }
 
     await user.save();
@@ -125,13 +158,15 @@ export const updateUserProfile = async (userId, updateData, uploadedFile) => {
     if (updateData.location_ids && Array.isArray(updateData.location_ids)) {
         await UserLocation.destroy({ where: { user_id: userId } });
 
-        const localPois = await PointOfInterest.findAll({ where: { type: 'local' } });
-        const localPoiIds = localPois.map(poi => poi.id);
+        const localPois = await PointOfInterest.findAll({
+            where: { type: 'local' },
+        });
+        const localPoiIds = localPois.map((poi) => poi.id);
         await UserPointOfInterest.destroy({
             where: {
                 user_id: userId,
-                point_of_interest_id: localPoiIds
-            }
+                point_of_interest_id: localPoiIds,
+            },
         });
 
         await addUserLocations(userId, updateData.location_ids);
@@ -152,16 +187,16 @@ export const getMunicipalities = async () => {
 
 export const sendContactMessage = async (email, name, subject, message) => {
     if (!email) {
-        throw new Error("User email not found. Please login or provide email.");
+        throw new Error('User email not found. Please login or provide email.');
     }
 
     const result = await sendContactEmail(email, name, subject, message);
 
     if (!result.success) {
-        throw new Error("Failed to send message");
+        throw new Error('Failed to send message');
     }
 
-    return { message: "Message sent successfully" };
+    return { message: 'Message sent successfully' };
 };
 
 const addUserLocations = async (userId, locationIds) => {
@@ -169,7 +204,7 @@ const addUserLocations = async (userId, locationIds) => {
         await UserLocation.create({
             user_id: userId,
             location_id: location_id,
-            selected_at: new Date()
+            selected_at: new Date(),
         });
 
         const location = await Location.findByPk(location_id);
@@ -177,8 +212,8 @@ const addUserLocations = async (userId, locationIds) => {
             const poi = await PointOfInterest.findOne({
                 where: {
                     name: `Municipio: ${location.name}`,
-                    type: 'local'
-                }
+                    type: 'local',
+                },
             });
             if (poi) {
                 await UserPointOfInterest.create({

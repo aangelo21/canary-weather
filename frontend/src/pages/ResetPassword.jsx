@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import SEO from '../components/SEO';
+import {
+    validatePassword,
+    validatePasswordMatch,
+    getPasswordStrength,
+} from '../utils/validation';
 
 const ResetPassword = () => {
     const { t } = useTranslation();
@@ -12,7 +17,13 @@ const ResetPassword = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [validationErrors, setValidationErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const [passwordStrength, setPasswordStrength] = useState({
+        strength: 'none',
+        color: 'gray',
+        percentage: 0,
+    });
 
     const token = searchParams.get('token');
 
@@ -24,15 +35,34 @@ const ResetPassword = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
+        setValidationErrors({});
 
-        if (password !== confirmPassword) {
-            setError(t('passwordsDontMatch'));
+        const errors = {};
+
+        // Validate password
+        const passwordValidation = validatePassword(password);
+        if (!passwordValidation.isValid) {
+            errors.password = passwordValidation.errors.join('. ');
+        }
+
+        // Validate password match
+        const matchValidation = validatePasswordMatch(
+            password,
+            confirmPassword,
+        );
+        if (!matchValidation.isValid) {
+            errors.confirmPassword = matchValidation.error;
+        }
+
+        if (Object.keys(errors).length > 0) {
+            setValidationErrors(errors);
+            setError(t('pleaseFixErrors') || 'Please fix the errors below');
             return;
         }
 
         setIsLoading(true);
         setMessage('');
-        setError('');
 
         try {
             const API_BASE = import.meta.env.VITE_API_BASE;
@@ -42,7 +72,7 @@ const ResetPassword = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ token, newPassword: password }),
-                credentials: 'include', 
+                credentials: 'include',
             });
 
             const data = await response.json();
@@ -50,13 +80,8 @@ const ResetPassword = () => {
             if (response.ok) {
                 setMessage(t('passwordResetSuccess'));
 
-                
                 if (data.token && data.user) {
                     localStorage.setItem('cw_user', JSON.stringify(data.user));
-                    
-                    
-                    
-                    
                     setTimeout(() => {
                         window.location.href = '/';
                     }, 1500);
@@ -66,12 +91,42 @@ const ResetPassword = () => {
                     }, 3000);
                 }
             } else {
-                setError(t('resetFailed'));
+                const errorMsg = data.error || t('resetFailed');
+                if (data.details && Array.isArray(data.details)) {
+                    setValidationErrors({ password: data.details.join('. ') });
+                }
+                setError(errorMsg);
             }
         } catch (err) {
             setError(t('connectionFailed'));
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handlePasswordChange = (e) => {
+        const newPassword = e.target.value;
+        setPassword(newPassword);
+
+        const strength = getPasswordStrength(newPassword);
+        setPasswordStrength(strength);
+
+        if (validationErrors.password) {
+            setValidationErrors((prev) => {
+                const { password, ...rest } = prev;
+                return rest;
+            });
+        }
+    };
+
+    const handleConfirmPasswordChange = (e) => {
+        setConfirmPassword(e.target.value);
+
+        if (validationErrors.confirmPassword) {
+            setValidationErrors((prev) => {
+                const { confirmPassword, ...rest } = prev;
+                return rest;
+            });
         }
     };
 
@@ -119,11 +174,58 @@ const ResetPassword = () => {
                                 name="password"
                                 type="password"
                                 required
-                                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-brand-primary focus:border-brand-primary focus:z-10 sm:text-sm"
-                                placeholder={t('newPasswordLabel')}
+                                className={`appearance-none rounded-md relative block w-full px-3 py-2 border placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-brand-primary focus:border-brand-primary focus:z-10 sm:text-sm ${validationErrors.password ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-700'}`}
+                                placeholder="6-20 chars, A-Z, a-z, 0-9, !@#$"
                                 value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                onChange={handlePasswordChange}
                             />
+                            {password &&
+                                passwordStrength.strength !== 'none' && (
+                                    <div className="mt-2 space-y-1">
+                                        <div className="flex items-center gap-2">
+                                            <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                                <div
+                                                    className={`h-full transition-all duration-300 ${
+                                                        passwordStrength.color ===
+                                                        'red'
+                                                            ? 'bg-red-500'
+                                                            : passwordStrength.color ===
+                                                                'yellow'
+                                                              ? 'bg-yellow-500'
+                                                              : 'bg-green-500'
+                                                    }`}
+                                                    style={{
+                                                        width: `${passwordStrength.percentage}%`,
+                                                    }}
+                                                ></div>
+                                            </div>
+                                            <span
+                                                className={`text-xs font-medium ${
+                                                    passwordStrength.color ===
+                                                    'red'
+                                                        ? 'text-red-600 dark:text-red-400'
+                                                        : passwordStrength.color ===
+                                                            'yellow'
+                                                          ? 'text-yellow-600 dark:text-yellow-400'
+                                                          : 'text-green-600 dark:text-green-400'
+                                                }`}
+                                            >
+                                                {passwordStrength.strength ===
+                                                'weak'
+                                                    ? t('weak') || 'Weak'
+                                                    : passwordStrength.strength ===
+                                                        'medium'
+                                                      ? t('medium') || 'Medium'
+                                                      : t('strong') || 'Strong'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                            {validationErrors.password && (
+                                <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                                    {validationErrors.password}
+                                </p>
+                            )}
                         </div>
                         <div>
                             <label
@@ -137,13 +239,16 @@ const ResetPassword = () => {
                                 name="confirm-password"
                                 type="password"
                                 required
-                                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-brand-primary focus:border-brand-primary focus:z-10 sm:text-sm"
+                                className={`appearance-none rounded-md relative block w-full px-3 py-2 border placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-brand-primary focus:border-brand-primary focus:z-10 sm:text-sm ${validationErrors.confirmPassword ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-700'}`}
                                 placeholder={t('confirmPassword')}
                                 value={confirmPassword}
-                                onChange={(e) =>
-                                    setConfirmPassword(e.target.value)
-                                }
+                                onChange={handleConfirmPasswordChange}
                             />
+                            {validationErrors.confirmPassword && (
+                                <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                                    {validationErrors.confirmPassword}
+                                </p>
+                            )}
                         </div>
                     </div>
 

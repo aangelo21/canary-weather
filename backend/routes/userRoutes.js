@@ -1,6 +1,4 @@
-
 import express from 'express';
-
 
 import {
     getAllUsers,
@@ -21,20 +19,22 @@ import {
     resetPassword,
 } from '../controllers/authController.js';
 
-
 import { upload } from '../middleware/uploadMiddleware.js';
 import { optimizeImage } from '../middleware/imageOptimizationMiddleware.js';
 
+import {
+    validateRegistration,
+    validatePasswordReset,
+    validateUserUpdate,
+    validateContactForm,
+} from '../middleware/validationMiddleware.js';
 
 const router = express.Router();
-
 
 import {
     authenticateSession,
     authenticateToken,
 } from '../middleware/authMiddleware.js';
-
-
 
 /**
  * @swagger
@@ -177,7 +177,7 @@ router.post('/forgot-password', forgotPassword);
  *       400:
  *         description: Invalid token or missing fields
  */
-router.post('/reset-password', resetPassword);
+router.post('/reset-password', validatePasswordReset, resetPassword);
 
 /**
  * @swagger
@@ -237,7 +237,7 @@ router.post('/reset-password', resetPassword);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/', createUser);
+router.post('/', validateRegistration, createUser);
 
 /**
  * @swagger
@@ -489,6 +489,7 @@ router.put(
     authenticateToken,
     upload.single('profile_picture'),
     optimizeImage,
+    validateUserUpdate,
     updateUser,
 );
 router.delete('/:id', authenticateToken, deleteUser);
@@ -527,7 +528,6 @@ router.delete('/:id', authenticateToken, deleteUser);
  *       500:
  *         description: Internal server error
  */
-router.post('/contact', authenticateToken, contactSupport);
-
+router.post('/contact', authenticateToken, validateContactForm, contactSupport);
 
 export default router;

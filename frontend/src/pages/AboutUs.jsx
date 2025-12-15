@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { apiFetch } from '../services/api';
 import SEO from '../components/SEO';
-
+import { validateRequired, validateEmail } from '../utils/validation';
 
 const HeroSection = ({ t }) => (
     <div className="relative z-10 flex flex-col lg:flex-row items-end justify-between mb-24 gap-12 animate-fade-in-up">
@@ -26,7 +26,6 @@ const HeroSection = ({ t }) => (
         </p>
     </div>
 );
-
 
 const BentoGridSection = ({ t }) => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[minmax(180px,auto)] mb-32">
@@ -149,7 +148,6 @@ const BentoGridSection = ({ t }) => (
     </div>
 );
 
-
 const TechStackSection = ({ t }) => (
     <div className="mb-32 relative">
         <div className="absolute -left-20 top-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl"></div>
@@ -185,7 +183,6 @@ const TechStackSection = ({ t }) => (
         </div>
     </div>
 );
-
 
 const RoadmapSection = ({ t }) => (
     <div className="mb-32 max-w-4xl mx-auto">
@@ -239,16 +236,17 @@ const RoadmapSection = ({ t }) => (
     </div>
 );
 
-
 const ContactSection = ({ t }) => {
     const [formState, setFormState] = useState({
         name: '',
         subject: '',
         message: '',
+        email: '',
     });
     const [focusedField, setFocusedField] = useState(null);
     const [status, setStatus] = useState('idle');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [validationErrors, setValidationErrors] = useState({});
 
     useEffect(() => {
         const checkLogin = () => {
@@ -266,6 +264,53 @@ const ContactSection = ({ t }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setValidationErrors({});
+
+        const errors = {};
+
+        // Validate name
+        const nameValidation = validateRequired(formState.name, 'Name');
+        if (!nameValidation.isValid) {
+            errors.name = nameValidation.error;
+        }
+
+        // Validate subject
+        const subjectValidation = validateRequired(
+            formState.subject,
+            'Subject',
+        );
+        if (!subjectValidation.isValid) {
+            errors.subject = subjectValidation.error;
+        }
+
+        // Validate message
+        const messageValidation = validateRequired(
+            formState.message,
+            'Message',
+        );
+        if (!messageValidation.isValid) {
+            errors.message = messageValidation.error;
+        }
+
+        if (formState.message && formState.message.length > 5000) {
+            errors.message = 'Message must not exceed 5000 characters';
+        }
+
+        // Validate email if not logged in
+        if (!isLoggedIn && formState.email) {
+            const emailValidation = validateEmail(formState.email);
+            if (!emailValidation.isValid) {
+                errors.email = emailValidation.error;
+            }
+        }
+
+        if (Object.keys(errors).length > 0) {
+            setValidationErrors(errors);
+            setStatus('error');
+            setTimeout(() => setStatus('idle'), 3000);
+            return;
+        }
+
         setStatus('sending');
         try {
             const response = await apiFetch('/users/contact', {
@@ -278,9 +323,24 @@ const ContactSection = ({ t }) => {
 
             if (response.ok) {
                 setStatus('success');
-                setFormState({ name: '', subject: '', message: '' });
+                setFormState({ name: '', subject: '', message: '', email: '' });
                 setTimeout(() => setStatus('idle'), 3000);
             } else {
+                const data = await response.json();
+                if (data.details && Array.isArray(data.details)) {
+                    const newErrors = {};
+                    data.details.forEach((detail) => {
+                        if (detail.toLowerCase().includes('name'))
+                            newErrors.name = detail;
+                        else if (detail.toLowerCase().includes('subject'))
+                            newErrors.subject = detail;
+                        else if (detail.toLowerCase().includes('message'))
+                            newErrors.message = detail;
+                        else if (detail.toLowerCase().includes('email'))
+                            newErrors.email = detail;
+                    });
+                    setValidationErrors(newErrors);
+                }
                 setStatus('error');
                 setTimeout(() => setStatus('idle'), 3000);
             }
@@ -291,14 +351,24 @@ const ContactSection = ({ t }) => {
         }
     };
 
-    
+    const handleFieldChange = (field, value) => {
+        setFormState((prev) => ({ ...prev, [field]: value }));
+
+        // Clear validation error for this field
+        if (validationErrors[field]) {
+            setValidationErrors((prev) => {
+                const { [field]: removed, ...rest } = prev;
+                return rest;
+            });
+        }
+    };
+
     const inputClasses = (fieldName) => `
         w-full bg-slate-900/50 border rounded-xl px-4 py-4 text-white placeholder-transparent
         transition-all duration-300 outline-none
-        ${focusedField === fieldName ? 'border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.15)] bg-slate-900/80' : 'border-white/10 hover:border-white/20'}
+        ${validationErrors[fieldName] ? 'border-red-500' : focusedField === fieldName ? 'border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.15)] bg-slate-900/80' : 'border-white/10 hover:border-white/20'}
     `;
 
-    
     const labelClasses = (fieldName) => `
         absolute left-4 transition-all duration-300 pointer-events-none
         ${
@@ -466,10 +536,10 @@ const ContactSection = ({ t }) => {
                                             className={inputClasses('name')}
                                             value={formState.name}
                                             onChange={(e) =>
-                                                setFormState({
-                                                    ...formState,
-                                                    name: e.target.value,
-                                                })
+                                                handleFieldChange(
+                                                    'name',
+                                                    e.target.value,
+                                                )
                                             }
                                             onFocus={() =>
                                                 setFocusedField('name')
@@ -483,6 +553,11 @@ const ContactSection = ({ t }) => {
                                             {t('contactForm.name') ||
                                                 'Your Name'}
                                         </label>
+                                        {validationErrors.name && (
+                                            <p className="text-xs text-red-400 mt-1">
+                                                {validationErrors.name}
+                                            </p>
+                                        )}
                                     </div>
                                     <div className="relative">
                                         <input
@@ -491,10 +566,10 @@ const ContactSection = ({ t }) => {
                                             className={inputClasses('subject')}
                                             value={formState.subject}
                                             onChange={(e) =>
-                                                setFormState({
-                                                    ...formState,
-                                                    subject: e.target.value,
-                                                })
+                                                handleFieldChange(
+                                                    'subject',
+                                                    e.target.value,
+                                                )
                                             }
                                             onFocus={() =>
                                                 setFocusedField('subject')
@@ -508,6 +583,11 @@ const ContactSection = ({ t }) => {
                                             {t('contactForm.subject') ||
                                                 'Subject'}
                                         </label>
+                                        {validationErrors.subject && (
+                                            <p className="text-xs text-red-400 mt-1">
+                                                {validationErrors.subject}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -518,10 +598,10 @@ const ContactSection = ({ t }) => {
                                         className={`${inputClasses('message')} resize-none`}
                                         value={formState.message}
                                         onChange={(e) =>
-                                            setFormState({
-                                                ...formState,
-                                                message: e.target.value,
-                                            })
+                                            handleFieldChange(
+                                                'message',
+                                                e.target.value,
+                                            )
                                         }
                                         onFocus={() =>
                                             setFocusedField('message')
@@ -535,17 +615,25 @@ const ContactSection = ({ t }) => {
                                         {t('contactForm.message') ||
                                             'How can we help you?'}
                                     </label>
+                                    {validationErrors.message && (
+                                        <p className="text-xs text-red-400 mt-1">
+                                            {validationErrors.message}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="flex justify-end">
                                     <button
                                         type="submit"
-                                        className="group relative px-8 py-4 bg-linear-to-r from-cyan-500 to-blue-600 rounded-xl font-bold text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
+                                        disabled={status === 'sending'}
+                                        className="group relative px-8 py-4 bg-linear-to-r from-cyan-500 to-blue-600 rounded-xl font-bold text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 hover:-translate-y-0.5 transition-all duration-300 overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                                         <span className="relative flex items-center gap-2">
-                                            {t('contactForm.send') ||
-                                                'Send Message'}
+                                            {status === 'sending'
+                                                ? t('sending') || 'Sending...'
+                                                : t('contactForm.send') ||
+                                                  'Send Message'}
                                             <svg
                                                 className="w-5 h-5 group-hover:translate-x-1 transition-transform"
                                                 fill="none"
@@ -562,6 +650,14 @@ const ContactSection = ({ t }) => {
                                         </span>
                                     </button>
                                 </div>
+                                {status === 'error' &&
+                                    Object.keys(validationErrors).length ===
+                                        0 && (
+                                        <div className="text-sm text-red-400 bg-red-500/10 p-3 rounded-md">
+                                            {t('errorSendingMessage') ||
+                                                'Failed to send message. Please try again.'}
+                                        </div>
+                                    )}
                             </form>
                         )}
                     </div>
@@ -570,7 +666,6 @@ const ContactSection = ({ t }) => {
         </div>
     );
 };
-
 
 function AboutUs() {
     const { t } = useTranslation();
