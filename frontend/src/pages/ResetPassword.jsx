@@ -7,13 +7,13 @@ const ResetPassword = () => {
     const { t } = useTranslation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    
+
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    
+
     const token = searchParams.get('token');
 
     useEffect(() => {
@@ -24,7 +24,7 @@ const ResetPassword = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (password !== confirmPassword) {
             setError(t('passwordsDontMatch'));
             return;
@@ -49,7 +49,7 @@ const ResetPassword = () => {
 
             if (response.ok) {
                 setMessage(t('passwordResetSuccess'));
-                
+
                 // Auto-login if token and user are returned
                 if (data.token && data.user) {
                     localStorage.setItem('cw_user', JSON.stringify(data.user));
@@ -79,9 +79,15 @@ const ResetPassword = () => {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-md w-full bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg text-center">
-                    <h2 className="text-2xl font-bold text-red-600 mb-4">{t('invalidRequest')}</h2>
-                    <p className="text-gray-600 dark:text-gray-400 mb-6">{t('missingToken')}</p>
-                    <Link to="/" className="text-brand-primary hover:underline">{t('returnToHome')}</Link>
+                    <h2 className="text-2xl font-bold text-red-600 mb-4">
+                        {t('invalidRequest')}
+                    </h2>
+                    <p className="text-gray-600 dark:text-gray-400 mb-6">
+                        {t('missingToken')}
+                    </p>
+                    <Link to="/" className="text-brand-primary hover:underline">
+                        {t('returnToHome')}
+                    </Link>
                 </div>
             </div>
         );
@@ -89,8 +95,8 @@ const ResetPassword = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-            <SEO 
-                title="Reset Password" 
+            <SEO
+                title="Reset Password"
                 description="Create a new password for your Canary Weather account."
             />
             <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
@@ -102,7 +108,10 @@ const ResetPassword = () => {
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     <div className="rounded-md shadow-sm -space-y-px">
                         <div className="mb-4">
-                            <label htmlFor="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            <label
+                                htmlFor="password"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            >
                                 {t('newPasswordLabel')}
                             </label>
                             <input
@@ -117,7 +126,10 @@ const ResetPassword = () => {
                             />
                         </div>
                         <div>
-                            <label htmlFor="confirm-password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            <label
+                                htmlFor="confirm-password"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            >
                                 {t('confirmPassword')}
                             </label>
                             <input
@@ -128,7 +140,9 @@ const ResetPassword = () => {
                                 className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-brand-primary focus:border-brand-primary focus:z-10 sm:text-sm"
                                 placeholder={t('confirmPassword')}
                                 value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                onChange={(e) =>
+                                    setConfirmPassword(e.target.value)
+                                }
                             />
                         </div>
                     </div>
@@ -136,7 +150,9 @@ const ResetPassword = () => {
                     {message && (
                         <div className="text-sm text-green-600 bg-green-100 p-3 rounded-md">
                             {message}
-                            <p className="mt-2 text-xs">{t('redirectingHome')}</p>
+                            <p className="mt-2 text-xs">
+                                {t('redirectingHome')}
+                            </p>
                         </div>
                     )}
 
@@ -154,7 +170,9 @@ const ResetPassword = () => {
                                 isLoading ? 'opacity-75 cursor-not-allowed' : ''
                             }`}
                         >
-                            {isLoading ? t('resetting') : t('resetPasswordButton')}
+                            {isLoading
+                                ? t('resetting')
+                                : t('resetPasswordButton')}
                         </button>
                     </div>
                 </form>

@@ -72,7 +72,7 @@ function InteractiveMap() {
         setIsSidebarOpen(true); // Open sidebar when fetching starts
         try {
             const res = await fetch(
-                `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${OPENWEATHER_API_KEY}&units=metric`
+                `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${OPENWEATHER_API_KEY}&units=metric`,
             );
             const data = await res.json();
             setWeather({
@@ -110,14 +110,14 @@ function InteractiveMap() {
 
     return (
         <div className="relative w-full h-full overflow-hidden">
-            <Sidebar 
-                isOpen={isSidebarOpen} 
-                onClose={handleSidebarClose} 
-                weather={weather} 
-                loading={loading} 
+            <Sidebar
+                isOpen={isSidebarOpen}
+                onClose={handleSidebarClose}
+                weather={weather}
+                loading={loading}
                 position={clickedPos}
             />
-            
+
             <MapContainer
                 center={[28.5, -16]}
                 zoom={8}
@@ -136,15 +136,19 @@ function InteractiveMap() {
                 <MapMarkers pois={pois} />
 
                 {/* Event Handlers */}
-                <MapEvents setClickedPos={setClickedPos} fetchWeather={fetchWeather} />
+                <MapEvents
+                    setClickedPos={setClickedPos}
+                    fetchWeather={fetchWeather}
+                />
 
                 {/* Custom Controls */}
-                <MapControls setClickedPos={setClickedPos} fetchWeather={fetchWeather} />
+                <MapControls
+                    setClickedPos={setClickedPos}
+                    fetchWeather={fetchWeather}
+                />
 
                 {/* Marker for clicked position */}
-                {clickedPos && (
-                    <Marker position={clickedPos} ref={markerRef} />
-                )}
+                {clickedPos && <Marker position={clickedPos} ref={markerRef} />}
             </MapContainer>
         </div>
     );

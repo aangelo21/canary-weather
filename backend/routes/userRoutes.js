@@ -1,43 +1,46 @@
 // Import Express framework for routing
-import express from "express";
+import express from 'express';
 
 // Import controller functions for user operations
 import {
-  getAllUsers,
-  getUserById,
-  createUser,
-  updateUser,
-  deleteUser,
-  loginUser,
-  logoutUser,
-  getCurrentUser,
-  getMunicipalities,
-  refreshToken,
-  contactSupport,
-} from "../controllers/userController.js";
+    getAllUsers,
+    getUserById,
+    createUser,
+    updateUser,
+    deleteUser,
+    loginUser,
+    logoutUser,
+    getCurrentUser,
+    getMunicipalities,
+    refreshToken,
+    contactSupport,
+} from '../controllers/userController.js';
 
-import { forgotPassword, resetPassword } from "../controllers/authController.js";
+import {
+    forgotPassword,
+    resetPassword,
+} from '../controllers/authController.js';
 
 // Import multer middleware for profile picture uploads
-import { upload } from "../middleware/uploadMiddleware.js";
-import { optimizeImage } from "../middleware/imageOptimizationMiddleware.js";
+import { upload } from '../middleware/uploadMiddleware.js';
+import { optimizeImage } from '../middleware/imageOptimizationMiddleware.js';
 
 // Create Express router instance
 const router = express.Router();
 
 // Import authentication middleware
 import {
-  authenticateSession,
-  authenticateToken,
-} from "../middleware/authMiddleware.js";
+    authenticateSession,
+    authenticateToken,
+} from '../middleware/authMiddleware.js';
 
 /**
  * User Routes
- * 
+ *
  * Defines routes for user authentication and management.
  * Includes login, logout, registration, profile updates, and retrieval.
  * Also handles token refreshing and fetching available municipalities.
- * 
+ *
  * Base Path: /api/users
  */
 
@@ -98,7 +101,7 @@ import {
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/login", loginUser);
+router.post('/login', loginUser);
 
 /**
  * @swagger
@@ -125,7 +128,7 @@ router.post("/login", loginUser);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/logout", logoutUser);
+router.post('/logout', logoutUser);
 
 /**
  * @swagger
@@ -152,7 +155,7 @@ router.post("/logout", logoutUser);
  *       400:
  *         description: Missing email
  */
-router.post("/forgot-password", forgotPassword);
+router.post('/forgot-password', forgotPassword);
 
 /**
  * @swagger
@@ -182,7 +185,7 @@ router.post("/forgot-password", forgotPassword);
  *       400:
  *         description: Invalid token or missing fields
  */
-router.post("/reset-password", resetPassword);
+router.post('/reset-password', resetPassword);
 
 /**
  * @swagger
@@ -242,7 +245,7 @@ router.post("/reset-password", resetPassword);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/", createUser);
+router.post('/', createUser);
 
 /**
  * @swagger
@@ -267,7 +270,7 @@ router.post("/", createUser);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/municipalities", getMunicipalities);
+router.get('/municipalities', getMunicipalities);
 
 /**
  * @swagger
@@ -294,7 +297,7 @@ router.get("/municipalities", getMunicipalities);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/refresh-token", authenticateSession, refreshToken);
+router.post('/refresh-token', authenticateSession, refreshToken);
 
 /**
  * @swagger
@@ -325,7 +328,7 @@ router.post("/refresh-token", authenticateSession, refreshToken);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/me", authenticateToken, getCurrentUser);
+router.get('/me', authenticateToken, getCurrentUser);
 
 /**
  * @swagger
@@ -358,7 +361,7 @@ router.get("/me", authenticateToken, getCurrentUser);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/", authenticateToken, getAllUsers);
+router.get('/', authenticateToken, getAllUsers);
 
 /**
  * @swagger
@@ -488,15 +491,15 @@ router.get("/", authenticateToken, getAllUsers);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/:id", authenticateToken, getUserById);
+router.get('/:id', authenticateToken, getUserById);
 router.put(
-  "/:id",
-  authenticateToken,
-  upload.single("profile_picture"),
-  optimizeImage,
-  updateUser
+    '/:id',
+    authenticateToken,
+    upload.single('profile_picture'),
+    optimizeImage,
+    updateUser,
 );
-router.delete("/:id", authenticateToken, deleteUser);
+router.delete('/:id', authenticateToken, deleteUser);
 
 /**
  * @swagger
@@ -532,7 +535,7 @@ router.delete("/:id", authenticateToken, deleteUser);
  *       500:
  *         description: Internal server error
  */
-router.post("/contact", authenticateToken, contactSupport);
+router.post('/contact', authenticateToken, contactSupport);
 
 // Export the router for use in the main app
 export default router;

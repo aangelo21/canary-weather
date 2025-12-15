@@ -302,8 +302,9 @@ const StyledWrapper = styled.div`
         + .theme-switch__container
         .theme-switch__circle-container {
         left: calc(
-            100% - var(--circle-container-offset) -
-                var(--circle-container-diameter)
+            100% - var(--circle-container-offset) - var(
+                    --circle-container-diameter
+                )
         );
     }
 
@@ -311,8 +312,10 @@ const StyledWrapper = styled.div`
         + .theme-switch__container
         .theme-switch__circle-container:hover {
         left: calc(
-            100% - var(--circle-container-offset) -
-                var(--circle-container-diameter) - 0.187em
+            100% - var(--circle-container-offset) - var(
+                    --circle-container-diameter
+                ) -
+                0.187em
         );
     }
 

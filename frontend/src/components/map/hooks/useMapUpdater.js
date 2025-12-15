@@ -17,10 +17,10 @@ const useMapUpdater = (setClickedPos, fetchWeather) => {
         if (location.state?.lat && location.state?.lng) {
             const { lat, lng } = location.state;
             const coordsStr = `${lat},${lng}`;
-            
+
             if (lastCoords.current !== coordsStr) {
                 map.flyTo([lat, lng], 13, {
-                    duration: 2
+                    duration: 2,
                 });
                 setClickedPos([lat, lng]);
                 fetchWeather(lat, lng);

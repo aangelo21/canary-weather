@@ -30,7 +30,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
     const handleReset = () => {
         map.flyTo([28.5, -16], 8, {
             duration: 1.5,
-            easeLinearity: 0.25
+            easeLinearity: 0.25,
         });
     };
 
@@ -44,7 +44,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
             (position) => {
                 const { latitude, longitude } = position.coords;
                 map.flyTo([latitude, longitude], 13, {
-                    duration: 1.5
+                    duration: 1.5,
                 });
                 setClickedPos([latitude, longitude]);
                 fetchWeather(latitude, longitude);
@@ -52,7 +52,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
             () => {
                 alert(t('locationRetrievalError'));
             },
-            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 },
         );
     };
 
@@ -65,8 +65,8 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
             // Use Nominatim for search, bounded to Canary Islands
             const response = await fetch(
                 `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-                    searchQuery
-                )}&viewbox=-19.5,26.5,-12.5,30.5&bounded=1`
+                    searchQuery,
+                )}&viewbox=-19.5,26.5,-12.5,30.5&bounded=1`,
             );
             const results = await response.json();
 
@@ -75,7 +75,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
                 const latitude = parseFloat(lat);
                 const longitude = parseFloat(lon);
                 map.flyTo([latitude, longitude], 13, {
-                    duration: 1.5
+                    duration: 1.5,
                 });
                 setClickedPos([latitude, longitude]);
                 fetchWeather(latitude, longitude);
@@ -203,7 +203,7 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
                     </svg>
                     <span className="hidden sm:inline">{t('locate')}</span>
                 </button>
-                
+
                 {/* Legend Button */}
                 <div onClick={(e) => e.stopPropagation()}>
                     <MapLegend />

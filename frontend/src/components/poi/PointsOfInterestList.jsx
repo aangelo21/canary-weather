@@ -28,7 +28,7 @@ import { useTranslation } from 'react-i18next';
  */
 export default function PointsOfInterestList() {
     const { t } = useTranslation();
-    
+
     /**
      * @type {[boolean, Function]} isAuthenticated - State to check if the user is logged in.
      */
@@ -320,7 +320,7 @@ export default function PointsOfInterestList() {
                 const userPois = await fetchPersonalPoisData();
                 const allPois = [...pois, ...userPois];
                 const uniquePois = Array.from(
-                    new Map(allPois.map((item) => [item.id, item])).values()
+                    new Map(allPois.map((item) => [item.id, item])).values(),
                 );
                 setFilteredPois(uniquePois);
             } else if (filter === 'global') {
@@ -328,18 +328,18 @@ export default function PointsOfInterestList() {
             } else if (filter === 'local') {
                 const userPois = await fetchPersonalPoisData();
                 const uniqueUserPois = Array.from(
-                    new Map(userPois.map((item) => [item.id, item])).values()
+                    new Map(userPois.map((item) => [item.id, item])).values(),
                 );
                 setFilteredPois(
-                    uniqueUserPois.filter((poi) => poi.type === 'local')
+                    uniqueUserPois.filter((poi) => poi.type === 'local'),
                 );
             } else if (filter === 'personal') {
                 const userPois = await fetchPersonalPoisData();
                 const uniqueUserPois = Array.from(
-                    new Map(userPois.map((item) => [item.id, item])).values()
+                    new Map(userPois.map((item) => [item.id, item])).values(),
                 );
                 setFilteredPois(
-                    uniqueUserPois.filter((poi) => poi.type === 'personal')
+                    uniqueUserPois.filter((poi) => poi.type === 'personal'),
                 );
             }
         } finally {
@@ -454,7 +454,8 @@ export default function PointsOfInterestList() {
                                         }
                                         onDelete={
                                             canEdit
-                                                ? () => handleDeleteClick(poi.id)
+                                                ? () =>
+                                                      handleDeleteClick(poi.id)
                                                 : undefined
                                         }
                                     />

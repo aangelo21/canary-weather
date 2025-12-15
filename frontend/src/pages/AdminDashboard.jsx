@@ -24,7 +24,7 @@ const AdminDashboard = () => {
         const redirectToDashboard = () => {
             const API_BASE_ROOT = import.meta.env.VITE_API_BASE.replace(
                 '/api',
-                ''
+                '',
             );
             // Redirect to the backend EJS dashboard
             window.location.href = `${API_BASE_ROOT}/admin`;
@@ -39,8 +39,8 @@ const AdminDashboard = () => {
 
     return (
         <div>
-            <SEO 
-                title="Admin Dashboard" 
+            <SEO
+                title="Admin Dashboard"
                 description="Administrative dashboard for managing Canary Weather content and settings."
                 name="Canary Weather Admin"
                 type="website"

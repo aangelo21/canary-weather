@@ -24,7 +24,10 @@ export default function Hero({ coords }) {
 
     // State for weather data, location name, loading status, and errors
     const [weather, setWeather] = useState(null);
-    const [locationName, setLocationName] = useState({ city: 'Locating...', region: '' });
+    const [locationName, setLocationName] = useState({
+        city: 'Locating...',
+        region: '',
+    });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -34,29 +37,35 @@ export default function Hero({ coords }) {
      * @param {number} lat - Latitude
      * @param {number} lon - Longitude
      */
-    const fetchWeatherData = useCallback(async (lat, lon) => {
-        try {
-            const response = await fetch(
-                `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric`
-            );
-            const data = await response.json();
-            
-            // Map OpenWeatherMap response to our internal structure
-            setWeather({
-                temp: data.main.temp,
-                humidity: data.main.humidity,
-                wind_speed: data.wind.speed, // Note: OWM returns m/s by default with metric units
-                weather_id: data.weather[0].id,
-                is_day: data.dt > data.sys.sunrise && data.dt < data.sys.sunset ? 1 : 0,
-                description: data.weather[0].main
-            });
-            setLoading(false);
-        } catch (err) {
-            console.error("Failed to fetch weather data:", err);
-            setError("Failed to load weather data.");
-            setLoading(false);
-        }
-    }, [OPENWEATHER_API_KEY]);
+    const fetchWeatherData = useCallback(
+        async (lat, lon) => {
+            try {
+                const response = await fetch(
+                    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric`,
+                );
+                const data = await response.json();
+
+                // Map OpenWeatherMap response to our internal structure
+                setWeather({
+                    temp: data.main.temp,
+                    humidity: data.main.humidity,
+                    wind_speed: data.wind.speed, // Note: OWM returns m/s by default with metric units
+                    weather_id: data.weather[0].id,
+                    is_day:
+                        data.dt > data.sys.sunrise && data.dt < data.sys.sunset
+                            ? 1
+                            : 0,
+                    description: data.weather[0].main,
+                });
+                setLoading(false);
+            } catch (err) {
+                console.error('Failed to fetch weather data:', err);
+                setError('Failed to load weather data.');
+                setLoading(false);
+            }
+        },
+        [OPENWEATHER_API_KEY],
+    );
 
     /**
      * Fetches location name using a reverse geocoding API.
@@ -66,15 +75,15 @@ export default function Hero({ coords }) {
     const fetchLocationName = useCallback(async (lat, lon) => {
         try {
             const response = await fetch(
-                `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`
+                `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`,
             );
             const data = await response.json();
             setLocationName({
                 city: data.city || data.locality || 'Unknown Location',
-                region: data.principalSubdivision || data.countryName || ''
+                region: data.principalSubdivision || data.countryName || '',
             });
         } catch (err) {
-            console.error("Failed to fetch location name:", err);
+            console.error('Failed to fetch location name:', err);
             setLocationName({ city: 'Unknown', region: '' });
         }
     }, []);
@@ -116,8 +125,18 @@ export default function Hero({ coords }) {
         let icon = (
             <div className="relative w-32 h-32 mb-4">
                 <div className="absolute inset-0 bg-orange-400 rounded-full blur-xl opacity-20 animate-pulse"></div>
-                <svg className="w-full h-full text-orange-500 animate-[spin_10s_linear_infinite]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                <svg
+                    className="w-full h-full text-orange-500 animate-[spin_10s_linear_infinite]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                    />
                 </svg>
             </div>
         );
@@ -129,63 +148,131 @@ export default function Hero({ coords }) {
             icon = (
                 <div className="relative w-32 h-32 mb-4">
                     <div className="absolute inset-0 bg-purple-500 rounded-full blur-xl opacity-20 animate-pulse"></div>
-                    <svg className="w-full h-full text-purple-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    <svg
+                        className="w-full h-full text-purple-600 animate-pulse"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M13 10V3L4 14h7v7l9-11h-7z"
+                        />
                     </svg>
                 </div>
             );
-        } 
+        }
         // Group 3xx: Drizzle & Group 5xx: Rain
         else if ((id >= 300 && id < 400) || (id >= 500 && id < 600)) {
             label = 'Rainy';
             icon = (
                 <div className="relative w-32 h-32 mb-4">
                     <div className="absolute inset-0 bg-blue-400 rounded-full blur-xl opacity-20 animate-pulse"></div>
-                    <svg className="w-full h-full text-blue-500 animate-bounce" style={{ animationDuration: '3s' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 16.2A4.5 4.5 0 0017.5 8h-1.832A4.5 4.5 0 009.355 8H7.5a4.5 4.5 0 00-1.3 8.8" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 18v-2m-4 2v-4m-4 4v-2" className="animate-ping" style={{ animationDuration: '5s' }} />
+                    <svg
+                        className="w-full h-full text-blue-500 animate-bounce"
+                        style={{ animationDuration: '3s' }}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M20 16.2A4.5 4.5 0 0017.5 8h-1.832A4.5 4.5 0 009.355 8H7.5a4.5 4.5 0 00-1.3 8.8"
+                        />
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M16 18v-2m-4 2v-4m-4 4v-2"
+                            className="animate-ping"
+                            style={{ animationDuration: '5s' }}
+                        />
                     </svg>
                 </div>
             );
-        } 
+        }
         // Group 6xx: Snow
         else if (id >= 600 && id < 700) {
             label = 'Snowy';
             icon = (
                 <div className="relative w-32 h-32 mb-4">
                     <div className="absolute inset-0 bg-cyan-200 rounded-full blur-xl opacity-20 animate-pulse"></div>
-                    <svg className="w-full h-full text-cyan-400 animate-spin" style={{ animationDuration: '15s' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v18m9-9H3m15.364-6.364l-12.728 12.728m12.728 0L6.343 6.343" />
+                    <svg
+                        className="w-full h-full text-cyan-400 animate-spin"
+                        style={{ animationDuration: '15s' }}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M12 3v18m9-9H3m15.364-6.364l-12.728 12.728m12.728 0L6.343 6.343"
+                        />
                     </svg>
                 </div>
             );
-        } 
+        }
         // Group 7xx: Atmosphere (Fog, Mist, etc.)
         else if (id >= 700 && id < 800) {
             label = 'Foggy';
             icon = (
                 <div className="relative w-32 h-32 mb-4">
                     <div className="absolute inset-0 bg-gray-300 rounded-full blur-xl opacity-20 animate-pulse"></div>
-                    <svg className="w-full h-full text-gray-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 15h18M3 10h18M3 20h18" />
+                    <svg
+                        className="w-full h-full text-gray-400 animate-pulse"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M3 15h18M3 10h18M3 20h18"
+                        />
                     </svg>
                 </div>
             );
-        } 
+        }
         // Group 800: Clear
         else if (id === 800) {
             label = 'Sunny & Clear';
             // Icon is already default
-        } 
+        }
         // Group 80x: Clouds
         else if (id > 800) {
             label = 'Partly Cloudy';
             icon = (
                 <div className="relative w-32 h-32 mb-4">
                     <div className="absolute inset-0 bg-gray-400 rounded-full blur-xl opacity-20 animate-pulse"></div>
-                    <svg className="w-full h-full text-blue-400 animate-bounce" style={{ animationDuration: '3s' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                        {isDay === 1 && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" className="text-orange-400 origin-center scale-75 -translate-y-2 translate-x-2" />}
+                    <svg
+                        className="w-full h-full text-blue-400 animate-bounce"
+                        style={{ animationDuration: '3s' }}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+                        />
+                        {isDay === 1 && (
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                                className="text-orange-400 origin-center scale-75 -translate-y-2 translate-x-2"
+                            />
+                        )}
                     </svg>
                 </div>
             );
@@ -194,11 +281,13 @@ export default function Hero({ coords }) {
         return { label, icon };
     };
 
-    const weatherDetails = weather ? getWeatherDetails(weather.weather_id, weather.is_day) : getWeatherDetails(800, 1);
+    const weatherDetails = weather
+        ? getWeatherDetails(weather.weather_id, weather.is_day)
+        : getWeatherDetails(800, 1);
 
     return (
         <div className="relative overflow-hidden">
-            {/* 
+            {/*
              * Main Container
              * Centers content and handles padding for different screen sizes.
              */}
@@ -210,7 +299,8 @@ export default function Hero({ coords }) {
                             {/* Badge: Small highlight text */}
                             <div className="inline-flex items-center justify-center lg:justify-start">
                                 <span className="px-4 py-1.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 text-sm font-semibold tracking-wide uppercase">
-                                    {t('weatherApp') || 'Canary Islands Forecast'}
+                                    {t('weatherApp') ||
+                                        'Canary Islands Forecast'}
                                 </span>
                             </div>
 
@@ -277,13 +367,12 @@ export default function Hero({ coords }) {
                         {/* Decorative Background Blob */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-blue-200/40 to-cyan-200/40 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
 
-                        {/* 
-                         * Main Weather Card 
+                        {/*
+                         * Main Weather Card
                          * A glassmorphism-style card representing a live weather dashboard.
                          * Now displays real-time data.
                          */}
                         <div className="relative w-full max-w-sm bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-white/50 dark:border-gray-700/50 rounded-3xl shadow-2xl p-8 transform lg:rotate-y-12 hover:rotate-0 transition-all duration-700 ease-out group">
-                            
                             {error && (
                                 <div className="absolute top-0 left-0 w-full bg-red-500/80 text-white text-xs p-2 text-center rounded-t-3xl z-10">
                                     {error}
@@ -294,13 +383,30 @@ export default function Hero({ coords }) {
                             <div className="flex justify-between items-start mb-8">
                                 <div>
                                     <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                        <svg className="w-5 h-5 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <svg
+                                            className="w-5 h-5 text-brand-primary"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                            />
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                            />
                                         </svg>
                                         {locationName.city}
                                     </h3>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400 ml-7">{locationName.region}</p>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400 ml-7">
+                                        {locationName.region}
+                                    </p>
                                 </div>
                                 <span className="px-3 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-xs font-bold rounded-full uppercase tracking-wide">
                                     Live
@@ -312,24 +418,33 @@ export default function Hero({ coords }) {
                                 {/* Animated Weather Icon */}
                                 {loading ? (
                                     <div className="w-32 h-32 flex items-center justify-center mb-4">
-                                        <Skeleton variant="circular" className="w-24 h-24" />
+                                        <Skeleton
+                                            variant="circular"
+                                            className="w-24 h-24"
+                                        />
                                     </div>
                                 ) : (
                                     weatherDetails.icon
                                 )}
-                                
+
                                 <div className="text-6xl font-bold text-gray-900 dark:text-white tracking-tighter flex items-center justify-center">
                                     {loading ? (
                                         <Skeleton className="w-32 h-16" />
                                     ) : (
-                                        <>{Math.round(weather?.temp)}<span className="text-4xl align-top text-brand-primary">°C</span></>
+                                        <>
+                                            {Math.round(weather?.temp)}
+                                            <span className="text-4xl align-top text-brand-primary">
+                                                °C
+                                            </span>
+                                        </>
                                     )}
                                 </div>
                                 <div className="text-xl font-medium text-gray-600 dark:text-gray-300 mt-2 capitalize w-full flex justify-center">
                                     {loading ? (
                                         <Skeleton className="w-24 h-6" />
                                     ) : (
-                                        weather?.description || weatherDetails.label
+                                        weather?.description ||
+                                        weatherDetails.label
                                     )}
                                 </div>
                             </div>
@@ -337,27 +452,77 @@ export default function Hero({ coords }) {
                             {/* Card Footer: Mini Stats */}
                             <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
                                 <div className="text-center flex flex-col items-center">
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">Wind</p>
-                                    {loading ? <Skeleton className="w-12 h-5" /> : <p className="font-bold text-gray-900 dark:text-white">{Math.round(weather?.wind_speed)} km/h</p>}
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">
+                                        Wind
+                                    </p>
+                                    {loading ? (
+                                        <Skeleton className="w-12 h-5" />
+                                    ) : (
+                                        <p className="font-bold text-gray-900 dark:text-white">
+                                            {Math.round(weather?.wind_speed)}{' '}
+                                            km/h
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="text-center border-l border-gray-100 dark:border-gray-700 flex flex-col items-center">
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">Humidity</p>
-                                    {loading ? <Skeleton className="w-12 h-5" /> : <p className="font-bold text-gray-900 dark:text-white">{Math.round(weather?.humidity)}%</p>}
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">
+                                        Humidity
+                                    </p>
+                                    {loading ? (
+                                        <Skeleton className="w-12 h-5" />
+                                    ) : (
+                                        <p className="font-bold text-gray-900 dark:text-white">
+                                            {Math.round(weather?.humidity)}%
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="text-center border-l border-gray-100 dark:border-gray-700 flex flex-col items-center">
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">UV</p>
-                                    {loading ? <Skeleton className="w-12 h-5" /> : <p className="font-bold text-gray-900 dark:text-white">High</p>}
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">
+                                        UV
+                                    </p>
+                                    {loading ? (
+                                        <Skeleton className="w-12 h-5" />
+                                    ) : (
+                                        <p className="font-bold text-gray-900 dark:text-white">
+                                            High
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
                             {/* Floating Elements (Decorations) */}
-                            <div className="absolute -right-12 top-1/4 bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-xl animate-bounce hidden lg:block" style={{ animationDuration: '3s' }}>
-                                <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                            <div
+                                className="absolute -right-12 top-1/4 bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-xl animate-bounce hidden lg:block"
+                                style={{ animationDuration: '3s' }}
+                            >
+                                <svg
+                                    className="w-6 h-6 text-blue-500"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+                                    />
                                 </svg>
                             </div>
-                            <div className="absolute -left-8 bottom-1/4 bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-xl animate-bounce hidden lg:block" style={{ animationDuration: '4s', animationDelay: '1s' }}>
-                                <span className="text-2xl" role="img" aria-label="wave">🌊</span>
+                            <div
+                                className="absolute -left-8 bottom-1/4 bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-xl animate-bounce hidden lg:block"
+                                style={{
+                                    animationDuration: '4s',
+                                    animationDelay: '1s',
+                                }}
+                            >
+                                <span
+                                    className="text-2xl"
+                                    role="img"
+                                    aria-label="wave"
+                                >
+                                    🌊
+                                </span>
                             </div>
                         </div>
                     </div>

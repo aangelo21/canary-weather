@@ -28,8 +28,8 @@ export default function Activities() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {/* 
-                     * Surfing Card 
+                    {/*
+                     * Surfing Card
                      * Displays surfing activity with an image background, gradient overlay, and bottom-aligned text.
                      */}
                     <div className="group relative overflow-hidden rounded-3xl h-80 cursor-pointer shadow-xl">
@@ -40,10 +40,10 @@ export default function Activities() {
                             loading="lazy"
                             className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                         />
-                        
+
                         {/* Gradient Overlay for Text Readability */}
                         <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent"></div>
-                        
+
                         {/* Content Container - Positioned at bottom left with z-index to sit above image/linear */}
                         <div className="absolute bottom-0 left-0 p-8 z-10">
                             <div className="text-white mb-2">
@@ -71,8 +71,8 @@ export default function Activities() {
                         </div>
                     </div>
 
-                    {/* 
-                     * Hiking Card 
+                    {/*
+                     * Hiking Card
                      * Displays hiking activity with similar styling.
                      */}
                     <div className="group relative overflow-hidden rounded-3xl h-80 cursor-pointer shadow-xl">
@@ -109,8 +109,8 @@ export default function Activities() {
                         </div>
                     </div>
 
-                    {/* 
-                     * Stargazing Card 
+                    {/*
+                     * Stargazing Card
                      * Displays stargazing activity with similar styling.
                      */}
                     <div className="group relative overflow-hidden rounded-3xl h-80 cursor-pointer shadow-xl">

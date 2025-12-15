@@ -22,7 +22,10 @@ export default function WarningsSkeleton() {
                 <Skeleton className="h-8 w-48 mb-4" />
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {[1, 2, 3].map((i) => (
-                        <div key={i} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm bg-white dark:bg-gray-800">
+                        <div
+                            key={i}
+                            className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm bg-white dark:bg-gray-800"
+                        >
                             <div className="flex justify-between items-start mb-2">
                                 <Skeleton className="h-6 w-32" />
                                 <Skeleton className="h-6 w-20 rounded-full" />
@@ -41,7 +44,7 @@ export default function WarningsSkeleton() {
             {/* Past Alerts Section */}
             <section>
                 <Skeleton className="h-8 w-48 mb-4" />
-                
+
                 {/* Desktop Table Skeleton */}
                 <div className="hidden md:block">
                     <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
@@ -52,7 +55,10 @@ export default function WarningsSkeleton() {
                             <Skeleton className="h-6 w-full" />
                         </div>
                         {[1, 2, 3, 4, 5].map((i) => (
-                            <div key={i} className="p-4 grid grid-cols-4 gap-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                            <div
+                                key={i}
+                                className="p-4 grid grid-cols-4 gap-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+                            >
                                 <Skeleton className="h-4 w-3/4" />
                                 <Skeleton className="h-4 w-1/2" />
                                 <Skeleton className="h-4 w-3/4" />
@@ -65,7 +71,10 @@ export default function WarningsSkeleton() {
                 {/* Mobile Cards Skeleton */}
                 <div className="md:hidden grid gap-4">
                     {[1, 2, 3].map((i) => (
-                        <div key={i} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm bg-white dark:bg-gray-800">
+                        <div
+                            key={i}
+                            className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm bg-white dark:bg-gray-800"
+                        >
                             <Skeleton className="h-6 w-32 mb-2" />
                             <Skeleton className="h-4 w-24 mb-2" />
                             <div className="space-y-1">

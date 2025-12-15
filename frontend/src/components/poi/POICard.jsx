@@ -47,7 +47,7 @@ function getWeatherEmoji(condition) {
  */
 const POICard = memo(function POICard({ poi, onEdit, onDelete }) {
     const { t } = useTranslation();
-    
+
     /**
      * @type {[Object|null, Function]} weather - State for the fetched weather data.
      */
@@ -76,7 +76,7 @@ const POICard = memo(function POICard({ poi, onEdit, onDelete }) {
                     observer.disconnect();
                 }
             },
-            { rootMargin: '50px' }
+            { rootMargin: '50px' },
         );
 
         if (cardRef.current) {
@@ -93,10 +93,10 @@ const POICard = memo(function POICard({ poi, onEdit, onDelete }) {
         if (isVisible && poi.latitude && poi.longitude && !weather) {
             const fetchWeather = async () => {
                 try {
-                    const OPENWEATHER_API_KEY =
-                        import.meta.env.VITE_OPENWEATHER_API_KEY;
+                    const OPENWEATHER_API_KEY = import.meta.env
+                        .VITE_OPENWEATHER_API_KEY;
                     const res = await fetch(
-                        `https://api.openweathermap.org/data/2.5/weather?lat=${poi.latitude}&lon=${poi.longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`
+                        `https://api.openweathermap.org/data/2.5/weather?lat=${poi.latitude}&lon=${poi.longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`,
                     );
                     if (!res.ok) return;
                     const data = await res.json();
@@ -216,7 +216,7 @@ const POICard = memo(function POICard({ poi, onEdit, onDelete }) {
                                     {getWeatherEmoji(
                                         weather.condition ||
                                             weather.description ||
-                                            ''
+                                            '',
                                     )}
                                 </div>
                             </div>
@@ -263,7 +263,10 @@ const POICard = memo(function POICard({ poi, onEdit, onDelete }) {
                                 <Skeleton className="w-16 h-4" />
                                 <Skeleton className="w-12 h-6" />
                             </div>
-                            <Skeleton variant="circular" className="w-10 h-10" />
+                            <Skeleton
+                                variant="circular"
+                                className="w-10 h-10"
+                            />
                         </div>
                         <div className="grid grid-cols-3 gap-2">
                             <div className="flex flex-col items-center gap-1">

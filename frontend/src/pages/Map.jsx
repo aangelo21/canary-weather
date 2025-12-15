@@ -22,8 +22,8 @@ function Map() {
     const { t } = useTranslation();
     return (
         <div className="w-full h-full relative">
-            <SEO 
-                title="Interactive Map" 
+            <SEO
+                title="Interactive Map"
                 description="Explore weather conditions, wind patterns, and wave heights across the Canary Islands with our interactive map."
             />
             <InteractiveMap />

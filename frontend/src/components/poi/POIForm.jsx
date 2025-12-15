@@ -39,7 +39,7 @@ export default function POIForm({
         <div>
             <form onSubmit={onSubmit}>
                 <div className="mb-2">
-                    <label 
+                    <label
                         htmlFor="poi-name"
                         className="block text-sm font-medium mb-1"
                     >
@@ -57,7 +57,7 @@ export default function POIForm({
                 </div>
 
                 <div className="mb-2">
-                    <label 
+                    <label
                         htmlFor="poi-description"
                         className="block text-sm font-medium mb-1"
                     >
@@ -75,7 +75,7 @@ export default function POIForm({
                 </div>
 
                 <div className="mb-2">
-                    <label 
+                    <label
                         htmlFor="poi-image"
                         className="block text-sm font-medium mb-1"
                     >

@@ -1,6 +1,6 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import tailwind from "@tailwindcss/vite";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwind from '@tailwindcss/vite';
 import viteCompression from 'vite-plugin-compression';
 import { VitePWA } from 'vite-plugin-pwa';
 
@@ -20,28 +20,34 @@ export default defineConfig({
             registerType: 'autoUpdate',
             includeAssets: ['logo.webp'],
             workbox: {
-                navigateFallbackDenylist: [/^\/api/, /^\/admin/, /^\/uploads/, /^\/api-docs/]
+                navigateFallbackDenylist: [
+                    /^\/api/,
+                    /^\/admin/,
+                    /^\/uploads/,
+                    /^\/api-docs/,
+                ],
             },
             manifest: {
                 name: 'Canary Weather',
                 short_name: 'CanaryWeather',
-                description: 'Accurate weather forecasts, tide charts, and activity guides for the Canary Islands.',
+                description:
+                    'Accurate weather forecasts, tide charts, and activity guides for the Canary Islands.',
                 theme_color: '#ffffff',
-                background_color: "#ffffff",
-                display: "standalone",
+                background_color: '#ffffff',
+                display: 'standalone',
                 icons: [
                     {
                         src: 'logo.webp',
                         sizes: '192x192',
-                        type: 'image/webp'
+                        type: 'image/webp',
                     },
                     {
                         src: 'logo.webp',
                         sizes: '512x512',
-                        type: 'image/webp'
-                    }
-                ]
-            }
+                        type: 'image/webp',
+                    },
+                ],
+            },
         }),
     ],
     build: {
@@ -83,7 +89,7 @@ export default defineConfig({
                 changeOrigin: true,
                 secure: false,
             },
-        }
+        },
     },
     preview: {
         proxy: {
@@ -107,6 +113,6 @@ export default defineConfig({
                 changeOrigin: true,
                 secure: false,
             },
-        }
-    }
+        },
+    },
 });

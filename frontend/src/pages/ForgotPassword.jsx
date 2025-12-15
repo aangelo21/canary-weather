@@ -42,8 +42,8 @@ const ForgotPassword = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-            <SEO 
-                title="Forgot Password" 
+            <SEO
+                title="Forgot Password"
                 description="Reset your Canary Weather account password."
             />
             <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
@@ -98,9 +98,12 @@ const ForgotPassword = () => {
                             {isLoading ? t('sending') : t('sendResetLink')}
                         </button>
                     </div>
-                    
+
                     <div className="text-center">
-                        <Link to="/" className="font-medium text-brand-primary hover:text-blue-500">
+                        <Link
+                            to="/"
+                            className="font-medium text-brand-primary hover:text-blue-500"
+                        >
                             {t('backToHome')}
                         </Link>
                     </div>

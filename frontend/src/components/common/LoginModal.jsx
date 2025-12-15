@@ -39,7 +39,7 @@ export default function LoginModal({
     onLogout,
 }) {
     const { t } = useTranslation();
-    
+
     /**
      * @type {[boolean, Function]} isSignUp - State to toggle between Login and Sign Up forms.
      */
@@ -97,7 +97,7 @@ export default function LoginModal({
      * @type {React.RefObject<HTMLInputElement>} fileInputRef - Reference to the hidden file input element for image upload.
      */
     const fileInputRef = useRef(null);
-    
+
     const API_BASE = import.meta.env.VITE_API_BASE;
 
     /**
@@ -129,7 +129,7 @@ export default function LoginModal({
                     localStorage.setItem('cw_user', JSON.stringify(freshUser));
                 })
                 .catch((err) =>
-                    console.error('Error refreshing user data:', err)
+                    console.error('Error refreshing user data:', err),
                 );
         }
     }, [user, isOpen]);
@@ -143,7 +143,7 @@ export default function LoginModal({
             fetchMunicipalities()
                 .then(setMunicipalities)
                 .catch((err) =>
-                    console.error('Error loading municipalities:', err)
+                    console.error('Error loading municipalities:', err),
                 );
         }
     }, [isOpen]);
@@ -336,7 +336,7 @@ export default function LoginModal({
                                     } catch (err) {
                                         setLoading(false);
                                         setError(
-                                            err.message || t('errorDeleteUser')
+                                            err.message || t('errorDeleteUser'),
                                         );
                                     }
                                 }}
@@ -357,7 +357,10 @@ export default function LoginModal({
     if (user) {
         return (
             <>
-                <div className="fixed inset-0 z-9998 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
+                <div
+                    className="fixed inset-0 z-9998 bg-black/50 backdrop-blur-sm"
+                    onClick={onClose}
+                ></div>
                 <div
                     className="fixed inset-0 flex items-center justify-center z-9999 p-4"
                     onClick={onClose}
@@ -495,7 +498,7 @@ export default function LoginModal({
                                             input.location_ids;
                                     const result = await createOrUpdateUser(
                                         updateData,
-                                        user.id
+                                        user.id,
                                     );
                                     setLoading(false);
                                     if (result) {
@@ -505,7 +508,7 @@ export default function LoginModal({
                                 } catch (err) {
                                     setLoading(false);
                                     setError(
-                                        err.message || t('errorUpdateUser')
+                                        err.message || t('errorUpdateUser'),
                                     );
                                 }
                             }}
@@ -565,7 +568,7 @@ export default function LoginModal({
                                         if (
                                             selectedLocationToAdd &&
                                             !input.location_ids.includes(
-                                                selectedLocationToAdd
+                                                selectedLocationToAdd,
                                             )
                                         ) {
                                             setInput((prev) => ({
@@ -587,7 +590,7 @@ export default function LoginModal({
                                 {input.location_ids &&
                                     input.location_ids.map((locId) => {
                                         const loc = municipalities.find(
-                                            (m) => m.id == locId
+                                            (m) => m.id == locId,
                                         );
                                         return loc ? (
                                             <span
@@ -598,7 +601,9 @@ export default function LoginModal({
                                                 <button
                                                     type="button"
                                                     className="hover:text-blue-900 font-bold"
-                                                    aria-label={t('remove') || 'Remove'}
+                                                    aria-label={
+                                                        t('remove') || 'Remove'
+                                                    }
                                                     onClick={() => {
                                                         setInput((prev) => ({
                                                             ...prev,
@@ -606,7 +611,7 @@ export default function LoginModal({
                                                                 prev.location_ids.filter(
                                                                     (id) =>
                                                                         id !==
-                                                                        locId
+                                                                        locId,
                                                                 ),
                                                         }));
                                                     }}
@@ -700,7 +705,9 @@ export default function LoginModal({
                                             <input
                                                 id="email"
                                                 type="email"
-                                                placeholder={t('emailPlaceholder')}
+                                                placeholder={t(
+                                                    'emailPlaceholder',
+                                                )}
                                                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:placeholder-gray-400"
                                                 value={input.email}
                                                 onChange={(e) =>
@@ -721,13 +728,16 @@ export default function LoginModal({
                                             <input
                                                 id="username"
                                                 type="text"
-                                                placeholder={t('usernamePlaceholder')}
+                                                placeholder={t(
+                                                    'usernamePlaceholder',
+                                                )}
                                                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:placeholder-gray-400"
                                                 value={input.username}
                                                 onChange={(e) =>
                                                     setInput((i) => ({
                                                         ...i,
-                                                        username: e.target.value,
+                                                        username:
+                                                            e.target.value,
                                                     }))
                                                 }
                                             />
@@ -747,7 +757,8 @@ export default function LoginModal({
                                                 onChange={(e) =>
                                                     setInput((i) => ({
                                                         ...i,
-                                                        password: e.target.value,
+                                                        password:
+                                                            e.target.value,
                                                     }))
                                                 }
                                             />
@@ -773,7 +784,7 @@ export default function LoginModal({
                                             />
                                         </div>
                                         <div className="flex flex-col space-y-1.5">
-                                            <label 
+                                            <label
                                                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-900 dark:text-white"
                                                 htmlFor="municipality-select"
                                             >
@@ -783,15 +794,19 @@ export default function LoginModal({
                                                 <select
                                                     id="municipality-select"
                                                     className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:bg-gray-800 flex-1 min-w-0"
-                                                    value={selectedLocationToAdd}
+                                                    value={
+                                                        selectedLocationToAdd
+                                                    }
                                                     onChange={(e) =>
                                                         setSelectedLocationToAdd(
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                 >
                                                     <option value="">
-                                                        {t('selectMunicipality')}
+                                                        {t(
+                                                            'selectMunicipality',
+                                                        )}
                                                     </option>
                                                     {municipalities.map(
                                                         (municipality) => (
@@ -807,7 +822,7 @@ export default function LoginModal({
                                                                     municipality.name
                                                                 }
                                                             </option>
-                                                        )
+                                                        ),
                                                     )}
                                                 </select>
                                                 <button
@@ -820,7 +835,7 @@ export default function LoginModal({
                                                         if (
                                                             selectedLocationToAdd &&
                                                             !input.location_ids.includes(
-                                                                selectedLocationToAdd
+                                                                selectedLocationToAdd,
                                                             )
                                                         ) {
                                                             setInput(
@@ -831,10 +846,10 @@ export default function LoginModal({
                                                                             ...prev.location_ids,
                                                                             selectedLocationToAdd,
                                                                         ],
-                                                                })
+                                                                }),
                                                             );
                                                             setSelectedLocationToAdd(
-                                                                ''
+                                                                '',
                                                             );
                                                         }
                                                     }}
@@ -850,7 +865,7 @@ export default function LoginModal({
                                                                 municipalities.find(
                                                                     (m) =>
                                                                         m.id ==
-                                                                        locId
+                                                                        locId,
                                                                 );
                                                             return loc ? (
                                                                 <span
@@ -861,22 +876,27 @@ export default function LoginModal({
                                                                     <button
                                                                         type="button"
                                                                         className="hover:text-blue-900 font-bold"
-                                                                        aria-label={t('remove') || 'Remove'}
+                                                                        aria-label={
+                                                                            t(
+                                                                                'remove',
+                                                                            ) ||
+                                                                            'Remove'
+                                                                        }
                                                                         onClick={() => {
                                                                             setInput(
                                                                                 (
-                                                                                    prev
+                                                                                    prev,
                                                                                 ) => ({
                                                                                     ...prev,
                                                                                     location_ids:
                                                                                         prev.location_ids.filter(
                                                                                             (
-                                                                                                id
+                                                                                                id,
                                                                                             ) =>
                                                                                                 id !==
-                                                                                                locId
+                                                                                                locId,
                                                                                         ),
-                                                                                })
+                                                                                }),
                                                                             );
                                                                         }}
                                                                     >
@@ -884,7 +904,7 @@ export default function LoginModal({
                                                                     </button>
                                                                 </span>
                                                             ) : null;
-                                                        }
+                                                        },
                                                     )}
                                             </div>
                                         </div>
@@ -901,7 +921,9 @@ export default function LoginModal({
                                             <input
                                                 id="emailOrUsername"
                                                 type="text"
-                                                placeholder={t('emailOrUsernamePlaceholder')}
+                                                placeholder={t(
+                                                    'emailOrUsernamePlaceholder',
+                                                )}
                                                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-gray-200 dark:border-gray-700 dark:text-white dark:placeholder-gray-400"
                                                 value={input.emailOrUsername}
                                                 onChange={(e) =>
@@ -928,14 +950,15 @@ export default function LoginModal({
                                                 onChange={(e) =>
                                                     setInput((i) => ({
                                                         ...i,
-                                                        password: e.target.value,
+                                                        password:
+                                                            e.target.value,
                                                     }))
                                                 }
                                             />
                                         </div>
                                         <div className="text-right">
-                                            <Link 
-                                                to="/forgot-password" 
+                                            <Link
+                                                to="/forgot-password"
                                                 className="text-xs text-brand-primary hover:underline dark:text-blue-400"
                                                 onClick={onClose}
                                             >

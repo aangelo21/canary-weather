@@ -5,11 +5,41 @@ import { useNavigate } from 'react-router-dom';
 // Use translation keys for the destination text so content can be localized
 const destinations = [
     { id: 1, key: 'teide', image: 'teide.webp', lat: 28.2724, lng: -16.6425 },
-    { id: 5, key: 'maspalomas', image: 'dunas.webp', lat: 27.7419, lng: -15.5891 },
-    { id: 7, key: 'timanfaya', image: 'timanfaya.webp', lat: 29.003, lng: -13.6216 },
-    { id: 9, key: 'corralejo', image: 'corralejo.webp', lat: 28.7373, lng: -13.8751 },
-    { id: 12, key: 'garajonay', image: 'garajonay.webp', lat: 28.0907, lng: -17.2349 },
-    { id: 4, key: 'roquenublo', image: 'roquenublo.webp', lat: 27.9871, lng: -15.6302 },
+    {
+        id: 5,
+        key: 'maspalomas',
+        image: 'dunas.webp',
+        lat: 27.7419,
+        lng: -15.5891,
+    },
+    {
+        id: 7,
+        key: 'timanfaya',
+        image: 'timanfaya.webp',
+        lat: 29.003,
+        lng: -13.6216,
+    },
+    {
+        id: 9,
+        key: 'corralejo',
+        image: 'corralejo.webp',
+        lat: 28.7373,
+        lng: -13.8751,
+    },
+    {
+        id: 12,
+        key: 'garajonay',
+        image: 'garajonay.webp',
+        lat: 28.0907,
+        lng: -17.2349,
+    },
+    {
+        id: 4,
+        key: 'roquenublo',
+        image: 'roquenublo.webp',
+        lat: 27.9871,
+        lng: -15.6302,
+    },
 ];
 
 /**
@@ -31,7 +61,7 @@ const destinations = [
 export default function DestinationCarousel() {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    
+
     /**
      * @type {Array<Object>} extendedDestinations - Tripled list of destinations to simulate infinite scrolling.
      */
@@ -174,9 +204,13 @@ export default function DestinationCarousel() {
                             ref={index === 0 ? itemRef : null}
                             className="shrink-0 w-[75%] sm:w-[40%] lg:w-[30%]"
                         >
-                            <div 
+                            <div
                                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden h-full transform transition-all hover:scale-105 duration-300 cursor-pointer"
-                                onClick={() => navigate('/map', { state: { lat: dest.lat, lng: dest.lng } })}
+                                onClick={() =>
+                                    navigate('/map', {
+                                        state: { lat: dest.lat, lng: dest.lng },
+                                    })
+                                }
                             >
                                 <div className="h-48 overflow-hidden">
                                     <img
@@ -193,13 +227,13 @@ export default function DestinationCarousel() {
                                         </h3>
                                         <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800">
                                             {t(
-                                                `destinations.${dest.key}.location`
+                                                `destinations.${dest.key}.location`,
                                             )}
                                         </span>
                                     </div>
                                     <p className="text-gray-600 dark:text-gray-300 text-sm">
                                         {t(
-                                            `destinations.${dest.key}.description`
+                                            `destinations.${dest.key}.description`,
                                         )}
                                     </p>
                                 </div>

@@ -33,7 +33,7 @@
         </div>
 
         <p class="text-gray-600 mb-8">Bienvenido al Panel de Administración de Canary Weather.</p>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                 <h2 class="text-xl font-semibold text-gray-800 mb-2">Usuarios</h2>
@@ -430,24 +430,24 @@
             if (viewName === 'pois') {
                 poisSection.classList.remove('hidden');
                 usersSection.classList.add('hidden');
-                
+
                 btnPois.classList.remove('text-gray-600', 'hover:text-gray-900', 'bg-transparent');
                 btnPois.classList.add('bg-brand-primary', 'text-white');
-                
+
                 btnUsers.classList.add('text-gray-600', 'hover:text-gray-900', 'bg-transparent');
                 btnUsers.classList.remove('bg-brand-primary', 'text-white');
-                
+
                 localStorage.setItem('adminView', 'pois');
             } else {
                 poisSection.classList.add('hidden');
                 usersSection.classList.remove('hidden');
-                
+
                 btnUsers.classList.remove('text-gray-600', 'hover:text-gray-900', 'bg-transparent');
                 btnUsers.classList.add('bg-brand-primary', 'text-white');
-                
+
                 btnPois.classList.add('text-gray-600', 'hover:text-gray-900', 'bg-transparent');
                 btnPois.classList.remove('bg-brand-primary', 'text-white');
-                
+
                 localStorage.setItem('adminView', 'users');
             }
         }
@@ -459,7 +459,7 @@
             switchView(savedView);
 
             const stats = <%- JSON.stringify(stats || {}) %>;
-            
+
             if (stats.poiByCategory) {
                 new Chart(document.getElementById('poiCategoryChart'), {
                     type: 'bar',

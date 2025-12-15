@@ -5,9 +5,12 @@ import L from 'leaflet';
 // Fix for default marker icon in React Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+    iconRetinaUrl:
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+    iconUrl:
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+    shadowUrl:
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
 /**
@@ -19,13 +22,9 @@ L.Icon.Default.mergeOptions({
  * @param {Array} props.pois - List of Points of Interest.
  */
 const MapMarkers = ({ pois }) => {
-    
     const markers = useMemo(() => {
         return pois.map((poi) => (
-            <Marker
-                key={poi.id}
-                position={[poi.latitude, poi.longitude]}
-            >
+            <Marker key={poi.id} position={[poi.latitude, poi.longitude]}>
                 <Popup className="custom-popup">
                     <div className="p-3 min-w-[250px]">
                         <h3 className="font-bold text-lg mb-1 text-gray-900 dark:text-gray-100">
@@ -52,9 +51,7 @@ const MapMarkers = ({ pois }) => {
 
     return (
         <LayersControl.Overlay name="Points of Interest" checked>
-            <LayerGroup>
-                {markers}
-            </LayerGroup>
+            <LayerGroup>{markers}</LayerGroup>
         </LayersControl.Overlay>
     );
 };

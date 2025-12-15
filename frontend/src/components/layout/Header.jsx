@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import ThemeSwitch from '../common/ThemeSwitch';
 import NotificationToggle from '../NotificationToggle';
 
-
 /**
  * Header Component.
  *
@@ -170,12 +169,12 @@ function Header({ isTransparent = false }) {
                 console.error('Error fetching alerts:', error);
             }
         };
-        
+
         loadAlerts();
-        
+
         // Refresh alerts every 5 minutes
         const intervalId = setInterval(loadAlerts, 5 * 60 * 1000);
-        
+
         return () => clearInterval(intervalId);
     }, []);
 
@@ -229,13 +228,13 @@ function Header({ isTransparent = false }) {
      */
     const getAlertColor = () => {
         const now = new Date();
-        const activeOrUpcoming = alerts.filter(alert => {
+        const activeOrUpcoming = alerts.filter((alert) => {
             const endDate = new Date(alert.end_date);
             return endDate > now;
         });
-        
+
         if (activeOrUpcoming.length === 0) return 'bg-[#00a91c]';
-        
+
         const levels = activeOrUpcoming.map((alert) => alert.level);
         if (levels.includes('Extreme')) return 'bg-[#b50909]';
         if (levels.includes('Severe')) return 'bg-orange-500';
@@ -267,13 +266,13 @@ function Header({ isTransparent = false }) {
                     ? 'text-cyan-400'
                     : 'text-blue-600 dark:text-blue-400'
                 : isTransparent
-                ? 'text-slate-300 hover:text-white'
-                : 'text-neutral-800 dark:text-neutral-300 hover:text-black dark:hover:text-white'
+                  ? 'text-slate-300 hover:text-white'
+                  : 'text-neutral-800 dark:text-neutral-300 hover:text-black dark:hover:text-white'
         }`;
 
     return (
         <>
-            {/* 
+            {/*
              * Main Header Container
              * Sticky positioning ensures the header is always accessible.
              * Uses a high-contrast background with a subtle border for separation.
@@ -281,9 +280,8 @@ function Header({ isTransparent = false }) {
             <header className={headerClasses}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16 md:h-20">
-                        
-                        {/* 
-                         * Logo Section 
+                        {/*
+                         * Logo Section
                          * Clean and simple branding.
                          * Updated text color to match the brand blue from the design reference.
                          * Added gradient text effect as requested.
@@ -294,11 +292,14 @@ function Header({ isTransparent = false }) {
                                 alt="Canary Weather Logo"
                                 className="h-10 md:h-12 w-auto"
                             />
-                            <span 
+                            <span
                                 onClick={(e) => {
                                     if (location.pathname === '/') {
                                         e.preventDefault();
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        window.scrollTo({
+                                            top: 0,
+                                            behavior: 'smooth',
+                                        });
                                     } else {
                                         navigate('/');
                                     }
@@ -309,8 +310,8 @@ function Header({ isTransparent = false }) {
                             </span>
                         </div>
 
-                        {/* 
-                         * Desktop Navigation 
+                        {/*
+                         * Desktop Navigation
                          * Uses an animated underline effect for a modern, interactive feel.
                          * Reordered links: Warnings is now the last item.
                          */}
@@ -320,32 +321,41 @@ function Header({ isTransparent = false }) {
                                 { to: '/map', label: t('map') },
                                 { to: '/pois', label: t('pointsOfInterest') },
                                 { to: '/aboutus', label: t('aboutUs') },
-                                { 
-                                    to: '/warnings', 
-                                    label: t('warnings'), 
-                                    icon: <span className={`w-2 h-2 rounded-full mr-2 ${getAlertColor()} ${['bg-#b50909', 'bg-orange-500'].includes(getAlertColor()) ? 'animate-pulse' : ''}`}></span> 
-                                }
+                                {
+                                    to: '/warnings',
+                                    label: t('warnings'),
+                                    icon: (
+                                        <span
+                                            className={`w-2 h-2 rounded-full mr-2 ${getAlertColor()} ${['bg-#b50909', 'bg-orange-500'].includes(getAlertColor()) ? 'animate-pulse' : ''}`}
+                                        ></span>
+                                    ),
+                                },
                             ].map((link) => (
                                 <NavLink
                                     key={link.to}
                                     to={link.to}
-                                    onClick={(e) => handleNavigationClick(e, link.to)}
-                                    className={({ isActive }) => navLinkClasses(isActive)}
+                                    onClick={(e) =>
+                                        handleNavigationClick(e, link.to)
+                                    }
+                                    className={({ isActive }) =>
+                                        navLinkClasses(isActive)
+                                    }
                                 >
                                     {link.icon}
                                     {link.label}
                                     {/* Animated Underline */}
-                                    <span className={`absolute -bottom-1 left-0 w-full h-0.5 transform scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100 ${isTransparent ? 'bg-cyan-400' : 'bg-blue-600 dark:bg-blue-400'}`}></span>
+                                    <span
+                                        className={`absolute -bottom-1 left-0 w-full h-0.5 transform scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100 ${isTransparent ? 'bg-cyan-400' : 'bg-blue-600 dark:bg-blue-400'}`}
+                                    ></span>
                                 </NavLink>
                             ))}
                         </nav>
 
-                        {/* 
-                         * Right Side Actions (Desktop) 
+                        {/*
+                         * Right Side Actions (Desktop)
                          * Minimalist controls for settings and user profile.
                          */}
                         <div className="hidden lg:flex items-center gap-4">
-                            
                             {/* Theme Switcher - Hidden on transparent pages (About Us) */}
                             {!isTransparent && (
                                 <>
@@ -361,29 +371,58 @@ function Header({ isTransparent = false }) {
                             {/* Language Selector */}
                             <div className="relative language-dropdown">
                                 <button
-                                    onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+                                    onClick={() =>
+                                        setShowLanguageDropdown(
+                                            !showLanguageDropdown,
+                                        )
+                                    }
                                     className={`flex items-center gap-2 text-sm font-medium transition-colors ${isTransparent ? 'text-slate-300 hover:text-white' : 'text-neutral-800 dark:text-neutral-200 hover:text-blue-600 dark:hover:text-blue-400'}`}
                                 >
-                                    <img 
-                                        src={i18n.language === 'en' ? 'https://flagcdn.com/w40/gb.png' : 'https://flagcdn.com/w40/es.png'} 
-                                        alt={i18n.language === 'en' ? 'English' : 'Español'}
+                                    <img
+                                        src={
+                                            i18n.language === 'en'
+                                                ? 'https://flagcdn.com/w40/gb.png'
+                                                : 'https://flagcdn.com/w40/es.png'
+                                        }
+                                        alt={
+                                            i18n.language === 'en'
+                                                ? 'English'
+                                                : 'Español'
+                                        }
                                         className="w-5 h-5 rounded-full object-cover shadow-sm"
                                     />
-                                    <span>{i18n.language === 'en' ? 'EN' : 'ES'}</span>
+                                    <span>
+                                        {i18n.language === 'en' ? 'EN' : 'ES'}
+                                    </span>
                                 </button>
-                                
+
                                 {showLanguageDropdown && (
                                     <div className="absolute right-0 mt-4 w-32 bg-white dark:bg-neutral-800 rounded-lg shadow-lg border border-neutral-100 dark:border-neutral-700 py-1 z-50 animate-in fade-in slide-in-from-top-1">
                                         {[
-                                            { code: 'es', label: 'Español', flag: 'https://flagcdn.com/w40/es.png' },
-                                            { code: 'en', label: 'English', flag: 'https://flagcdn.com/w40/gb.png' }
+                                            {
+                                                code: 'es',
+                                                label: 'Español',
+                                                flag: 'https://flagcdn.com/w40/es.png',
+                                            },
+                                            {
+                                                code: 'en',
+                                                label: 'English',
+                                                flag: 'https://flagcdn.com/w40/gb.png',
+                                            },
                                         ].map((lang) => (
                                             <button
                                                 key={lang.code}
                                                 onClick={() => {
-                                                    i18n.changeLanguage(lang.code);
-                                                    localStorage.setItem('i18nextLng', lang.code);
-                                                    setShowLanguageDropdown(false);
+                                                    i18n.changeLanguage(
+                                                        lang.code,
+                                                    );
+                                                    localStorage.setItem(
+                                                        'i18nextLng',
+                                                        lang.code,
+                                                    );
+                                                    setShowLanguageDropdown(
+                                                        false,
+                                                    );
                                                 }}
                                                 className={`w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors ${
                                                     i18n.language === lang.code
@@ -391,7 +430,11 @@ function Header({ isTransparent = false }) {
                                                         : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700'
                                                 }`}
                                             >
-                                                <img src={lang.flag} alt={lang.label} className="w-4 h-4 rounded-full object-cover" />
+                                                <img
+                                                    src={lang.flag}
+                                                    alt={lang.label}
+                                                    className="w-4 h-4 rounded-full object-cover"
+                                                />
                                                 {lang.label}
                                             </button>
                                         ))}
@@ -401,40 +444,88 @@ function Header({ isTransparent = false }) {
 
                             {/* User Profile / Login Button */}
                             {user ? (
-                                <div className="relative ml-2" ref={userDropdownRef}>
+                                <div
+                                    className="relative ml-2"
+                                    ref={userDropdownRef}
+                                >
                                     <button
-                                        onClick={() => setShowUserDropdown(!showUserDropdown)}
+                                        onClick={() =>
+                                            setShowUserDropdown(
+                                                !showUserDropdown,
+                                            )
+                                        }
                                         className="flex items-center gap-3 focus:outline-none group"
                                     >
                                         <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-transparent group-hover:ring-blue-500 transition-all">
                                             {getProfileImageUrl() ? (
-                                                <img src={getProfileImageUrl()} alt={t('profile')} className="w-full h-full object-cover" />
+                                                <img
+                                                    src={getProfileImageUrl()}
+                                                    alt={t('profile')}
+                                                    className="w-full h-full object-cover"
+                                                />
                                             ) : (
                                                 <div className="w-full h-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center text-neutral-600 dark:text-neutral-300 font-bold text-sm">
-                                                    {user.username?.charAt(0).toUpperCase()}
+                                                    {user.username
+                                                        ?.charAt(0)
+                                                        .toUpperCase()}
                                                 </div>
                                             )}
                                         </div>
                                     </button>
-                                    
+
                                     {showUserDropdown && (
                                         <div className="absolute right-0 mt-4 w-64 bg-white dark:bg-neutral-800 rounded-xl shadow-xl border border-neutral-100 dark:border-neutral-700 z-50 overflow-hidden animate-in fade-in slide-in-from-top-1">
                                             <div className="flex flex-col">
                                                 <button
-                                                    onClick={() => { setShowLogin(true); setShowUserDropdown(false); }}
+                                                    onClick={() => {
+                                                        setShowLogin(true);
+                                                        setShowUserDropdown(
+                                                            false,
+                                                        );
+                                                    }}
                                                     className="w-full text-left px-5 py-4 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors flex items-center gap-3 border-b border-neutral-100 dark:border-neutral-700"
                                                 >
-                                                    <svg className="w-5 h-5 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                                    <svg
+                                                        className="w-5 h-5 text-neutral-500 dark:text-neutral-400"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={1.5}
+                                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                                        />
+                                                    </svg>
                                                     {t('editProfile')}
                                                 </button>
                                                 <NotificationToggle />
                                                 {user.is_admin && (
-
                                                     <button
-                                                        onClick={() => { navigate('/admin'); setShowUserDropdown(false); }}
+                                                        onClick={() => {
+                                                            navigate('/admin');
+                                                            setShowUserDropdown(
+                                                                false,
+                                                            );
+                                                        }}
                                                         className="w-full text-left px-5 py-4 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors flex items-center gap-3 border-b border-neutral-100 dark:border-neutral-700"
                                                     >
-                                                        <svg className="w-5 h-5 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                                                        <svg
+                                                            className="w-5 h-5 text-neutral-500 dark:text-neutral-400"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth={
+                                                                    1.5
+                                                                }
+                                                                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                                                            />
+                                                        </svg>
                                                         {t('dashboard')}
                                                     </button>
                                                 )}
@@ -442,7 +533,19 @@ function Header({ isTransparent = false }) {
                                                     onClick={handleLogout}
                                                     className="w-full text-left px-5 py-4 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors flex items-center gap-3"
                                                 >
-                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                                    <svg
+                                                        className="w-5 h-5"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={1.5}
+                                                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                                                        />
+                                                    </svg>
                                                     {t('logout')}
                                                 </button>
                                             </div>
@@ -455,53 +558,107 @@ function Header({ isTransparent = false }) {
                                     onClick={() => setShowLogin(true)}
                                 >
                                     {t('login')}
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    <svg
+                                        className="w-4 h-4"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M14 5l7 7m0 0l-7 7m7-7H3"
+                                        />
                                     </svg>
                                 </button>
                             )}
                         </div>
 
-                        {/* 
-                         * Mobile Controls 
+                        {/*
+                         * Mobile Controls
                          * Simplified controls for smaller screens.
                          */}
                         <div className="lg:hidden flex items-center gap-4">
-                            
                             {/* Mobile Settings Toggle */}
                             <div className="relative mobile-settings-dropdown">
                                 <button
-                                    onClick={() => setShowMobileSettings(!showMobileSettings)}
+                                    onClick={() =>
+                                        setShowMobileSettings(
+                                            !showMobileSettings,
+                                        )
+                                    }
                                     className={`p-2 rounded-lg transition-colors ${isTransparent ? 'text-slate-300 hover:bg-white/10 hover:text-white' : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'}`}
                                 >
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <svg
+                                        className="w-6 h-6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                                        />
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                        />
                                     </svg>
                                 </button>
                                 {showMobileSettings && (
                                     <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-neutral-800 rounded-lg shadow-xl border border-neutral-100 dark:border-neutral-700 z-50 p-4 animate-in fade-in slide-in-from-top-2">
                                         {!isTransparent && (
                                             <div className="flex items-center justify-between mb-4">
-                                                <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('theme')}:</span>
+                                                <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                                                    {t('theme')}:
+                                                </span>
                                                 <ThemeSwitch />
                                             </div>
                                         )}
                                         <div className="flex items-center justify-between">
-                                            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('language')}:</span>
+                                            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                                                {t('language')}:
+                                            </span>
                                             <div className="flex gap-2">
                                                 <button
-                                                    onClick={() => { i18n.changeLanguage('en'); setShowMobileSettings(false); }}
+                                                    onClick={() => {
+                                                        i18n.changeLanguage(
+                                                            'en',
+                                                        );
+                                                        setShowMobileSettings(
+                                                            false,
+                                                        );
+                                                    }}
                                                     className={`flex items-center gap-1 px-3 py-1 text-xs font-medium rounded border transition-colors ${i18n.language === 'en' ? 'bg-blue-600 text-white border-transparent shadow-sm' : 'bg-transparent border-neutral-300 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400'}`}
                                                 >
-                                                    <img src="https://flagcdn.com/w40/gb.png" alt="EN" className="w-3 h-3 rounded-full" />
+                                                    <img
+                                                        src="https://flagcdn.com/w40/gb.png"
+                                                        alt="EN"
+                                                        className="w-3 h-3 rounded-full"
+                                                    />
                                                     EN
                                                 </button>
                                                 <button
-                                                    onClick={() => { i18n.changeLanguage('es'); setShowMobileSettings(false); }}
+                                                    onClick={() => {
+                                                        i18n.changeLanguage(
+                                                            'es',
+                                                        );
+                                                        setShowMobileSettings(
+                                                            false,
+                                                        );
+                                                    }}
                                                     className={`flex items-center gap-1 px-3 py-1 text-xs font-medium rounded border transition-colors ${i18n.language === 'es' ? 'bg-blue-600 text-white border-transparent shadow-sm' : 'bg-transparent border-neutral-300 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400'}`}
                                                 >
-                                                    <img src="https://flagcdn.com/w40/es.png" alt="ES" className="w-3 h-3 rounded-full" />
+                                                    <img
+                                                        src="https://flagcdn.com/w40/es.png"
+                                                        alt="ES"
+                                                        className="w-3 h-3 rounded-full"
+                                                    />
                                                     ES
                                                 </button>
                                             </div>
@@ -516,27 +673,64 @@ function Header({ isTransparent = false }) {
                                 onClick={toggleMenu}
                             >
                                 {isOpen ? (
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                    <svg
+                                        className="w-6 h-6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M6 18L18 6M6 6l12 12"
+                                        />
+                                    </svg>
                                 ) : (
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+                                    <svg
+                                        className="w-6 h-6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M4 6h16M4 12h16M4 18h16"
+                                        />
+                                    </svg>
                                 )}
                             </button>
                         </div>
                     </div>
 
-                    {/* 
-                     * Mobile Menu Content 
+                    {/*
+                     * Mobile Menu Content
                      * A clean, slide-down menu for mobile devices.
                      */}
                     {isOpen && (
-                        <div className={`lg:hidden py-4 border-t border-neutral-100 dark:border-neutral-800 animate-in slide-in-from-top-2 fade-in duration-200 shadow-xl rounded-b-2xl ${isTransparent ? 'bg-[#0B1120]/95 backdrop-blur-md' : 'bg-white dark:bg-neutral-900'}`}>
+                        <div
+                            className={`lg:hidden py-4 border-t border-neutral-100 dark:border-neutral-800 animate-in slide-in-from-top-2 fade-in duration-200 shadow-xl rounded-b-2xl ${isTransparent ? 'bg-[#0B1120]/95 backdrop-blur-md' : 'bg-white dark:bg-neutral-900'}`}
+                        >
                             <ul className="flex flex-col space-y-1">
                                 {[
                                     { to: '/', label: t('home') },
                                     { to: '/map', label: t('map') },
-                                    { to: '/pois', label: t('pointsOfInterest') },
+                                    {
+                                        to: '/pois',
+                                        label: t('pointsOfInterest'),
+                                    },
                                     { to: '/aboutus', label: t('aboutUs') },
-                                    { to: '/warnings', label: t('warnings'), icon: <span className={`w-2 h-2 rounded-full mr-2 ${getAlertColor()}`}></span> }
+                                    {
+                                        to: '/warnings',
+                                        label: t('warnings'),
+                                        icon: (
+                                            <span
+                                                className={`w-2 h-2 rounded-full mr-2 ${getAlertColor()}`}
+                                            ></span>
+                                        ),
+                                    },
                                 ].map((link) => (
                                     <li key={link.to}>
                                         <NavLink
@@ -544,17 +738,20 @@ function Header({ isTransparent = false }) {
                                             className={({ isActive }) =>
                                                 `flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                                                     isActive
-                                                        ? isTransparent 
+                                                        ? isTransparent
                                                             ? 'bg-white/10 text-cyan-400'
                                                             : 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
                                                         : isTransparent
-                                                            ? 'text-slate-300 hover:bg-white/5 hover:text-white'
-                                                            : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-white'
+                                                          ? 'text-slate-300 hover:bg-white/5 hover:text-white'
+                                                          : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-white'
                                                 }`
                                             }
                                             onClick={(e) => {
                                                 setIsOpen(false);
-                                                handleNavigationClick(e, link.to);
+                                                handleNavigationClick(
+                                                    e,
+                                                    link.to,
+                                                );
                                             }}
                                         >
                                             {link.icon}
@@ -562,45 +759,112 @@ function Header({ isTransparent = false }) {
                                         </NavLink>
                                     </li>
                                 ))}
-                                
+
                                 {/* Mobile User Section */}
                                 <li className="pt-4 mt-2 border-t border-neutral-100 dark:border-neutral-800">
                                     {user ? (
                                         <div className="space-y-2">
                                             <button
-                                                onClick={() => setShowMobileUserDropdown(!showMobileUserDropdown)}
+                                                onClick={() =>
+                                                    setShowMobileUserDropdown(
+                                                        !showMobileUserDropdown,
+                                                    )
+                                                }
                                                 className={`flex items-center gap-3 w-full px-4 py-2 rounded-lg transition-colors ${isTransparent ? 'hover:bg-white/5 text-slate-200' : 'hover:bg-neutral-50 dark:hover:bg-neutral-800'}`}
                                             >
                                                 <div className="w-8 h-8 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center">
                                                     {getProfileImageUrl() ? (
-                                                        <img src={getProfileImageUrl()} alt={t('profile')} className="w-full h-full object-cover" />
+                                                        <img
+                                                            src={getProfileImageUrl()}
+                                                            alt={t('profile')}
+                                                            className="w-full h-full object-cover"
+                                                        />
                                                     ) : (
-                                                        <span className="text-xs font-bold text-neutral-600 dark:text-neutral-300">{user.username?.charAt(0).toUpperCase()}</span>
+                                                        <span className="text-xs font-bold text-neutral-600 dark:text-neutral-300">
+                                                            {user.username
+                                                                ?.charAt(0)
+                                                                .toUpperCase()}
+                                                        </span>
                                                     )}
                                                 </div>
                                                 <div className="flex-1 text-left">
-                                                    <p className={`text-sm font-semibold ${isTransparent ? 'text-white' : 'text-neutral-900 dark:text-white'}`}>{user.username}</p>
+                                                    <p
+                                                        className={`text-sm font-semibold ${isTransparent ? 'text-white' : 'text-neutral-900 dark:text-white'}`}
+                                                    >
+                                                        {user.username}
+                                                    </p>
                                                 </div>
-                                                <svg className={`w-4 h-4 transition-transform ${showMobileUserDropdown ? 'rotate-180' : ''} ${isTransparent ? 'text-slate-400' : 'text-neutral-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                                <svg
+                                                    className={`w-4 h-4 transition-transform ${showMobileUserDropdown ? 'rotate-180' : ''} ${isTransparent ? 'text-slate-400' : 'text-neutral-400'}`}
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M19 9l-7 7-7-7"
+                                                    />
+                                                </svg>
                                             </button>
 
                                             {showMobileUserDropdown && (
-                                                <div className={`mx-4 mt-2 rounded-xl shadow-sm border overflow-hidden ${isTransparent ? 'bg-[#1a2236] border-white/10' : 'bg-white dark:bg-neutral-800 border-neutral-100 dark:border-neutral-700'}`}>
+                                                <div
+                                                    className={`mx-4 mt-2 rounded-xl shadow-sm border overflow-hidden ${isTransparent ? 'bg-[#1a2236] border-white/10' : 'bg-white dark:bg-neutral-800 border-neutral-100 dark:border-neutral-700'}`}
+                                                >
                                                     <button
-                                                        onClick={() => { setShowLogin(true); setIsOpen(false); }}
+                                                        onClick={() => {
+                                                            setShowLogin(true);
+                                                            setIsOpen(false);
+                                                        }}
                                                         className={`w-full text-left px-5 py-4 text-sm font-medium transition-colors flex items-center gap-3 border-b ${isTransparent ? 'text-slate-200 hover:bg-white/5 border-white/10' : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 border-neutral-100 dark:border-neutral-700'}`}
                                                     >
-                                                        <svg className={`w-5 h-5 ${isTransparent ? 'text-slate-400' : 'text-neutral-500 dark:text-neutral-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                                        <svg
+                                                            className={`w-5 h-5 ${isTransparent ? 'text-slate-400' : 'text-neutral-500 dark:text-neutral-400'}`}
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth={
+                                                                    1.5
+                                                                }
+                                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                                            />
+                                                        </svg>
                                                         {t('editProfile')}
                                                     </button>
                                                     <NotificationToggle />
                                                     {user.is_admin && (
-
                                                         <button
-                                                            onClick={() => { navigate('/admin'); setIsOpen(false); }}
+                                                            onClick={() => {
+                                                                navigate(
+                                                                    '/admin',
+                                                                );
+                                                                setIsOpen(
+                                                                    false,
+                                                                );
+                                                            }}
                                                             className={`w-full text-left px-5 py-4 text-sm font-medium transition-colors flex items-center gap-3 border-b ${isTransparent ? 'text-slate-200 hover:bg-white/5 border-white/10' : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 border-neutral-100 dark:border-neutral-700'}`}
                                                         >
-                                                            <svg className={`w-5 h-5 ${isTransparent ? 'text-slate-400' : 'text-neutral-500 dark:text-neutral-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                                                            <svg
+                                                                className={`w-5 h-5 ${isTransparent ? 'text-slate-400' : 'text-neutral-500 dark:text-neutral-400'}`}
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                viewBox="0 0 24 24"
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    strokeWidth={
+                                                                        1.5
+                                                                    }
+                                                                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                                                                />
+                                                            </svg>
                                                             {t('dashboard')}
                                                         </button>
                                                     )}
@@ -608,7 +872,21 @@ function Header({ isTransparent = false }) {
                                                         onClick={handleLogout}
                                                         className={`w-full text-left px-5 py-4 text-sm font-medium transition-colors flex items-center gap-3 ${isTransparent ? 'text-red-400 hover:bg-red-900/20' : 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10'}`}
                                                     >
-                                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                                        <svg
+                                                            className="w-5 h-5"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth={
+                                                                    1.5
+                                                                }
+                                                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                                                            />
+                                                        </svg>
                                                         {t('logout')}
                                                     </button>
                                                 </div>
@@ -618,7 +896,9 @@ function Header({ isTransparent = false }) {
                                         <div className="px-4">
                                             <button
                                                 className="w-full flex items-center justify-center gap-2 bg-[#1d4ed8] hover:bg-[#1e40af] text-white px-4 py-3 rounded-lg font-semibold shadow-sm hover:shadow-lg transition-all"
-                                                onClick={() => setShowLogin(true)}
+                                                onClick={() =>
+                                                    setShowLogin(true)
+                                                }
                                             >
                                                 {t('login')}
                                             </button>
@@ -644,4 +924,3 @@ function Header({ isTransparent = false }) {
 }
 
 export default Header;
-
