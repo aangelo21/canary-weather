@@ -7,8 +7,21 @@ export default function Stats({ coords }) {
     const [weather, setWeather] = useState(null);
     const [loading, setLoading] = useState(true);
     const [currentTime, setCurrentTime] = useState(Date.now());
+    const [stars, setStars] = useState([]);
 
     useEffect(() => {
+        // Generate random stars only once to avoid re-renders causing jumps
+        const newStars = Array.from({ length: 20 }).map((_, i) => ({
+            id: i,
+            top: `${Math.random() * 70}%`,
+            left: `${Math.random() * 100}%`,
+            size: Math.random() > 0.7 ? '2px' : '1px',
+            opacity: Math.random() * 0.5 + 0.3,
+            duration: `${Math.random() * 3 + 2}s`,
+            delay: `${Math.random() * 5}s`
+        }));
+        setStars(newStars);
+
         const timer = setInterval(() => {
             setCurrentTime(Date.now());
         }, 1000);
@@ -262,12 +275,45 @@ export default function Stats({ coords }) {
                 }`}>
                     {/* Stars effect for night */}
                     {!isDay && (
-                        <div className="absolute inset-0 opacity-50 pointer-events-none">
-                            <div className="absolute top-4 left-10 w-1 h-1 bg-white rounded-full animate-pulse" style={{animationDelay: '0s'}}></div>
-                            <div className="absolute top-10 right-12 w-1 h-1 bg-white rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
-                            <div className="absolute top-6 left-1/2 w-0.5 h-0.5 bg-white rounded-full animate-pulse" style={{animationDelay: '2s'}}></div>
-                            <div className="absolute bottom-12 left-8 w-1 h-1 bg-white rounded-full animate-pulse" style={{animationDelay: '1.5s'}}></div>
-                            <div className="absolute top-8 right-1/3 w-0.5 h-0.5 bg-white rounded-full animate-pulse" style={{animationDelay: '0.5s'}}></div>
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                            <style>
+                                {`
+                                    @keyframes shooting-star {
+                                        0% { transform: translateX(0) translateY(0) rotate(-45deg); opacity: 1; }
+                                        20% { transform: translateX(200px) translateY(200px) rotate(-45deg); opacity: 0; }
+                                        100% { transform: translateX(200px) translateY(200px) rotate(-45deg); opacity: 0; }
+                                    }
+                                    .shooting-star {
+                                        position: absolute;
+                                        top: -10%;
+                                        left: 50%;
+                                        width: 100px;
+                                        height: 2px;
+                                        background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.8), rgba(255,255,255,0));
+                                        animation: shooting-star 8s infinite ease-in-out;
+                                        animation-delay: 3s;
+                                        opacity: 0;
+                                    }
+                                `}
+                            </style>
+                            {/* Twinkling Stars */}
+                            {stars.map((star) => (
+                                <div
+                                    key={star.id}
+                                    className="absolute bg-white rounded-full animate-pulse"
+                                    style={{
+                                        top: star.top,
+                                        left: star.left,
+                                        width: star.size,
+                                        height: star.size,
+                                        opacity: star.opacity,
+                                        animationDuration: star.duration,
+                                        animationDelay: star.delay
+                                    }}
+                                />
+                            ))}
+                            {/* Shooting Star */}
+                            <div className="shooting-star"></div>
                         </div>
                     )}
 
