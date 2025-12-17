@@ -13,7 +13,9 @@ import {
     authenticateToken,
     optionalAuthenticateToken,
 } from '../middleware/authMiddleware.js';
+import apicache from 'apicache';
 
+const cache = apicache.middleware;
 const router = express.Router();
 
 
@@ -43,7 +45,7 @@ const router = express.Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/', optionalAuthenticateToken, getAllPointsOfInterest);
+router.get('/', cache('3 minutes'), optionalAuthenticateToken, getAllPointsOfInterest);
 
 /**
  * @swagger
@@ -101,7 +103,7 @@ router.get('/personal', authenticateToken, getPersonalPointsOfInterest);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/:id', getPointOfInterestById);
+router.get('/:id', cache('3 minutes'), getPointOfInterestById);
 
 /**
  * @swagger
