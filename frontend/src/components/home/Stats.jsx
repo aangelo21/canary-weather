@@ -6,6 +6,14 @@ export default function Stats({ coords }) {
     const { t } = useTranslation();
     const [weather, setWeather] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [currentTime, setCurrentTime] = useState(Date.now());
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentTime(Date.now());
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
 
     useEffect(() => {
         if (!coords) return;
@@ -41,7 +49,7 @@ export default function Stats({ coords }) {
     
     const sunrise = weather.sys.sunrise;
     const sunset = weather.sys.sunset;
-    const now = Date.now() / 1000;
+    const now = currentTime / 1000;
     const isDay = now >= sunrise && now <= sunset;
 
     let progress = 0;
@@ -273,7 +281,7 @@ export default function Stats({ coords }) {
                                 ? 'bg-white/50 dark:bg-black/20 text-orange-700 dark:text-orange-400' 
                                 : 'bg-white/10 text-indigo-200'
                         }`}>
-                            {new Date().toLocaleTimeString([], {
+                            {new Date(currentTime).toLocaleTimeString([], {
                                 hour: '2-digit',
                                 minute: '2-digit',
                             })}
@@ -299,13 +307,28 @@ export default function Stats({ coords }) {
                             <g transform={`translate(${sunX}, ${sunY})`}>
                                 {isDay ? (
                                     <>
+                                        {/* Sun Rays Animation */}
+                                        <g className="animate-[spin_10s_linear_infinite]">
+                                            {[...Array(8)].map((_, i) => (
+                                                <line
+                                                    key={i}
+                                                    x1="0"
+                                                    y1="-14"
+                                                    x2="0"
+                                                    y2="-18"
+                                                    className="stroke-orange-400"
+                                                    strokeWidth="2"
+                                                    transform={`rotate(${i * 45})`}
+                                                />
+                                            ))}
+                                        </g>
                                         <circle
-                                            r="6"
+                                            r="8"
                                             className="text-orange-500"
                                             fill="currentColor"
                                         />
                                         <circle
-                                            r="10"
+                                            r="12"
                                             className="text-orange-400 animate-pulse"
                                             fill="currentColor"
                                             fillOpacity="0.3"
