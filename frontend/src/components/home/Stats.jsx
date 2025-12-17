@@ -317,6 +317,51 @@ export default function Stats({ coords }) {
                         </div>
                     )}
 
+                    {/* Clouds effect for day */}
+                    {isDay && (
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                            <style>
+                                {`
+                                    @keyframes float-cloud {
+                                        0% { transform: translateX(-100%); opacity: 0; }
+                                        10% { opacity: 0.6; }
+                                        90% { opacity: 0.6; }
+                                        100% { transform: translateX(400%); opacity: 0; }
+                                    }
+                                    .cloud-shape {
+                                        position: absolute;
+                                        background: rgba(255, 255, 255, 0.6);
+                                        border-radius: 50px;
+                                        animation: float-cloud linear infinite;
+                                    }
+                                    .cloud-shape::after {
+                                        content: '';
+                                        position: absolute;
+                                        top: -50%;
+                                        left: 15%;
+                                        width: 60%;
+                                        height: 100%;
+                                        background: inherit;
+                                        border-radius: 50%;
+                                    }
+                                    .cloud-shape::before {
+                                        content: '';
+                                        position: absolute;
+                                        top: -30%;
+                                        right: 15%;
+                                        width: 40%;
+                                        height: 80%;
+                                        background: inherit;
+                                        border-radius: 50%;
+                                    }
+                                `}
+                            </style>
+                            <div className="cloud-shape w-16 h-6 top-4" style={{ animationDuration: '25s', animationDelay: '0s' }}></div>
+                            <div className="cloud-shape w-12 h-4 top-12" style={{ animationDuration: '35s', animationDelay: '5s' }}></div>
+                            <div className="cloud-shape w-20 h-8 top-8" style={{ animationDuration: '30s', animationDelay: '12s' }}></div>
+                        </div>
+                    )}
+
                     <div className="flex justify-between items-center mb-2 relative z-10">
                         <span className={`text-sm font-medium ${isDay ? 'text-orange-800 dark:text-orange-300' : 'text-indigo-200'}`}>
                             {isDay ? (t('sunCycle') || 'Sun Cycle') : (t('moonCycle') || 'Moon Cycle')}
