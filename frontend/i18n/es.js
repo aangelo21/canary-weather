@@ -23,7 +23,7 @@ export const es = {
         map: 'Mapa',
         tides: 'Mareas',
         warnings: 'Advertencias',
-        warningsTitle: 'Avisos Meteorológicos',
+        warningsTitle: 'Advertencias Meteorológicas',
         loading: 'Cargando...',
         activeWarnings: 'Avisos Activos',
         noActiveWarnings: 'No hay avisos activos en este momento.',
