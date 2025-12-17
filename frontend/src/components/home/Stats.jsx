@@ -395,7 +395,12 @@ export default function Stats({ coords }) {
                             />
 
                             {}
-                            <g transform={`translate(${sunX}, ${sunY})`}>
+                            <g 
+                                style={{ 
+                                    transform: `translate(${sunX}px, ${sunY}px)`,
+                                    transition: 'transform 1s linear'
+                                }}
+                            >
                                 {isDay ? (
                                     <>
                                         {/* Sun Rays Animation */}
