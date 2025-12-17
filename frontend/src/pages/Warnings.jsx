@@ -260,7 +260,7 @@ function Warnings() {
     );
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
             <SEO
                 title="Weather Warnings"
                 description="Stay informed with the latest weather warnings and alerts for the Canary Islands."
@@ -354,8 +354,8 @@ function Warnings() {
                     <div className="flex items-center justify-between mb-8">
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
                             <span className="relative flex h-3 w-3">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${filteredActiveAlerts.length === 0 ? 'bg-green-400' : filteredActiveAlerts.length === 1 ? 'bg-orange-400' : 'bg-red-400'}`}></span>
+                                <span className={`relative inline-flex rounded-full h-3 w-3 ${filteredActiveAlerts.length === 0 ? 'bg-green-500' : filteredActiveAlerts.length === 1 ? 'bg-orange-500' : 'bg-red-500'}`}></span>
                             </span>
                             {t('activeWarnings') || 'Active Warnings'}
                         </h2>

@@ -24,6 +24,8 @@ export const en = {
         tides: 'Tides',
         warnings: 'Warnings',
         warningsTitle: 'Weather Warnings',
+        warningsSubtitle: 'Real-time official weather alerts for the Canary Islands',
+        goodWeather: 'Good Weather!',
         loading: 'Loading...',
         activeWarnings: 'Active Warnings',
         noActiveWarnings: 'No active warnings at the moment.',
