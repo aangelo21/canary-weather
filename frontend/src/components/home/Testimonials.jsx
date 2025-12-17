@@ -38,10 +38,11 @@ const Marquee = ({
             <div
                 className="flex min-w-full gap-4"
                 style={{
-                    animation:
-                        duration > 0
-                            ? `scroll-${direction} ${duration}s linear infinite`
-                            : 'none',
+                    animationName:
+                        duration > 0 ? `scroll-${direction}` : 'none',
+                    animationDuration: `${duration}s`,
+                    animationTimingFunction: 'linear',
+                    animationIterationCount: 'infinite',
                     animationPlayState: isPaused ? 'paused' : 'running',
                 }}
             >
