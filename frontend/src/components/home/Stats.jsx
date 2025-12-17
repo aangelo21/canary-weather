@@ -42,14 +42,29 @@ export default function Stats({ coords }) {
     const sunrise = weather.sys.sunrise;
     const sunset = weather.sys.sunset;
     const now = Date.now() / 1000;
+    const isDay = now >= sunrise && now <= sunset;
 
-    
     let progress = 0;
-    if (now > sunrise && now < sunset) {
+    
+    if (isDay) {
         progress = (now - sunrise) / (sunset - sunrise);
-    } else if (now >= sunset) {
-        progress = 1;
+    } else {
+        // Night progress logic
+        const dayDuration = sunset - sunrise;
+        const nightDuration = 86400 - dayDuration;
+        
+        if (now > sunset) {
+            // Evening/Early night
+            progress = (now - sunset) / nightDuration;
+        } else {
+            // Morning/Late night (before sunrise)
+            // Time since yesterday's sunset (approximate)
+            progress = (now - (sunset - 86400)) / nightDuration;
+        }
     }
+
+    // Clamp progress
+    progress = Math.max(0, Math.min(1, progress));
 
     
     
@@ -232,13 +247,32 @@ export default function Stats({ coords }) {
                 </div>
 
                 {}
-                <div className="bg-linear-to-br from-orange-50 to-yellow-50 dark:from-gray-800 dark:to-gray-900 p-6 rounded-3xl border border-orange-100 dark:border-gray-700 shadow-sm relative overflow-hidden">
+                <div className={`p-6 rounded-3xl border shadow-sm relative overflow-hidden transition-all duration-1000 ${
+                    isDay 
+                        ? 'bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-gray-800 dark:to-gray-900 border-orange-100 dark:border-gray-700' 
+                        : 'bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 border-indigo-900 text-white'
+                }`}>
+                    {/* Stars effect for night */}
+                    {!isDay && (
+                        <div className="absolute inset-0 opacity-50 pointer-events-none">
+                            <div className="absolute top-4 left-10 w-1 h-1 bg-white rounded-full animate-pulse" style={{animationDelay: '0s'}}></div>
+                            <div className="absolute top-10 right-12 w-1 h-1 bg-white rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
+                            <div className="absolute top-6 left-1/2 w-0.5 h-0.5 bg-white rounded-full animate-pulse" style={{animationDelay: '2s'}}></div>
+                            <div className="absolute bottom-12 left-8 w-1 h-1 bg-white rounded-full animate-pulse" style={{animationDelay: '1.5s'}}></div>
+                            <div className="absolute top-8 right-1/3 w-0.5 h-0.5 bg-white rounded-full animate-pulse" style={{animationDelay: '0.5s'}}></div>
+                        </div>
+                    )}
+
                     <div className="flex justify-between items-center mb-2 relative z-10">
-                        <span className="text-sm font-medium text-orange-800 dark:text-orange-300">
-                            {t('sunCycle') || 'Sun Cycle'}
+                        <span className={`text-sm font-medium ${isDay ? 'text-orange-800 dark:text-orange-300' : 'text-indigo-200'}`}>
+                            {isDay ? (t('sunCycle') || 'Sun Cycle') : (t('moonCycle') || 'Moon Cycle')}
                         </span>
                         {}
-                        <span className="text-xs font-mono bg-white/50 dark:bg-black/20 px-2 py-1 rounded-md text-orange-700 dark:text-orange-400">
+                        <span className={`text-xs font-mono px-2 py-1 rounded-md ${
+                            isDay 
+                                ? 'bg-white/50 dark:bg-black/20 text-orange-700 dark:text-orange-400' 
+                                : 'bg-white/10 text-indigo-200'
+                        }`}>
                             {new Date().toLocaleTimeString([], {
                                 hour: '2-digit',
                                 minute: '2-digit',
@@ -256,36 +290,56 @@ export default function Stats({ coords }) {
                                 d="M 10 60 A 50 50 0 0 1 110 60"
                                 fill="none"
                                 stroke="currentColor"
-                                className="text-orange-200 dark:text-gray-600"
+                                className={isDay ? "text-orange-200 dark:text-gray-600" : "text-indigo-800"}
                                 strokeWidth="2"
                                 strokeDasharray="4 4"
                             />
 
                             {}
                             <g transform={`translate(${sunX}, ${sunY})`}>
-                                <circle
-                                    r="6"
-                                    className="text-orange-500"
-                                    fill="currentColor"
-                                />
-                                <circle
-                                    r="10"
-                                    className="text-orange-400 animate-pulse"
-                                    fill="currentColor"
-                                    fillOpacity="0.3"
-                                />
+                                {isDay ? (
+                                    <>
+                                        <circle
+                                            r="6"
+                                            className="text-orange-500"
+                                            fill="currentColor"
+                                        />
+                                        <circle
+                                            r="10"
+                                            className="text-orange-400 animate-pulse"
+                                            fill="currentColor"
+                                            fillOpacity="0.3"
+                                        />
+                                    </>
+                                ) : (
+                                    <>
+                                        <circle
+                                            r="12"
+                                            className="text-indigo-400 animate-pulse"
+                                            fill="currentColor"
+                                            fillOpacity="0.2"
+                                        />
+                                        <path 
+                                            d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" 
+                                            fill="currentColor" 
+                                            className="text-indigo-200"
+                                            transform="translate(-12, -12) scale(1)" 
+                                        />
+                                    </>
+                                )}
                             </g>
                         </svg>
 
                         {}
-                        <div className="absolute bottom-0 w-full h-px bg-orange-200 dark:bg-gray-600"></div>
+                        <div className={`absolute bottom-0 w-full h-px ${isDay ? 'bg-orange-200 dark:bg-gray-600' : 'bg-indigo-900'}`}></div>
                     </div>
 
-                    <div className="flex justify-between text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 relative z-10">
+                    <div className={`flex justify-between text-xs font-medium mt-2 relative z-10 ${isDay ? 'text-gray-500 dark:text-gray-400' : 'text-indigo-300'}`}>
                         <div className="flex flex-col items-start">
-                            <span>Sunrise</span>
-                            <span className="text-gray-900 dark:text-white">
+                            <span>{t('sunrise') || 'Sunrise'}</span>
+                            <span className={isDay ? "text-gray-900 dark:text-white" : "text-white"}>
                                 {formatTime(sunrise)}
+
                             </span>
                         </div>
                         <div className="flex flex-col items-end">

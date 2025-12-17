@@ -553,6 +553,7 @@ export const es = {
         visibility: 'Visibilidad',
         pressure: 'Presión',
         sunCycle: 'Ciclo Solar',
+        moonCycle: 'Ciclo Lunar',
 
         // Auth
         resetPassword: 'Restablecer Contraseña',

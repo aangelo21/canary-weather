@@ -547,6 +547,7 @@ export const en = {
         visibility: 'Visibility',
         pressure: 'Pressure',
         sunCycle: 'Sun Cycle',
+        moonCycle: 'Moon Cycle',
 
         // Auth
         resetPassword: 'Reset Password',
