@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Star } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Marquee component for scrolling content
@@ -77,32 +78,37 @@ const Marquee = ({
  * @param {string} props.review - Review text
  */
 const ReviewCard = ({ avatar, name, rating, review }) => (
-    <div className="w-80 p-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-300">
-        <div className="flex items-center gap-4 mb-4">
-            <img
-                src={avatar}
-                alt={name}
-                className="w-12 h-12 rounded-full object-cover ring-2 ring-blue-100 dark:ring-blue-900"
-            />
+    <div className="w-80 p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-gray-700 hover:-translate-y-1 transition-transform duration-300">
+        <div className="flex items-center gap-4 mb-6">
+            <div className="relative">
+                <img
+                    src={avatar}
+                    alt={name}
+                    className="w-14 h-14 rounded-full object-cover ring-4 ring-gray-50 dark:ring-gray-700"
+                />
+                <div className="absolute -bottom-1 -right-1 bg-blue-500 text-white p-1 rounded-full">
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                </div>
+            </div>
             <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white">
+                <h3 className="font-bold text-gray-900 dark:text-white text-lg leading-tight">
                     {name}
                 </h3>
-                <div className="flex gap-0.5">
+                <div className="flex gap-0.5 mt-1">
                     {Array.from({ length: 5 }).map((_, i) => (
                         <Star
                             key={i}
-                            className={`w-4 h-4 ${
+                            className={`w-3.5 h-3.5 ${
                                 i < rating
                                     ? 'text-yellow-400 fill-yellow-400'
-                                    : 'text-gray-300 dark:text-gray-600'
+                                    : 'text-gray-200 dark:text-gray-600'
                             }`}
                         />
                     ))}
                 </div>
             </div>
         </div>
-        <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+        <p className="text-gray-600 dark:text-gray-300 leading-relaxed italic">
             "{review}"
         </p>
     </div>
@@ -113,60 +119,62 @@ const ReviewCard = ({ avatar, name, rating, review }) => (
  * Displays a marquee of user reviews
  */
 export default function Testimonials() {
+    const { t } = useTranslation();
+
     const reviews = [
         {
             id: 1,
             name: 'Michelangelo Martínez',
             avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=alex',
             rating: 5,
-            review: 'The wind alerts for Fuerteventura saved my surf trip! Incredibly accurate and easy to read.',
+            review: t('testimonials.review1'),
         },
         {
             id: 2,
             name: 'Gabriel Medina',
             avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=maria',
             rating: 5,
-            review: 'Finally a weather app that understands the microclimates of Tenerife. The local forecasts are spot on.',
+            review: t('testimonials.review2'),
         },
         {
             id: 3,
             name: 'Samuel Ponce',
             avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=john',
             rating: 4,
-            review: 'The Calima warnings are a lifesaver for my allergies. I check this app every morning before heading out.',
+            review: t('testimonials.review3'),
         },
         {
             id: 4,
             name: 'Carlos Luis',
             avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sophie',
             rating: 5,
-            review: 'Beautiful interface and the webcam integration is super useful to see the actual weather in real-time.',
+            review: t('testimonials.review4'),
         },
         {
             id: 5,
             name: 'Ángel Lallave',
             avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=carlos',
             rating: 5,
-            review: 'Best app for hiking in La Gomera. The trail weather info is exactly what I needed.',
+            review: t('testimonials.review5'),
         },
     ];
 
     return (
-        <section className="pt-4 pb-16 bg-white dark:bg-gray-900 transition-colors duration-300">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <section className="py-20 bg-gray-50 dark:bg-gray-800/50 transition-colors duration-300">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
                 <div className="text-center space-y-4">
-                    <h2 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300">
-                        Trusted by Locals & Travelers
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+                        {t('testimonials.title')}
                     </h2>
                     <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">
-                        Join thousands of users who rely on Canary Weather for accurate, local forecasts across the islands.
+                        {t('testimonials.subtitle')}
                     </p>
                 </div>
 
                 <div className="relative">
                     {/* Gradient masks for smooth fade effect on edges */}
-                    <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white dark:from-gray-900 to-transparent z-10 pointer-events-none" />
-                    <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white dark:from-gray-900 to-transparent z-10 pointer-events-none" />
+                    <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-gray-50 dark:from-gray-900 to-transparent z-10 pointer-events-none" />
+                    <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-gray-50 dark:from-gray-900 to-transparent z-10 pointer-events-none" />
 
                     <Marquee direction="left" className="py-4" speed={40}>
                         {reviews.map((review) => (
