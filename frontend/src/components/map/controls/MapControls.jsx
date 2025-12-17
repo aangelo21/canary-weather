@@ -86,12 +86,12 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
     return (
         <div
             id="map-controls"
-            className="absolute top-4 left-4 z-1000 flex flex-col gap-3 w-full max-w-xs items-start"
+            className="absolute top-4 left-4 z-1000 flex flex-col gap-3 w-[calc(100%-2rem)] sm:w-full sm:max-w-xs items-start pointer-events-none"
         >
             {}
             <form
                 onSubmit={handleSearch}
-                className="relative flex items-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 dark:border-gray-700/30 transition-all duration-300 hover:shadow-xl focus-within:ring-2 focus-within:ring-blue-500/50 w-full"
+                className="relative flex items-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 dark:border-gray-700/30 transition-all duration-300 hover:shadow-xl focus-within:ring-2 focus-within:ring-blue-500/50 w-full pointer-events-auto"
             >
                 <input
                     type="text"
@@ -145,8 +145,8 @@ const MapControls = ({ setClickedPos, fetchWeather }) => {
                 </button>
             </form>
 
-            {}
-            <div className="flex gap-2 items-center">
+            {/* Controls */}
+            <div className="flex gap-2 items-center pointer-events-auto w-full">
                 <button
                     onClick={(e) => {
                         e.stopPropagation();

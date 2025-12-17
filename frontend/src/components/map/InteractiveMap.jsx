@@ -121,7 +121,17 @@ function InteractiveMap() {
                 />
 
                 {}
-                {clickedPos && <Marker position={clickedPos} ref={markerRef} />}
+                {clickedPos && (
+                    <Marker
+                        position={clickedPos}
+                        ref={markerRef}
+                        eventHandlers={{
+                            click: () => {
+                                handleSidebarClose();
+                            },
+                        }}
+                    />
+                )}
             </MapContainer>
         </div>
     );

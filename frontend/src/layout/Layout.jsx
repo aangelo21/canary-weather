@@ -10,7 +10,7 @@ export default function Layout() {
 
     return (
         <div
-            className={`flex flex-col ${isMapPage ? 'h-screen overflow-hidden' : 'min-h-screen'} ${isAboutPage ? 'bg-[#0B1120]' : 'bg-white'}`}
+            className={`flex flex-col ${isMapPage ? 'fixed inset-0 overflow-hidden' : 'min-h-screen'} ${isAboutPage ? 'bg-[#0B1120]' : 'bg-white'}`}
         >
             <Header isTransparent={isAboutPage} />
             <main className={`grow ${isMapPage ? 'relative' : ''}`}>

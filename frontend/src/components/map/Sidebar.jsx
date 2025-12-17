@@ -60,7 +60,7 @@ const Sidebar = ({ isOpen, onClose, weather, loading, position }) => {
 
     return (
         <div
-            className={`absolute top-0 right-0 h-full w-full sm:w-[450px] bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl shadow-2xl z-2000 transform transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) ${isOpen ? 'translate-x-0' : 'translate-x-full'} overflow-y-auto border-l border-white/20 dark:border-gray-700/30`}
+            className={`absolute top-0 right-0 h-full w-full sm:w-[450px] bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl shadow-2xl z-[1500] transform transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) ${isOpen ? 'translate-x-0' : 'translate-x-full'} overflow-y-auto border-l border-white/20 dark:border-gray-700/30`}
         >
             {}
             <div className="sticky top-0 z-20 flex items-center justify-between p-5 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800/50">

@@ -23,6 +23,7 @@ import locationRoutes from './routes/locationRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import pushRoutes from './routes/pushRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 import swaggerUi from 'swagger-ui-express';
 
@@ -67,6 +68,8 @@ const sessionStore = new SequelizeStore({
     tableName: 'Sessions',
 });
 
+import passport from './config/passport.js';
+
 app.use(
     session({
         secret: process.env.SESSION_SECRET || 'supersecretkey',
@@ -80,6 +83,9 @@ app.use(
         },
     }),
 );
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -117,6 +123,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/pois', pointOfInterestRoutes);
 
 app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
 
 app.use('/api/locations', locationRoutes);
 

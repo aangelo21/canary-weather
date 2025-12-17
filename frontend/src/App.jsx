@@ -6,7 +6,8 @@ import '../i18n/index.js';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../i18n/index.js';
 import { ThemeProvider } from './context/ThemeContext';
-import { restoreSession } from './services/userService';
+import { restoreSession, getCurrentUser } from './services/userService';
+import { setAccessToken } from './services/api';
 import ScrollToTop from './components/ScrollToTop';
 import RedirectToApiDocs from './components/RedirectToApiDocs';
 
@@ -32,6 +33,21 @@ function App() {
 
     useEffect(() => {
         const initAuth = async () => {
+            // Check for token in URL (OAuth callback)
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get('token');
+            if (token) {
+                setAccessToken(token);
+                try {
+                    const user = await getCurrentUser();
+                    localStorage.setItem('cw_user', JSON.stringify(user));
+                    // Remove token from URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                } catch (e) {
+                    console.error("Failed to fetch user with token", e);
+                }
+            }
+
             const userStr = localStorage.getItem('cw_user');
             if (userStr) {
                 const restored = await restoreSession();
