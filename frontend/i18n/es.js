@@ -496,7 +496,7 @@ export const es = {
             },
         },
 
-        aiGreeting: '¡Hola! Soy tu Asistente Meteorológico IA.',
+        aiGreeting: '👋 ¡Hola! Soy tu experto en el clima de Canarias. Estoy aquí para ayudarte con pronósticos, alertas y planes. ¿Qué necesitas saber hoy?',
         aiSubtitle: '¡Pregúntame sobre el tiempo!',
         aiPlaceholder: 'Pregunta algo...',
         aiError: 'Lo siento, no pude procesar tu solicitud.',

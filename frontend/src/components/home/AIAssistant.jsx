@@ -17,7 +17,7 @@ export default function AIAssistant({ weather }) {
             setMessages([
                 {
                     type: 'bot',
-                    text: `${t('aiGreeting') || 'Hello! I am your AI Weather Assistant.'} ${summary}`,
+                    text: `${t('aiGreeting') || '👋 ¡Hola! Soy tu experto en el clima de Canarias. Estoy aquí para ayudarte con pronósticos, alertas y planes. ¿Qué necesitas saber hoy?'}`,
                 },
             ]);
         }

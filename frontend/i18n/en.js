@@ -490,7 +490,7 @@ export const en = {
             },
         },
 
-        aiGreeting: 'Hello! I am your AI Weather Assistant.',
+        aiGreeting: '👋 Hello! I am your Canary Islands weather expert. I am here to help you with forecasts, alerts, and plans. What do you need to know today?',
         aiSubtitle: 'Ask me about the weather!',
         aiPlaceholder: 'Ask something...',
         aiError: 'Sorry, I could not process your request.',
