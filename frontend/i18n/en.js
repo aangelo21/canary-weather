@@ -24,6 +24,18 @@ export const en = {
         tides: 'Tides',
         warnings: 'Warnings',
         warningsTitle: 'Weather Warnings',
+        warningsSubtitle: 'Real-time official weather alerts for the Canary Islands',
+        popularDestinationsSubtitle: 'Explore the most breathtaking locations across the islands with real-time weather updates.',
+        testimonials: {
+            title: 'Trusted by Locals & Travelers',
+            subtitle: 'Join thousands of users who rely on Canary Weather for accurate, local forecasts across the islands.',
+            review1: 'The wind alerts for Fuerteventura saved my surf trip! Incredibly accurate and easy to read.',
+            review2: 'Finally a weather app that understands the microclimates of Tenerife. The local forecasts are spot on.',
+            review3: 'The Calima warnings are a lifesaver for my allergies. I check this app every morning before heading out.',
+            review4: 'Beautiful interface and the webcam integration is super useful to see the actual weather in real-time.',
+            review5: 'Best app for hiking in La Gomera. The trail weather info is exactly what I needed.',
+        },
+        goodWeather: 'Good Weather!',
         loading: 'Loading...',
         activeWarnings: 'Active Warnings',
         noActiveWarnings: 'No active warnings at the moment.',
@@ -478,7 +490,7 @@ export const en = {
             },
         },
 
-        aiGreeting: 'Hello! I am your AI Weather Assistant.',
+        aiGreeting: '👋 Hello! I am your Canary Islands weather expert. I am here to help you with forecasts, alerts, and plans. What do you need to know today?',
         aiSubtitle: 'Ask me about the weather!',
         aiPlaceholder: 'Ask something...',
         aiError: 'Sorry, I could not process your request.',
@@ -535,6 +547,7 @@ export const en = {
         visibility: 'Visibility',
         pressure: 'Pressure',
         sunCycle: 'Sun Cycle',
+        moonCycle: 'Moon Cycle',
 
         // Auth
         resetPassword: 'Reset Password',

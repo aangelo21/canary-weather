@@ -29,6 +29,14 @@ import {
     validateContactForm,
 } from '../middleware/validationMiddleware.js';
 
+import rateLimit from 'express-rate-limit';
+
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limit each IP to 5 requests per windowMs
+    message: 'Too many login attempts from this IP, please try again after 15 minutes'
+});
+
 const router = express.Router();
 
 import {
@@ -93,7 +101,7 @@ import {
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/login', loginUser);
+router.post('/login', authLimiter, loginUser);
 
 /**
  * @swagger
@@ -147,7 +155,7 @@ router.post('/logout', logoutUser);
  *       400:
  *         description: Missing email
  */
-router.post('/forgot-password', forgotPassword);
+router.post('/forgot-password', authLimiter, forgotPassword);
 
 /**
  * @swagger

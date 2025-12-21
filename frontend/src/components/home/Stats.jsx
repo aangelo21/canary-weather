@@ -6,6 +6,27 @@ export default function Stats({ coords }) {
     const { t } = useTranslation();
     const [weather, setWeather] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [currentTime, setCurrentTime] = useState(Date.now());
+    const [stars, setStars] = useState([]);
+
+    useEffect(() => {
+        // Generate random stars only once to avoid re-renders causing jumps
+        const newStars = Array.from({ length: 20 }).map((_, i) => ({
+            id: i,
+            top: `${Math.random() * 70}%`,
+            left: `${Math.random() * 100}%`,
+            size: Math.random() > 0.7 ? '2px' : '1px',
+            opacity: Math.random() * 0.5 + 0.3,
+            duration: `${Math.random() * 3 + 2}s`,
+            delay: `${Math.random() * 5}s`
+        }));
+        setStars(newStars);
+
+        const timer = setInterval(() => {
+            setCurrentTime(Date.now());
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
 
     useEffect(() => {
         if (!coords) return;
@@ -41,15 +62,30 @@ export default function Stats({ coords }) {
     
     const sunrise = weather.sys.sunrise;
     const sunset = weather.sys.sunset;
-    const now = Date.now() / 1000;
+    const now = currentTime / 1000;
+    const isDay = now >= sunrise && now <= sunset;
 
-    
     let progress = 0;
-    if (now > sunrise && now < sunset) {
+    
+    if (isDay) {
         progress = (now - sunrise) / (sunset - sunrise);
-    } else if (now >= sunset) {
-        progress = 1;
+    } else {
+        // Night progress logic
+        const dayDuration = sunset - sunrise;
+        const nightDuration = 86400 - dayDuration;
+        
+        if (now > sunset) {
+            // Evening/Early night
+            progress = (now - sunset) / nightDuration;
+        } else {
+            // Morning/Late night (before sunrise)
+            // Time since yesterday's sunset (approximate)
+            progress = (now - (sunset - 86400)) / nightDuration;
+        }
     }
+
+    // Clamp progress
+    progress = Math.max(0, Math.min(1, progress));
 
     
     
@@ -232,14 +268,111 @@ export default function Stats({ coords }) {
                 </div>
 
                 {}
-                <div className="bg-linear-to-br from-orange-50 to-yellow-50 dark:from-gray-800 dark:to-gray-900 p-6 rounded-3xl border border-orange-100 dark:border-gray-700 shadow-sm relative overflow-hidden">
+                <div className={`p-6 rounded-3xl border shadow-sm relative overflow-hidden transition-all duration-1000 ${
+                    isDay 
+                        ? 'bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-gray-800 dark:to-gray-900 border-orange-100 dark:border-gray-700' 
+                        : 'bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 border-indigo-900 text-white'
+                }`}>
+                    {/* Stars effect for night */}
+                    {!isDay && (
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                            <style>
+                                {`
+                                    @keyframes shooting-star {
+                                        0% { transform: translateX(0) translateY(0) rotate(-45deg); opacity: 1; }
+                                        20% { transform: translateX(200px) translateY(200px) rotate(-45deg); opacity: 0; }
+                                        100% { transform: translateX(200px) translateY(200px) rotate(-45deg); opacity: 0; }
+                                    }
+                                    .shooting-star {
+                                        position: absolute;
+                                        top: -10%;
+                                        left: 50%;
+                                        width: 100px;
+                                        height: 2px;
+                                        background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.8), rgba(255,255,255,0));
+                                        animation: shooting-star 8s infinite ease-in-out;
+                                        animation-delay: 3s;
+                                        opacity: 0;
+                                    }
+                                `}
+                            </style>
+                            {/* Twinkling Stars */}
+                            {stars.map((star) => (
+                                <div
+                                    key={star.id}
+                                    className="absolute bg-white rounded-full animate-pulse"
+                                    style={{
+                                        top: star.top,
+                                        left: star.left,
+                                        width: star.size,
+                                        height: star.size,
+                                        opacity: star.opacity,
+                                        animationDuration: star.duration,
+                                        animationDelay: star.delay
+                                    }}
+                                />
+                            ))}
+                            {/* Shooting Star */}
+                            <div className="shooting-star"></div>
+                        </div>
+                    )}
+
+                    {/* Clouds effect for day */}
+                    {isDay && (
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                            <style>
+                                {`
+                                    @keyframes float-cloud {
+                                        0% { transform: translateX(-100%); opacity: 0; }
+                                        10% { opacity: 0.6; }
+                                        90% { opacity: 0.6; }
+                                        100% { transform: translateX(400%); opacity: 0; }
+                                    }
+                                    .cloud-shape {
+                                        position: absolute;
+                                        background: rgba(255, 255, 255, 0.6);
+                                        border-radius: 50px;
+                                        animation: float-cloud linear infinite;
+                                    }
+                                    .cloud-shape::after {
+                                        content: '';
+                                        position: absolute;
+                                        top: -50%;
+                                        left: 15%;
+                                        width: 60%;
+                                        height: 100%;
+                                        background: inherit;
+                                        border-radius: 50%;
+                                    }
+                                    .cloud-shape::before {
+                                        content: '';
+                                        position: absolute;
+                                        top: -30%;
+                                        right: 15%;
+                                        width: 40%;
+                                        height: 80%;
+                                        background: inherit;
+                                        border-radius: 50%;
+                                    }
+                                `}
+                            </style>
+                            <div className="cloud-shape w-16 h-6 top-4" style={{ animationDuration: '25s', animationDelay: '0s' }}></div>
+                            <div className="cloud-shape w-12 h-4 top-12" style={{ animationDuration: '35s', animationDelay: '5s' }}></div>
+                            <div className="cloud-shape w-20 h-8 top-8" style={{ animationDuration: '30s', animationDelay: '12s' }}></div>
+                        </div>
+                    )}
+
                     <div className="flex justify-between items-center mb-2 relative z-10">
-                        <span className="text-sm font-medium text-orange-800 dark:text-orange-300">
-                            {t('sunCycle') || 'Sun Cycle'}
+                        <span className={`text-sm font-medium ${isDay ? 'text-orange-800 dark:text-orange-300' : 'text-indigo-200'}`}>
+                            {isDay ? (t('sunCycle') || 'Sun Cycle') : (t('moonCycle') || 'Moon Cycle')}
                         </span>
                         {}
-                        <span className="text-xs font-mono bg-white/50 dark:bg-black/20 px-2 py-1 rounded-md text-orange-700 dark:text-orange-400">
-                            {new Date().toLocaleTimeString([], {
+                        <span className={`text-xs font-mono px-2 py-1 rounded-md ${
+                            isDay 
+                                ? 'bg-white/50 dark:bg-black/20 text-orange-700 dark:text-orange-400' 
+                                : 'bg-white/10 text-indigo-200'
+                        }`}>
+                            {new Date(currentTime).toLocaleTimeString([], {
                                 hour: '2-digit',
                                 minute: '2-digit',
                             })}
@@ -256,36 +389,76 @@ export default function Stats({ coords }) {
                                 d="M 10 60 A 50 50 0 0 1 110 60"
                                 fill="none"
                                 stroke="currentColor"
-                                className="text-orange-200 dark:text-gray-600"
+                                className={isDay ? "text-orange-200 dark:text-gray-600" : "text-indigo-800"}
                                 strokeWidth="2"
                                 strokeDasharray="4 4"
                             />
 
                             {}
-                            <g transform={`translate(${sunX}, ${sunY})`}>
-                                <circle
-                                    r="6"
-                                    className="text-orange-500"
-                                    fill="currentColor"
-                                />
-                                <circle
-                                    r="10"
-                                    className="text-orange-400 animate-pulse"
-                                    fill="currentColor"
-                                    fillOpacity="0.3"
-                                />
+                            <g 
+                                style={{ 
+                                    transform: `translate(${sunX}px, ${sunY}px)`,
+                                    transition: 'transform 1s linear'
+                                }}
+                            >
+                                {isDay ? (
+                                    <>
+                                        {/* Sun Rays Animation */}
+                                        <g className="animate-[spin_10s_linear_infinite]">
+                                            {[...Array(8)].map((_, i) => (
+                                                <line
+                                                    key={i}
+                                                    x1="0"
+                                                    y1="-14"
+                                                    x2="0"
+                                                    y2="-18"
+                                                    className="stroke-orange-400"
+                                                    strokeWidth="2"
+                                                    transform={`rotate(${i * 45})`}
+                                                />
+                                            ))}
+                                        </g>
+                                        <circle
+                                            r="8"
+                                            className="text-orange-500"
+                                            fill="currentColor"
+                                        />
+                                        <circle
+                                            r="12"
+                                            className="text-orange-400 animate-pulse"
+                                            fill="currentColor"
+                                            fillOpacity="0.3"
+                                        />
+                                    </>
+                                ) : (
+                                    <>
+                                        <circle
+                                            r="12"
+                                            className="text-indigo-400 animate-pulse"
+                                            fill="currentColor"
+                                            fillOpacity="0.2"
+                                        />
+                                        <path 
+                                            d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" 
+                                            fill="currentColor" 
+                                            className="text-indigo-200"
+                                            transform="translate(-12, -12) scale(1)" 
+                                        />
+                                    </>
+                                )}
                             </g>
                         </svg>
 
                         {}
-                        <div className="absolute bottom-0 w-full h-px bg-orange-200 dark:bg-gray-600"></div>
+                        <div className={`absolute bottom-0 w-full h-px ${isDay ? 'bg-orange-200 dark:bg-gray-600' : 'bg-indigo-900'}`}></div>
                     </div>
 
-                    <div className="flex justify-between text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 relative z-10">
+                    <div className={`flex justify-between text-xs font-medium mt-2 relative z-10 ${isDay ? 'text-gray-500 dark:text-gray-400' : 'text-indigo-300'}`}>
                         <div className="flex flex-col items-start">
-                            <span>Sunrise</span>
-                            <span className="text-gray-900 dark:text-white">
+                            <span>{t('sunrise') || 'Sunrise'}</span>
+                            <span className={isDay ? "text-gray-900 dark:text-white" : "text-white"}>
                                 {formatTime(sunrise)}
+
                             </span>
                         </div>
                         <div className="flex flex-col items-end">

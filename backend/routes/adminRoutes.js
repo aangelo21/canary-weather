@@ -11,6 +11,12 @@ import {
     updateUser,
     deleteUser,
 } from '../controllers/adminController.js';
+import { body } from 'express-validator';
+
+const validateCoordinates = [
+    body('latitude').isFloat({ min: -90, max: 90 }).withMessage('Latitude must be between -90 and 90'),
+    body('longitude').isFloat({ min: -180, max: 180 }).withMessage('Longitude must be between -180 and 180')
+];
 
 const router = express.Router();
 
@@ -75,7 +81,7 @@ router.get('/', ensureAdminAuthenticated, getDashboard);
  *       403:
  *         description: Admin privileges required
  */
-router.post('/poi', authenticateSession, checkAdmin, createGlobalPOI);
+router.post('/poi', authenticateSession, checkAdmin, validateCoordinates, createGlobalPOI);
 
 /**
  * @swagger
@@ -121,7 +127,7 @@ router.post('/poi', authenticateSession, checkAdmin, createGlobalPOI);
  *       404:
  *         description: POI not found
  */
-router.post('/poi/:id/update', authenticateSession, checkAdmin, updatePOI);
+router.post('/poi/:id/update', authenticateSession, checkAdmin, validateCoordinates, updatePOI);
 
 /**
  * @swagger
