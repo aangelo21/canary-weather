@@ -9,7 +9,8 @@
         "lint": "eslint .",
         "preview": "vite preview",
         "test": "vitest",
-        "test:run": "vitest run"
+        "test:run": "vitest run",
+        "coverage": "vitest run --coverage"
     },
     "dependencies": {
         "@fontsource/poppins": "^5.2.7",
