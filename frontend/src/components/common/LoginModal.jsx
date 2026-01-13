@@ -781,6 +781,7 @@ export default function LoginModal({
                                                 </div>
                                                 <input
                                                     type="email"
+                                                    aria-label="email"
                                                     placeholder={t('emailPlaceholder')}
                                                     className={`w-full pl-11 pr-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all dark:text-white ${validationErrors.email ? 'border-red-500' : ''}`}
                                                     value={input.email}
@@ -813,6 +814,7 @@ export default function LoginModal({
                                             </div>
                                             <input
                                                 type="text"
+                                                aria-label="emailOrUsername"
                                                 placeholder={t('emailOrUsernamePlaceholder')}
                                                 className="w-full pl-11 pr-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all dark:text-white"
                                                 value={input.emailOrUsername}
@@ -829,6 +831,7 @@ export default function LoginModal({
                                         </div>
                                         <input
                                             type={showPassword ? 'text' : 'password'}
+                                            aria-label="password"
                                             placeholder={t('password')}
                                             className={`w-full pl-11 pr-12 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all dark:text-white ${validationErrors.password ? 'border-red-500' : ''}`}
                                             value={input.password}

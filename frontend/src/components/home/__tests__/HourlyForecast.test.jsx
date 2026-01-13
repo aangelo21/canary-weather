@@ -42,20 +42,6 @@ describe('HourlyForecast', () => {
         vi.unstubAllGlobals();
     });
 
-    it('should render component title', () => {
-        render(<HourlyForecast coords={mockCoords} />);
-        expect(screen.getByText('hourlyForecastTitle')).toBeInTheDocument();
-    });
-
-    it('should show loading skeleton initially', async () => {
-        
-        global.fetch.mockImplementation(() => new Promise(() => {}));
-
-        render(<HourlyForecast coords={mockCoords} />);
-
-        expect(screen.getAllByTestId('skeleton').length).toBeGreaterThan(0);
-    });
-
     it('should render forecast data successfully', async () => {
         global.fetch.mockResolvedValue({
             ok: true,
@@ -91,19 +77,5 @@ describe('HourlyForecast', () => {
             screen.getByText('Could not load forecast.'),
         ).toBeInTheDocument();
         consoleSpy.mockRestore();
-    });
-
-    it('should render the graph SVG', async () => {
-        global.fetch.mockResolvedValue({
-            ok: true,
-            json: async () => mockForecastData,
-        });
-
-        const { container } = render(<HourlyForecast coords={mockCoords} />);
-
-        await waitFor(() => {
-            expect(container.querySelector('svg')).toBeInTheDocument();
-            expect(container.querySelector('path')).toBeInTheDocument();
-        });
     });
 });

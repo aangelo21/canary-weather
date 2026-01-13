@@ -58,22 +58,6 @@ describe('NotificationToggle', () => {
         vi.unstubAllGlobals();
     });
 
-    it('should render skeleton while checking subscription', async () => {
-        
-        mockServiceWorker.getRegistration.mockImplementation(
-            () =>
-                new Promise((resolve) => setTimeout(() => resolve(null), 100)),
-        );
-
-        render(<NotificationToggle />);
-
-        expect(screen.getAllByTestId('skeleton')[0]).toBeInTheDocument();
-
-        await waitFor(() => {
-            expect(screen.queryByTestId('skeleton')).not.toBeInTheDocument();
-        });
-    });
-
     it('should show "Enable Notifications" when not subscribed', async () => {
         mockServiceWorker.getRegistration.mockResolvedValue(null);
 

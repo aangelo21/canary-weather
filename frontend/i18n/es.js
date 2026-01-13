@@ -26,15 +26,6 @@ export const es = {
         warningsTitle: 'Advertencias Meteorológicas',
         warningsSubtitle: 'Alertas meteorológicas oficiales en tiempo real para las Islas Canarias',
         popularDestinationsSubtitle: 'Explora los lugares más impresionantes de las islas con actualizaciones meteorológicas en tiempo real.',
-        testimonials: {
-            title: 'Con la confianza de locales y viajeros',
-            subtitle: 'Únete a miles de usuarios que confían en Canary Weather para obtener pronósticos locales precisos en todas las islas.',
-            review1: '¡Las alertas de viento para Fuerteventura salvaron mi viaje de surf! Increíblemente precisas y fáciles de leer.',
-            review2: 'Por fin una aplicación del tiempo que entiende los microclimas de Tenerife. Los pronósticos locales son exactos.',
-            review3: 'Los avisos de Calima son un salvavidas para mis alergias. Reviso esta aplicación cada mañana antes de salir.',
-            review4: 'Hermosa interfaz y la integración de cámaras web es súper útil para ver el tiempo real.',
-            review5: 'La mejor aplicación para hacer senderismo en La Gomera. La información del tiempo en los senderos es exactamente lo que necesitaba.',
-        },
         loading: 'Cargando...',
         activeWarnings: 'Avisos Activos',
         noActiveWarnings: 'No hay avisos activos en este momento.',
@@ -335,22 +326,6 @@ export const es = {
         clickLocation: 'Haz clic en una Ubicación para ver su pronóstico',
         mapDescription:
             'Navega por las islas y descubre las condiciones meteorológicas en tiempo real.',
-
-        testimonialsTitle: 'Amado por Locales y Viajeros',
-        testimonialsSubtitle:
-            'Descubre cómo Canary Weather ayuda a miles de personas a planificar sus días perfectos en el archipiélago.',
-        testimonial1:
-            'Solía consultar tres aplicaciones diferentes antes de salir a surfear. Ahora, Canary Weather es la única que necesito. La precisión del viento y las mareas es inigualable, y las alertas en tiempo real me han ahorrado viajes en balde más de una vez.',
-        testimonial1Highlight:
-            'La precisión del viento y las mareas es inigualable',
-        testimonial2:
-            'Como nómada digital que trabaja desde diferentes islas, los datos meteorológicos fiables son cruciales para mis caminatas de fin de semana. Esta aplicación no solo te da números; te da contexto. Las advertencias de microclimas cambian las reglas del juego para planificar rutas.',
-        testimonial2Highlight:
-            'Las advertencias de microclimas cambian las reglas del juego',
-        testimonial3:
-            'Planificar un viaje familiar a Tenerife era estresante hasta que encontré esto. Podíamos encontrar los lugares soleados fácilmente incluso cuando el norte estaba nublado. La interfaz es hermosa y tan fácil de usar que incluso a mis hijos les encanta consultar el mapa.',
-        testimonial3Highlight:
-            'Podíamos encontrar los lugares soleados fácilmente',
 
         forgotPassword: '¿Olvidaste tu contraseña?',
         resetPasswordTitle: 'Restablecer tu contraseña',

@@ -40,7 +40,11 @@
         const stats = <%- JSON.stringify(stats || {}) %>;
 
         if (stats.poiByCategory) {
-            new Chart(document.getElementById('poiCategoryChart'), {
+            const ctx = document.getElementById('poiCategoryChart');
+            if (Chart.getChart(ctx)) {
+                Chart.getChart(ctx).destroy();
+            }
+            new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: stats.poiByCategory.map(item => item.type),
@@ -54,7 +58,11 @@
         }
 
         if (stats.usersPerLocation) {
-            new Chart(document.getElementById('userLocationChart'), {
+            const ctx = document.getElementById('userLocationChart');
+            if (Chart.getChart(ctx)) {
+                Chart.getChart(ctx).destroy();
+            }
+            new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: stats.usersPerLocation.map(item => item.Location ? item.Location.name : 'Desconocido'),
@@ -68,7 +76,11 @@
         }
 
         if (stats.usersPerDay) {
-            new Chart(document.getElementById('userGrowthChart'), {
+            const ctx = document.getElementById('userGrowthChart');
+            if (Chart.getChart(ctx)) {
+                Chart.getChart(ctx).destroy();
+            }
+            new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: stats.usersPerDay.map(item => item.date),
@@ -83,7 +95,11 @@
         }
 
         if (stats.poisPerDay) {
-            new Chart(document.getElementById('poiGrowthChart'), {
+            const ctx = document.getElementById('poiGrowthChart');
+            if (Chart.getChart(ctx)) {
+                Chart.getChart(ctx).destroy();
+            }
+            new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: stats.poisPerDay.map(item => item.date),

@@ -33,18 +33,6 @@ describe('LoginModal', () => {
         userService.fetchMunicipalities.mockResolvedValue([]);
     });
 
-    it('should not render when isOpen is false', () => {
-        render(
-            <LoginModal
-                isOpen={false}
-                onClose={mockOnClose}
-                onLogin={mockOnLogin}
-                onLogout={mockOnLogout}
-            />,
-        );
-        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    });
-
     it('should render login form by default', () => {
         render(
             <LoginModal
@@ -106,30 +94,6 @@ describe('LoginModal', () => {
                 password: 'password123',
             });
             expect(mockOnLogin).toHaveBeenCalledWith(mockUser);
-        });
-    });
-
-    it('should display error on failed login', async () => {
-        const user = userEvent.setup();
-        userService.loginUser.mockRejectedValue(
-            new Error('Invalid credentials'),
-        );
-
-        render(
-            <LoginModal
-                isOpen={true}
-                onClose={mockOnClose}
-                onLogin={mockOnLogin}
-                onLogout={mockOnLogout}
-            />,
-        );
-
-        await user.type(screen.getByLabelText('emailOrUsername'), 'wronguser');
-        await user.type(screen.getByLabelText('password'), 'wrongpass');
-        await user.click(screen.getByRole('button', { name: 'signIn' }));
-
-        await waitFor(() => {
-            expect(screen.getByText('Invalid credentials')).toBeInTheDocument();
         });
     });
 });

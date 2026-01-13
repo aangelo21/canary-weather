@@ -26,15 +26,6 @@ export const en = {
         warningsTitle: 'Weather Warnings',
         warningsSubtitle: 'Real-time official weather alerts for the Canary Islands',
         popularDestinationsSubtitle: 'Explore the most breathtaking locations across the islands with real-time weather updates.',
-        testimonials: {
-            title: 'Trusted by Locals & Travelers',
-            subtitle: 'Join thousands of users who rely on Canary Weather for accurate, local forecasts across the islands.',
-            review1: 'The wind alerts for Fuerteventura saved my surf trip! Incredibly accurate and easy to read.',
-            review2: 'Finally a weather app that understands the microclimates of Tenerife. The local forecasts are spot on.',
-            review3: 'The Calima warnings are a lifesaver for my allergies. I check this app every morning before heading out.',
-            review4: 'Beautiful interface and the webcam integration is super useful to see the actual weather in real-time.',
-            review5: 'Best app for hiking in La Gomera. The trail weather info is exactly what I needed.',
-        },
         goodWeather: 'Good Weather!',
         loading: 'Loading...',
         activeWarnings: 'Active Warnings',
@@ -327,19 +318,6 @@ export const en = {
         mapDescription:
             'Navigate through the islands and discover real-time weather conditions.',
         ourHQ: 'Our Basement',
-
-        testimonialsTitle: 'Loved by Locals & Travelers',
-        testimonialsSubtitle:
-            'See how Canary Weather helps thousands of people plan their perfect days in the archipelago.',
-        testimonial1:
-            'I used to check three different apps before heading out to surf. Now, Canary Weather is the only one I need. The wind and tide accuracy is unmatched, and the real-time alerts have saved me from wasted trips more than once.',
-        testimonial1Highlight: 'The wind and tide accuracy is unmatched',
-        testimonial2:
-            "As a digital nomad working from different islands, reliable weather data is crucial for my weekend hikes. This app doesn't just give you numbers; it gives you context. The microclimate warnings are a game-changer for planning routes.",
-        testimonial2Highlight: 'The microclimate warnings are a game-changer',
-        testimonial3:
-            'Planning a family trip to Tenerife was stressful until I found this. We could find the sunny spots easily even when the north was cloudy. The interface is beautiful and so easy to use, even my kids love checking the map.',
-        testimonial3Highlight: 'We could find the sunny spots easily',
 
         forgotPassword: 'Forgot Password?',
         resetPasswordTitle: 'Reset your password',
