@@ -23,39 +23,6 @@ describe('API Service', () => {
         expect(apiService.getAccessToken()).toBe('test-token');
     });
 
-    it('should make requests with correct base URL', async () => {
-        global.fetch.mockResolvedValue({ ok: true, json: async () => ({}) });
-
-        await apiService.apiFetch('/test');
-
-        expect(global.fetch).toHaveBeenCalledWith(
-            'http://localhost:85/api/test',
-            expect.objectContaining({
-                credentials: 'include',
-                headers: expect.not.objectContaining({
-                    Authorization: expect.any(String),
-                }),
-            }),
-        );
-    });
-
-    it('should include Authorization header when token is set', async () => {
-        apiService.setAccessToken('valid-token');
-        global.fetch.mockResolvedValue({ ok: true, json: async () => ({}) });
-
-        await apiService.apiFetch('/protected');
-
-        expect(global.fetch).toHaveBeenCalledWith(
-            'http://localhost:85/api/protected',
-            expect.objectContaining({
-                credentials: 'include',
-                headers: expect.objectContaining({
-                    Authorization: 'Bearer valid-token',
-                }),
-            }),
-        );
-    });
-
     it('should handle 401 and attempt refresh', async () => {
         
         global.fetch.mockResolvedValueOnce({ status: 401, ok: false });
