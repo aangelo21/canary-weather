@@ -218,15 +218,16 @@ describe('LoginModal', () => {
         vi.clearAllMocks();
         userService.fetchMunicipalities.mockResolvedValue([]);
         
-        Object.defineProperty(window, 'localStorage', {
-            value: {
-                getItem: vi.fn(),
-                setItem: vi.fn(),
-                removeItem: vi.fn(),
-                clear: vi.fn(),
-            },
-            writable: true
+        vi.stubGlobal('localStorage', {
+            getItem: vi.fn(),
+            setItem: vi.fn(),
+            removeItem: vi.fn(),
+            clear: vi.fn(),
         });
+    });
+
+    afterEach(() => {
+        vi.unstubAllGlobals();
     });
 
     it('should render login form by default', () => {
