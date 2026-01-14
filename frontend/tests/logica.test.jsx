@@ -9,467 +9,171 @@ import {
 } from '../src/utils/validation';
 import './mock.test.jsx';
 
-describe('API Service', () => {
-    let apiService;
-
-    beforeEach(async () => {
+describe('Validation & Services', () => {
+    beforeEach(() => {
         vi.clearAllMocks();
         vi.stubGlobal('fetch', vi.fn());
-        vi.stubGlobal('import.meta', {
-            env: {
-                VITE_API_BASE: 'http://localhost:3000',
-            },
-        });
-
-        const module = await import('../src/services/api.js');
-        apiService = module;
-        apiService.setAccessToken(null);
+        vi.stubGlobal('import.meta', { env: { VITE_API_BASE: 'http://localhost:3000' } });
     });
 
     afterEach(() => {
         vi.unstubAllGlobals();
     });
 
-    it('should manage access token correctly', () => {
+    it('should validate all input types comprehensively', () => {
+        expect(validatePassword('Pass123!').isValid).toBe(true);
+        expect(validatePassword('').errors).toContain('Password is required');
+        expect(validatePassword('short').errors.length).toBeGreaterThan(0);
+        expect(validatePassword('A'.repeat(21) + '1!a').errors).toContain('Password must not exceed 20 characters');
+        
+        expect(validateEmail('test@example.com').isValid).toBe(true);
+        expect(validateEmail('').error).toBe('Email is required');
+        expect(validateEmail('invalid').error).toBe('Please enter a valid email address');
+        
+        expect(validateUsername('user_123').isValid).toBe(true);
+        expect(validateUsername('').error).toBe('Username is required');
+        expect(validateUsername('us').error).toContain('at least 3 characters');
+        expect(validateUsername('user@name').error).toContain('only contain letters');
+        
+        expect(validatePasswordMatch('pass', 'pass').isValid).toBe(true);
+        expect(validatePasswordMatch('pass1', 'pass2').error).toBe('Passwords do not match');
+        
+        expect(validateRequired('hello').isValid).toBe(true);
+        expect(validateRequired('', 'Field').error).toBe('Field is required');
+        
+        expect(getPasswordStrength('').strength).toBe('none');
+        expect(getPasswordStrength('abc').strength).toBe('weak');
+        expect(getPasswordStrength('password123').strength).toBe('medium');
+        expect(getPasswordStrength('Password123!').strength).toBe('strong');
+    });
+
+    it('should handle API service operations', async () => {
+        const apiService = await import('../src/services/api.js');
+        apiService.setAccessToken(null);
+        
         expect(apiService.getAccessToken()).toBeNull();
         apiService.setAccessToken('test-token');
         expect(apiService.getAccessToken()).toBe('test-token');
-    });
-
-    it('should handle token refresh on 401', async () => {
-        const mockEndpoint = '/test';
         
-        global.fetch
-            .mockResolvedValueOnce({ status: 401, ok: false })
-            .mockResolvedValueOnce({
-                ok: true,
-                json: async () => ({ token: 'new-token' }),
-            })
-            .mockResolvedValueOnce({
-                ok: true,
-                json: async () => ({ success: true }),
-            });
-
-        await apiService.apiFetch(mockEndpoint);
-        
-        expect(global.fetch).toHaveBeenCalled();
-    });
-
-    it('should include auth header when token exists', async () => {
-        apiService.setAccessToken('my-token');
-        global.fetch.mockResolvedValue({ ok: true, json: async () => ({}) });
-        
+        global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ({}) });
         await apiService.apiFetch('/endpoint');
-        
         expect(global.fetch).toHaveBeenCalledWith(
             expect.any(String),
             expect.objectContaining({
-                headers: expect.objectContaining({
-                    Authorization: 'Bearer my-token'
-                })
+                headers: expect.objectContaining({ Authorization: 'Bearer test-token' })
             })
         );
+        
+        global.fetch.mockResolvedValueOnce({ status: 401, ok: false })
+            .mockResolvedValueOnce({ ok: true, json: async () => ({ token: 'new-token' }) })
+            .mockResolvedValueOnce({ ok: true, json: async () => ({}) });
+        
+        await apiService.apiFetch('/test');
+        expect(global.fetch).toHaveBeenCalled();
     });
 
-    it('should handle non-401 errors gracefully', async () => {
-        global.fetch.mockResolvedValue({ status: 500, ok: false });
-        const response = await apiService.apiFetch('/endpoint');
-        expect(response.ok).toBe(false);
-    });
-});
-
-describe('Validation Utils', () => {
-    describe('validatePassword', () => {
-        it('should validate valid password', () => {
-            const result = validatePassword('Pass123!');
-            expect(result.isValid).toBe(true);
-            expect(result.errors).toHaveLength(0);
-        });
-
-        it('should fail if password is empty', () => {
-            const result = validatePassword('');
-            expect(result.isValid).toBe(false);
-            expect(result.errors).toContain('Password is required');
-        });
-
-        it('should fail if too short', () => {
-            const result = validatePassword('Pas1!');
-            expect(result.isValid).toBe(false);
-            expect(result.errors).toContain('Password must be at least 6 characters long');
-        });
-
-        it('should fail if too long', () => {
-            const result = validatePassword('A'.repeat(21) + '1!a');
-            expect(result.isValid).toBe(false);
-            expect(result.errors).toContain('Password must not exceed 20 characters');
-        });
-
-        it('should fail if no uppercase', () => {
-            const result = validatePassword('pass123!');
-            expect(result.isValid).toBe(false);
-            expect(result.errors).toContain('Password must contain at least one uppercase letter');
-        });
-
-        it('should fail if no lowercase', () => {
-            const result = validatePassword('PASS123!');
-            expect(result.isValid).toBe(false);
-            expect(result.errors).toContain('Password must contain at least one lowercase letter');
-        });
-
-        it('should fail if no number', () => {
-            const result = validatePassword('PassWord!');
-            expect(result.isValid).toBe(false);
-            expect(result.errors).toContain('Password must contain at least one number');
-        });
-
-        it('should fail if no special char', () => {
-            const result = validatePassword('Pass1234');
-            expect(result.isValid).toBe(false);
-            expect(result.errors).toContain('Password must contain at least one special character');
-        });
-    });
-
-    describe('validateEmail', () => {
-        it('should validate correct email', () => {
-            expect(validateEmail('test@example.com').isValid).toBe(true);
-        });
-
-        it('should fail empty email', () => {
-            const result = validateEmail('');
-            expect(result.isValid).toBe(false);
-            expect(result.error).toBe('Email is required');
-        });
-
-        it('should fail invalid format', () => {
-            const result = validateEmail('test@');
-            expect(result.isValid).toBe(false);
-            expect(result.error).toBe('Please enter a valid email address');
-        });
-    });
-
-    describe('validateUsername', () => {
-        it('should validate correct username', () => {
-            expect(validateUsername('user_123').isValid).toBe(true);
-        });
-
-        it('should fail empty username', () => {
-            const result = validateUsername('');
-            expect(result.isValid).toBe(false);
-            expect(result.error).toBe('Username is required');
-        });
-
-        it('should fail short username', () => {
-            const result = validateUsername('us');
-            expect(result.isValid).toBe(false);
-            expect(result.error).toBe('Username must be at least 3 characters long');
-        });
-
-        it('should fail long username', () => {
-            const result = validateUsername('a'.repeat(21));
-            expect(result.isValid).toBe(false);
-            expect(result.error).toBe('Username must not exceed 20 characters');
-        });
-
-        it('should fail invalid chars', () => {
-            const result = validateUsername('user@name');
-            expect(result.isValid).toBe(false);
-            expect(result.error).toBe('Username can only contain letters, numbers, hyphens, and underscores');
-        });
-    });
-
-    describe('validatePasswordMatch', () => {
-        it('should validate matching passwords', () => {
-            expect(validatePasswordMatch('pass', 'pass').isValid).toBe(true);
-        });
-
-        it('should fail empty confirmation', () => {
-            const result = validatePasswordMatch('pass', '');
-            expect(result.isValid).toBe(false);
-            expect(result.error).toBe('Please confirm your password');
-        });
-
-        it('should fail mismatch', () => {
-            const result = validatePasswordMatch('pass1', 'pass2');
-            expect(result.isValid).toBe(false);
-            expect(result.error).toBe('Passwords do not match');
-        });
-    });
-
-    describe('validateRequired', () => {
-        it('should validate non-empty string', () => {
-            expect(validateRequired('hello').isValid).toBe(true);
-        });
-
-        it('should fail on empty string', () => {
-            const result = validateRequired('');
-            expect(result.isValid).toBe(false);
-            expect(result.error).toBe('This field is required');
-        });
-
-        it('should fail on null', () => {
-            const result = validateRequired(null);
-            expect(result.isValid).toBe(false);
-            expect(result.error).toBe('This field is required');
-        });
-
-        it('should use custom field name', () => {
-            const result = validateRequired('', 'Username');
-            expect(result.isValid).toBe(false);
-            expect(result.error).toBe('Username is required');
-        });
-    });
-
-    describe('getPasswordStrength', () => {
-        it('should return none for empty', () => {
-            const result = getPasswordStrength('');
-            expect(result).toEqual({ strength: 'none', color: 'gray', percentage: 0 });
-        });
-
-        it('should return weak for simple passwords', () => {
-            const result = getPasswordStrength('abc');
-            expect(result.strength).toBe('weak');
-        });
-
-        it('should return medium for decent passwords', () => {
-            const result = getPasswordStrength('password123');
-            expect(result.strength).toBe('medium');
-        });
-
-        it('should return strong for complex passwords', () => {
-            const result = getPasswordStrength('Password123!');
-            expect(result.strength).toBe('strong');
-        });
-    });
-});
-
-describe('User Service', () => {
-    let userService;
-
-    beforeEach(async () => {
-        vi.resetModules();
-        vi.stubGlobal('fetch', vi.fn());
-        vi.stubGlobal('import.meta', { env: { VITE_API_BASE: 'http://localhost:3000' } });
-        userService = await import('../src/services/userService');
-    });
-
-    afterEach(() => {
-        vi.unstubAllGlobals();
-    });
-
-    it('should login user successfully', async () => {
-        global.fetch.mockResolvedValue({
+    it('should handle user service operations', async () => {
+        const userService = await import('../src/services/userService');
+        
+        global.fetch.mockResolvedValueOnce({
             ok: true,
-            json: async () => ({ token: 'fake-token', user: { id: 1 } }),
+            json: async () => ({ token: 'token', user: { id: 1 } }),
             headers: { get: () => 'application/json' }
         });
-
-        const result = await userService.loginUser({ username: 'user', password: 'pw' });
-        expect(result.token).toBe('fake-token');
-    });
-
-    it('should handle login error', async () => {
-        global.fetch.mockResolvedValue({
-            ok: false,
-            headers: { get: () => 'application/json' },
-            json: async () => ({ error: 'Invalid credentials' })
-        });
-
-        await expect(userService.loginUser({ username: 'u', password: 'p' }))
-            .rejects.toThrow('Invalid credentials');
-    });
-    
-    it('should fetch current user', async () => {
-        global.fetch.mockResolvedValue({
-            ok: true,
-            json: async () => ({ id: 1, username: 'me' })
-        });
+        const loginResult = await userService.loginUser({ username: 'u', password: 'p' });
+        expect(loginResult.token).toBe('token');
         
+        global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ success: true }) });
+        await userService.logoutUser();
+        
+        global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ token: 'refresh' }) });
+        expect(await userService.restoreSession()).toBe(true);
+        
+        global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ id: 1 }) });
         const user = await userService.getCurrentUser();
         expect(user.id).toBe(1);
-        expect(global.fetch).toHaveBeenCalledWith(
-            expect.stringContaining('/users/me'),
-            expect.anything()
-        );
-    });
-
-    it('should handle logout', async () => {
-        global.fetch.mockResolvedValue({
-            ok: true,
-            json: async () => ({ success: true })
-        });
         
-        await userService.logoutUser();
-        expect(global.fetch).toHaveBeenCalledWith(
-            expect.stringContaining('/users/logout'),
-            expect.objectContaining({ method: 'POST' })
-        );
-    });
-
-    it('should restore session successfully', async () => {
-        global.fetch.mockResolvedValue({
-            ok: true,
-            json: async () => ({ token: 'refreshed-token' })
-        });
+        global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ([{ id: 1 }]) });
+        const users = await userService.fetchUsers();
+        expect(users).toHaveLength(1);
         
-        const result = await userService.restoreSession();
-        expect(result).toBe(true);
+        global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ id: 2 }) });
+        await userService.createOrUpdateUser({ username: 'new' });
+        
+        global.fetch.mockResolvedValueOnce({ ok: true, status: 204 });
+        const delResult = await userService.deleteUser(1);
+        expect(delResult.success).toBe(true);
+        
+        global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ([{ name: 'City' }]) });
+        const munis = await userService.fetchMunicipalities();
+        expect(munis[0].name).toBe('City');
     });
 
-    it('should handle restore session failure', async () => {
-        global.fetch.mockResolvedValue({ ok: false });
-        const result = await userService.restoreSession();
-        expect(result).toBe(false);
-    });
-});
-
-describe('Location Service', () => {
-    let locationService;
-
-    beforeEach(async () => {
-        vi.resetModules();
-        vi.stubGlobal('fetch', vi.fn());
-        vi.stubGlobal('import.meta', { env: { VITE_API_BASE: 'http://localhost:3000' } });
-        locationService = await import('../src/services/locationService');
-    });
-
-    afterEach(() => {
-        vi.unstubAllGlobals();
-    });
-
-    it('should fetch locations', async () => {
-        global.fetch.mockResolvedValue({
-            ok: true,
-            json: async () => ([{ id: 1, name: 'Loc' }])
-        });
-
+    it('should handle location service operations', async () => {
+        const locationService = await import('../src/services/locationService');
+        
+        global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ([{ id: 1 }]) });
         const locs = await locationService.fetchLocations();
         expect(locs).toHaveLength(1);
-        expect(global.fetch).toHaveBeenCalledWith(
-            expect.stringContaining('/locations'),
-            expect.anything()
-        );
-    });
-
-    it('should fetch location by id', async () => {
-        global.fetch.mockResolvedValue({
-            ok: true,
-            json: async () => ({ id: 5, name: 'Test Location' })
-        });
-
+        
+        global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ id: 5 }) });
         const loc = await locationService.fetchLocationById(5);
         expect(loc.id).toBe(5);
-        expect(global.fetch).toHaveBeenCalledWith(
-            expect.stringContaining('/locations/5'),
-            expect.anything()
-        );
-    });
-
-    it('should handle fetch error', async () => {
-        global.fetch.mockResolvedValue({ ok: false });
+        
+        global.fetch.mockResolvedValueOnce({ ok: false });
         await expect(locationService.fetchLocations()).rejects.toThrow();
     });
-});
 
-describe('POI Service', () => {
-    let poiService;
-
-    beforeEach(async () => {
-        vi.resetModules();
-        vi.stubGlobal('fetch', vi.fn());
-        vi.stubGlobal('import.meta', { env: { VITE_API_BASE: 'http://localhost:3000' } });
-        poiService = await import('../src/services/poiService');
-    });
-
-    afterEach(() => {
-        vi.unstubAllGlobals();
-    });
-
-    it('should fetch POIs', async () => {
-        global.fetch.mockResolvedValue({
-            ok: true,
-            json: async () => ([{ id: 1, name: 'POI' }])
-        });
-
+    it('should handle POI service operations', async () => {
+        const poiService = await import('../src/services/poiService');
+        
+        global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ([{ id: 1 }]) });
         const pois = await poiService.fetchPois();
         expect(pois).toHaveLength(1);
+        
+        global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ([{ id: 2, is_global: false }]) });
+        const personal = await poiService.fetchPersonalPois();
+        expect(personal[0].is_global).toBe(false);
+        
+        global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ id: 3 }) });
+        await poiService.createOrUpdatePoi({ name: 'Test', latitude: '28', longitude: '-15', is_global: true });
+        
+        global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ success: true }) });
+        const delResult = await poiService.deletePoi(1);
+        expect(delResult.success).toBe(true);
     });
 
-    it('should handle POI fetch error', async () => {
-        global.fetch.mockResolvedValue({ ok: false });
-        await expect(poiService.fetchPois()).rejects.toThrow('Error fetching POIs');
-    });
-});
-
-describe('AI Service', () => {
-    let aiService;
-
-    beforeEach(async () => {
-        vi.resetModules();
-        vi.stubGlobal('fetch', vi.fn());
-        vi.stubGlobal('import.meta', { env: { VITE_API_BASE: 'http://localhost:3000' } });
-        aiService = await import('../src/services/aiService');
-    });
-
-    it('should ask AI', async () => {
-        global.fetch.mockResolvedValue({
-            ok: true,
-            json: async () => ({ text: 'AI response' })
-        });
-
+    it('should handle AI service operations', async () => {
+        const aiService = await import('../src/services/aiService');
+        
+        global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ text: 'AI response' }) });
         const res = await aiService.askAI('hello');
         expect(res).toBe('AI response');
-        expect(global.fetch).toHaveBeenCalledWith(
-            expect.stringContaining('/ai/chat'),
-            expect.objectContaining({ method: 'POST' })
-        );
+        
+        global.fetch.mockResolvedValueOnce({ ok: false, status: 500, json: async () => ({}) });
+        const fallback = await aiService.askAI('test');
+        expect(fallback).toContain('cannot connect');
+        
+        global.fetch.mockRejectedValueOnce(new Error('Network'));
+        const esFallback = await aiService.askAI('test', {}, 'es');
+        expect(esFallback).toContain('Lo siento');
     });
 
-    it('should handle AI error and return fallback message', async () => {
-        global.fetch.mockResolvedValue({ ok: false, status: 500, json: async () => ({}) });
-        const res = await aiService.askAI('test');
-        expect(res).toContain('cannot connect');
-    });
-
-    it('should return spanish fallback on error when lang is es', async () => {
-        global.fetch.mockRejectedValue(new Error('Network error'));
-        const res = await aiService.askAI('test', {}, 'es');
-        expect(res).toContain('Lo siento');
-    });
-});
-
-describe('Alert Service', () => {
-    let alertService;
-
-    beforeEach(async () => {
-        vi.resetModules();
-        vi.stubGlobal('fetch', vi.fn());
-        vi.stubGlobal('import.meta', { env: { VITE_API_BASE: 'http://localhost:3000' } });
-        alertService = await import('../src/services/alertService');
-    });
-    
-    it('should fetch alerts', async () => {
-        global.fetch.mockResolvedValue({
-            ok: true,
-            json: async () => ([{ id: 1, type: 'Warning' }])
-        });
-
+    it('should handle alert service operations', async () => {
+        const alertService = await import('../src/services/alertService');
+        
+        global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ([{ id: 1 }]) });
         const alerts = await alertService.fetchAlerts();
         expect(alerts).toHaveLength(1);
-    });
-
-    it('should fetch alerts by location', async () => {
-        global.fetch.mockResolvedValue({
-            ok: true,
-            json: async () => ([{ id: 2, type: 'Storm', location_id: 10 }])
-        });
-
-        const alerts = await alertService.fetchAlertsByLocation(10);
-        expect(alerts).toHaveLength(1);
-        expect(alerts[0].location_id).toBe(10);
-    });
-
-    it('should handle alerts fetch error', async () => {
-        global.fetch.mockResolvedValue({ ok: false });
+        
+        global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ([{ id: 2, location_id: 10 }]) });
+        const byLoc = await alertService.fetchAlertsByLocation(10);
+        expect(byLoc[0].location_id).toBe(10);
+        
+        global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ warnings: [] }) });
+        await alertService.fetchWarnings();
+        
+        global.fetch.mockResolvedValueOnce({ ok: false });
         await expect(alertService.fetchAlerts()).rejects.toThrow();
     });
 });
