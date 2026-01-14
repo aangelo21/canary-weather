@@ -146,73 +146,52 @@ export default function HourlyForecast({ coords, compact = false }) {
     const getWeatherIcon = (code) => {
         const isDay = code.includes('d');
         const type = code.slice(0, 2);
-        const sizeClass = compact ? 'w-8 h-8' : 'w-12 h-12';
-
-        // Common cloud path for reuse
-        const cloudPath = "M17.5,19c0,2.17-1.79,3.94-4,4c-0.08,0-0.17,0-0.25,0H8c-2.21,0-4-1.79-4-4c0-2.05,1.54-3.74,3.53-3.96 c0.11-1.67,1.5-3.04,3.22-3.04c0.94,0,1.79,0.41,2.39,1.06c0.4-0.67,1.13-1.12,1.97-1.12c1.29,0,2.33,1.04,2.33,2.33 c0,0.17-0.02,0.34-0.06,0.5C17.41,15.46,17.5,16.22,17.5,19z";
+        const sizeClass = compact ? 'text-3xl' : 'text-5xl';
 
         switch (type) {
             case '01': // Clear sky
-                return isDay ? (
-                    <svg className={`${sizeClass} text-orange-500 animate-spin-slow`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="4" fill="currentColor" fillOpacity="0.2" />
-                        <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-                    </svg>
-                ) : (
-                    <svg className={`${sizeClass} text-blue-300`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" fillOpacity="0.2" />
-                    </svg>
+                return (
+                    <span className={`${sizeClass} select-none`} role="img" aria-label="Clear sky">
+                        {isDay ? '☀️' : '🌙'}
+                    </span>
                 );
             case '02': // Few clouds
                 return (
-                    <svg className={`${sizeClass}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        {isDay ? (
-                            <g>
-                                <circle cx="16" cy="8" r="3" className="text-orange-400" fill="currentColor" fillOpacity="0.2" />
-                                <path d="M16 2v1m0 10v1m-4.24-7.76l.7.7m6.38 6.38l.7.7M10 8h1m10 0h1m-7.76 4.24l-.7.7m6.38-6.38l-.7.7" className="text-orange-400" />
-                            </g>
-                        ) : (
-                            <path d="M19.5 10.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5a1.5 1.5 0 0 1-1.5-1.5c0-.83.67-1.5 1.5-1.5z" className="text-blue-200" fill="currentColor" />
-                        )}
-                        <path d="M17 19a3 3 0 0 1-3 3H7a4 4 0 1 1 0-8 2.5 2.5 0 0 1 2.5 2.5c0 .16-.02.32-.06.48a3 3 0 0 1 2.56-1.48 3 3 0 0 1 2.94 2.5" className="text-gray-400 dark:text-gray-300" fill="currentColor" fillOpacity="0.1" />
-                    </svg>
+                    <span className={`${sizeClass} select-none`} role="img" aria-label="Few clouds">
+                        {isDay ? '⛅' : '☁️'}
+                    </span>
                 );
             case '03': // Scattered clouds
             case '04': // Broken clouds
                 return (
-                    <svg className={`${sizeClass} text-gray-400 dark:text-gray-300`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17 19a3 3 0 0 1-3 3H7a4 4 0 1 1 0-8 2.5 2.5 0 0 1 2.5 2.5c0 .16-.02.32-.06.48a3 3 0 0 1 2.56-1.48 3 3 0 0 1 2.94 2.5" fill="currentColor" fillOpacity="0.1" />
-                        <path d="M19 12a3 3 0 0 1-3 3h-1" strokeDasharray="2 2" className="opacity-50" />
-                    </svg>
+                    <span className={`${sizeClass} select-none`} role="img" aria-label="Clouds">
+                        ☁️
+                    </span>
                 );
             case '09': // Shower rain
             case '10': // Rain
                 return (
-                    <svg className={`${sizeClass} text-blue-500`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17 16a3 3 0 0 1-3 3H7a4 4 0 1 1 0-8 2.5 2.5 0 0 1 2.5 2.5c0 .16-.02.32-.06.48a3 3 0 0 1 2.56-1.48 3 3 0 0 1 2.94 2.5" className="text-gray-400 dark:text-gray-300" fill="currentColor" fillOpacity="0.1" />
-                        <path d="M8 20v2M12 20v2M16 20v2" className="animate-bounce" style={{ animationDuration: '1s' }} />
-                    </svg>
+                    <span className={`${sizeClass} select-none`} role="img" aria-label="Rain">
+                        🌧️
+                    </span>
                 );
             case '11': // Thunderstorm
                 return (
-                    <svg className={`${sizeClass} text-purple-500`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17 16a3 3 0 0 1-3 3H7a4 4 0 1 1 0-8 2.5 2.5 0 0 1 2.5 2.5c0 .16-.02.32-.06.48a3 3 0 0 1 2.56-1.48 3 3 0 0 1 2.94 2.5" className="text-gray-500" fill="currentColor" fillOpacity="0.1" />
-                        <path d="M13 16l-2 3h3l-2 3" className="text-yellow-400 animate-pulse" fill="currentColor" />
-                    </svg>
+                    <span className={`${sizeClass} select-none`} role="img" aria-label="Thunderstorm">
+                        ⛈️
+                    </span>
                 );
             case '13': // Snow
                 return (
-                    <svg className={`${sizeClass} text-cyan-300`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17 16a3 3 0 0 1-3 3H7a4 4 0 1 1 0-8 2.5 2.5 0 0 1 2.5 2.5c0 .16-.02.32-.06.48a3 3 0 0 1 2.56-1.48 3 3 0 0 1 2.94 2.5" className="text-gray-300" fill="currentColor" fillOpacity="0.1" />
-                        <path d="M8 20h.01M12 20h.01M16 20h.01M10 22h.01M14 22h.01" strokeWidth="3" />
-                    </svg>
+                    <span className={`${sizeClass} select-none`} role="img" aria-label="Snow">
+                        ❄️
+                    </span>
                 );
             default: // Mist/Fog/Other
                 return (
-                    <svg className={`${sizeClass} text-gray-400`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M5 12h14M5 16h14M5 20h14" />
-                        {isDay && <circle cx="12" cy="6" r="2" className="text-orange-300" fill="currentColor" />}
-                    </svg>
+                    <span className={`${sizeClass} select-none`} role="img" aria-label="Mist">
+                        🌫️
+                    </span>
                 );
         }
     };
