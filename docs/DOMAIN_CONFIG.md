@@ -8,7 +8,7 @@ This document details the technical process for domain acquisition, DNS record c
 
 ### Acquisition
 
-The domain **`canaryweather.xyz`** was bough in Vercel for the project.
+The domain **`canaryweather.xyz`** was bought on Vercel for the project.
 
 ### DNS Configuration
 
@@ -379,17 +379,24 @@ After configuring Nginx and SSL, the application services must be running on the
 
 ### Starting the Application
 
-**Backend:**
+The application uses PM2 with `ecosystem.config.js` for process management. 
+
+**Build the Frontend:**
 ```bash
-cd ~/canary_weather/backend
-pm2 start index.js --name canaryweather-backend
+cd frontend
+npm install
+npm run build
+cd ..
 ```
 
-**Frontend:**
+**Start with ecosystem.config.js:**
 ```bash
-cd ~/canary_weather/frontend
-pm2 start "npm run dev -- --host 0.0.0.0" --name canaryweather-frontend
+pm2 start ecosystem.config.js
 ```
+
+This starts both:
+- **Backend**: `canary-backend` on port 85
+- **Frontend**: `canary-frontend` serving static files on port 5173
 
 ### PM2 Management Commands
 
@@ -539,4 +546,4 @@ dig canaryweather.xyz
    - Use strong JWT and session secrets
    - Rotate secrets periodically
 
-For more security best practices, see [docs/SECURITY.md](../SECURITY.md).
+For more security best practices, see the security documentation.

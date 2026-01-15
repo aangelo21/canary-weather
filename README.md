@@ -163,7 +163,7 @@ When your alert condition is met, you will receive a notification.
 For more detailed information, refer to our documentation:
 
 ### User Guide
-- **[API Testing Guide](./docs/API_TESTING_GUIDE.md)** - Learn about the available API endpoints
+- **[API Testing Guide](./docs/API.md)** - Learn about the available API endpoints
 
 ### For Developers and Administrators
 - **[Architecture Overview](./docs/ARCHITECTURE.md)** - How the system is built
@@ -232,85 +232,11 @@ Check the following:
 3. Make sure your device is connected to the internet
 4. Check that alerts are active (not paused)
 
-### Can I export my data?
-Contact your system administrator to request a data export.
-
 ### How often is the weather data updated?
 Weather forecasts are updated regularly throughout the day. Current conditions are refreshed frequently.
 
 ---
 
-## Troubleshooting
-
-### I cannot log in
-- Check that you are using the correct username and password
-- Make sure Caps Lock is not on
-- Try clearing your browser cookies and try again
-- Contact your system administrator if the problem persists
-
-### The map is not loading
-- Check your internet connection
-- Try refreshing the page (press F5)
-- Clear your browser cache
-- Try a different browser
-
-### Alerts are not working
-- Check that alerts are enabled in your settings
-- Make sure you have allowed browser notifications
-- Verify that alert conditions are set correctly
-- Check that your saved location is correct
-
-### The website is slow
-- Check your internet connection speed
-- Close other browser tabs to free up memory
-- Clear your browser cache
-- Try accessing during off-peak hours
-
-### I see an error message
-- Take note of the error message
-- Refresh the page
-- Try using a different browser
-- Contact support with the error message details
-
----
-
-## Support and Help
-
-### Getting Help
-
-If you encounter any issues:
-
-1. Check this documentation first
-2. Try the troubleshooting steps above
-3. Clear your browser cache and cookies
-4. Try using a different browser
-5. Contact your system administrator
-
-### Reporting Issues
-
-If you find a bug or have a suggestion:
-
-1. Note what happened and when
-2. Include any error messages
-3. Describe the steps to reproduce the problem
-4. Contact your system administrator with this information
-
-### Contact Information
-
-For support and assistance, contact your system administrator or the development team.
-
----
-
-## About This Application
-
-**Application Name:** Canary Weather  
-**Version:** 1.0.0  
-**Production URL:** https://canaryweather.xyz  
-**Last Updated:** December 2024  
-
-This application is built and maintained by our development team.
-
----
 
 ## Privacy and Security
 
@@ -370,21 +296,9 @@ Once installed, you can open Canary Weather like any other app on your device.
 
 ---
 
-## Version History
-
-### Version 1.0.0 (December 2024)
-- Initial release
-- Weather forecasts for Canary Islands
-- Location and point of interest management
-- Weather alerts system
-- Real-time notifications
-- Multi-language support
-
----
-
 ## License
 
-This project is licensed under the ISC License.
+This project is licensed under the MIT License.
 
 ---
 

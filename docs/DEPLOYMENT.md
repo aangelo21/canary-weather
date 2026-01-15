@@ -15,7 +15,7 @@ Key features of DigitalOcean include:
 
 - **Update repositories**
 
-It is always important to update the repositories before continuing with the server configuration. Run the following command to update the VPS respositories:
+It is always important to update the repositories before continuing with the server configuration. Run the following command to update the VPS repositories:
 
 ```bash 
 apt update && apt upgrade -y 
@@ -79,8 +79,8 @@ npm install pm2 -g -y
 The frontend .env must look like this:
 
 ```bash
-VITE_API_URL=http://your_ip:3000
-VITE_API_KEY=your_api_key
+VITE_API_BASE=/api
+VITE_OPENWEATHER_API_KEY=your_api_key
 ```
 
 The backend .env must look like this:
@@ -92,35 +92,47 @@ DB_PASSWORD=yourpasswordhere
 DB_NAME=yourdbnamehere
 DB_DIALECT=yourdialecthere
 DB_PORT=yourdbporthere
-DB_SSL=yourslshere
+DB_SSL=yoursslhere
 JWT_SECRET=yoursecretword
 ```
 
 - **Run PM2**
 
-In Order to run the frontend, we have to navigate to the frontend directory, install the dependencies and run the following command:
+The project uses an `ecosystem.config.js` file to manage both frontend and backend processes with PM2. This configuration includes:
+- Proper log management
+- Environment variables from .env files
+- Frontend serving of built static files
+- Backend Node.js server
+
+To start both applications:
 
 ```bash
-pm2 start "npm run dev -- --host 0.0.0.0" --name frontend
+pm2 start ecosystem.config.js
 ```
 
-For the backend, we have to navigate to the backend directory, install the dependencies and run the following command:
+This will start:
+- `canary-backend`: Backend API on port 85
+- `canary-frontend`: Frontend serving static files from dist/ on port 5173
+
+**Note:** Before running PM2, make sure to build the frontend:
 
 ```bash
-pm2 start "node index.js" --name backend
+cd frontend
+npm run build
+cd ..
 ```
 
-### DataBase
+### Database
 
-We have hosted our MySQL database on DigitalOcean as well. See the architecture and setup in [diagrams.md](./diagrams.md).
+We have hosted our MySQL database on DigitalOcean as well. See the architecture and setup in [DIAGRAMS.md](./DIAGRAMS.md).
 
-## Sprint deployments
+## Sprint Deployments
 
 ### Github
 
 - Push the changes to the develop branch in github
-- Create a pull request to main and wait for aprovement
-- Once aproved, create a release with the name tag corresponding to the version of the deployment
+- Create a pull request to main and wait for approval
+- Once approved, create a release with the name tag corresponding to the version of the deployment
 
 ### PM2 & droplet
 

@@ -30,7 +30,7 @@ DB_SSL=REQUIRED
 JWT_SECRET=secret_value
 
 # Frontend URL
-FRONTEND_URL=http://localhost:5173 or htts://canaryweather.xyz
+FRONTEND_URL=http://localhost:5173 or https://canaryweather.xyz
 NODE_ENV=development or production
 
 # LDAP Configuration
@@ -40,7 +40,7 @@ LDAP_ADMIN_PASSWORD=secret_value
 # Email Service
 RESEND_API_KEY=secret_value
 
-#Vapid
+# VAPID Keys
 VAPID_PUBLIC_KEY=secret_value
 VAPID_PRIVATE_KEY=secret_value
 VAPID_SUBJECT=mailto:admin@canaryweather.xyz
