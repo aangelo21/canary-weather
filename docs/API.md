@@ -1,5 +1,5 @@
 # CanaryWeather API Testing Guide
-## Simple Version for Everyone
+## Simple Guide for Everyone
 
 ---
 

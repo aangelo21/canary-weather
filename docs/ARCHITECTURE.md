@@ -18,7 +18,7 @@ CanaryWeather is a full-stack web application designed to provide weather alerts
 
 ### Layer 1: Frontend (User Interface)
 
-**Technology**: Vue.js with Vite
+**Technology**: React with Vite
 
 The frontend is the visual part of the application that users interact with. It runs in the web browser.
 
@@ -203,7 +203,7 @@ After authentication, the system checks what the user is allowed to do.
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                            CLIENT LAYER                                 │
 │  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │  Web Browser (Frontend - Vue.js + Vite)                          │  │
+│  │  Web Browser (Frontend - React + Vite)                           │  │
 │  │  - User Interface                                                │  │
 │  │  - Client-side validation                                        │  │
 │  │  - Local storage management                                      │  │
@@ -380,7 +380,7 @@ Nginx (Reverse Proxy)
     | Forwards requests
     | SSL/TLS termination
     v
-Frontend Application (Vue.js + Vite)
+Frontend Application (React + Vite)
     |
     | REST API Calls (HTTP/JSON)
     | WebSocket connection (Socket.IO)
@@ -450,7 +450,7 @@ Backend API (Node.js + Express)
 ## Key Technologies
 
 ### Frontend Stack
-- Vue.js: JavaScript framework for user interface
+- React: JavaScript library for user interface
 - Vite: Build tool for fast development
 - JavaScript: Programming language
 - HTML/CSS: For layout and styling

@@ -163,7 +163,7 @@ When your alert condition is met, you will receive a notification.
 For more detailed information, refer to our documentation:
 
 ### User Guide
-- **[API Testing Guide](./docs/API_TESTING_GUIDE.md)** - Learn about the available API endpoints
+- **[API Testing Guide](./docs/API.md)** - Learn about the available API endpoints
 
 ### For Developers and Administrators
 - **[Architecture Overview](./docs/ARCHITECTURE.md)** - How the system is built
@@ -237,60 +237,6 @@ Weather forecasts are updated regularly throughout the day. Current conditions a
 
 ---
 
-## Troubleshooting
-
-### I cannot log in
-- Check that you are using the correct username and password
-- Make sure Caps Lock is not on
-- Try clearing your browser cookies and try again
-- Contact your system administrator if the problem persists
-
-### The map is not loading
-- Check your internet connection
-- Try refreshing the page (press F5)
-- Clear your browser cache
-- Try a different browser
-
-### Alerts are not working
-- Check that alerts are enabled in your settings
-- Make sure you have allowed browser notifications
-- Verify that alert conditions are set correctly
-- Check that your saved location is correct
-
-### The website is slow
-- Check your internet connection speed
-- Close other browser tabs to free up memory
-- Clear your browser cache
-- Try accessing during off-peak hours
-
-### I see an error message
-- Take note of the error message
-- Refresh the page
-- Try using a different browser
-- Contact support with the error message details
-
----
-
-## Support and Help
-
-### Getting Help
-
-If you encounter any issues:
-
-1. Check this documentation first
-2. Try the troubleshooting steps above
-3. Clear your browser cache and cookies
-4. Try using a different browser
-5. Contact your system administrator
-
-### Reporting Issues
-
-If you find a bug or have a suggestion:
-
-1. Note what happened and when
-2. Include any error messages
-3. Describe the steps to reproduce the problem
-4. Contact your system administrator with this information
 
 ## Privacy and Security
 
