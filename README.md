@@ -232,9 +232,6 @@ Check the following:
 3. Make sure your device is connected to the internet
 4. Check that alerts are active (not paused)
 
-### Can I export my data?
-Contact your system administrator to request a data export.
-
 ### How often is the weather data updated?
 Weather forecasts are updated regularly throughout the day. Current conditions are refreshed frequently.
 
@@ -295,23 +292,6 @@ If you find a bug or have a suggestion:
 3. Describe the steps to reproduce the problem
 4. Contact your system administrator with this information
 
-### Contact Information
-
-For support and assistance, contact your system administrator or the development team.
-
----
-
-## About This Application
-
-**Application Name:** Canary Weather  
-**Version:** 1.0.0  
-**Production URL:** https://canaryweather.xyz  
-**Last Updated:** December 2024  
-
-This application is built and maintained by our development team.
-
----
-
 ## Privacy and Security
 
 Your data is important to us. We take security seriously:
@@ -370,21 +350,9 @@ Once installed, you can open Canary Weather like any other app on your device.
 
 ---
 
-## Version History
-
-### Version 1.0.0 (December 2024)
-- Initial release
-- Weather forecasts for Canary Islands
-- Location and point of interest management
-- Weather alerts system
-- Real-time notifications
-- Multi-language support
-
----
-
 ## License
 
-This project is licensed under the ISC License.
+This project is licensed under the MIT License.
 
 ---
 

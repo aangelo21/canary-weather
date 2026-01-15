@@ -195,32 +195,220 @@ After authentication, the system checks what the user is allowed to do.
 
 ---
 
+## Architecture Diagram
+
+### Complete System Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                            CLIENT LAYER                                 │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │  Web Browser (Frontend - Vue.js + Vite)                          │  │
+│  │  - User Interface                                                │  │
+│  │  - Client-side validation                                        │  │
+│  │  - Local storage management                                      │  │
+│  └──────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
+                               │
+                               │ HTTPS (SSL/TLS)
+                               │ DNS: canaryweather.xyz
+                               ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         REVERSE PROXY LAYER                             │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │  Nginx                                                           │  │
+│  │  - SSL/TLS termination                                          │  │
+│  │  - Request routing                                              │  │
+│  │  - Static file serving                                          │  │
+│  │  - Load balancing                                               │  │
+│  └──────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
+                               │
+                ┌──────────────┴──────────────┐
+                │                             │
+                ▼                             ▼
+        Static Files                  API Requests
+        (HTML/CSS/JS)                 /api/* routes
+                                              │
+┌─────────────────────────────────────────────┼─────────────────────────┐
+│                      APPLICATION LAYER      │                         │
+│  ┌──────────────────────────────────────────▼──────────────────────┐ │
+│  │  Backend Server (Node.js + Express)                            │ │
+│  │                                                                 │ │
+│  │  ┌─────────────────────────────────────────────────────────┐  │ │
+│  │  │  REST API Endpoints                                     │  │ │
+│  │  │  - GET/POST/PUT/DELETE operations                       │  │ │
+│  │  │  - JSON request/response                                │  │ │
+│  │  └─────────────────────────────────────────────────────────┘  │ │
+│  │                                                                 │ │
+│  │  ┌─────────────────────────────────────────────────────────┐  │ │
+│  │  │  Authentication & Authorization                         │  │ │
+│  │  │  - Session management (express-session)                 │  │ │
+│  │  │  - Cookie management (secure, httpOnly)                 │  │ │
+│  │  │  - JWT tokens (Bearer authentication)                   │  │ │
+│  │  │  - Passport.js strategies                               │  │ │
+│  │  └─────────────────────────────────────────────────────────┘  │ │
+│  │                                                                 │ │
+│  │  ┌─────────────────────────────────────────────────────────┐  │ │
+│  │  │  WebSocket Server (Socket.IO)                           │  │ │
+│  │  │  - Real-time bidirectional communication                │  │ │
+│  │  │  - Push notifications                                   │  │ │
+│  │  │  - Live alert updates                                   │  │ │
+│  │  └─────────────────────────────────────────────────────────┘  │ │
+│  │                                                                 │ │
+│  │  ┌─────────────────────────────────────────────────────────┐  │ │
+│  │  │  Controllers (Business Logic)                           │  │ │
+│  │  │  - User management                                      │  │ │
+│  │  │  - Alert processing                                     │  │ │
+│  │  │  - Notification handling                                │  │ │
+│  │  │  - POI management                                       │  │ │
+│  │  └─────────────────────────────────────────────────────────┘  │ │
+│  │                                                                 │ │
+│  │  ┌─────────────────────────────────────────────────────────┐  │ │
+│  │  │  Services Layer                                         │  │ │
+│  │  │  - External API integration                             │  │ │
+│  │  │  - Email service                                        │  │ │
+│  │  │  - Push notification service                            │  │ │
+│  │  │  - Alert scheduler (cron jobs)                          │  │ │
+│  │  └─────────────────────────────────────────────────────────┘  │ │
+│  └─────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────┘
+                │                │                │
+    ┌───────────┘                │                └───────────┐
+    │                            │                            │
+    ▼                            ▼                            ▼
+┌─────────────────┐  ┌──────────────────────┐  ┌──────────────────────┐
+│  LDAP Server    │  │   MySQL Database     │  │   External APIs      │
+│                 │  │                      │  │                      │
+│ - User auth     │  │ ┌──────────────────┐ │  │ - Weather API (AEMET)│
+│ - User mgmt     │  │ │ Data Access      │ │  │ - Geocoding API      │
+│ - Password      │  │ │ Layer (Sequelize)│ │  │ - Map services       │
+│   verification  │  │ └──────────────────┘ │  │                      │
+│                 │  │                      │  │                      │
+│ Directory tree: │  │ Tables:              │  │ HTTP/HTTPS requests  │
+│ - ou=users      │  │ - Users              │  │ JSON responses       │
+│ - ou=groups     │  │ - UserProfiles       │  │                      │
+│ - ou=admins     │  │ - Sessions           │  │                      │
+│                 │  │ - Locations          │  │                      │
+│                 │  │ - Alerts/Warnings    │  │                      │
+│                 │  │ - PointsOfInterest   │  │                      │
+│                 │  │ - Forecasts          │  │                      │
+│                 │  │ - Notifications      │  │                      │
+│                 │  │ - UserLocations      │  │                      │
+│                 │  │ - PushSubscriptions  │  │                      │
+│                 │  │                      │  │                      │
+│                 │  │ ORM: Sequelize       │  │                      │
+│                 │  │ - Models & Relations │  │                      │
+│                 │  │ - Migrations         │  │                      │
+│                 │  │ - Transactions       │  │                      │
+└─────────────────┘  └──────────────────────┘  └──────────────────────┘
+
+Legend:
+─────  Data/Request flow
+┌───┐  Component/System boundary
+│   │  Functional module
+```
+
+### Communication Protocols
+
+**Frontend ↔ Backend:**
+- REST API: HTTP/HTTPS with JSON payloads
+- WebSocket: Real-time bidirectional communication (Socket.IO)
+- Authentication: JWT tokens in Authorization header + Session cookies
+
+**Backend ↔ Database:**
+- Protocol: MySQL protocol
+- ORM: Sequelize (abstraction layer)
+- Connection pooling for performance
+
+**Backend ↔ LDAP:**
+- Protocol: LDAP protocol
+- Operations: Bind, Search, Add, Modify, Delete
+- Authentication: Admin credentials
+
+**Backend ↔ External APIs:**
+- Protocol: HTTP/HTTPS
+- Format: JSON/XML
+- Authentication: API keys
+
+### Session and Cookie Management
+
+```
+Login Flow with Sessions & Cookies:
+1. User submits credentials → Backend
+2. Backend validates with LDAP
+3. Backend creates session in database
+4. Backend generates JWT token
+5. Backend sets secure HTTP-only cookie with session ID
+6. Backend returns JWT token in response body
+7. Frontend stores JWT in memory/localStorage
+8. Subsequent requests include:
+   - JWT token in Authorization header
+   - Session cookie automatically sent by browser
+9. Backend validates both JWT and session
+10. Session expires after 24h of inactivity
+11. JWT expires after 15 minutes (requires refresh)
+```
+
+### WebSocket Real-time Communication
+
+```
+WebSocket Connection Flow:
+1. Frontend establishes WebSocket connection
+2. Backend authenticates connection using JWT
+3. Backend stores connection reference
+4. When event occurs (new alert, notification):
+   - Backend emits event to connected clients
+   - Specific users or broadcast to all
+5. Frontend receives event instantly
+6. Frontend updates UI without page reload
+7. Connection persists until logout/disconnect
+```
+
+---
+
 ## Data Flow Diagram
 
 ```
 User (Browser)
     |
-    | HTTP Requests
-    | (with JWT Token)
+    | HTTPS Requests (DNS: canaryweather.xyz)
+    | (JWT Token + Session Cookies)
     v
 Nginx (Reverse Proxy)
     |
     | Forwards requests
+    | SSL/TLS termination
     v
-Frontend Application (Vite)
+Frontend Application (Vue.js + Vite)
     |
-    | API Calls
+    | REST API Calls (HTTP/JSON)
+    | WebSocket connection (Socket.IO)
     v
-Backend API (Express)
+Backend API (Node.js + Express)
     |
-    +---> LDAP (User Authentication)
-    |     (Checks passwords)
+    +---> LDAP Server
+    |     (User Authentication & Management)
+    |     - Bind operations
+    |     - User search & validation
     |
     +---> MySQL Database
-    |     (Stores all application data)
+    |     (Data Persistence via Sequelize ORM)
+    |     - User preferences & profiles
+    |     - Alerts & forecasts
+    |     - Sessions & notifications
+    |     - POIs & locations
     |
-    +---> WebSocket
-          (Real-time updates to frontend)
+    +---> External APIs
+    |     (Weather data, geocoding, maps)
+    |     - AEMET weather API
+    |     - Geocoding services
+    |
+    +---> WebSocket (Socket.IO)
+          (Real-time bidirectional communication)
+          - Push notifications to clients
+          - Live alert updates
+          - Real-time data synchronization
 ```
 
 ---
