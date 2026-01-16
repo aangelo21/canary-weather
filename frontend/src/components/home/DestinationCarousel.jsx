@@ -73,6 +73,39 @@ export default function DestinationCarousel() {
     const containerRef = useRef(null);
     const contentRef = useRef(null);
 
+    const touchStartX = useRef(0);
+    const touchEndX = useRef(0);
+    const isDragging = useRef(false);
+
+    const handleTouchStart = (e) => {
+        touchStartX.current = e.touches[0].clientX;
+        isDragging.current = true;
+    };
+
+    const handleTouchMove = (e) => {
+        if (!isDragging.current) return;
+        touchEndX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = () => {
+        if (!isDragging.current) return;
+        isDragging.current = false;
+        
+        const swipeThreshold = 50;
+        const diff = touchStartX.current - touchEndX.current;
+
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        }
+        
+        touchStartX.current = 0;
+        touchEndX.current = 0;
+    };
+
     
     useEffect(() => {
         const handleResize = () => {
@@ -157,6 +190,9 @@ export default function DestinationCarousel() {
                 <div
                     className="relative overflow-hidden py-4 -mx-4 sm:-mx-6 lg:-mx-8"
                     ref={containerRef}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
                 >
                     <div
                         ref={contentRef}
