@@ -2,19 +2,30 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
+import { validateEmail } from '../utils/validation';
 
 const ForgotPassword = () => {
     const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [validationError, setValidationError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
         setMessage('');
         setError('');
+        setValidationError('');
+
+        // Validate email
+        const emailValidation = validateEmail(email);
+        if (!emailValidation.isValid) {
+            setValidationError(emailValidation.error);
+            return;
+        }
+
+        setIsLoading(true);
 
         try {
             const API_BASE = import.meta.env.VITE_API_BASE;
@@ -40,10 +51,17 @@ const ForgotPassword = () => {
         }
     };
 
+    const handleEmailChange = (e) => {
+        setEmail(e.target.value);
+        if (validationError) {
+            setValidationError('');
+        }
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-            <SEO 
-                title="Forgot Password" 
+            <SEO
+                title="Forgot Password"
                 description="Reset your Canary Weather account password."
             />
             <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
@@ -67,11 +85,16 @@ const ForgotPassword = () => {
                                 type="email"
                                 autoComplete="email"
                                 required
-                                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-brand-primary focus:border-brand-primary focus:z-10 sm:text-sm"
+                                className={`appearance-none rounded-md relative block w-full px-3 py-2 border placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-brand-primary focus:border-brand-primary focus:z-10 sm:text-sm ${validationError ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-700'}`}
                                 placeholder={t('emailAddress')}
                                 value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                onChange={handleEmailChange}
                             />
+                            {validationError && (
+                                <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                                    {validationError}
+                                </p>
+                            )}
                         </div>
                     </div>
 
@@ -98,9 +121,12 @@ const ForgotPassword = () => {
                             {isLoading ? t('sending') : t('sendResetLink')}
                         </button>
                     </div>
-                    
+
                     <div className="text-center">
-                        <Link to="/" className="font-medium text-brand-primary hover:text-blue-500">
+                        <Link
+                            to="/"
+                            className="font-medium text-brand-primary hover:text-blue-500"
+                        >
                             {t('backToHome')}
                         </Link>
                     </div>

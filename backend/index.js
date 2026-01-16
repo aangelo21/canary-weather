@@ -6,190 +6,161 @@ const _filename = fileURLToPath(import.meta.url);
 const _dirname = path.dirname(_filename);
 dotenv.config({ path: path.join(_dirname, '.env') });
 
-// Import necessary modules for the Express server
-import express from "express";
-import cors from "cors";
-import session from "express-session";
-import connectSessionSequelize from "connect-session-sequelize";
-// Import Sequelize instance for database connection
-import sequelize from "./controllers/dbController.js";
-// Import models to ensure they are registered with Sequelize
-import "./models/index.js";
-import http from "http";
+import express from 'express';
+import cors from 'cors';
+import session from 'express-session';
+import connectSessionSequelize from 'connect-session-sequelize';
+import sequelize from './controllers/dbController.js';
+import './models/index.js';
+import http from 'http';
 
-import pointOfInterestRoutes from "./routes/pointOfInterestRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
-import alertRoutes from "./routes/alertRoutes.js";
-import notificationRoutes from "./routes/notificationRoutes.js";
-import userLocationRoutes from "./routes/userLocationRoutes.js";
-import locationRoutes from "./routes/locationRoutes.js";
-import adminRoutes from "./routes/adminRoutes.js";
-import pushRoutes from "./routes/pushRoutes.js";
-import aiRoutes from "./routes/aiRoutes.js";
+import pointOfInterestRoutes from './routes/pointOfInterestRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import alertRoutes from './routes/alertRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
+import userLocationRoutes from './routes/userLocationRoutes.js';
+import locationRoutes from './routes/locationRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
+import pushRoutes from './routes/pushRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
-// Import Swagger for API documentation
-import swaggerUi from "swagger-ui-express";
+import swaggerUi from 'swagger-ui-express';
 
-import swaggerSpec from "./config/swagger.config.js";
-// Import websocket initializer. This module will encapsulate all Socket.IO logic.
-import initWebsocket from "./services/websocketService.js";
-import { startAlertScheduler } from "./services/alertScheduler.js";
+import swaggerSpec from './config/swagger.config.js';
+import initWebsocket from './services/websocketService.js';
+import { startAlertScheduler } from './services/alertScheduler.js';
 
-// Define __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Create an Express application instance
 const app = express();
 
-// Set EJS as the view engine
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
-// Set the port from environment variable or default to 85
 const PORT = process.env.PORT || 85;
 
-const isProduction = process.env.NODE_ENV === 'production' || (process.env.FRONTEND_URL && process.env.FRONTEND_URL.includes('canaryweather.xyz'));
+const isProduction =
+    process.env.NODE_ENV === 'production' ||
+    (process.env.FRONTEND_URL &&
+        process.env.FRONTEND_URL.includes('canaryweather.xyz'));
 const isDevelopment = !isProduction;
 
-// Define allowed origins for CORS (Cross-Origin Resource Sharing)
-// This list should match the one used in the WebSocket service.
 const ALLOWED_ORIGINS = [
-  "http://localhost:5173",
-  "http://134.209.22.118:5173",
-  "https://canaryweather.xyz",
+    'http://localhost:5173',
+    'http://134.209.22.118:5173',
+    'https://canaryweather.xyz',
 ];
 
-// Enable CORS for cross-origin requests
 app.use(
-  cors({
-    origin: ALLOWED_ORIGINS,
-    credentials: true, // Allow cookies/headers to be sent
-  })
+    cors({
+        origin: ALLOWED_ORIGINS,
+        credentials: true,
+    }),
 );
-// Parse incoming JSON payloads
 app.use(express.json());
-// Parse incoming URL-encoded payloads (for forms)
 app.use(express.urlencoded({ extended: true }));
 
-// Configure session store
 const SequelizeStore = connectSessionSequelize(session.Store);
 const sessionStore = new SequelizeStore({
-  db: sequelize,
-  tableName: "Sessions",
+    db: sequelize,
+    tableName: 'Sessions',
 });
 
-// Configure session middleware
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "supersecretkey",
-    store: sessionStore,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: false, // Set to true if using HTTPS
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    },
-  })
-);
-
-// Serve static files from the uploads directory for profile pictures and POI images
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-// Swagger API Documentation
-// Redirect to trailing slash to ensure relative paths work
-app.get(["/api/docs", "/docs"], (req, res, next) => {
-  if (!req.originalUrl.endsWith("/")) {
-    return res.redirect(req.originalUrl + "/");
-  }
-  next();
-});
 
 app.use(
-  ["/api/docs", "/docs"],
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, {
-    customCss: ".swagger-ui .topbar { display: none }",
-    customSiteTitle: "CanaryWeather API Docs",
-    customJs: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js",
-    customCssUrl: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css"
-  })
+    session({
+        secret: process.env.SESSION_SECRET || 'supersecretkey',
+        store: sessionStore,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            secure: false,
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000,
+        },
+    }),
 );
 
-// Serve OpenAPI JSON spec
-app.get(["/api/docs.json", "/docs.json"], (req, res) => {
-  res.setHeader("Content-Type", "application/json");
-  res.send(swaggerSpec);
-});
-
-// Redirect old API docs URL to new one
-app.get("/api-docs", (req, res) => {
-  res.redirect("/api/docs/");
-});
-
-// Serve static files from the uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.use("/api/pois", pointOfInterestRoutes);
-
-app.use("/api/users", userRoutes);
-
-app.use("/api/locations", locationRoutes);
-
-app.use("/api/alerts", alertRoutes);
-
-app.use("/api/notifications", notificationRoutes);
-
-app.use("/api/user-locations", userLocationRoutes);
-
-app.use("/admin", adminRoutes);
-app.use("/api/push", pushRoutes);
-app.use("/api/ai", aiRoutes);
-
-// Health check endpoint to verify server status
-app.get("/api/health", (req, res) => {
-
-  res.json({ status: "OK", message: "CanaryWeather API is running" });
+app.get(['/api/docs', '/docs'], (req, res, next) => {
+    if (!req.originalUrl.endsWith('/')) {
+        return res.redirect(req.originalUrl + '/');
+    }
+    next();
 });
 
-// Asynchronous function to initialize database and start server
+app.use(
+    ['/api/docs', '/docs'],
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerSpec, {
+        customCss: '.swagger-ui .topbar { display: none }',
+        customSiteTitle: 'CanaryWeather API Docs',
+        customJs:
+            'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js',
+        customCssUrl:
+            'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css',
+    }),
+);
+
+app.get(['/api/docs.json', '/docs.json'], (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+});
+
+app.get('/api-docs', (req, res) => {
+    res.redirect('/api/docs/');
+});
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use('/api/pois', pointOfInterestRoutes);
+
+app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
+
+app.use('/api/locations', locationRoutes);
+
+app.use('/api/alerts', alertRoutes);
+
+app.use('/api/notifications', notificationRoutes);
+
+app.use('/api/user-locations', userLocationRoutes);
+
+app.use('/admin', adminRoutes);
+app.use('/api/push', pushRoutes);
+app.use('/api/ai', aiRoutes);
+
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'OK', message: 'CanaryWeather API is running' });
+});
+
 (async () => {
-  try {
-    // Test database connection
-    await sequelize.authenticate();
+    try {
+        await sequelize.authenticate();
 
-    // Disable foreign key checks to prevent deadlocks during sync
-    await sequelize.query('SET FOREIGN_KEY_CHECKS = 0');
+        await sequelize.query('SET FOREIGN_KEY_CHECKS = 0');
 
-    // Synchronize models with database (create tables if they don't exist)
-    // We use migrations for schema changes, so we don't need alter: true
-    await sequelize.sync();
+        await sequelize.sync();
 
-    // Re-enable foreign key checks
-    await sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
+        await sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
 
-    // Sync session store
-    await sessionStore.sync();
+        await sessionStore.sync();
 
-    // Create an HTTP server from the Express app so we can attach Socket.IO
-    const server = http.createServer(app);
+        const server = http.createServer(app);
 
-    // Initialize the websocket layer (Socket.IO) with the HTTP server
-    // The `initWebsocket` function encapsulates all websocket event wiring
-    initWebsocket(server);
+        initWebsocket(server);
 
-    // Handle server errors (e.g. EACCES if port 85 is privileged)
-    server.on('error', (error) => {
-      console.error('Server failed to start:', error);
-    });
+        server.on('error', (error) => {
+            console.error('Server failed to start:', error);
+        });
 
-    // Start listening on the specified port
-    server.listen(PORT, () => {
-      startAlertScheduler();
-    });
-  } catch (error) {
-    // Log any errors during database connection or sync
-    console.error("Unable to connect to the database:", error);
-  }
+        server.listen(PORT, () => {
+            startAlertScheduler();
+        });
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
 })();

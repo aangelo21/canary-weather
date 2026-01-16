@@ -1,26 +1,9 @@
-// Footer.jsx - Footer component for the Canary Weather application
+
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
-/**
- * Footer Component.
- *
- * Renders the application footer, which serves as a global navigation and information hub.
- *
- * Sections:
- * - **Brand Info**: Displays the logo and a brief description of the application.
- * - **Quick Links**: Provides navigation links to key pages (Home, Map, POIs, Warnings, About Us).
- * - **Contact Info**: Displays contact details (email, phone, address).
- * - **Social Links**: Links to social media profiles.
- * - **Copyright**: Displays the copyright notice with the current year.
- *
- * The footer is responsive and adapts its layout for mobile and desktop screens.
- * It also supports dark mode styling.
- *
- * @component
- * @returns {JSX.Element} The rendered Footer component.
- */
+
 export default function Footer() {
     const { t } = useTranslation();
     const currentYear = new Date().getFullYear();
@@ -29,7 +12,7 @@ export default function Footer() {
         <footer className="bg-linear-to-b from-brand-primary to-blue-900 dark:from-gray-900 dark:to-black text-white pt-16 pb-8 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12 items-start">
-                    {/* Brand Section */}
+                    {}
                     <div className="space-y-4">
                         <div className="flex items-center gap-2">
                             <img
@@ -43,7 +26,7 @@ export default function Footer() {
                         </p>
                     </div>
 
-                    {/* Quick Links */}
+                    {}
                     <div>
                         <h3 className="text-lg font-bold mb-4 text-white">
                             {t('quickLinks')}
@@ -92,7 +75,7 @@ export default function Footer() {
                         </ul>
                     </div>
 
-                    {/* Contact Info */}
+                    {}
                     <div>
                         <h3 className="text-lg font-bold mb-4 text-white">
                             {t('contactInfo')}
@@ -150,7 +133,7 @@ export default function Footer() {
                         </ul>
                     </div>
 
-                    {/* Socials */}
+                    {}
                     <div>
                         <h3 className="text-lg font-bold mb-4 text-white">
                             {t('followUs')}
@@ -203,7 +186,7 @@ export default function Footer() {
                     </div>
                 </div>
 
-                {/* Bottom Bar */}
+                {}
                 <div className="border-t border-blue-400/30 dark:border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-blue-100 dark:text-gray-500 text-sm text-center md:text-left">
                         {t('copyright')} {currentYear} {t('canaryWeather')}.{' '}
@@ -214,7 +197,9 @@ export default function Footer() {
                             to="/privacy-policy"
                             className="text-blue-100 dark:text-gray-500 hover:text-white transition-colors"
                         >
-                            {typeof t('privacyPolicy') === 'string' ? t('privacyPolicy') : 'Privacy Policy'}
+                            {typeof t('privacyPolicy') === 'string'
+                                ? t('privacyPolicy')
+                                : 'Privacy Policy'}
                         </Link>
                         <Link
                             to="/terms-and-conditions"

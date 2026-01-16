@@ -1,23 +1,16 @@
-import express from "express";
+import express from 'express';
 import {
-  getAllAlerts,
-  getAlertById,
-  createAlert,
-  updateAlert,
-  deleteAlert,
-  fetchWarnings,
-} from "../controllers/alertController.js";
+    getAllAlerts,
+    getAlertById,
+    createAlert,
+    updateAlert,
+    deleteAlert,
+    fetchWarnings,
+} from '../controllers/alertController.js';
 
 const router = express.Router();
 
-/**
- * Alert Routes
- * 
- * Defines routes for managing weather alerts.
- * Includes CRUD operations and a route to trigger fetching warnings from external sources.
- * 
- * Base Path: /api/alerts
- */
+
 
 /**
  * @swagger
@@ -42,7 +35,7 @@ const router = express.Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/", getAllAlerts);
+router.get('/', getAllAlerts);
 
 /**
  * @swagger
@@ -73,7 +66,7 @@ router.get("/", getAllAlerts);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/:id", getAlertById);
+router.get('/:id', getAlertById);
 
 /**
  * @swagger
@@ -127,7 +120,7 @@ router.get("/:id", getAlertById);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/", createAlert);
+router.post('/', createAlert);
 
 /**
  * @swagger
@@ -210,8 +203,8 @@ router.post("/", createAlert);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.put("/:id", updateAlert);
-router.delete("/:id", deleteAlert);
+router.put('/:id', updateAlert);
+router.delete('/:id', deleteAlert);
 
 /**
  * @swagger
@@ -239,6 +232,6 @@ router.delete("/:id", deleteAlert);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/fetch", fetchWarnings);
+router.post('/fetch', fetchWarnings);
 
 export default router;

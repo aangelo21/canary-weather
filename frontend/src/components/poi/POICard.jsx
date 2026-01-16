@@ -2,12 +2,7 @@ import { useState, useEffect, useRef, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Skeleton from '../common/Skeleton';
 
-/**
- * Helper function to determine the appropriate weather emoji based on the condition string.
- *
- * @param {string} condition - The weather condition description (e.g., "clear sky", "rain").
- * @returns {string} An emoji character representing the weather.
- */
+
 function getWeatherEmoji(condition) {
     const c = (condition || '').toLowerCase();
     if (c.includes('clear')) return '☀️';
@@ -26,36 +21,14 @@ function getWeatherEmoji(condition) {
     return '🌤️';
 }
 
-/**
- * POICard Component.
- *
- * Displays a summary card for a specific Point of Interest (POI).
- *
- * Features:
- * - **Lazy Loading**: Uses `IntersectionObserver` to fetch weather data only when the card scrolls into view, optimizing performance for long lists.
- * - **Weather Integration**: Fetches and displays real-time weather data (temperature, condition, humidity, wind) for the POI's location.
- * - **Image Handling**: Displays the POI's image if available, falling back to a placeholder.
- * - **Actions**: Provides Edit and Delete buttons if the corresponding handlers are passed (typically for the owner of the POI).
- * - **Memoization**: Wrapped in `React.memo` to prevent unnecessary re-renders.
- *
- * @component
- * @param {Object} props - The component props.
- * @param {Object} props.poi - The POI data object containing name, description, coordinates, image URL, etc.
- * @param {Function} [props.onEdit] - Callback function triggered when the Edit button is clicked.
- * @param {Function} [props.onDelete] - Callback function triggered when the Delete button is clicked.
- * @returns {JSX.Element} The rendered POICard component.
- */
+
 const POICard = memo(function POICard({ poi, onEdit, onDelete }) {
     const { t } = useTranslation();
+
     
-    /**
-     * @type {[Object|null, Function]} weather - State for the fetched weather data.
-     */
     const [weather, setWeather] = useState(null);
 
-    /**
-     * @type {[boolean, Function]} isVisible - State to track if the card is currently visible in the viewport.
-     */
+    
     const [isVisible, setIsVisible] = useState(false);
 
     const cardRef = useRef(null);
@@ -64,10 +37,7 @@ const POICard = memo(function POICard({ poi, onEdit, onDelete }) {
     const baseUrl = API_BASE?.replace('/api', '') || '';
     const imageUrl = poi.image_url ? `${baseUrl}${poi.image_url}` : null;
 
-    /**
-     * Effect hook to set up the IntersectionObserver.
-     * Sets `isVisible` to true when the card enters the viewport.
-     */
+    
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([entry]) => {
@@ -76,7 +46,7 @@ const POICard = memo(function POICard({ poi, onEdit, onDelete }) {
                     observer.disconnect();
                 }
             },
-            { rootMargin: '50px' }
+            { rootMargin: '50px' },
         );
 
         if (cardRef.current) {
@@ -86,17 +56,15 @@ const POICard = memo(function POICard({ poi, onEdit, onDelete }) {
         return () => observer.disconnect();
     }, []);
 
-    /**
-     * Effect hook to fetch weather data when the card becomes visible.
-     */
+    
     useEffect(() => {
         if (isVisible && poi.latitude && poi.longitude && !weather) {
             const fetchWeather = async () => {
                 try {
-                    const OPENWEATHER_API_KEY =
-                        import.meta.env.VITE_OPENWEATHER_API_KEY;
+                    const OPENWEATHER_API_KEY = import.meta.env
+                        .VITE_OPENWEATHER_API_KEY;
                     const res = await fetch(
-                        `https://api.openweathermap.org/data/2.5/weather?lat=${poi.latitude}&lon=${poi.longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`
+                        `https://api.openweathermap.org/data/2.5/weather?lat=${poi.latitude}&lon=${poi.longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`,
                     );
                     if (!res.ok) return;
                     const data = await res.json();
@@ -216,7 +184,7 @@ const POICard = memo(function POICard({ poi, onEdit, onDelete }) {
                                     {getWeatherEmoji(
                                         weather.condition ||
                                             weather.description ||
-                                            ''
+                                            '',
                                     )}
                                 </div>
                             </div>
@@ -263,7 +231,10 @@ const POICard = memo(function POICard({ poi, onEdit, onDelete }) {
                                 <Skeleton className="w-16 h-4" />
                                 <Skeleton className="w-12 h-6" />
                             </div>
-                            <Skeleton variant="circular" className="w-10 h-10" />
+                            <Skeleton
+                                variant="circular"
+                                className="w-10 h-10"
+                            />
                         </div>
                         <div className="grid grid-cols-3 gap-2">
                             <div className="flex flex-col items-center gap-1">

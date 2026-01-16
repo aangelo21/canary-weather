@@ -2,78 +2,111 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-// Use translation keys for the destination text so content can be localized
+
 const destinations = [
     { id: 1, key: 'teide', image: 'teide.webp', lat: 28.2724, lng: -16.6425 },
-    { id: 5, key: 'maspalomas', image: 'dunas.webp', lat: 27.7419, lng: -15.5891 },
-    { id: 7, key: 'timanfaya', image: 'timanfaya.webp', lat: 29.003, lng: -13.6216 },
-    { id: 9, key: 'corralejo', image: 'corralejo.webp', lat: 28.7373, lng: -13.8751 },
-    { id: 12, key: 'garajonay', image: 'garajonay.webp', lat: 28.0907, lng: -17.2349 },
-    { id: 4, key: 'roquenublo', image: 'roquenublo.webp', lat: 27.9871, lng: -15.6302 },
+    {
+        id: 5,
+        key: 'maspalomas',
+        image: 'dunas.webp',
+        lat: 27.7419,
+        lng: -15.5891,
+    },
+    {
+        id: 7,
+        key: 'timanfaya',
+        image: 'timanfaya.webp',
+        lat: 29.003,
+        lng: -13.6216,
+    },
+    {
+        id: 9,
+        key: 'corralejo',
+        image: 'corralejo.webp',
+        lat: 28.7373,
+        lng: -13.8751,
+    },
+    {
+        id: 12,
+        key: 'garajonay',
+        image: 'garajonay.webp',
+        lat: 28.0907,
+        lng: -17.2349,
+    },
+    {
+        id: 4,
+        key: 'roquenublo',
+        image: 'roquenublo.webp',
+        lat: 27.9871,
+        lng: -15.6302,
+    },
 ];
 
-/**
- * DestinationCarousel Component.
- *
- * Displays an interactive carousel of popular tourist destinations in the Canary Islands.
- * Features:
- * - Infinite Scrolling: The carousel loops seamlessly in both directions.
- * - Responsive Design: Adjusts the number of visible items based on screen width (1, 2, or 3 items).
- * - Touch/Click Navigation: Users can navigate using previous/next buttons.
- * - Localization: Destination names and descriptions are internationalized.
- *
- * The component uses a "tripled list" technique to achieve the infinite scroll effect,
- * resetting the index silently when the user reaches the duplicate sets at the ends.
- *
- * @component
- * @returns {JSX.Element} The rendered DestinationCarousel component.
- */
+
 export default function DestinationCarousel() {
     const { t } = useTranslation();
     const navigate = useNavigate();
+
     
-    /**
-     * @type {Array<Object>} extendedDestinations - Tripled list of destinations to simulate infinite scrolling.
-     */
     const extendedDestinations = [
         ...destinations,
         ...destinations,
         ...destinations,
     ];
 
-    /**
-     * @type {[number, Function]} currentIndex - Current index of the carousel. Starts in the middle set.
-     */
+    
     const [currentIndex, setCurrentIndex] = useState(destinations.length);
 
-    /**
-     * @type {[boolean, Function]} isTransitioning - Controls whether the transition animation is active. Used for silent resets.
-     */
+    
     const [isTransitioning, setIsTransitioning] = useState(true);
 
-    /**
-     * @type {[number, Function]} itemsPerPage - Number of items visible at once based on screen width.
-     */
+    
     const [itemsPerPage, setItemsPerPage] = useState(1);
 
-    /**
-     * @type {[number, Function]} itemWidth - Width of a single carousel item including gap.
-     */
+    
     const [itemWidth, setItemWidth] = useState(0);
 
-    /**
-     * @type {[number, Function]} containerWidth - Width of the carousel container.
-     */
+    
     const [containerWidth, setContainerWidth] = useState(0);
 
     const itemRef = useRef(null);
     const containerRef = useRef(null);
     const contentRef = useRef(null);
 
-    /**
-     * Effect hook to handle window resize events.
-     * Updates `itemsPerPage` and `itemWidth` to ensure correct layout and scrolling behavior.
-     */
+    const touchStartX = useRef(0);
+    const touchEndX = useRef(0);
+    const isDragging = useRef(false);
+
+    const handleTouchStart = (e) => {
+        touchStartX.current = e.touches[0].clientX;
+        isDragging.current = true;
+    };
+
+    const handleTouchMove = (e) => {
+        if (!isDragging.current) return;
+        touchEndX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = () => {
+        if (!isDragging.current) return;
+        isDragging.current = false;
+        
+        const swipeThreshold = 50;
+        const diff = touchStartX.current - touchEndX.current;
+
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        }
+        
+        touchStartX.current = 0;
+        touchEndX.current = 0;
+    };
+
+    
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth >= 1024) {
@@ -83,14 +116,14 @@ export default function DestinationCarousel() {
             } else {
                 setItemsPerPage(1);
             }
-            // Update itemWidth after resize
+            
             setTimeout(() => {
                 if (
                     itemRef.current &&
                     contentRef.current &&
                     containerRef.current
                 ) {
-                    // compute item width (first child) and include gap (24px = gap-6)
+                    
                     const w = itemRef.current.offsetWidth;
                     setItemWidth(w + 24);
                     setContainerWidth(containerRef.current.offsetWidth);
@@ -103,10 +136,7 @@ export default function DestinationCarousel() {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    /**
-     * Effect hook to handle infinite scroll logic.
-     * Checks if the carousel has reached the end of the extended list and silently resets the index to the middle set.
-     */
+    
     useEffect(() => {
         if (currentIndex >= destinations.length * 2) {
             const timer = setTimeout(() => {
@@ -123,9 +153,7 @@ export default function DestinationCarousel() {
         }
     }, [currentIndex]);
 
-    /**
-     * Effect hook to re-enable transitions after a silent reset.
-     */
+    
     useEffect(() => {
         if (!isTransitioning) {
             const timer = setTimeout(() => {
@@ -135,119 +163,125 @@ export default function DestinationCarousel() {
         }
     }, [isTransitioning]);
 
-    /**
-     * Advances the carousel to the next slide.
-     */
+    
     const nextSlide = () => {
         if (!isTransitioning) return;
         setCurrentIndex((prevIndex) => prevIndex + 1);
     };
 
-    /**
-     * Moves the carousel to the previous slide.
-     */
+    
     const prevSlide = () => {
         if (!isTransitioning) return;
         setCurrentIndex((prevIndex) => prevIndex - 1);
     };
 
     return (
-        <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 pt-4">
-            <h2 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white">
-                {t('popularDestinations') || 'Popular Destinations'}
-            </h2>
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-8">
+            <div className="text-center mb-12 space-y-4">
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+                    {t('popularDestinations') || 'Popular Destinations'}
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">
+                    {t('popularDestinationsSubtitle') || 'Explore the most breathtaking locations across the islands with real-time weather updates.'}
+                </p>
+            </div>
 
-            <div
-                className="relative overflow-hidden py-10 -mx-4 sm:-mx-6 lg:-mx-8"
-                ref={containerRef}
-            >
+            <div className="relative group">
                 <div
-                    ref={contentRef}
-                    className={`flex gap-6 ${isTransitioning ? 'transition-transform duration-500 ease-in-out' : ''}`}
-                    style={{
-                        transform: `translateX(${containerWidth / 2 - (itemWidth - 24) / 2 - currentIndex * itemWidth}px)`,
-                    }}
+                    className="relative overflow-hidden py-4 -mx-4 sm:-mx-6 lg:-mx-8"
+                    ref={containerRef}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
                 >
-                    {extendedDestinations.map((dest, index) => (
-                        <div
-                            key={`${dest.id}-${index}`}
-                            ref={index === 0 ? itemRef : null}
-                            className="shrink-0 w-[75%] sm:w-[40%] lg:w-[30%]"
-                        >
-                            <div 
-                                className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden h-full transform transition-all hover:scale-105 duration-300 cursor-pointer"
-                                onClick={() => navigate('/map', { state: { lat: dest.lat, lng: dest.lng } })}
+                    <div
+                        ref={contentRef}
+                        className={`flex gap-6 ${isTransitioning ? 'transition-transform duration-500 ease-in-out' : ''}`}
+                        style={{
+                            transform: `translateX(${containerWidth / 2 - (itemWidth - 24) / 2 - currentIndex * itemWidth}px)`,
+                        }}
+                    >
+                        {extendedDestinations.map((dest, index) => (
+                            <div
+                                key={`${dest.id}-${index}`}
+                                ref={index === 0 ? itemRef : null}
+                                className="shrink-0 w-[75%] sm:w-[40%] lg:w-[30%]"
                             >
-                                <div className="h-48 overflow-hidden">
+                                <div
+                                    className="group relative bg-gray-900 rounded-3xl shadow-xl overflow-hidden h-[320px] transform transition-all hover:scale-[1.02] duration-500 cursor-pointer"
+                                    onClick={() =>
+                                        navigate('/map', {
+                                            state: { lat: dest.lat, lng: dest.lng },
+                                        })
+                                    }
+                                >
                                     <img
                                         src={dest.image}
                                         alt={t(`destinations.${dest.key}.name`)}
                                         loading="lazy"
-                                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     />
-                                </div>
-                                <div className="p-6">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                                            {t(`destinations.${dest.key}.name`)}
-                                        </h3>
-                                        <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800">
-                                            {t(
-                                                `destinations.${dest.key}.location`
-                                            )}
-                                        </span>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+                                    
+                                    <div className="absolute bottom-4 left-4 right-4 p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-lg transition-all duration-300 group-hover:bg-white/20 group-hover:scale-[1.02]">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <h3 className="text-lg font-bold text-white leading-tight drop-shadow-md">
+                                                {t(`destinations.${dest.key}.name`)}
+                                            </h3>
+                                            <span className="shrink-0 ml-2 bg-black/30 text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-white/10">
+                                                {t(`destinations.${dest.key}.location`)}
+                                            </span>
+                                        </div>
+                                        <p className="text-gray-100 text-xs line-clamp-2 drop-shadow-sm">
+                                            {t(`destinations.${dest.key}.description`)}
+                                        </p>
                                     </div>
-                                    <p className="text-gray-600 dark:text-gray-300 text-sm">
-                                        {t(
-                                            `destinations.${dest.key}.description`
-                                        )}
-                                    </p>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
+
+                <button
+                    onClick={prevSlide}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 -ml-4 lg:-ml-12 bg-white dark:bg-gray-800 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors z-10 focus:outline-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    aria-label="Previous slide"
+                >
+                    <svg
+                        className="w-6 h-6 text-gray-800 dark:text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 19l-7-7 7-7"
+                        />
+                    </svg>
+                </button>
+
+                <button
+                    onClick={nextSlide}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 lg:-mr-12 bg-white dark:bg-gray-800 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors z-10 focus:outline-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    aria-label="Next slide"
+                >
+                    <svg
+                        className="w-6 h-6 text-gray-800 dark:text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                        />
+                    </svg>
+                </button>
             </div>
-
-            <button
-                onClick={prevSlide}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -ml-4 lg:-ml-12 bg-white dark:bg-gray-800 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors z-10 focus:outline-none"
-                aria-label="Previous slide"
-            >
-                <svg
-                    className="w-6 h-6 text-gray-800 dark:text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 19l-7-7 7-7"
-                    />
-                </svg>
-            </button>
-
-            <button
-                onClick={nextSlide}
-                className="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 lg:-mr-12 bg-white dark:bg-gray-800 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors z-10 focus:outline-none"
-                aria-label="Next slide"
-            >
-                <svg
-                    className="w-6 h-6 text-gray-800 dark:text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                    />
-                </svg>
-            </button>
         </div>
     );
 }
