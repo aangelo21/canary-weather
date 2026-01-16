@@ -10,6 +10,7 @@ import { LdapService } from '../ldapService.js';
 import { sendWelcomeEmail, sendContactEmail } from '../emailService.js';
 import { generateAccessToken } from '../auth/tokenService.js';
 import { Op } from 'sequelize';
+import bcrypt from 'bcrypt';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -48,43 +49,33 @@ export const registerUser = async (userData) => {
         throw new Error('Faltan campos obligatorios');
     }
 
-    // Check for duplicate email in database
     const existingEmail = await User.findOne({ where: { email } });
     if (existingEmail) {
         throw new Error('El email ya está registrado');
     }
 
-    // Check for duplicate username in LDAP and database
-    const exists = await LdapService.userExists(username);
-
-    if (exists) {
-        const dbUser = await User.findOne({ where: { username } });
-        if (!dbUser) {
-            const authenticated = await LdapService.authenticate(
-                username,
-                password,
-            );
-            if (!authenticated) {
-                throw new Error(
-                    'El usuario ya existe en LDAP (contraseña incorrecta)',
-                );
-            }
-        } else {
-            throw new Error('El usuario ya existe');
-        }
-    } else {
-        await LdapService.createUser(username, email, password);
+    const existingUsername = await User.findOne({ where: { username } });
+    if (existingUsername) {
+        throw new Error('El usuario ya existe');
     }
 
-    let user = await User.findOne({ where: { username } });
-
-    if (!user) {
-        user = await User.create({
-            username,
-            email,
-            is_admin: false,
-        });
+    const ldapUserExists = await LdapService.userExists(username);
+    if (ldapUserExists) {
+        throw new Error('El usuario ya existe en LDAP');
     }
+
+    const ldapResult = await LdapService.createUser(username, email);
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await User.create({
+        username,
+        email,
+        password: hashedPassword,
+        ldap_id: ldapResult.ldapId,
+        is_admin: false,
+    });
 
     sendWelcomeEmail(email, username);
 
@@ -148,9 +139,8 @@ export const updateUserProfile = async (userId, updateData, uploadedFile) => {
     }
 
     if (updateData.password) {
-        await LdapService.updateUser(user.username, {
-            password: updateData.password,
-        });
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(updateData.password, salt);
     }
 
     await user.save();
