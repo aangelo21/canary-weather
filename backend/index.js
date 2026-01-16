@@ -68,7 +68,6 @@ const sessionStore = new SequelizeStore({
     tableName: 'Sessions',
 });
 
-import passport from './config/passport.js';
 
 app.use(
     session({
@@ -83,9 +82,6 @@ app.use(
         },
     }),
 );
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
