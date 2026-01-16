@@ -124,18 +124,34 @@ const getWeatherDescription = (code) => {
 export const chatWithAI = async (req, res) => {
     try {
         const { message, history } = req.body;
-        // Using the provided GitHub PAT for GitHub Models (Azure AI Inference)
-        const apiKey = process.env.GITHUB_MODELS_API_KEY;
+        
+        let apiKey = process.env.GITHUB_MODELS_API_KEY;
+        let baseURL = "https://models.inference.ai.azure.com";
+        let model = 'gpt-4o';
+        let defaultHeaders = undefined;
 
-        console.log("AI Controller - API Key configured:", !!apiKey); // Debug log
+        // Treat placeholder or empty string as invalid
+        if (apiKey && (apiKey.includes('your_') || apiKey.trim() === '')) {
+            apiKey = null;
+        }
+
+        if (!apiKey && process.env.OPENAI_API_KEY) {
+             apiKey = process.env.OPENAI_API_KEY;
+             baseURL = undefined; // Use default OpenAI URL
+        }
+
+        console.log("AI Controller - API Key configured:", !!apiKey);
+        console.log("AI Controller - Provider:", (!baseURL || baseURL.includes('openai')) ? "OpenAI" : "GitHub Models");
+        console.log("AI Controller - Model:", model);
 
         if (!apiKey) {
             return res.status(500).json({ error: 'AI service not configured (missing API key)' });
         }
 
         const client = new OpenAI({
-            baseURL: "https://models.inference.ai.azure.com",
-            apiKey: apiKey
+            baseURL: baseURL,
+            apiKey: apiKey,
+            defaultHeaders: defaultHeaders
         });
 
         const messages = [
@@ -155,7 +171,7 @@ export const chatWithAI = async (req, res) => {
         // First call to the model
         let completion = await client.chat.completions.create({
             messages: messages,
-            model: 'gpt-4o',
+            model: model,
             tools: TOOLS,
             tool_choice: "auto",
         });
@@ -248,7 +264,7 @@ export const chatWithAI = async (req, res) => {
             // Second call with tool results
             completion = await client.chat.completions.create({
                 messages: messages,
-                model: 'gpt-4o',
+                model: model,
             });
             responseMessage = completion.choices[0].message;
         }

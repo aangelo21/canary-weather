@@ -17,6 +17,13 @@ jest.unstable_mockModule('jsonwebtoken', () => ({
     },
 }));
 
+jest.unstable_mockModule('../../models/index.js', () => ({
+    User: {
+        findOne: jest.fn(),
+    },
+    sequelize: {},
+}));
+
 
 const authController = await import('../../controllers/authController.js');
 const { LdapService } = await import('../../services/ldapService.js');
