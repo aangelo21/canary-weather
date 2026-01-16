@@ -14,7 +14,7 @@ module.exports = {
             },
             env_file: './backend/.env',
             // Logs configuration - stored outside the project directory
-            output: '/dev/null',
+            output: '../logs/backend/out.log',
             error: '../logs/backend/error.log',
             log_date_format: 'YYYY-MM-DD HH:mm:ss',
             merge_logs: true,
@@ -35,7 +35,7 @@ module.exports = {
             watch: false,
             ignore_watch: ['node_modules'],
             // Logs configuration - stored outside the project directory
-            output: '/dev/null',
+            output: '../logs/frontend/out.log',
             error: '../logs/frontend/error.log',
             log_date_format: 'YYYY-MM-DD HH:mm:ss',
             merge_logs: true,
