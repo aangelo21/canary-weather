@@ -10,6 +10,8 @@ import {
     getMunicipalities as fetchMunicipalities,
     sendContactMessage,
 } from '../services/user/userManagementService.js';
+import { LdapService } from '../services/ldapService.js';
+import { User } from '../models/index.js';
 
 export const loginUser = async (req, res) => {
     try {
@@ -99,7 +101,25 @@ export const updateUser = async (req, res) => {
 };
 
 export const deleteUser = async (req, res) => {
-    return res.status(501).json({ error: 'Not implemented for LDAP' });
+    try {
+        const { id } = req.params;
+        const user = await User.findByPk(id);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        if (user.username) {
+            await LdapService.deleteUser(user.username);
+        }
+
+        await user.destroy();
+
+        return res.json({ message: 'User deleted successfully' });
+    } catch (err) {
+        console.error('Delete user error:', err);
+        return res.status(500).json({ error: err.message || 'Failed to delete user' });
+    }
 };
 
 export const getMunicipalities = async (req, res) => {

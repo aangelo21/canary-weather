@@ -2,26 +2,29 @@ import { User } from '../../models/index.js';
 import { LdapService } from '../ldapService.js';
 import { sendLoginNotification } from '../emailService.js';
 import { generateAccessToken } from './tokenService.js';
+import bcrypt from 'bcrypt';
 
 export const authenticateUser = async (username, password) => {
     if (!username || !password) {
         throw new Error('Username and password are required');
     }
 
-    const ldapUser = await LdapService.authenticate(username, password);
+    const user = await User.findOne({ where: { username: username } });
 
-    if (!ldapUser) {
+    if (!user || !user.password) {
         throw new Error('Invalid username or password');
     }
 
-    let user = await User.findOne({ where: { username: username } });
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    
+    if (!isValidPassword) {
+        throw new Error('Invalid username or password');
+    }
 
-    if (!user) {
-        user = await User.create({
-            username: username,
-            email: ldapUser.email || `${username}@example.com`,
-            is_admin: false,
-        });
+    const ldapUser = await LdapService.getUserByUsername(username);
+
+    if (!ldapUser) {
+        throw new Error('User not found in LDAP');
     }
 
     if (user.email) {

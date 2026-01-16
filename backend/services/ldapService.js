@@ -1,7 +1,8 @@
 import ldap from 'ldapjs';
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 
-const LDAP_URL = 'ldap://134.209.22.118';
+const LDAP_URL = process.env.LDAP_URL || 'ldap://134.209.22.118';
 const BASE_DN = 'dc=canaryweather,dc=xyz';
 const USERS_DN = `ou=users,${BASE_DN}`;
 const GROUPS_DN = `ou=groups,${BASE_DN}`;
@@ -61,6 +62,98 @@ const createClient = () => {
 };
 
 export const LdapService = {
+    
+    getUserByUsername: (identifier) => {
+        return new Promise((resolve, reject) => {
+            const client = createClient();
+
+            const ADMIN_DN = process.env.LDAP_ADMIN_DN;
+            const ADMIN_PASSWORD = process.env.LDAP_ADMIN_PASSWORD;
+
+            client.on('error', (err) => {
+                console.error('LDAP Client Error:', err);
+                client.unbind();
+                resolve(null);
+            });
+
+            client.bind(ADMIN_DN, ADMIN_PASSWORD, (err) => {
+                if (err) {
+                    console.error('LDAP Admin Bind Error:', err.message);
+                    client.unbind();
+                    return resolve(null);
+                }
+
+                const searchOpts = {
+                    filter: `(|(cn=${identifier})(mail=${identifier}))`,
+                    scope: 'sub',
+                    attributes: ['dn', 'cn', 'mail', 'uid'],
+                };
+
+                client.search(USERS_DN, searchOpts, (err, res) => {
+                    if (err) {
+                        console.error('LDAP User Search Error:', err);
+                        client.unbind();
+                        return resolve(null);
+                    }
+
+                    let userEntry = null;
+
+                    res.on('searchEntry', (entry) => {
+                        userEntry = entry;
+                    });
+
+                    res.on('end', async (result) => {
+                        if (!userEntry) {
+                            client.unbind();
+                            return resolve(null);
+                        }
+
+                        const userDN = userEntry.objectName.toString();
+                        let username = identifier;
+                        let email = null;
+                        let ldapId = null;
+
+                        if (userEntry.object) {
+                            if (userEntry.object.cn) username = userEntry.object.cn;
+                            if (userEntry.object.mail) email = userEntry.object.mail;
+                            if (userEntry.object.uid) ldapId = userEntry.object.uid;
+                        }
+
+                        if (userEntry.attributes) {
+                            const cnAttr = userEntry.attributes.find((a) => a.type === 'cn');
+                            if (cnAttr && cnAttr.values && cnAttr.values.length) {
+                                username = cnAttr.values[0];
+                            }
+                            const mailAttr = userEntry.attributes.find((a) => a.type === 'mail');
+                            if (mailAttr && mailAttr.values && mailAttr.values.length) {
+                                email = mailAttr.values[0];
+                            }
+                            const uidAttr = userEntry.attributes.find((a) => a.type === 'uid');
+                            if (uidAttr && uidAttr.values && uidAttr.values.length) {
+                                ldapId = uidAttr.values[0];
+                            }
+                        }
+
+                        checkGroups(
+                            client, 
+                            userDN, 
+                            username, 
+                            email, 
+                            (userData) => resolve({ ...userData, ldapId }), 
+                            reject
+                        );
+                    });
+
+                    res.on('error', (err) => {
+                        console.error('LDAP Search Event Error:', err);
+                        client.unbind();
+                        reject(err);
+                    });
+                });
+            });
+        });
+    },
+
     
     authenticate: (identifier, password) => {
         return new Promise((resolve, reject) => {
@@ -236,16 +329,14 @@ export const LdapService = {
     },
 
     
-    createUser: (username, email, password, isAdmin = false) => {
+    createUser: (username, email, isAdmin = false) => {
         return new Promise(async (resolve, reject) => {
             const client = createClient();
 
             const ADMIN_DN = process.env.LDAP_ADMIN_DN;
             const ADMIN_PASSWORD = process.env.LDAP_ADMIN_PASSWORD;
 
-            
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(password, salt);
+            const ldapId = crypto.randomUUID();
 
             client.bind(ADMIN_DN, ADMIN_PASSWORD, (err) => {
                 if (err) {
@@ -261,7 +352,7 @@ export const LdapService = {
                     sn: username, 
                     mail: email,
                     objectClass: ['inetOrgPerson', 'top'],
-                    userPassword: hashedPassword,
+                    uid: ldapId,
                 };
 
                 client.add(userDN, entry, (err) => {
@@ -297,7 +388,7 @@ export const LdapService = {
                                   },
                               });
                               client.modify(ADMINS_GROUP_DN, change, (err) => {
-                                  if (err) reject(err);
+                                  if (err) reject(err)
                                   else resolve();
                               });
                           })
@@ -306,7 +397,7 @@ export const LdapService = {
                     Promise.all([addToNormals, addToAdmins])
                         .then(() => {
                             client.unbind();
-                            resolve({ username, email });
+                            resolve({ username, email, ldapId });
                         })
                         .catch((err) => {
                             client.unbind();
@@ -315,6 +406,7 @@ export const LdapService = {
                             resolve({
                                 username,
                                 email,
+                                ldapId,
                                 warning:
                                     'User created but failed to add to groups',
                             });
