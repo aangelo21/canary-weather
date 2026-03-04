@@ -35,12 +35,6 @@ const User = sequelize.define(
             allowNull: false,
         },
         
-        ldap_id: {
-            type: DataTypes.UUID,
-            allowNull: true,
-            unique: true,
-        },
-        
         password: {
             type: DataTypes.STRING,
             allowNull: true,

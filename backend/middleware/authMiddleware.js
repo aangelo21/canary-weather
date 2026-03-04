@@ -2,19 +2,9 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
-
-export function authenticateSession(req, res, next) {
-    if (req.session && req.session.user) {
-        req.user = req.session.user;
-        return next();
-    }
-    return res.status(401).json({ error: 'Session authentication required' });
-}
-
-
 export function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; 
+    const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
         return res.status(401).json({ error: 'Token required' });
@@ -28,7 +18,6 @@ export function authenticateToken(req, res, next) {
         next();
     });
 }
-
 
 export function optionalAuthenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
@@ -47,14 +36,4 @@ export function optionalAuthenticateToken(req, res, next) {
         req.user = null;
         next();
     }
-}
-
-
-export function optionalAuthenticateSession(req, res, next) {
-    if (req.session && req.session.user) {
-        req.user = req.session.user;
-    } else {
-        req.user = null;
-    }
-    next();
 }

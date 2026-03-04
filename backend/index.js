@@ -8,8 +8,6 @@ dotenv.config({ path: path.join(_dirname, '.env') });
 
 import express from 'express';
 import cors from 'cors';
-import session from 'express-session';
-import connectSessionSequelize from 'connect-session-sequelize';
 import sequelize from './controllers/dbController.js';
 import './models/index.js';
 import http from 'http';
@@ -23,7 +21,6 @@ import locationRoutes from './routes/locationRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import pushRoutes from './routes/pushRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
-import authRoutes from './routes/authRoutes.js';
 
 import swaggerUi from 'swagger-ui-express';
 
@@ -38,20 +35,14 @@ const app = express();
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.set('trust proxy', 1);
 
-const PORT = process.env.PORT || 85;
-
-const isProduction =
-    process.env.NODE_ENV === 'production' ||
-    (process.env.FRONTEND_URL &&
-        process.env.FRONTEND_URL.includes('canaryweather.xyz'));
-const isDevelopment = !isProduction;
+const PORT = process.env.PORT || 10000;
 
 const ALLOWED_ORIGINS = [
     'http://localhost:5173',
-    'http://134.209.22.118:5173',
-    'https://canaryweather.xyz',
-];
+    process.env.FRONTEND_URL,
+].filter(Boolean);
 
 app.use(
     cors({
@@ -61,27 +52,6 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-const SequelizeStore = connectSessionSequelize(session.Store);
-const sessionStore = new SequelizeStore({
-    db: sequelize,
-    tableName: 'Sessions',
-});
-
-
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET || 'supersecretkey',
-        store: sessionStore,
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            secure: false,
-            httpOnly: true,
-            maxAge: 24 * 60 * 60 * 1000,
-        },
-    }),
-);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -119,7 +89,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/pois', pointOfInterestRoutes);
 
 app.use('/api/users', userRoutes);
-app.use('/api/auth', authRoutes);
 
 app.use('/api/locations', locationRoutes);
 
@@ -141,13 +110,11 @@ app.get('/api/health', (req, res) => {
     try {
         await sequelize.authenticate();
 
-        await sequelize.query('SET FOREIGN_KEY_CHECKS = 0');
+        await sequelize.query('SET session_replication_role = replica');
 
         await sequelize.sync();
 
-        await sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
-
-        await sessionStore.sync();
+        await sequelize.query('SET session_replication_role = DEFAULT');
 
         const server = http.createServer(app);
 

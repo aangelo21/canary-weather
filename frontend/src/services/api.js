@@ -22,18 +22,24 @@ export const apiFetch = async (endpoint, options = {}) => {
     const config = {
         ...options,
         headers,
-        credentials: 'include',
     };
 
     let response = await fetch(url, config);
 
     if (response.status === 401) {
         try {
+            const refreshToken = localStorage.getItem('refreshToken');
+            if (!refreshToken) {
+                console.error('No refresh token available');
+                return response;
+            }
+
             const refreshResponse = await fetch(
                 `${API_BASE}/users/refresh-token`,
                 {
                     method: 'POST',
-                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refreshToken }),
                 },
             );
 
@@ -45,7 +51,6 @@ export const apiFetch = async (endpoint, options = {}) => {
                 const newConfig = {
                     ...options,
                     headers,
-                    credentials: 'include',
                 };
                 response = await fetch(url, newConfig);
             } else {

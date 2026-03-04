@@ -1,8 +1,8 @@
 import {
     authenticateUser,
     refreshUserToken,
-    createSessionData,
 } from '../services/auth/authService.js';
+import { verifyRefreshToken } from '../services/auth/tokenService.js';
 import {
     getUserProfile,
     registerUser,
@@ -10,7 +10,6 @@ import {
     getMunicipalities as fetchMunicipalities,
     sendContactMessage,
 } from '../services/user/userManagementService.js';
-import { LdapService } from '../services/ldapService.js';
 import { User } from '../models/index.js';
 
 export const loginUser = async (req, res) => {
@@ -18,9 +17,7 @@ export const loginUser = async (req, res) => {
         const { username, password } = req.body;
         const result = await authenticateUser(username, password);
 
-        req.session.user = result.user;
-
-        return res.json({ user: result.user, token: result.token });
+        return res.json({ user: result.user, token: result.token, refreshToken: result.refreshToken });
     } catch (err) {
         console.error(err);
         const statusCode =
@@ -33,9 +30,24 @@ export const loginUser = async (req, res) => {
 
 export const refreshToken = async (req, res) => {
     try {
-        const user = req.user;
-        const token = refreshUserToken(user);
-        return res.json({ token });
+        const { refreshToken: token } = req.body;
+
+        if (!token) {
+            return res.status(401).json({ error: 'Refresh token required' });
+        }
+
+        const decoded = verifyRefreshToken(token);
+        if (!decoded) {
+            return res.status(403).json({ error: 'Invalid or expired refresh token' });
+        }
+
+        const user = await User.findByPk(decoded.id);
+        if (!user) {
+            return res.status(403).json({ error: 'User not found' });
+        }
+
+        const newToken = refreshUserToken(user);
+        return res.json({ token: newToken });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: 'Failed to refresh token' });
@@ -43,18 +55,12 @@ export const refreshToken = async (req, res) => {
 };
 
 export const logoutUser = async (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            return res.status(500).json({ error: 'Could not log out' });
-        }
-        res.clearCookie('connect.sid');
-        return res.json({ message: 'Logged out successfully' });
-    });
+    return res.json({ message: 'Logged out successfully' });
 };
 
 export const getCurrentUser = async (req, res) => {
     try {
-        const userId = req.session.user && req.session.user.id;
+        const userId = req.user && req.user.id;
         if (!userId) {
             return res.status(401).json({ error: 'Not authenticated' });
         }
@@ -68,20 +74,40 @@ export const getCurrentUser = async (req, res) => {
 };
 
 export const getAllUsers = async (req, res) => {
-    return res.status(501).json({ error: 'Not implemented for LDAP' });
+    try {
+        const users = await User.findAll({
+            attributes: ['id', 'username', 'email', 'profile_picture_url', 'is_admin', 'createdAt'],
+        });
+        return res.json(users);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: err.message });
+    }
 };
 
 export const getUserById = async (req, res) => {
-    return res.status(501).json({ error: 'Not implemented for LDAP' });
+    try {
+        const { id } = req.params;
+        const user = await User.findByPk(id, {
+            attributes: ['id', 'username', 'email', 'profile_picture_url', 'is_admin', 'createdAt'],
+        });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        return res.json(user);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: err.message });
+    }
 };
 
 export const createUser = async (req, res) => {
     try {
         const result = await registerUser(req.body);
 
-        req.session.user = result.user;
-
-        return res.status(201).json({ user: result.user, token: result.token });
+        return res.status(201).json({ user: result.user, token: result.token, refreshToken: result.refreshToken });
     } catch (err) {
         console.error(err);
         const statusCode = err.message.includes('ya existe') ? 409 : 400;
@@ -107,10 +133,6 @@ export const deleteUser = async (req, res) => {
 
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
-        }
-
-        if (user.username) {
-            await LdapService.deleteUser(user.username);
         }
 
         await user.destroy();

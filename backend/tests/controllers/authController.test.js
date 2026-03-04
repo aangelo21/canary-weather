@@ -1,12 +1,5 @@
 import { jest } from '@jest/globals';
 
-
-jest.unstable_mockModule('../../services/ldapService.js', () => ({
-    LdapService: {
-        getAllUsers: jest.fn(),
-    },
-}));
-
 jest.unstable_mockModule('../../services/emailService.js', () => ({
     sendPasswordResetEmail: jest.fn(),
 }));
@@ -24,9 +17,8 @@ jest.unstable_mockModule('../../models/index.js', () => ({
     sequelize: {},
 }));
 
-
 const authController = await import('../../controllers/authController.js');
-const { LdapService } = await import('../../services/ldapService.js');
+const { User } = await import('../../models/index.js');
 const { sendPasswordResetEmail } =
     await import('../../services/emailService.js');
 const jwt = (await import('jsonwebtoken')).default;
@@ -54,11 +46,11 @@ describe('Auth Controller - Forgot Password', () => {
 
     it('should return success message even if user is not found (security)', async () => {
         req.body.email = 'nonexistent@example.com';
-        LdapService.getAllUsers.mockResolvedValue([]);
+        User.findOne.mockResolvedValue(null);
 
         await authController.forgotPassword(req, res);
 
-        expect(LdapService.getAllUsers).toHaveBeenCalled();
+        expect(User.findOne).toHaveBeenCalledWith({ where: { email: 'nonexistent@example.com' } });
         expect(res.json).toHaveBeenCalledWith({
             message:
                 'If an account with that email exists, a password reset link has been sent.',
@@ -69,12 +61,12 @@ describe('Auth Controller - Forgot Password', () => {
     it('should send email and return success message if user is found', async () => {
         const mockUser = { username: 'testuser', email: 'test@example.com' };
         req.body.email = 'test@example.com';
-        LdapService.getAllUsers.mockResolvedValue([mockUser]);
+        User.findOne.mockResolvedValue(mockUser);
         jwt.sign.mockReturnValue('mock-token');
 
         await authController.forgotPassword(req, res);
 
-        expect(LdapService.getAllUsers).toHaveBeenCalled();
+        expect(User.findOne).toHaveBeenCalledWith({ where: { email: 'test@example.com' } });
         expect(jwt.sign).toHaveBeenCalledWith(
             { id: mockUser.username, email: mockUser.email, type: 'reset' },
             expect.any(String),
@@ -92,10 +84,9 @@ describe('Auth Controller - Forgot Password', () => {
 
     it('should handle errors gracefully', async () => {
         req.body.email = 'test@example.com';
-        const error = new Error('LDAP Error');
-        LdapService.getAllUsers.mockRejectedValue(error);
+        const error = new Error('Database Error');
+        User.findOne.mockRejectedValue(error);
 
-        
         const consoleSpy = jest
             .spyOn(console, 'error')
             .mockImplementation(() => {});

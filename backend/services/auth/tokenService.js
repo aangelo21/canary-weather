@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 const TOKEN_EXPIRY = '15m';
+const REFRESH_TOKEN_EXPIRY = '7d';
 
 export const generateAccessToken = (user) => {
     return jwt.sign(
@@ -15,6 +16,29 @@ export const generateAccessToken = (user) => {
         JWT_SECRET,
         { expiresIn: TOKEN_EXPIRY },
     );
+};
+
+export const generateRefreshToken = (user) => {
+    return jwt.sign(
+        {
+            id: user.id,
+            type: 'refresh',
+        },
+        JWT_SECRET,
+        { expiresIn: REFRESH_TOKEN_EXPIRY },
+    );
+};
+
+export const verifyRefreshToken = (token) => {
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        if (decoded.type !== 'refresh') {
+            return null;
+        }
+        return decoded;
+    } catch (error) {
+        return null;
+    }
 };
 
 export const generateResetToken = (user) => {

@@ -1,12 +1,11 @@
 import { User } from '../../models/index.js';
-import { LdapService } from '../ldapService.js';
 import { sendPasswordResetEmail } from '../emailService.js';
 import { generateResetToken, verifyToken } from './tokenService.js';
 import { generateAccessToken } from './tokenService.js';
+import bcrypt from 'bcrypt';
 
 export const initiatePasswordReset = async (email) => {
-    const users = await LdapService.getAllUsers();
-    const user = users.find((u) => u.email === email);
+    const user = await User.findOne({ where: { email } });
 
     if (!user) {
         return { success: true };
@@ -31,8 +30,6 @@ export const resetUserPassword = async (token, newPassword) => {
         throw new Error('Invalid or expired token');
     }
 
-    await LdapService.updateUser(decoded.id, { password: newPassword });
-
     const dbUser = await User.findOne({ where: { username: decoded.id } });
 
     if (!dbUser) {
@@ -41,6 +38,10 @@ export const resetUserPassword = async (token, newPassword) => {
             autoLogin: false,
         };
     }
+
+    const salt = await bcrypt.genSalt(10);
+    dbUser.password = await bcrypt.hash(newPassword, salt);
+    await dbUser.save();
 
     const loginToken = generateAccessToken(dbUser);
 

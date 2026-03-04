@@ -1,0 +1,70 @@
+databases:
+  - name: canaryweather-db
+    databaseName: canaryweather
+    user: canaryweather
+    plan: free
+
+services:
+  - type: web
+    name: canaryweather-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install && npm run migrate
+    startCommand: node index.js
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: canaryweather-db
+          property: host
+      - key: DB_USER
+        fromDatabase:
+          name: canaryweather-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: canaryweather-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: canaryweather-db
+          property: database
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_DIALECT
+        value: postgres
+      - key: DB_SSL
+        value: "true"
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: BACKEND_URL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY
+        sync: false
+      - key: VAPID_SUBJECT
+        sync: false
+      - key: GITHUB_MODELS_API_KEY
+        sync: false
+
+  - type: web
+    name: canaryweather-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install --legacy-peer-deps && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE
+        sync: false
+      - key: VITE_OPENWEATHER_API_KEY
+        sync: false

@@ -1,6 +1,6 @@
 # CanaryWeather Project Packages
 
-This document lists all the packages (dependencies) installed in the Canary Weather project. It explains what each package does and why it is used.
+This document lists all the packages (dependencies) installed in the canary-weather project. It explains what each package does and why it is used.
 
 Packages are organized by whether they are used in the frontend or backend.
 
@@ -110,23 +110,19 @@ The backend is built with Node.js and Express. These are the main packages used.
 
 ### Database
 
-- **sequelize** (^6.37.7): An ORM (Object-Relational Mapping) that provides an easier way to interact with the MySQL database. Instead of writing raw SQL, developers write JavaScript code that Sequelize converts to SQL.
+- **sequelize** (^6.37.7): An ORM (Object-Relational Mapping) that provides an easier way to interact with the PostgreSQL database. Instead of writing raw SQL, developers write JavaScript code that Sequelize converts to SQL.
 
-- **mysql2** (^3.15.3): The driver that allows Node.js to connect to and communicate with MySQL databases.
+- **pg** (^8.13.3): The driver that allows Node.js to connect to and communicate with PostgreSQL databases.
+
+- **pg-hstore** (^2.3.4): Serializes and deserializes JSON data to hstore format, used by Sequelize for PostgreSQL.
 
 - **sequelize-cli** (^6.6.0): Command-line tools for managing Sequelize migrations and seeders (for development).
 
-- **connect-session-sequelize** (^8.0.2): Stores user sessions in the database using Sequelize. Sessions are used to track logged-in users.
-
 ### Authentication and Security
 
-- **jsonwebtoken** (^9.0.2): Creates and verifies JWT tokens. JWTs are used to authenticate API requests after a user logs in.
+- **jsonwebtoken** (^9.0.2): Creates and verifies JWT tokens. JWTs are used to authenticate API requests after a user logs in. Both access tokens (15m) and refresh tokens (7d) are JWT-based.
 
-- **bcrypt** (^6.0.0): Hashes passwords securely. Passwords are never stored in plain text; they are hashed using bcrypt.
-
-- **express-session** (^1.18.2): Manages user sessions. Sessions track which users are logged in.
-
-- **ldapjs** (^3.0.7): Connects to LDAP servers for user authentication. The app uses LDAP to verify usernames and passwords.
+- **bcrypt** (^6.0.0): Hashes passwords securely. Passwords are never stored in plain text; they are hashed using bcrypt with 10 salt rounds.
 
 ### API Documentation
 
@@ -148,19 +144,23 @@ The backend is built with Node.js and Express. These are the main packages used.
 
 ### AI Integration
 
-- **groq-sdk** (^0.37.0): SDK for connecting to the Groq AI service. Used for AI-powered features like smart alerts or analysis.
+- **openai** (^6.14.0): SDK for connecting to AI services via OpenAI-compatible API. Used for AI-powered features.
 
 ### Utilities
 
-- **cors** (^2.8.5): Enables Cross-Origin Resource Sharing. Allows the frontend (different domain) to make requests to the backend API.
+- **cors** (^2.8.5): Enables Cross-Origin Resource Sharing. Required for cross-origin communication between the frontend and backend on Render.
 
 - **dotenv** (^17.2.3): Loads environment variables from a .env file. Used to store secrets like API keys and database passwords.
 
-- **ejs** (^3.1.10): Template engine for rendering HTML pages on the server. Used for email templates or server-rendered pages.
+- **ejs** (^3.1.10): Template engine for rendering HTML pages on the server. Used for the admin dashboard.
 
 - **socket.io** (^4.8.1): Real-time communication library. Enables live updates (like real-time notifications) between server and browser.
 
 - **xml2js** (^0.6.2): Converts XML data to JavaScript objects. Used when processing XML data from external sources.
+
+- **express-rate-limit** (^8.2.1): Rate limiting middleware. Protects authentication endpoints from brute force attacks.
+
+- **express-validator** (^7.3.1): Input validation middleware. Validates and sanitizes user input.
 
 ### Development Tools
 
@@ -172,30 +172,13 @@ The backend is built with Node.js and Express. These are the main packages used.
 
 ---
 
-## Dependency Resolution
-
-Both the frontend and backend use a "resolutions" section to fix security vulnerabilities in some dependencies. This ensures that even if sub-dependencies have weak versions, they are overridden with secure versions.
-
-Common packages kept secure:
-
-- **lodash**: Utility functions library (security patches applied).
-- **jsonwebtoken**: JWT library (security patches applied).
-- **express-jwt**: JWT middleware for Express (security patches applied).
-- **ws**: WebSocket library (security patches applied).
-- **qs**: Query string parser (security patches applied).
-
----
-
 ## Summary
 
 ### Frontend Focus
 The frontend uses React for the interface, Tailwind for styling, Leaflet for maps, and i18next for translations. It also includes Vite for fast building and testing tools like Vitest.
 
 ### Backend Focus
-The backend uses Express for the API, Sequelize for the database, JWT for authentication, LDAP for user verification, and Socket.IO for real-time updates. It also includes email and push notification services.
-
-### Shared Purpose
-Both frontend and backend have security-focused dependencies (bcrypt, jsonwebtoken) and are designed to work together as a full-stack weather application with maps, translations, alerts, and real-time notifications.
+The backend uses Express for the API, Sequelize for the database, JWT + bcrypt for authentication, and Socket.IO for real-time updates. It also includes email and push notification services.
 
 ---
 
@@ -215,20 +198,8 @@ To add a new package:
 npm install package-name
 ```
 
-To update packages to newer versions:
-
-```
-npm update
-```
-
 To check for security vulnerabilities:
 
 ```
 npm audit
-```
-
-To fix automatically fixable vulnerabilities:
-
-```
-npm audit fix
 ```

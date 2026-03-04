@@ -1,5 +1,5 @@
 import express from 'express';
-import { authenticateSession } from '../middleware/authMiddleware.js';
+import { authenticateToken } from '../middleware/authMiddleware.js';
 import { checkAdmin } from '../middleware/checkAdmin.js';
 import { ensureAdminAuthenticated } from '../middleware/adminAuthMiddleware.js';
 import {
@@ -27,7 +27,7 @@ const router = express.Router();
  * /admin:
  *   get:
  *     summary: Admin dashboard
- *     description: Access the admin dashboard (requires session authentication and admin privileges)
+ *     description: Access the admin dashboard (requires JWT authentication and admin privileges)
  *     tags: [Admin]
  *     responses:
  *       200:
@@ -37,7 +37,7 @@ const router = express.Router();
  *             schema:
  *               type: string
  *       401:
- *         description: Session authentication required
+ *         description: Authentication required
  *       403:
  *         description: Admin privileges required
  */
@@ -77,11 +77,11 @@ router.get('/', ensureAdminAuthenticated, getDashboard);
  *       201:
  *         description: POI created successfully
  *       401:
- *         description: Session authentication required
+ *         description: Authentication required
  *       403:
  *         description: Admin privileges required
  */
-router.post('/poi', authenticateSession, checkAdmin, validateCoordinates, createGlobalPOI);
+router.post('/poi', authenticateToken, checkAdmin, validateCoordinates, createGlobalPOI);
 
 /**
  * @swagger
@@ -121,13 +121,13 @@ router.post('/poi', authenticateSession, checkAdmin, validateCoordinates, create
  *       200:
  *         description: POI updated successfully
  *       401:
- *         description: Session authentication required
+ *         description: Authentication required
  *       403:
  *         description: Admin privileges required
  *       404:
  *         description: POI not found
  */
-router.post('/poi/:id/update', authenticateSession, checkAdmin, validateCoordinates, updatePOI);
+router.post('/poi/:id/update', authenticateToken, checkAdmin, validateCoordinates, updatePOI);
 
 /**
  * @swagger
@@ -148,13 +148,13 @@ router.post('/poi/:id/update', authenticateSession, checkAdmin, validateCoordina
  *       204:
  *         description: POI deleted successfully
  *       401:
- *         description: Session authentication required
+ *         description: Authentication required
  *       403:
  *         description: Admin privileges required
  *       404:
  *         description: POI not found
  */
-router.post('/poi/:id/delete', authenticateSession, checkAdmin, deletePOI);
+router.post('/poi/:id/delete', authenticateToken, checkAdmin, deletePOI);
 
 /**
  * @swagger
@@ -188,11 +188,11 @@ router.post('/poi/:id/delete', authenticateSession, checkAdmin, deletePOI);
  *       201:
  *         description: User created successfully
  *       401:
- *         description: Session authentication required
+ *         description: Authentication required
  *       403:
  *         description: Admin privileges required
  */
-router.post('/users', authenticateSession, checkAdmin, createUser);
+router.post('/users', authenticateToken, checkAdmin, createUser);
 
 /**
  * @swagger
@@ -230,13 +230,13 @@ router.post('/users', authenticateSession, checkAdmin, createUser);
  *       200:
  *         description: User updated successfully
  *       401:
- *         description: Session authentication required
+ *         description: Authentication required
  *       403:
  *         description: Admin privileges required
  *       404:
  *         description: User not found
  */
-router.post('/users/:id/update', authenticateSession, checkAdmin, updateUser);
+router.post('/users/:id/update', authenticateToken, checkAdmin, updateUser);
 
 /**
  * @swagger
@@ -257,12 +257,12 @@ router.post('/users/:id/update', authenticateSession, checkAdmin, updateUser);
  *       204:
  *         description: User deleted successfully
  *       401:
- *         description: Session authentication required
+ *         description: Authentication required
  *       403:
  *         description: Admin privileges required
  *       404:
  *         description: User not found
  */
-router.post('/users/:id/delete', authenticateSession, checkAdmin, deleteUser);
+router.post('/users/:id/delete', authenticateToken, checkAdmin, deleteUser);
 
 export default router;

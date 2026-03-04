@@ -140,7 +140,7 @@ export default function Footer() {
                         </h3>
                         <div className="flex gap-4">
                             <a
-                                href="https://github.com/aangelo21/canary_weather"
+                                href="https://github.com/aangelo21/canary-weather"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label="GitHub"

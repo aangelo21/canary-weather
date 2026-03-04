@@ -1,141 +1,119 @@
 # CanaryWeather Deployment Guide
 
-## DigitalOcean
+## Architecture Overview
 
-DigitalOcean is a cloud infrastructure provider that offers simple and scalable cloud computing solutions. Founded in 2011, it specializes in providing developer-friendly tools and services, including virtual servers, managed databases, storage, and networking. DigitalOcean is known for its user-friendly interface, competitive pricing, and focus on simplicity compared to larger cloud providers like AWS or Azure.
+CanaryWeather is deployed entirely on Render:
+- **Frontend**: Render Static Site (React + Vite)
+- **Backend**: Render Web Service (Node.js + Express API)
+- **Database**: Render PostgreSQL
 
-Key features of DigitalOcean include:
-- Easy-to-use control panel and API
-- Global data centers
-- Competitive pricing with transparent costs
-- Strong community and documentation
-- Support for popular technologies and frameworks
+---
 
-### Droplet/PM2
+## Frontend (Render Static Site)
 
-- **Update repositories**
+### Setup
 
-It is always important to update the repositories before continuing with the server configuration. Run the following command to update the VPS repositories:
+1. Create a new **Static Site** on Render
+2. Connect your GitHub repository
+3. Configure the project:
+   - **Root Directory**: `frontend`
+   - **Build Command**: `npm install && npm run build`
+   - **Publish Directory**: `dist`
 
-```bash 
-apt update && apt upgrade -y 
-``` 
+4. Set environment variables in Render dashboard:
+   ```
+   VITE_API_BASE=https://your-backend.onrender.com/api
+   VITE_OPENWEATHER_API_KEY=your_openweather_api_key
+   ```
 
-- **Install Git**
+5. Add a rewrite rule for SPA routing:
+   - **Source**: `/*`
+   - **Destination**: `/index.html`
+   - **Action**: Rewrite
 
-Run the following command to install Git:
+6. Deploy — Render will automatically build and deploy on every push to `main`
 
-```bash
-apt install git -y
-```
+---
 
-- **Clone the repository**
+## Backend (Render Web Service)
 
-```bash
-git clone https://github.com/aangelo21/canary_weather
-```
+### Setup
 
-- **Install Node.js & npm**
+1. Create a new **Web Service** on Render
+2. Connect your GitHub repository
+3. Configure:
+   - **Root Directory**: `backend`
+   - **Build Command**: `npm install`
+   - **Start Command**: `node index.js`
+   - **Environment**: Node
 
-In order to install the latest LTS version of Node.js and npm, we have to first install nvm:
+4. Set environment variables in Render dashboard:
+   ```
+   DB_HOST=your_render_db_host
+   DB_USER=your_user
+   DB_PASSWORD=your_password
+   DB_NAME=your_db_name
+   DB_PORT=5432
+   DB_DIALECT=postgres
+   JWT_SECRET=your_jwt_secret
+   FRONTEND_URL=https://your-frontend.onrender.com
+   BACKEND_URL=https://your-backend.onrender.com
+   NODE_ENV=production
+   RESEND_API_KEY=your_resend_api_key
+   VAPID_PUBLIC_KEY=your_public_key
+   VAPID_PRIVATE_KEY=your_private_key
+   VAPID_SUBJECT=your_subject
+   GITHUB_MODELS_API_KEY=your_api_key
+   ```
 
-```bash
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-```
+5. Render will auto-deploy on pushes to `main` and assigns a `PORT` env var automatically
 
-Restart the shell to apply the changes using:
+### Health Check
 
-```bash
-\. "$HOME/.nvm/nvm.sh"
-```
+Verify the backend is running: `GET https://your-backend.onrender.com/api/health`
 
-Then, install Node.js and npm using nvm:
+---
 
-```bash
-nvm install 24
-```
+## Database (Render PostgreSQL)
 
-To verify the installation of both Node.js and npm run:
+1. Create a new **PostgreSQL** database on Render
+2. Note the connection credentials (host, user, password, database name, port)
+3. The internal connection string is available in the Render dashboard
+4. Run migrations:
+   ```bash
+   cd backend
+   npx sequelize-cli db:migrate
+   ```
 
-```bash
-node -v
-npm -v
-```
-
-You should see something like this after you complete the last step
-
-![node-version](/docs/public/deployment/node-version.png)
-
-- **Install PM2**
-
-Since PM2 is a npm package, run the following command to install PM2:
-
-```bash
-npm install pm2 -g -y
-```
-
-- **Create .env**
-
-The frontend .env must look like this:
-
-```bash
-VITE_API_BASE=/api
-VITE_OPENWEATHER_API_KEY=your_api_key
-```
-
-The backend .env must look like this:
-
-```bash
-DB_HOST=yourhosthere
-DB_USER=youruserhere
-DB_PASSWORD=yourpasswordhere
-DB_NAME=yourdbnamehere
-DB_DIALECT=yourdialecthere
-DB_PORT=yourdbporthere
-DB_SSL=yoursslhere
-JWT_SECRET=yoursecretword
-```
-
-- **Run PM2**
-
-The project uses an `ecosystem.config.js` file to manage both frontend and backend processes with PM2. This configuration includes:
-- Proper log management
-- Environment variables from .env files
-- Frontend serving of built static files
-- Backend Node.js server
-
-To start both applications:
-
-```bash
-pm2 start ecosystem.config.js
-```
-
-This will start:
-- `canary-backend`: Backend API on port 85
-- `canary-frontend`: Frontend serving static files from dist/ on port 5173
-
-**Note:** Before running PM2, make sure to build the frontend:
-
-```bash
-cd frontend
-npm run build
-cd ..
-```
-
-### Database
-
-We have hosted our MySQL database on DigitalOcean as well. See the architecture and setup in [DIAGRAMS.md](./DIAGRAMS.md).
+---
 
 ## Sprint Deployments
 
-### Github
+### GitHub Workflow
 
-- Push the changes to the develop branch in github
-- Create a pull request to main and wait for approval
-- Once approved, create a release with the name tag corresponding to the version of the deployment
+1. Push changes to the `develop` branch
+2. Create a pull request to `main` and wait for approval
+3. Once merged, Render auto-deploys frontend and backend from `main`
+4. Create a release tag for the version
 
-### PM2 & droplet
+---
 
-- Run ``git pull origin main`` to ensure the latest changes are downloaded
-- Install the dependencies with ``npm i`` (in both /frontend and /backend directories)
-- Restart the pm2 services ``pm2 restart all`` (inside the project root folder, since ecosystem.config.js handles the pm2 restart the intended way)
+## Local Development
+
+### Backend
+```bash
+cd backend
+cp .env.example .env  # Edit with your local values
+npm install
+npm start
+```
+
+### Frontend
+```bash
+cd frontend
+cp .env.example .env  # Edit with your local values
+npm install
+npm run dev
+```
+
+The frontend dev server proxies `/api` requests to `http://localhost:10000` by default.
