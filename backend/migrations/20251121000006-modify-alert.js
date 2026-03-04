@@ -2,15 +2,15 @@
 
 module.exports = {
     up: async (queryInterface, Sequelize) => {
-        await queryInterface.removeColumn('Alerts', 'location_id');
+        await queryInterface.removeColumn('Alert', 'location_id');
     },
 
     down: async (queryInterface, Sequelize) => {
-        await queryInterface.addColumn('Alerts', 'location_id', {
+        await queryInterface.addColumn('Alert', 'location_id', {
             type: Sequelize.UUID,
             allowNull: false,
             references: {
-                model: 'Locations',
+                model: 'Location',
                 key: 'id',
             },
             onUpdate: 'CASCADE',

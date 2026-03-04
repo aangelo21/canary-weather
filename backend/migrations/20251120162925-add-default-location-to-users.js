@@ -2,7 +2,7 @@
 
 export default {
     async up(queryInterface, Sequelize) {
-        await queryInterface.addColumn('Users', 'default_location_id', {
+        await queryInterface.addColumn('User', 'default_location_id', {
             type: Sequelize.UUID,
             allowNull: true,
             references: {
@@ -15,6 +15,6 @@ export default {
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.removeColumn('Users', 'default_location_id');
+        await queryInterface.removeColumn('User', 'default_location_id');
     },
 };

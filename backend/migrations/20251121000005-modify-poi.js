@@ -2,21 +2,21 @@
 
 module.exports = {
     up: async (queryInterface, Sequelize) => {
-        await queryInterface.removeColumn('PointOfInterests', 'description');
-        await queryInterface.removeColumn('PointOfInterests', 'location_id');
+        await queryInterface.removeColumn('PointOfInterest', 'description');
+        await queryInterface.removeColumn('PointOfInterest', 'location_id');
     },
 
     down: async (queryInterface, Sequelize) => {
-        await queryInterface.addColumn('PointOfInterests', 'description', {
+        await queryInterface.addColumn('PointOfInterest', 'description', {
             type: Sequelize.TEXT,
             allowNull: true,
         });
 
-        await queryInterface.addColumn('PointOfInterests', 'location_id', {
+        await queryInterface.addColumn('PointOfInterest', 'location_id', {
             type: Sequelize.UUID,
             allowNull: true,
             references: {
-                model: 'Locations',
+                model: 'Location',
                 key: 'id',
             },
             onUpdate: 'CASCADE',
