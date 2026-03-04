@@ -40,12 +40,6 @@ jest.unstable_mockModule('../../controllers/dbController.js', () => ({
     },
 }));
 
-jest.unstable_mockModule('../../services/ldapService.js', () => ({
-    LdapService: {
-        getAllUsers: jest.fn(),
-    },
-}));
-
 jest.unstable_mockModule('sequelize', () => ({
     Op: {
         like: 'LIKE',

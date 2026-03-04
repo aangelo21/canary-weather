@@ -1,7 +1,6 @@
 import { User } from '../../models/index.js';
-import { LdapService } from '../ldapService.js';
 import { sendLoginNotification } from '../emailService.js';
-import { generateAccessToken } from './tokenService.js';
+import { generateAccessToken, generateRefreshToken } from './tokenService.js';
 import bcrypt from 'bcrypt';
 
 export const authenticateUser = async (username, password) => {
@@ -16,15 +15,9 @@ export const authenticateUser = async (username, password) => {
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
-    
+
     if (!isValidPassword) {
         throw new Error('Invalid username or password');
-    }
-
-    const ldapUser = await LdapService.getUserByUsername(username);
-
-    if (!ldapUser) {
-        throw new Error('User not found in LDAP');
     }
 
     if (user.email) {
@@ -32,6 +25,7 @@ export const authenticateUser = async (username, password) => {
     }
 
     const token = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
 
     return {
         user: {
@@ -42,19 +36,10 @@ export const authenticateUser = async (username, password) => {
             is_admin: user.is_admin,
         },
         token,
+        refreshToken,
     };
 };
 
 export const refreshUserToken = (user) => {
     return generateAccessToken(user);
-};
-
-export const createSessionData = (user) => {
-    return {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        profile_picture_url: user.profile_picture_url,
-        is_admin: user.is_admin,
-    };
 };

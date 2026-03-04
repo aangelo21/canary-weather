@@ -5,9 +5,9 @@ import {
     UserLocation,
     User,
 } from '../models/index.js';
-import { LdapService } from '../services/ldapService.js';
 import { Op } from 'sequelize';
 import sequelize from './dbController.js';
+import bcrypt from 'bcrypt';
 
 export const getDashboard = async (req, res) => {
     try {
@@ -187,16 +187,13 @@ export const createUser = async (req, res) => {
     try {
         const { username, email, password, is_admin } = req.body;
 
-        await LdapService.createUser(
-            username,
-            email,
-            password,
-            is_admin === 'on',
-        );
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
         await User.create({
             username,
             email,
+            password: hashedPassword,
             is_admin: is_admin === 'on',
         });
 
@@ -230,7 +227,6 @@ export const deleteUser = async (req, res) => {
         const user = await User.findByPk(id);
 
         if (user) {
-            await LdapService.deleteUser(user.username);
             await user.destroy();
         }
 

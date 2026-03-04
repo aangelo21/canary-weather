@@ -6,7 +6,7 @@ This document explains the database structure, tables, relationships, and how da
 
 ## Overview
 
-The CanaryWeather application uses MySQL as its relational database management system. The database stores all application data including users, weather alerts, points of interest, notifications, and user preferences.
+The CanaryWeather application uses PostgreSQL as its relational database management system, hosted on Render. The database stores all application data including users, weather alerts, points of interest, notifications, and user preferences.
 
 **Database Name**: canaryweather
 
@@ -16,23 +16,14 @@ The CanaryWeather application uses MySQL as its relational database management s
 
 ### Data Storage Strategy
 
-The system uses a hybrid approach for data management:
-
-**LDAP Storage** (User Credentials):
-- Usernames and passwords
-- Admin status
-- Email addresses
-
-**MySQL Storage** (Application Data):
+All data is stored in PostgreSQL:
+- User accounts (with bcrypt-hashed passwords)
 - User preferences
 - Weather alerts
 - Points of interest
 - Notifications
 - User locations
-- Sessions
 - User-POI relationships
-
-This separation ensures security by keeping sensitive credentials separate from application data.
 
 ---
 
@@ -40,11 +31,13 @@ This separation ensures security by keeping sensitive credentials separate from 
 
 ### 1. Users Table
 
-**Purpose**: Stores user profile information and preferences
+**Purpose**: Stores user accounts and profile information
 
 **Column Details**:
-- `id` (String, Primary Key): Username from LDAP
+- `id` (UUID, Primary Key): Unique user identifier
 - `email` (String): User email address
+- `username` (String): User display name
+- `password` (String): Bcrypt-hashed password
 - `profile_picture_url` (String, Nullable): Path to profile image
 - `is_admin` (Boolean): Admin privileges flag
 - `createdAt` (DateTime): Account creation date
@@ -237,30 +230,6 @@ This separation ensures security by keeping sensitive credentials separate from 
 
 ---
 
-### 8. Sessions Table
-
-**Purpose**: Stores user session data for authentication
-
-**Column Details**:
-- `sid` (String, Primary Key): Session identifier
-- `expires` (DateTime): When session expires
-- `data` (JSON): Session data
-
-**Example Data**:
-```
-| sid                    | expires    | data                                    |
-|------------------------|------------|----------------------------------------|
-| abc123def456           | 2024-01-22 | {"user": {"id": "johndoe", ...}}      |
-```
-
-**Purpose**: Manages user login sessions across requests
-
-**Relationships**:
-- One session belongs to one user
-- Sessions are temporary and auto-delete when expired
-
----
-
 ## Table Relationships
 
 ### Relationship Diagram
@@ -422,10 +391,6 @@ Used for: fixed set of values
 - Must belong to an existing user
 - Deleting user also deletes their notifications
 
-### Rule 4: Sessions Auto-Expire
-- Sessions are automatically deleted when expired
-- Prevents accumulation of old session data
-
 ---
 
 ## Backup and Recovery
@@ -449,7 +414,7 @@ If data is corrupted or lost:
 ### Regular Tasks
 - Check database size and growth
 - Monitor query performance
-- Clean up old expired sessions
+- Clean up old expired data
 - Verify backup completion
 - Check for errors in logs
 
@@ -465,20 +430,19 @@ If data is corrupted or lost:
 ### Development Environment
 ```
 Host: localhost
-Port: 3306
+Port: 5432
 Database: canaryweather
-User: root
+User: postgres
 Password: (from .env file)
 ```
 
 ### Production Environment
 ```
-Host: (DigitalOcean database host)
-Port: 3306
-Database: canaryweather
+Host: (Render PostgreSQL internal host)
+Port: 5432
+Database: (from environment variables)
 User: (from environment variables)
 Password: (from environment variables)
-SSL: Enabled
 ```
 
 ### Environment Variables (.env)
@@ -487,9 +451,8 @@ DB_HOST=database_host
 DB_USER=database_user
 DB_PASSWORD=database_password
 DB_NAME=canaryweather
-DB_DIALECT=mysql
-DB_PORT=3306
-DB_SSL=true
+DB_PORT=5432
+DB_DIALECT=postgres
 ```
 
 ---
@@ -526,14 +489,12 @@ When you need to change the database structure:
 ## Security
 
 ### Password Storage
-- Passwords NOT stored in this database
-- Stored in LDAP system
-- This database never handles passwords
+- Passwords hashed with bcrypt before storage
+- Never stored in plain text
 
 ### Data Encryption
-- Sensitive data encrypted before storage
-- Connection to database uses SSL/TLS
 - Passwords passed through environment variables (not code)
+- SSL available if database requires it
 
 ### Access Control
 - Database credentials not in version control
@@ -582,9 +543,8 @@ When you need to change the database structure:
 ## Summary
 
 The CanaryWeather database:
-- Stores all application data in MySQL
-- Uses 8 main tables with clear relationships
-- Separates user credentials (LDAP) from application data
+- Stores all application data in PostgreSQL (including user credentials with bcrypt)
+- Uses 7 main tables with clear relationships
 - Includes security measures for data protection
 - Maintains data integrity through constraints
 - Provides fast access through indexes

@@ -2,16 +2,10 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const DB_HOST = process.env.DB_HOST || process.env.DB_URL || '127.0.0.1';
-const DB_PORT = parseInt(process.env.DB_PORT || '3306', 10);
-const DB_NAME = process.env.DB_NAME || process.env.MYSQL_DATABASE || 'database';
-const DB_USER = process.env.DB_USERNAME || process.env.DB_USER || 'root';
+const DB_PORT = parseInt(process.env.DB_PORT || '5432', 10);
+const DB_NAME = process.env.DB_NAME || 'canaryweather';
+const DB_USER = process.env.DB_USERNAME || process.env.DB_USER || 'postgres';
 const DB_PASS = process.env.DB_PASSWORD || null;
-
-console.log('=== Config.cjs Debug ===');
-console.log('DB_HOST:', DB_HOST);
-console.log('DB_PORT:', DB_PORT);
-console.log('DB_NAME:', DB_NAME);
-console.log('========================');
 
 module.exports = {
     development: {
@@ -20,7 +14,7 @@ module.exports = {
         database: DB_NAME,
         host: DB_HOST,
         port: DB_PORT,
-        dialect: process.env.DB_DIALECT || 'mysql',
+        dialect: process.env.DB_DIALECT || 'postgres',
     },
     test: {
         username: DB_USER,
@@ -28,7 +22,7 @@ module.exports = {
         database: DB_NAME,
         host: DB_HOST,
         port: DB_PORT,
-        dialect: process.env.DB_DIALECT || 'mysql',
+        dialect: process.env.DB_DIALECT || 'postgres',
     },
     production: {
         username: DB_USER,
@@ -36,6 +30,6 @@ module.exports = {
         database: DB_NAME,
         host: DB_HOST,
         port: DB_PORT,
-        dialect: process.env.DB_DIALECT || 'mysql',
+        dialect: process.env.DB_DIALECT || 'postgres',
     },
 };

@@ -4,16 +4,23 @@ module.exports = {
     async up(queryInterface, Sequelize) {
         const dropForeignKey = async (tableName, columnName) => {
             const [results] = await queryInterface.sequelize.query(
-                `SELECT CONSTRAINT_NAME
-         FROM information_schema.KEY_COLUMN_USAGE
-         WHERE TABLE_NAME = '${tableName}'
-         AND COLUMN_NAME = '${columnName}'
-         AND REFERENCED_TABLE_NAME IS NOT NULL;`,
+                `SELECT tc.constraint_name
+         FROM information_schema.table_constraints tc
+         JOIN information_schema.constraint_column_usage ccu
+           ON tc.constraint_name = ccu.constraint_name
+           AND tc.table_schema = ccu.table_schema
+         WHERE tc.table_name = '${tableName}'
+         AND tc.constraint_type = 'FOREIGN KEY'
+         AND EXISTS (
+           SELECT 1 FROM information_schema.key_column_usage kcu
+           WHERE kcu.constraint_name = tc.constraint_name
+           AND kcu.column_name = '${columnName}'
+         );`,
             );
 
             if (results && results.length > 0) {
                 for (const row of results) {
-                    const constraintName = row.CONSTRAINT_NAME;
+                    const constraintName = row.constraint_name;
                     console.log(
                         `Dropping constraint ${constraintName} on ${tableName}`,
                     );
@@ -32,17 +39,6 @@ module.exports = {
                 console.log(
                     `No foreign key found for ${tableName}.${columnName}`,
                 );
-                const commonNames = [
-                    `${tableName}_${columnName}_foreign_idx`,
-                    `${tableName}_ibfk_1`,
-                    `${tableName}_ibfk_2`,
-                    `${tableName}_ibfk_321`,
-                ];
-                for (const name of commonNames) {
-                    try {
-                        await queryInterface.removeConstraint(tableName, name);
-                    } catch (e) {}
-                }
             }
         };
 

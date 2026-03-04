@@ -6,9 +6,8 @@ import {
     PointOfInterest,
     UserProfile,
 } from '../../models/index.js';
-import { LdapService } from '../ldapService.js';
 import { sendWelcomeEmail, sendContactEmail } from '../emailService.js';
-import { generateAccessToken } from '../auth/tokenService.js';
+import { generateAccessToken, generateRefreshToken } from '../auth/tokenService.js';
 import { Op } from 'sequelize';
 import bcrypt from 'bcrypt';
 import fs from 'fs';
@@ -59,13 +58,6 @@ export const registerUser = async (userData) => {
         throw new Error('El usuario ya existe');
     }
 
-    const ldapUserExists = await LdapService.userExists(username);
-    if (ldapUserExists) {
-        throw new Error('El usuario ya existe en LDAP');
-    }
-
-    const ldapResult = await LdapService.createUser(username, email);
-
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -73,7 +65,6 @@ export const registerUser = async (userData) => {
         username,
         email,
         password: hashedPassword,
-        ldap_id: ldapResult.ldapId,
         is_admin: false,
     });
 
@@ -84,6 +75,7 @@ export const registerUser = async (userData) => {
     }
 
     const token = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
 
     return {
         user: {
@@ -94,6 +86,7 @@ export const registerUser = async (userData) => {
             is_admin: user.is_admin,
         },
         token,
+        refreshToken,
     };
 };
 

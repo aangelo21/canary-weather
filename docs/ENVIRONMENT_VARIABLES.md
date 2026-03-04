@@ -1,6 +1,6 @@
 # CanaryWeather Environment Variables
 
-This document describes all environment variables used in the Canary Weather application. These are the real variables from the project, with sensitive values redacted for security.
+This document describes all environment variables used in the canary-weather application.
 
 ---
 
@@ -8,43 +8,52 @@ This document describes all environment variables used in the Canary Weather app
 
 ```
 # API Configuration
-VITE_API_BASE=/api
+VITE_API_BASE=http://localhost:10000/api  # In production (Render): https://your-backend.onrender.com/api
 
 # Weather API
-VITE_OPENWEATHER_API_KEY=secret_value
+VITE_OPENWEATHER_API_KEY=your_openweather_api_key
 ```
 
 ## Backend
 
 ```
-# Database Configuration
-DB_HOST=db-mysql-lon1-75034-do-user-27863084-0.j.db.ondigitalocean.com
-DB_USER=doadmin
-DB_PASSWORD=secret_value
-DB_NAME=defaultdb
-DB_DIALECT=mysql
-DB_PORT=25060
-DB_SSL=REQUIRED
+# Database (Render PostgreSQL in production)
+DB_HOST=your_render_db_host
+DB_USER=your_user
+DB_PASSWORD=your_password
+DB_NAME=your_db_name
+DB_PORT=5432
+DB_DIALECT=postgres
 
 # Authentication
-JWT_SECRET=secret_value
+JWT_SECRET=your_jwt_secret
 
-# Frontend URL
-FRONTEND_URL=http://localhost:5173 or https://canaryweather.xyz
-NODE_ENV=development or production
-
-# LDAP Configuration
-LDAP_ADMIN_DN=cn=admin,dc=canaryweather,dc=xyz
-LDAP_ADMIN_PASSWORD=secret_value
+# URLs
+FRONTEND_URL=https://your-frontend.onrender.com
+BACKEND_URL=https://your-backend.onrender.com
+NODE_ENV=production
 
 # Email Service
-RESEND_API_KEY=secret_value
+RESEND_API_KEY=your_resend_api_key
 
-# VAPID Keys
-VAPID_PUBLIC_KEY=secret_value
-VAPID_PRIVATE_KEY=secret_value
-VAPID_SUBJECT=mailto:admin@canaryweather.xyz
+# Push Notifications (VAPID keys)
+VAPID_PUBLIC_KEY=your_public_key
+VAPID_PRIVATE_KEY=your_private_key
+VAPID_SUBJECT=mailto:your_email
 
 # AI Configuration
-GROQ_API_KEY=secret_value
+GITHUB_MODELS_API_KEY=your_api_key
+```
+
+### Optional Variables
+
+```
+# Database connection pool
+DB_POOL_MAX=10
+DB_POOL_MIN=0
+DB_POOL_ACQUIRE=30000
+DB_POOL_IDLE=10000
+
+# Database logging
+DB_LOGGING=true
 ```

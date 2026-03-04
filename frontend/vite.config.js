@@ -63,29 +63,24 @@ export default defineConfig({
         },
     },
     server: {
-        allowedHosts: ['canaryweather.xyz'],
-        hmr: {
-            host: 'canaryweather.xyz',
-            clientPort: 443,
-        },
         proxy: {
             '/api': {
-                target: 'http://localhost:85',
+                target: 'http://localhost:10000',
                 changeOrigin: true,
                 secure: false,
             },
             '/uploads': {
-                target: 'http://localhost:85',
+                target: 'http://localhost:10000',
                 changeOrigin: true,
                 secure: false,
             },
             '/admin': {
-                target: 'http://localhost:85',
+                target: 'http://localhost:10000',
                 changeOrigin: true,
                 secure: false,
             },
             '/api-docs': {
-                target: 'http://localhost:85',
+                target: 'http://localhost:10000',
                 changeOrigin: true,
                 secure: false,
             },
@@ -94,22 +89,22 @@ export default defineConfig({
     preview: {
         proxy: {
             '/api': {
-                target: 'http://localhost:85',
+                target: 'http://localhost:10000',
                 changeOrigin: true,
                 secure: false,
             },
             '/uploads': {
-                target: 'http://localhost:85',
+                target: 'http://localhost:10000',
                 changeOrigin: true,
                 secure: false,
             },
             '/admin': {
-                target: 'http://localhost:85',
+                target: 'http://localhost:10000',
                 changeOrigin: true,
                 secure: false,
             },
             '/api-docs': {
-                target: 'http://localhost:85',
+                target: 'http://localhost:10000',
                 changeOrigin: true,
                 secure: false,
             },

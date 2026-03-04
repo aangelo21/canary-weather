@@ -72,7 +72,6 @@ const ResetPassword = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ token, newPassword: password }),
-                credentials: 'include',
             });
 
             const data = await response.json();

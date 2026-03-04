@@ -36,20 +36,9 @@ export const resetPassword = async (req, res) => {
 
         const result = await resetUserPassword(token, newPassword);
 
-        if (!result.autoLogin) {
-            return res.json({ message: result.message });
-        }
-
-        res.cookie('token', result.token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            maxAge: 24 * 60 * 60 * 1000,
-        });
-
         return res.json({
             message: result.message,
-            token: result.token,
-            user: result.user,
+            ...(result.autoLogin && { token: result.token, user: result.user }),
         });
     } catch (err) {
         console.error('Reset password error:', err);

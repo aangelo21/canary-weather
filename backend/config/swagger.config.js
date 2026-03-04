@@ -34,7 +34,7 @@ const options = {
                 description: 'Development server',
             },
             {
-                url: process.env.FRONTEND_URL || 'https://canaryweather.xyz',
+                url: process.env.BACKEND_URL || 'https://canaryweather.xyz',
                 description: 'Production server',
             },
         ],
@@ -221,7 +221,7 @@ const options = {
             {
                 name: 'Authentication',
                 description:
-                    'User authentication and authorization endpoints (LDAP-based)',
+                    'User authentication and authorization endpoints',
             },
             {
                 name: 'Users',

@@ -40,7 +40,6 @@ const authLimiter = rateLimit({
 const router = express.Router();
 
 import {
-    authenticateSession,
     authenticateToken,
 } from '../middleware/authMiddleware.js';
 
@@ -108,7 +107,7 @@ router.post('/login', authLimiter, loginUser);
  * /api/users/logout:
  *   post:
  *     summary: Logout user
- *     description: Destroy user session and clear cookies
+ *     description: Logout the current user (client-side token cleanup)
  *     tags: [Authentication]
  *     responses:
  *       200:
@@ -277,7 +276,7 @@ router.get('/municipalities', getMunicipalities);
  * /api/users/refresh-token:
  *   post:
  *     summary: Refresh JWT token
- *     description: Generate a new JWT token using session authentication
+ *     description: Generate a new JWT access token using a refresh token
  *     tags: [Authentication]
  *     responses:
  *       200:
@@ -291,13 +290,13 @@ router.get('/municipalities', getMunicipalities);
  *                   type: string
  *                   description: New JWT token (valid for 15 minutes)
  *       401:
- *         description: Session authentication required
+ *         description: Invalid or missing refresh token
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/refresh-token', authenticateSession, refreshToken);
+router.post('/refresh-token', refreshToken);
 
 /**
  * @swagger

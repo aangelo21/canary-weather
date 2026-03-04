@@ -11,10 +11,9 @@ let ioInstance = null;
 
 
 const ALLOWED_ORIGINS = [
-    'http://localhost:5173', 
-    'http://134.209.22.118:5173', 
-    'https://canaryweather.xyz', 
-];
+    'http://localhost:5173',
+    process.env.FRONTEND_URL,
+].filter(Boolean);
 
 
 export function getIO() {
