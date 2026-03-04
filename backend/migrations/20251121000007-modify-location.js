@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = {
+export default {
     up: async (queryInterface, Sequelize) => {
         await queryInterface.removeColumn('Location', 'is_coastal');
         await queryInterface.removeColumn('Location', 'coast_code_id');

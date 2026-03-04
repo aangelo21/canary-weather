@@ -1,22 +1,22 @@
 'use strict';
 
-module.exports = {
+export default {
     up: async (queryInterface, Sequelize) => {
-        await queryInterface.addColumn('UserLocations', 'id', {
+        await queryInterface.addColumn('UserLocation', 'id', {
             type: Sequelize.UUID,
             defaultValue: Sequelize.UUIDV4,
             allowNull: false,
         });
 
-        await queryInterface.removeConstraint('UserLocations', 'PRIMARY');
+        await queryInterface.removeConstraint('UserLocation', 'PRIMARY');
 
-        await queryInterface.addConstraint('UserLocations', {
+        await queryInterface.addConstraint('UserLocation', {
             fields: ['id'],
             type: 'primary key',
             name: 'UserLocations_pkey',
         });
 
-        await queryInterface.addConstraint('UserLocations', {
+        await queryInterface.addConstraint('UserLocation', {
             fields: ['user_id', 'location_id'],
             type: 'unique',
             name: 'user_location_unique',
@@ -25,20 +25,20 @@ module.exports = {
 
     down: async (queryInterface, Sequelize) => {
         await queryInterface.removeConstraint(
-            'UserLocations',
+            'UserLocation',
             'UserLocations_pkey',
         );
         await queryInterface.removeConstraint(
-            'UserLocations',
+            'UserLocation',
             'user_location_unique',
         );
 
-        await queryInterface.addConstraint('UserLocations', {
+        await queryInterface.addConstraint('UserLocation', {
             fields: ['user_id', 'location_id'],
             type: 'primary key',
             name: 'PRIMARY',
         });
 
-        await queryInterface.removeColumn('UserLocations', 'id');
+        await queryInterface.removeColumn('UserLocation', 'id');
     },
 };
