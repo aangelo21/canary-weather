@@ -110,11 +110,11 @@ app.get('/api/health', (req, res) => {
     try {
         await sequelize.authenticate();
 
-        await sequelize.query('SET session_replication_role = replica');
-
-        await sequelize.sync();
-
-        await sequelize.query('SET session_replication_role = DEFAULT');
+        if (process.env.NODE_ENV !== 'production') {
+            await sequelize.query('SET session_replication_role = replica');
+            await sequelize.sync();
+            await sequelize.query('SET session_replication_role = DEFAULT');
+        }
 
         const server = http.createServer(app);
 
