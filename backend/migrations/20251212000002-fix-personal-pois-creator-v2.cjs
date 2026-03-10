@@ -4,7 +4,7 @@ module.exports = {
     up: async (queryInterface, Sequelize) => {
         await queryInterface.sequelize.query(`
             UPDATE "PointOfInterest"
-            SET created_by = upi.user_id
+            SET created_by = upi.user_id::uuid
             FROM "UserPointOfInterest" upi
             WHERE "PointOfInterest".id = upi.point_of_interest_id
             AND "PointOfInterest".type = 'personal'
