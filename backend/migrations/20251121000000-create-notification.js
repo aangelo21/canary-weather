@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = {
+export default {
     up: async (queryInterface, Sequelize) => {
         await queryInterface.createTable('Notifications', {
             id: {
@@ -26,7 +26,7 @@ module.exports = {
                 type: Sequelize.UUID,
                 allowNull: false,
                 references: {
-                    model: 'Users',
+                    model: 'User',
                     key: 'id',
                 },
                 onUpdate: 'CASCADE',
@@ -36,7 +36,7 @@ module.exports = {
                 type: Sequelize.UUID,
                 allowNull: true,
                 references: {
-                    model: 'Alerts',
+                    model: 'Alert',
                     key: 'id',
                 },
                 onUpdate: 'CASCADE',

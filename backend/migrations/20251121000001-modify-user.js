@@ -1,20 +1,20 @@
 'use strict';
 
-module.exports = {
+export default {
     up: async (queryInterface, Sequelize) => {
-        await queryInterface.addColumn('Users', 'is_admin', {
+        await queryInterface.addColumn('User', 'is_admin', {
             type: Sequelize.BOOLEAN,
             defaultValue: false,
             allowNull: false,
         });
 
-        await queryInterface.removeColumn('Users', 'default_location_id');
+        await queryInterface.removeColumn('User', 'default_location_id');
     },
 
     down: async (queryInterface, Sequelize) => {
-        await queryInterface.removeColumn('Users', 'is_admin');
+        await queryInterface.removeColumn('User', 'is_admin');
 
-        await queryInterface.addColumn('Users', 'default_location_id', {
+        await queryInterface.addColumn('User', 'default_location_id', {
             type: Sequelize.UUID,
             allowNull: true,
         });

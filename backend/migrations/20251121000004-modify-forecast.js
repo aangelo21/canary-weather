@@ -1,75 +1,75 @@
 'use strict';
 
-module.exports = {
+export default {
     up: async (queryInterface, Sequelize) => {
-        await queryInterface.addColumn('Forecasts', 'condition', {
+        await queryInterface.addColumn('Forecast', 'condition', {
             type: Sequelize.STRING,
             allowNull: true,
         });
 
-        await queryInterface.addColumn('Forecasts', 'humidity', {
+        await queryInterface.addColumn('Forecast', 'humidity', {
             type: Sequelize.INTEGER,
             allowNull: true,
         });
 
-        await queryInterface.addColumn('Forecasts', 'air_pressure', {
+        await queryInterface.addColumn('Forecast', 'air_pressure', {
             type: Sequelize.INTEGER,
             allowNull: true,
         });
 
-        await queryInterface.addColumn('Forecasts', 'wind_speed', {
+        await queryInterface.addColumn('Forecast', 'wind_speed', {
             type: Sequelize.DOUBLE,
             allowNull: true,
         });
 
-        await queryInterface.addColumn('Forecasts', 'poi_id', {
+        await queryInterface.addColumn('Forecast', 'poi_id', {
             type: Sequelize.UUID,
             allowNull: true,
             references: {
-                model: 'PointOfInterests',
+                model: 'PointOfInterest',
                 key: 'id',
             },
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE',
         });
 
-        await queryInterface.removeColumn('Forecasts', 'wind');
-        await queryInterface.removeColumn('Forecasts', 'rain_probability');
-        await queryInterface.removeColumn('Forecasts', 'date_time');
-        await queryInterface.removeColumn('Forecasts', 'location_id');
+        await queryInterface.removeColumn('Forecast', 'wind');
+        await queryInterface.removeColumn('Forecast', 'rain_probability');
+        await queryInterface.removeColumn('Forecast', 'date_time');
+        await queryInterface.removeColumn('Forecast', 'location_id');
     },
 
     down: async (queryInterface, Sequelize) => {
-        await queryInterface.addColumn('Forecasts', 'wind', {
+        await queryInterface.addColumn('Forecast', 'wind', {
             type: Sequelize.STRING,
             allowNull: true,
         });
 
-        await queryInterface.addColumn('Forecasts', 'rain_probability', {
+        await queryInterface.addColumn('Forecast', 'rain_probability', {
             type: Sequelize.DOUBLE,
             allowNull: true,
         });
 
-        await queryInterface.addColumn('Forecasts', 'date_time', {
+        await queryInterface.addColumn('Forecast', 'date_time', {
             type: Sequelize.DATE,
             allowNull: false,
         });
 
-        await queryInterface.addColumn('Forecasts', 'location_id', {
+        await queryInterface.addColumn('Forecast', 'location_id', {
             type: Sequelize.UUID,
             allowNull: false,
             references: {
-                model: 'Locations',
+                model: 'Location',
                 key: 'id',
             },
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE',
         });
 
-        await queryInterface.removeColumn('Forecasts', 'condition');
-        await queryInterface.removeColumn('Forecasts', 'humidity');
-        await queryInterface.removeColumn('Forecasts', 'air_pressure');
-        await queryInterface.removeColumn('Forecasts', 'wind_speed');
-        await queryInterface.removeColumn('Forecasts', 'poi_id');
+        await queryInterface.removeColumn('Forecast', 'condition');
+        await queryInterface.removeColumn('Forecast', 'humidity');
+        await queryInterface.removeColumn('Forecast', 'air_pressure');
+        await queryInterface.removeColumn('Forecast', 'wind_speed');
+        await queryInterface.removeColumn('Forecast', 'poi_id');
     },
 };

@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = {
+export default {
     async up(queryInterface, Sequelize) {
         await queryInterface.createTable('UserLocation', {
             user_id: {

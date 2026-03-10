@@ -1,25 +1,25 @@
 'use strict';
 
-module.exports = {
+export default {
     up: async (queryInterface, Sequelize) => {
-        await queryInterface.addColumn('UserPointOfInterests', 'id', {
+        await queryInterface.addColumn('UserPointOfInterest', 'id', {
             type: Sequelize.UUID,
             defaultValue: Sequelize.UUIDV4,
             allowNull: false,
         });
 
         await queryInterface.removeConstraint(
-            'UserPointOfInterests',
+            'UserPointOfInterest',
             'PRIMARY',
         );
 
-        await queryInterface.addConstraint('UserPointOfInterests', {
+        await queryInterface.addConstraint('UserPointOfInterest', {
             fields: ['id'],
             type: 'primary key',
             name: 'UserPointOfInterests_pkey',
         });
 
-        await queryInterface.addConstraint('UserPointOfInterests', {
+        await queryInterface.addConstraint('UserPointOfInterest', {
             fields: ['user_id', 'point_of_interest_id'],
             type: 'unique',
             name: 'user_poi_unique',
@@ -28,20 +28,20 @@ module.exports = {
 
     down: async (queryInterface, Sequelize) => {
         await queryInterface.removeConstraint(
-            'UserPointOfInterests',
+            'UserPointOfInterest',
             'UserPointOfInterests_pkey',
         );
         await queryInterface.removeConstraint(
-            'UserPointOfInterests',
+            'UserPointOfInterest',
             'user_poi_unique',
         );
 
-        await queryInterface.addConstraint('UserPointOfInterests', {
+        await queryInterface.addConstraint('UserPointOfInterest', {
             fields: ['user_id', 'point_of_interest_id'],
             type: 'primary key',
             name: 'PRIMARY',
         });
 
-        await queryInterface.removeColumn('UserPointOfInterests', 'id');
+        await queryInterface.removeColumn('UserPointOfInterest', 'id');
     },
 };
