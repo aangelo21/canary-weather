@@ -10,9 +10,9 @@ export async function up(queryInterface, Sequelize) {
 
     
     await queryInterface.sequelize.query(`
-    UPDATE PointOfInterest
+    UPDATE "PointOfInterest"
     SET type = CASE
-      WHEN is_global = 1 THEN 'global'
+      WHEN is_global = true THEN 'global'
       ELSE 'local'
     END
   `);
