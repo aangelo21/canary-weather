@@ -119,7 +119,7 @@ async function seed() {
             name: p.name,
             latitude: p.latitude,
             longitude: p.longitude,
-            description: p.description || null,
+
             is_global: true,
             type: 'global',
         };
@@ -134,7 +134,7 @@ async function seed() {
             await poi.update({
                 latitude: p.latitude,
                 longitude: p.longitude,
-                description: p.description || null,
+    
                 is_global: true,
                 type: 'global',
             });

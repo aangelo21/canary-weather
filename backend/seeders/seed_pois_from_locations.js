@@ -18,7 +18,7 @@ async function seed() {
                 defaults: {
                     latitude: location.latitude,
                     longitude: location.longitude,
-                    description: `Municipio de ${location.name}. Información meteorológica y puntos de interés locales.`,
+
                     is_global: false,
                     type: 'local',
                 },
@@ -31,7 +31,7 @@ async function seed() {
                 await poi.update({
                     latitude: location.latitude,
                     longitude: location.longitude,
-                    description: `Municipio de ${location.name}. Información meteorológica y puntos de interés locales.`,
+
                     is_global: false,
                     type: 'local',
                 });
