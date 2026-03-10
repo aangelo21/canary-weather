@@ -8,7 +8,7 @@ export default {
             allowNull: false,
         });
 
-        await queryInterface.removeConstraint('UserLocation', 'PRIMARY');
+        await queryInterface.removeConstraint('UserLocation', 'UserLocation_pkey');
 
         await queryInterface.addConstraint('UserLocation', {
             fields: ['id'],
@@ -36,7 +36,7 @@ export default {
         await queryInterface.addConstraint('UserLocation', {
             fields: ['user_id', 'location_id'],
             type: 'primary key',
-            name: 'PRIMARY',
+            name: 'UserLocation_pkey',
         });
 
         await queryInterface.removeColumn('UserLocation', 'id');

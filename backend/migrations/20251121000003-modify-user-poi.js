@@ -10,7 +10,7 @@ export default {
 
         await queryInterface.removeConstraint(
             'UserPointOfInterest',
-            'PRIMARY',
+            'UserPointOfInterest_pkey',
         );
 
         await queryInterface.addConstraint('UserPointOfInterest', {
@@ -39,7 +39,7 @@ export default {
         await queryInterface.addConstraint('UserPointOfInterest', {
             fields: ['user_id', 'point_of_interest_id'],
             type: 'primary key',
-            name: 'PRIMARY',
+            name: 'UserPointOfInterest_pkey',
         });
 
         await queryInterface.removeColumn('UserPointOfInterest', 'id');

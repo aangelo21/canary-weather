@@ -2,13 +2,15 @@ import { DataTypes } from 'sequelize';
 
 
 export async function up(queryInterface, Sequelize) {
-    await queryInterface.addColumn('PointOfInterest', 'type', {
-        type: Sequelize.ENUM('global', 'local', 'personal'),
-        allowNull: false,
-        defaultValue: 'local',
-    });
+    const tableDesc = await queryInterface.describeTable('PointOfInterest');
+    if (!tableDesc.type) {
+        await queryInterface.addColumn('PointOfInterest', 'type', {
+            type: Sequelize.ENUM('global', 'local', 'personal'),
+            allowNull: false,
+            defaultValue: 'local',
+        });
+    }
 
-    
     await queryInterface.sequelize.query(`
     UPDATE "PointOfInterest"
     SET type = CASE
