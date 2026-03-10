@@ -13,10 +13,10 @@ export async function up(queryInterface, Sequelize) {
 
     await queryInterface.sequelize.query(`
     UPDATE "PointOfInterest"
-    SET type = CASE
+    SET type = (CASE
       WHEN is_global = true THEN 'global'
       ELSE 'local'
-    END
+    END)::"enum_PointOfInterest_type"
   `);
 }
 

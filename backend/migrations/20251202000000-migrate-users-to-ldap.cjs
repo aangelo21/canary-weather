@@ -46,7 +46,7 @@ module.exports = {
 
         await dropForeignKey('UserPointOfInterest', 'user_id');
 
-        await dropForeignKey('Notification', 'user_id');
+        await dropForeignKey('Notifications', 'user_id');
 
         const changeCol = async (tableName) => {
             try {
@@ -65,7 +65,7 @@ module.exports = {
 
         await changeCol('UserLocation');
         await changeCol('UserPointOfInterest');
-        await changeCol('Notification');
+        await changeCol('Notifications');
     },
 
     async down(queryInterface, Sequelize) {},
